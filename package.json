@@ -1,0 +1,21 @@
+{
+  "name": "highoutput-library",
+  "version": "0.0.1",
+  "description": "Module library for Hight Output Ventures",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint utilities/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Proto-Garage/highoutput-library.git"
+  },
+  "author": "High Output Ventures",
+  "license": "ISC",
+  "homepage": "https://github.com/Proto-Garage/highoutput-library#README.md",
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.11.0"
+  }
+}

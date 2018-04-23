@@ -6,4 +6,4 @@ module.exports = {
   delay,
   hash,
   hmac,
-}
+};
