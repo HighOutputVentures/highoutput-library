@@ -11,11 +11,9 @@ Wait for a given amount of time. The input can be a string compatible to the [`m
 import { delay } from 'highoutput-utilities';
 
 async function main() {
-  // do something here
   await delay(1000); // wait for 1 second
-  // do something here
+
   await delay('1m'); // wait for 1 minute
-  // do something here
 }
 
 main();
@@ -89,3 +87,17 @@ Generate logs that follow a certain format.
 * `arg1` `(string|Object|)`
 * `arg2` `(string|Object|)`
 
+### Examples
+```javascript
+import { Logger } from 'highoutput-utilities';
+
+const logger = new Logger(['api']);
+
+logger.info('Read this!');
+logger.error(new Error('A nasty error.'));
+logger.silly('My dog will not bite you, probably.');
+logger.verbose('You want some log?');
+logger.warn('I kill you!');
+
+logger.tag('http').verbose({ host: '127.0.0.1', pathname: '/' });
+```
