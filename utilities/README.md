@@ -1,4 +1,4 @@
-# A collection of common tools
+# Utilities
 
 ## `delay(duration)`
 * `duration` `(number|string)` Amount of time to wait
