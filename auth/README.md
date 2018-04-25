@@ -32,6 +32,56 @@ const auth = new Auth({
 });
 ```
 
+### **auth.createJWT(claims)**
+* **claims.sub** `string | number` ID of the owner of the JWT.
+* **claims.exp** `number` (Optional) UNIX timestamp of the expiration time.
+* Returns: **jwt** `string`
+
+Create a json web token.
+
+#### Example
+```javascript
+await auth.createJWT({
+  sub: '507f1f77bcf86cd799439011',
+  exp: 1524663851,
+});
+```
+
+### **auth.verifyJWT(token, subject)**
+* **token** `string` JWT.
+* **subject** `string | number` (Optional) ID of the owner of the JWT.
+* Returns: **claims** `object`
+
+Verify and decode a json web token.
+
+#### Example
+```javascript
+await auth.verifyJWT('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1YWQ3MTZlZjc1ZTZhODc1MTQ0Y2Q0NDQiLCJpYXQiOjE1MjQ2MjYzNjMsImV4cCI6MTUyNTIzMTE2M30.z2xgs0BeLQsTBiG9sphjkP_JljYht2o4AgI4ClWgZqw', '507f1f77bcf86cd799439011');
+```
+
+### **auth.createPasswordHash(password)**
+* **password** `string` Password.
+* Returns: **hash** `string`
+
+Generate a password hash.
+
+#### Example
+```javascript
+await auth.createPasswordHash('123456Seven');
+```
+
+### **auth.comparePasswordHash(password, hash)**
+* **password** `string` Password.
+* **hash** `string` Password.
+* Returns: **valid** `boolean`
+
+Compare password to hash.
+
+#### Example
+```javascript
+await auth.comparePasswordHash('123456Seven', '$2b$10$r9mOi7JbCEjhqCkxPVJXRedw2LPyWOp/gz8uAd7ELd35Qb5IGC3NO');
+```
+
 ### **auth.createAccessToken(params)**
 * **params.username** `string` Username.
 * **params.password** `string` Password.
@@ -41,7 +91,7 @@ const auth = new Auth({
 * Throws:
   * `INVALID_CREDENTIALS`
 
-Create a json web token.
+Create an access token.
 
 #### Example
 ```javascript

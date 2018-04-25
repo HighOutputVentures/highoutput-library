@@ -22,9 +22,18 @@ class Auth {
       password: 'password',
       ...(options.propertyMap || {}),
     };
+    this.saltRounds = 10;
   }
 
-  createJWT(payload) {
+  async createPasswordHash(password) {
+    return bcrypt.hash(password, this.saltRounds);
+  }
+
+  async comparePasswordHash(password, hash) {
+    return bcrypt.compare(password, hash);
+  }
+
+  async createJWT(payload) {
     return new Promise((resolve, reject) => {
       jwt.sign(payload, this.secretKey, { algorithm: 'HS256' }, (err, token) => {
         if (err) {
@@ -37,15 +46,15 @@ class Auth {
     });
   }
 
-  verifyJWT(token, subject) {
+  async verifyJWT(token, subject) {
     return new Promise((resolve, reject) => {
-      jwt.verify(token, this.secretKey, subject ? { subject } : null, (err, decoded) => {
+      jwt.verify(token, this.secretKey, subject ? { subject } : null, (err, claims) => {
         if (err) {
           reject(err);
           return;
         }
 
-        resolve(decoded);
+        resolve(claims);
       });
     });
   }
@@ -73,7 +82,7 @@ class Auth {
     assert(account.id, '\'id\' is required');
     assert(account.password, '\'password\' is required');
 
-    const valid = await bcrypt.compare(params.password, account.password);
+    const valid = await this.comparePasswordHash(params.password, account.password);
     if (!valid) {
       throw new AuthError(
         'INVALID_CREDENTIALS',
@@ -120,7 +129,11 @@ class Auth {
       account = await this.userModel.findById(decoded.sub);
     }
 
-    const valid = await bcrypt.compare(params.oldPassword, account[this.propertyMap.password]);
+    const valid = await this.compare(
+      params.oldPassword,
+      account[this.propertyMap.password],
+    );
+
     if (!valid) {
       throw new AuthError(
         'INVALID_CREDENTIALS',
@@ -128,7 +141,7 @@ class Auth {
       );
     }
 
-    const password = await bcrypt.hash(params.newPassword, 8);
+    const password = await this.createPasswordHash(params.newPassword);
     if (isMongooseModel(this.userModel)) {
       await this.userModel
         .findByIdAndUpdate(decoded.sub, { [this.propertyMap.password]: password });
@@ -158,7 +171,7 @@ class Auth {
 
     const payload = {
       sub: params.subject,
-      exp: Math.floor((Date.now() + ms(params.expiresIn || '30d')) / 1000),
+      exp: Math.floor((Date.now() + ms(params.expiresIn || '12h')) / 1000),
     };
 
     return this.createJWT(payload);
@@ -178,7 +191,7 @@ class Auth {
       );
     }
 
-    const password = await bcrypt.hash(params.password, 8);
+    const password = await this.createPasswordHash(params.password);
     if (isMongooseModel(this.userModel)) {
       await this.userModel
         .findByIdAndUpdate(decoded.sub, { [this.propertyMap.password]: password });
