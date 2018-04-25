@@ -15,8 +15,10 @@ const sendEmail = client('http://localhost:8080', 'mysupersecretkeythatnooneknow
   * html `<String>` Html content
   * bcc `<String>|<Array<String>>`
   * cc `<String>|<Array<String>>`
+  * template `<String>` Name of the template
+  * templateData `<Object>` Object data to be bound to the template
 
-Though `text` and `html` property is not required, but one of them must be present.
+Though `text`, `html` property is not required, but one of them must be present.
 
 ```javascript
   sendEmail({

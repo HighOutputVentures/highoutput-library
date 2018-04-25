@@ -24,3 +24,26 @@ To make the request valid, you need to set a `key` in the header that can be fou
   "bcc": ["chestine_jans@yahoo.com"]
 }
 ```
+
+## Send Template [/email/template]
+Email template must be in ejs format.
+
+### POST
+Upload a new template with the given `name` and the `template` itself. It's also possible to use `include` in ejs template files with the `name` of the referred template. Template file must be in `form-data` that compose of 2 keys namely the `name` which will represent the name of the template and the `template` which is the ejs file to be uploaded.
+
+```
+curl -X POST -F template=@./header.ejs -F name=header http://localhost:8080/email/template
+```
+
+You can then make a request that uses template.
+```javascript
+{
+  "from": "Highoutput Ventures <noreply@highoutput.io>",
+  "to": ["djansyledjans@gmail.com"],
+  "subject": "hello world",
+  "template": "header",
+  "templateData": { "brand": "highoutput ventures" },
+  "cc": ["chestine_jans@yahoo.com"],
+  "bcc": ["chestine_jans@yahoo.com"]
+}
+```
