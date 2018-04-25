@@ -1,11 +1,9 @@
 const AWS = require('aws-sdk');
+const throttle = require('p-throttle');
 const { KoaApplication } = require('flowd-koa');
-const { RateLimiter } = require('limiter');
 const { Logger } = require('highoutput-utilities');
-
 const Config = require('./../config');
 
-const limiter = new RateLimiter(Config.AWS.rateLimit, 'second');
 const logger = new Logger([]);
 
 class RequestApplication extends KoaApplication {
@@ -20,41 +18,38 @@ class RequestApplication extends KoaApplication {
       from, to, subject, cc, bcc, text, html, region,
     } = ctx.request.body;
 
-    to.forEach((email) => {
-      limiter.removeTokens(1, (err) => {
-        if (err) {
-          logger.error(err);
-          return;
-        }
-
-        const params = {
-          Destination: { CcAddresses: cc, ToAddresses: [email], BccAddresses: bcc },
-          Source: from,
-          Message: {
-            Body: {
-              Html: {
-                Charset: 'UTF-8',
-                Data: html,
-              },
-              Text: {
-                Charset: 'UTF-8',
-                Data: text,
-              },
-            },
-            Subject: {
-              Charset: 'UTF-8',
-              Data: subject,
-            },
+    const params = {
+      Source: from,
+      Message: {
+        Body: {
+          Html: {
+            Charset: 'UTF-8',
+            Data: html,
           },
-        };
+          Text: {
+            Charset: 'UTF-8',
+            Data: text,
+          },
+        },
+        Subject: {
+          Charset: 'UTF-8',
+          Data: subject,
+        },
+      },
+    };
 
-        AWS.config.update({ region: region || 'us-east-1' });
-        new AWS.SES({ apiVersion: '2010-12-01' })
-          .sendEmail(params)
-          .promise()
-          .catch(error => logger.error(error));
-      });
-    });
+    const throttled = throttle((email) => {
+      AWS.config.update({ region: region || 'us-east-1' });
+      new AWS.SES({ apiVersion: '2010-12-01' })
+        .sendEmail({
+          ...params,
+          Destination: { CcAddresses: cc, ToAddresses: [email], BccAddresses: bcc },
+        })
+        .promise()
+        .catch(error => logger.error(error));
+    }, Config.AWS.rateLimit, 1000);
+
+    to.forEach(throttled);
     ctx.status = 200;
   }
 }
