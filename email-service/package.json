@@ -22,6 +22,7 @@
     "flowd": "^1.0.7",
     "flowd-koa": "^1.0.9",
     "highoutput-utilities": "0.0.2",
+    "koa-body": "^2.5.0",
     "koa-bodyparser": "^4.2.0",
     "koa-logger": "^3.2.0",
     "p-throttle": "^1.1.0"

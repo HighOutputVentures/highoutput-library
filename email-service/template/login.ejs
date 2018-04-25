@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app-login">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Login | AMS</title>
+    <meta name="description" content="app, web app, responsive, admin dashboard, admin, flat, flat ui, ui kit, off screen nav" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+    <!-- Bootstrap -->
+    
+     <link rel="stylesheet" href="/dist/css/style.css">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+  <div class="login-container">
+    <div class="bg">
+      <img class="login-background" src="dist/img/background.jpg" alt="">
+    </div>
+    <div class="full-width">
+     <div class="sidebar col-md-3 col-sm-12">
+      <img class="login-logo" src="dist/img/RT-Logo.png" alt="">
+       <div class="sidebar-elements">
+         <h4 class="login-header">Login To Your Account</h4>
+          <div id="error_messages" class="alert alert-danger ng-cloak" role="alert" ng-show="errorInLogin">
+            {{errorInLogin.message}}
+          </div>
+         <form id="loginForm" name="loginForm" novalidate ng-submit="submitForm()">
+           <input ng-model="u" id="username" name="username" type="text" class="login-input form-control" placeholder="Username">
+           <input id="password" name="password" ng-model="p" type="password" class="login-input form-control" placeholder="Password">
+           <button class="btn btn-primary login-btn" type="submit" id="btn_signin" 
+                value="Submit" type="submit" ng-disabled="!loginForm.$valid">
+             <i class="fa fa-lock"></i> Secure Login
+             <i class="fa fa-refresh fa-spin" ng-show="loading"></i>
+            </button>
+         </form>
+        <div class="support">
+          <a href="" class="support-link" ><i class="fa fa-support"></i> Need Help or Support?</a>
+        </div>
+       </div>
+      </div>
+     <div class="col-md-9 col-sm-12">
+       
+     </div>
+    </div>
+    <div class="full-width footer">
+      <div class="pull-right footer-text">
+        &copy; 2017 Raise Technologies Ltd
+      </div>
+    </div>
+  
+  </div>
+  
+
+    <script src="static/js/lib/angular.min.js"></script>
+  <script type="text/javascript">
+  angular.module('app-login', []).run(function($rootScope, $http){
+    $rootScope.submitForm = function(){
+      $rootScope.loading = true;
+      $http.post('/v1/authorize', {
+        username: $rootScope.u,
+        password: $rootScope.p
+      }).success(function(){
+        location.reload();
+      }).error(function(err){
+        $rootScope.loading = false;
+        $rootScope.errorInLogin = {};
+        if(err.account_locked){
+          $rootScope.errorInLogin = {message:'Sorry. This account has been locked'};
+        }else{
+          $rootScope.errorInLogin = {message:'Incorrect Username or Password. Please Try Again'};
+        }
+      });
+    }
+  });
+  </script>
+
+    
+  </body>
+</html>
