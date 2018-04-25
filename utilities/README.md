@@ -52,13 +52,46 @@ hash('The quick brown fox jumps over the lazy dog.', 'secretkey');
 hash('The quick brown fox jumps over the lazy dog.', 'secretkey', 'sha256');
 ```
 
+## `rateLimiter(params)`
+* `params` `(Object)`
+  * `tokensPerInterval` `(Number)` Number of tokens to drip into the bucket over the course of one interval.
+  * `interval` `(String|Number)` The interval length in milliseconds, or as one of the following strings: `second`, `minute`, `hour`, `day`.
+  * `maxRetry` `(Number)` Number of tries before it will be considered as a fail.
+  * `minInterval` `(Number)` Number of the minimum interval for retry delay.
+* Returns: `(Promise<Function>)`
+  * `consumeToken` `(Number)` Number of token to consume.
+  * `cb` `(Function)` Function to be called when there is enough token to consume.
+    * `err` `(Object)` Error object when there is an error occured.
+    * `remainingRequests` Number of remaining token to be consumed right this moment.
+
+```javascript
+  import { RateLimiter } from 'highoutput-utilities';
+
+  const limiter = RateLimiter({
+    tokensPerInterval: 10,
+    interval: 'second',
+    maxRetry: 10,
+    minInterval: 100,
+  });
+
+  async function process() {
+    await limiter(5, () => {
+      // your code goes here
+    });
+  }
+  
+  process();
+```
+
+### `rateLimiter.consume`
+
 ## Class: `Logger`
 Generate logs that follow a certain format.
 
 ### `new Logger(tags)`
 * `tags` `(Array<string>)`
 
-### `logger.tag(tag)`
+### `logger.tag(tag)`-
 * `tag` `(string)`
 * Returns: `(Logger)`
 
