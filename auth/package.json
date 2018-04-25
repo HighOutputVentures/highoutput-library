@@ -4,7 +4,7 @@
   "description": "Authentication and authorization module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "ava test"
   },
   "author": "High Output Ventures",
   "license": "ISC",
@@ -12,5 +12,22 @@
     "bcrypt": "^2.0.1",
     "jsonwebtoken": "^8.2.1",
     "ms": "^2.1.1"
+  },
+  "devDependencies": {
+    "ava": "^0.25.0",
+    "chance": "^1.0.13",
+    "ramda": "^0.25.0"
+  },
+  "ava": {
+    "files": [
+      "test/**/*.js"
+    ],
+    "concurrency": 5,
+    "failFast": true,
+    "failWithoutAssertions": true,
+    "tap": false,
+    "verbose": true,
+    "powerAssert": false,
+    "timeout": "120s"
   }
 }

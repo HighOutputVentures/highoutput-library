@@ -48,7 +48,7 @@ class Auth {
     assert(params.password, '\'password\' is required');
 
     let account;
-    if (isMongooseModel(this.model.userModel)) {
+    if (isMongooseModel(this.options.userModel)) {
       account = await this.options.userModel
         .findOne({ username: params.username })
         .select({ password: 1 });
@@ -86,10 +86,10 @@ class Auth {
     return this.createJWT(payload);
   }
 
-  async verifyAccessToken(token) {
+  async verifyAccessToken(params) {
     let decoded;
     try {
-      decoded = await this.verifyJWT(token);
+      decoded = await this.verifyJWT(params.accessToken, params.subject);
     } catch (err) {
       throw new AuthError(
         'INVALID_TOKEN',
@@ -101,14 +101,14 @@ class Auth {
   }
 
   async changePassword(params) {
-    assert(params.token, '\'token\' is required');
+    assert(params.accessToken, '\'accessToken\' is required');
     assert(params.oldPassword, '\'oldPassword\' is required');
     assert(params.newPassword, '\'newPassword\' is required');
 
     const decoded = await this.verifyAccessToken(params);
 
     let account;
-    if (isMongooseModel(this.model.userModel)) {
+    if (isMongooseModel(this.options.userModel)) {
       account = await this.options.userModel
         .findById(decoded.sub)
         .select({ password: 1 });
@@ -125,7 +125,7 @@ class Auth {
     }
 
     const password = await bcrypt.hash(params.newPassword, 8);
-    if (isMongooseModel(this.model.userModel)) {
+    if (isMongooseModel(this.options.userModel)) {
       await this.options.userModel
         .findByIdAndUpdate(decoded.sub, { password });
     } else {
@@ -134,18 +134,40 @@ class Auth {
   }
 
   async requestResetPassword(params) {
-    assert(params.id, '\'token\' is required');
-    return this.createJWT({ sub: params.id });
+    assert(params.subject, '\'subject\' is required');
+
+    let account;
+    if (isMongooseModel(this.options.userModel)) {
+      account = await this.options.userModel
+        .findById(params.subject)
+        .select({ _id: 1 });
+    } else {
+      account = await this.options.userModel.findById(params.subject);
+    }
+
+    if (!account) {
+      throw new AuthError(
+        'USER_NOT_FOUND',
+        'User does not exist',
+      );
+    }
+
+    let payload = { sub: params.subject };
+    if (params.expiresIn) {
+      payload = { ...payload, exp: Math.floor((Date.now() + ms(params.expiresIn)) / 1000) };
+    }
+
+    return this.createJWT(payload);
   }
 
   async resetPassword(params) {
-    assert(params.token, '\'token\' is required');
+    assert(params.requestToken, '\'requestToken\' is required');
     assert(params.password, '\'password\' is required');
 
     const decoded = await this.verifyAccessToken(params);
 
     const password = await bcrypt.hash(params.password, 8);
-    if (isMongooseModel(this.model.userModel)) {
+    if (isMongooseModel(this.options.userModel)) {
       await this.options.userModel
         .findByIdAndUpdate(decoded.sub, { password });
     } else {
