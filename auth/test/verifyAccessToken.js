@@ -13,7 +13,7 @@ const auth = new Auth({
   userModel,
 });
 
-test('create access token', async (t) => {
+test('verify access token', async (t) => {
   const user = createUser();
   await userModel.insertUser(user);
 
@@ -22,17 +22,9 @@ test('create access token', async (t) => {
     password: user.password,
   });
 
-  t.is(typeof accessToken, 'string');
-});
+  const claims = await auth.verifyAccessToken({ accessToken });
 
-test('invalid credentials', async (t) => {
-  const user = createUser();
-  await userModel.insertUser(user);
-
-  const error = await t.throws(auth.createAccessToken({
-    username: user.username,
-    password: chance.string(),
-  }));
-
-  t.is(error.code, 'INVALID_CREDENTIALS');
+  t.is(typeof claims.sub, 'string');
+  t.is(typeof claims.exp, 'number');
+  t.is(typeof claims.iat, 'number');
 });

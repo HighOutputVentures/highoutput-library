@@ -74,14 +74,11 @@ class Auth {
       );
     }
 
-    let payload = { sub: account.id };
-    if (params.expiresIn) {
-      payload = { ...payload, exp: Math.floor((Date.now() + ms(params.expiresIn)) / 1000) };
-    }
-
-    if (params.claims) {
-      payload = { ...payload, ...params.claims };
-    }
+    const payload = {
+      sub: account.id,
+      exp: Math.floor((Date.now() + ms(params.expiresIn || '30d')) / 1000),
+      ...(params.claims || {}),
+    };
 
     return this.createJWT(payload);
   }
@@ -93,7 +90,7 @@ class Auth {
     } catch (err) {
       throw new AuthError(
         'INVALID_TOKEN',
-        'Invalid token',
+        'Invalid access token',
       );
     }
 
@@ -152,10 +149,10 @@ class Auth {
       );
     }
 
-    let payload = { sub: params.subject };
-    if (params.expiresIn) {
-      payload = { ...payload, exp: Math.floor((Date.now() + ms(params.expiresIn)) / 1000) };
-    }
+    const payload = {
+      sub: params.subject,
+      exp: Math.floor((Date.now() + ms(params.expiresIn || '30d')) / 1000),
+    };
 
     return this.createJWT(payload);
   }
@@ -164,7 +161,15 @@ class Auth {
     assert(params.requestToken, '\'requestToken\' is required');
     assert(params.password, '\'password\' is required');
 
-    const decoded = await this.verifyAccessToken(params);
+    let decoded;
+    try {
+      decoded = await this.verifyJWT(params.requestToken, params.subject);
+    } catch (err) {
+      throw new AuthError(
+        'INVALID_TOKEN',
+        'Invalid request token',
+      );
+    }
 
     const password = await bcrypt.hash(params.password, 8);
     if (isMongooseModel(this.options.userModel)) {
