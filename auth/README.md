@@ -5,6 +5,32 @@
 ### **new Auth(options)**
 * **options.secretKey** `string` Secret key to use in generating the JWT.
 * **options.userModel** `UserModel` User model.
+* **options.properyMap** `object` (Optional) An object specifying the property to use as `username` and `password`. Only applied if `options.userModel` is a `Mongoose` model.
+
+#### Example
+```javascript
+import mongoose, { Schema } from 'mongoose';
+
+const AccountModel = mongoose.model('Account', new Schema({
+  email: {
+    type: String,
+    required: true,
+    index: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  }
+}));
+
+const auth = new Auth({
+  secretKey: '4fb473f82ba47bf6acbab33e7529fb96',
+  userModel: AccountModel,
+  propertyMap: {
+    username: 'email',
+  },
+});
+```
 
 ### **auth.createAccessToken(params)**
 * **params.username** `string` Username.

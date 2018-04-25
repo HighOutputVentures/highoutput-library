@@ -14,12 +14,19 @@ class Auth {
   constructor(options) {
     assert(options.secretKey, '\'secretKey\' is required');
     assert(options.userModel, '\'userModel\' is required');
-    this.options = options;
+
+    this.secretKey = options.secretKey;
+    this.userModel = options.userModel;
+    this.propertyMap = {
+      username: 'username',
+      password: 'password',
+      ...(options.propertyMap || {}),
+    };
   }
 
   createJWT(payload) {
     return new Promise((resolve, reject) => {
-      jwt.sign(payload, this.options.secretKey, { algorithm: 'HS256' }, (err, token) => {
+      jwt.sign(payload, this.secretKey, { algorithm: 'HS256' }, (err, token) => {
         if (err) {
           reject(err);
           return;
@@ -32,7 +39,7 @@ class Auth {
 
   verifyJWT(token, subject) {
     return new Promise((resolve, reject) => {
-      jwt.verify(token, this.options.secretKey, subject ? { subject } : null, (err, decoded) => {
+      jwt.verify(token, this.secretKey, subject ? { subject } : null, (err, decoded) => {
         if (err) {
           reject(err);
           return;
@@ -48,12 +55,12 @@ class Auth {
     assert(params.password, '\'password\' is required');
 
     let account;
-    if (isMongooseModel(this.options.userModel)) {
-      account = await this.options.userModel
-        .findOne({ username: params.username })
+    if (isMongooseModel(this.userModel)) {
+      account = await this.userModel
+        .findOne({ [this.propertyMap.username]: params.username })
         .select({ password: 1 });
     } else {
-      account = await this.options.userModel.findByUsername(params.username);
+      account = await this.userModel.findByUsername(params.username);
     }
 
     if (!account) {
@@ -105,15 +112,15 @@ class Auth {
     const decoded = await this.verifyAccessToken(params);
 
     let account;
-    if (isMongooseModel(this.options.userModel)) {
-      account = await this.options.userModel
+    if (isMongooseModel(this.userModel)) {
+      account = await this.userModel
         .findById(decoded.sub)
-        .select({ password: 1 });
+        .select({ [this.propertyMap.password]: 1 });
     } else {
-      account = await this.options.userModel.findById(decoded.sub);
+      account = await this.userModel.findById(decoded.sub);
     }
 
-    const valid = await bcrypt.compare(params.oldPassword, account.password);
+    const valid = await bcrypt.compare(params.oldPassword, account[this.propertyMap.password]);
     if (!valid) {
       throw new AuthError(
         'INVALID_CREDENTIALS',
@@ -122,11 +129,11 @@ class Auth {
     }
 
     const password = await bcrypt.hash(params.newPassword, 8);
-    if (isMongooseModel(this.options.userModel)) {
-      await this.options.userModel
-        .findByIdAndUpdate(decoded.sub, { password });
+    if (isMongooseModel(this.userModel)) {
+      await this.userModel
+        .findByIdAndUpdate(decoded.sub, { [this.propertyMap.password]: password });
     } else {
-      await this.options.userModel.updatePassword(decoded.sub, password);
+      await this.userModel.updatePassword(decoded.sub, password);
     }
   }
 
@@ -134,12 +141,12 @@ class Auth {
     assert(params.subject, '\'subject\' is required');
 
     let account;
-    if (isMongooseModel(this.options.userModel)) {
-      account = await this.options.userModel
+    if (isMongooseModel(this.userModel)) {
+      account = await this.userModel
         .findById(params.subject)
         .select({ _id: 1 });
     } else {
-      account = await this.options.userModel.findById(params.subject);
+      account = await this.userModel.findById(params.subject);
     }
 
     if (!account) {
@@ -172,11 +179,11 @@ class Auth {
     }
 
     const password = await bcrypt.hash(params.password, 8);
-    if (isMongooseModel(this.options.userModel)) {
-      await this.options.userModel
-        .findByIdAndUpdate(decoded.sub, { password });
+    if (isMongooseModel(this.userModel)) {
+      await this.userModel
+        .findByIdAndUpdate(decoded.sub, { [this.propertyMap.password]: password });
     } else {
-      await this.options.userModel.updatePassword(decoded.sub, password);
+      await this.userModel.updatePassword(decoded.sub, password);
     }
   }
 }
