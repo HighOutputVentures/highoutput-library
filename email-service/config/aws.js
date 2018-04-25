@@ -1,3 +1,3 @@
 module.exports = {
-  rateLimit: 13,
+  rateLimit: parseInt(process.env.RATE_LIMIT || 13, 10),
 };

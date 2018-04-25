@@ -20,38 +20,40 @@ class RequestApplication extends KoaApplication {
       from, to, subject, cc, bcc, text, html, region,
     } = ctx.request.body;
 
-    limiter.removeTokens(1, (err) => {
-      if (err) {
-        logger.error(err);
-        return;
-      }
+    to.forEach((email) => {
+      limiter.removeTokens(1, (err) => {
+        if (err) {
+          logger.error(err);
+          return;
+        }
 
-      const params = {
-        Destination: { CcAddresses: cc, ToAddresses: to, BccAddresses: bcc },
-        Source: from,
-        Message: {
-          Body: {
-            Html: {
-              Charset: 'UTF-8',
-              Data: html,
+        const params = {
+          Destination: { CcAddresses: cc, ToAddresses: [email], BccAddresses: bcc },
+          Source: from,
+          Message: {
+            Body: {
+              Html: {
+                Charset: 'UTF-8',
+                Data: html,
+              },
+              Text: {
+                Charset: 'UTF-8',
+                Data: text,
+              },
             },
-            Text: {
+            Subject: {
               Charset: 'UTF-8',
-              Data: text,
+              Data: subject,
             },
           },
-          Subject: {
-            Charset: 'UTF-8',
-            Data: subject,
-          },
-        },
-      };
+        };
 
-      AWS.config.update({ region: region || 'us-east-1' });
-      new AWS.SES({ apiVersion: '2010-12-01' })
-        .sendEmail(params)
-        .promise()
-        .catch(error => logger.error(error));
+        AWS.config.update({ region: region || 'us-east-1' });
+        new AWS.SES({ apiVersion: '2010-12-01' })
+          .sendEmail(params)
+          .promise()
+          .catch(error => logger.error(error));
+      });
     });
     ctx.status = 200;
   }
