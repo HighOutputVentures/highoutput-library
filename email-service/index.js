@@ -20,4 +20,3 @@ module.exports = {
   app,
   instance: app.start(),
 };
-
