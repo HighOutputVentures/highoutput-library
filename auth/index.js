@@ -22,14 +22,13 @@ class Auth {
       password: 'password',
       ...(options.propertyMap || {}),
     };
-    this.saltRounds = 10;
   }
 
-  async createPasswordHash(password) {
-    return bcrypt.hash(password, this.saltRounds);
+  static async createPasswordHash(password) {
+    return bcrypt.hash(password, 8);
   }
 
-  async comparePasswordHash(password, hash) {
+  static async comparePasswordHash(password, hash) {
     return bcrypt.compare(password, hash);
   }
 
@@ -82,7 +81,7 @@ class Auth {
     assert(account.id, '\'id\' is required');
     assert(account.password, '\'password\' is required');
 
-    const valid = await this.comparePasswordHash(params.password, account.password);
+    const valid = await Auth.comparePasswordHash(params.password, account.password);
     if (!valid) {
       throw new AuthError(
         'INVALID_CREDENTIALS',
@@ -141,7 +140,7 @@ class Auth {
       );
     }
 
-    const password = await this.createPasswordHash(params.newPassword);
+    const password = await Auth.createPasswordHash(params.newPassword);
     if (isMongooseModel(this.userModel)) {
       await this.userModel
         .findByIdAndUpdate(decoded.sub, { [this.propertyMap.password]: password });
@@ -191,7 +190,7 @@ class Auth {
       );
     }
 
-    const password = await this.createPasswordHash(params.password);
+    const password = await Auth.createPasswordHash(params.password);
     if (isMongooseModel(this.userModel)) {
       await this.userModel
         .findByIdAndUpdate(decoded.sub, { [this.propertyMap.password]: password });

@@ -32,10 +32,33 @@ const auth = new Auth({
 });
 ```
 
+### **Auth.createPasswordHash(password)**
+* **password** `string` Password.
+* Returns: **hash** `Promise<string>`
+
+Generate a password hash.
+
+#### Example
+```javascript
+await auth.createPasswordHash('123456Seven');
+```
+
+### **Auth.comparePasswordHash(password, hash)**
+* **password** `string` Password.
+* **hash** `string` Password.
+* Returns: **valid** `Promise<boolean>`
+
+Compare password to hash.
+
+#### Example
+```javascript
+await auth.comparePasswordHash('123456Seven', '$2b$10$r9mOi7JbCEjhqCkxPVJXRedw2LPyWOp/gz8uAd7ELd35Qb5IGC3NO');
+```
+
 ### **auth.createJWT(claims)**
 * **claims.sub** `string | number` ID of the owner of the JWT.
 * **claims.exp** `number` (Optional) UNIX timestamp of the expiration time.
-* Returns: **jwt** `string`
+* Returns: **jwt** `Promise<string>`
 
 Create a json web token.
 
@@ -50,7 +73,7 @@ await auth.createJWT({
 ### **auth.verifyJWT(token, subject)**
 * **token** `string` JWT.
 * **subject** `string | number` (Optional) ID of the owner of the JWT.
-* Returns: **claims** `object`
+* Returns: **claims** `Promise<object>`
 
 Verify and decode a json web token.
 
@@ -59,35 +82,12 @@ Verify and decode a json web token.
 await auth.verifyJWT('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1YWQ3MTZlZjc1ZTZhODc1MTQ0Y2Q0NDQiLCJpYXQiOjE1MjQ2MjYzNjMsImV4cCI6MTUyNTIzMTE2M30.z2xgs0BeLQsTBiG9sphjkP_JljYht2o4AgI4ClWgZqw', '507f1f77bcf86cd799439011');
 ```
 
-### **auth.createPasswordHash(password)**
-* **password** `string` Password.
-* Returns: **hash** `string`
-
-Generate a password hash.
-
-#### Example
-```javascript
-await auth.createPasswordHash('123456Seven');
-```
-
-### **auth.comparePasswordHash(password, hash)**
-* **password** `string` Password.
-* **hash** `string` Password.
-* Returns: **valid** `boolean`
-
-Compare password to hash.
-
-#### Example
-```javascript
-await auth.comparePasswordHash('123456Seven', '$2b$10$r9mOi7JbCEjhqCkxPVJXRedw2LPyWOp/gz8uAd7ELd35Qb5IGC3NO');
-```
-
 ### **auth.createAccessToken(params)**
 * **params.username** `string` Username.
 * **params.password** `string` Password.
 * **params.expiresIn** `string` (Optional) Amount of time before the **accessToken** expires. Must be compatible to the `ms` package.
 * **params.claims** `object` (Optional) Additional claims to include in the JWT.
-* Returns: **accessToken** `string`
+* Returns: **accessToken** `Promise<string>`
 * Throws:
   * `INVALID_CREDENTIALS`
 
@@ -104,7 +104,7 @@ await auth.createAccessToken({
 ### **auth.verifyAccessToken(params)**
 * **params.accessToken** `string` Access token.
 * **params.subject** `string | number` (Optional) ID of the owner of the **accessToken**.
-* Returns: **claims** `object` Claims stored in the JWT.
+* Returns: **claims** `Promise<object>` Claims stored in the JWT.
 * Throws:
   * `INVALID_TOKEN`
 
@@ -140,7 +140,7 @@ await auth.changePassword({
 ### **auth.requestResetPassword(params)**
 * **params.subject** `string | number` ID of the user requesting the password reset.
 * **params.expiresIn** `string` (Optional) Amount of time before the **requestToken** expires.
-* Returns: **requestToken** `string`
+* Returns: **requestToken** `Promise<string>`
 * Throws:
   * `USER_NOT_FOUND`
 
@@ -180,7 +180,7 @@ The **UserModel** can be any of the following types:
 
 #### Example
 ```javascript
-const bcrypt = require('bcrypt');
+const Auth = require('highoutput-auth');
 const R = require('ramda');
 
 class UserModel {
@@ -191,7 +191,7 @@ class UserModel {
   async insertUser(user) {
     this.users.push({
       ...user,
-      password: await bcrypt.hash(user.password, 8),
+      password: await Auth.createPasswordHash(user.password),
     });
   }
 
