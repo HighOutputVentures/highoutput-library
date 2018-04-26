@@ -130,7 +130,7 @@ The **UserModel** can be any of the following types:
 
 #### Example
 ```javascript
-const Auth = require('highoutput-auth');
+const { bcrypt } = require('highoutput-auth');
 const R = require('ramda');
 
 class UserModel {
@@ -141,7 +141,7 @@ class UserModel {
   async insertUser(user) {
     this.users.push({
       ...user,
-      password: await Auth.createPasswordHash(user.password),
+      password: await bcrypt.hash(user.password),
     });
   }
 
