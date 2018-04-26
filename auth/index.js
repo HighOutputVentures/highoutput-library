@@ -22,11 +22,10 @@ class Auth {
       password: 'password',
       ...(options.propertyMap || {}),
     };
-    this.saltRounds = 10;
   }
 
   static async createPasswordHash(password) {
-    return bcrypt.hash(password, this.saltRounds);
+    return bcrypt.hash(password, 8);
   }
 
   static async comparePasswordHash(password, hash) {

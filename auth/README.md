@@ -34,7 +34,7 @@ const auth = new Auth({
 
 ### **Auth.createPasswordHash(password)**
 * **password** `string` Password.
-* Returns: **hash** `string`
+* Returns: **hash** `Promise<string>`
 
 Generate a password hash.
 
@@ -46,7 +46,7 @@ await auth.createPasswordHash('123456Seven');
 ### **Auth.comparePasswordHash(password, hash)**
 * **password** `string` Password.
 * **hash** `string` Password.
-* Returns: **valid** `boolean`
+* Returns: **valid** `Promise<boolean>`
 
 Compare password to hash.
 
@@ -58,7 +58,7 @@ await auth.comparePasswordHash('123456Seven', '$2b$10$r9mOi7JbCEjhqCkxPVJXRedw2L
 ### **auth.createJWT(claims)**
 * **claims.sub** `string | number` ID of the owner of the JWT.
 * **claims.exp** `number` (Optional) UNIX timestamp of the expiration time.
-* Returns: **jwt** `string`
+* Returns: **jwt** `Promise<string>`
 
 Create a json web token.
 
@@ -73,7 +73,7 @@ await auth.createJWT({
 ### **auth.verifyJWT(token, subject)**
 * **token** `string` JWT.
 * **subject** `string | number` (Optional) ID of the owner of the JWT.
-* Returns: **claims** `object`
+* Returns: **claims** `Promise<object>`
 
 Verify and decode a json web token.
 
@@ -87,7 +87,7 @@ await auth.verifyJWT('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1YWQ3MTZlZ
 * **params.password** `string` Password.
 * **params.expiresIn** `string` (Optional) Amount of time before the **accessToken** expires. Must be compatible to the `ms` package.
 * **params.claims** `object` (Optional) Additional claims to include in the JWT.
-* Returns: **accessToken** `string`
+* Returns: **accessToken** `Promise<string>`
 * Throws:
   * `INVALID_CREDENTIALS`
 
@@ -104,7 +104,7 @@ await auth.createAccessToken({
 ### **auth.verifyAccessToken(params)**
 * **params.accessToken** `string` Access token.
 * **params.subject** `string | number` (Optional) ID of the owner of the **accessToken**.
-* Returns: **claims** `object` Claims stored in the JWT.
+* Returns: **claims** `Promise<object>` Claims stored in the JWT.
 * Throws:
   * `INVALID_TOKEN`
 
@@ -140,7 +140,7 @@ await auth.changePassword({
 ### **auth.requestResetPassword(params)**
 * **params.subject** `string | number` ID of the user requesting the password reset.
 * **params.expiresIn** `string` (Optional) Amount of time before the **requestToken** expires.
-* Returns: **requestToken** `string`
+* Returns: **requestToken** `Promise<string>`
 * Throws:
   * `USER_NOT_FOUND`
 
