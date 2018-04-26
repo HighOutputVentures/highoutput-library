@@ -1,6 +1,6 @@
 {
   "name": "highoutput-auth",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Authentication and authorization module",
   "main": "index.js",
   "scripts": {
@@ -29,5 +29,9 @@
     "verbose": true,
     "powerAssert": false,
     "timeout": "120s"
+  },
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/HighOutputVentures/highoutput-library.git"
   }
 }
