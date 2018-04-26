@@ -15,6 +15,7 @@ COPY ./index.js $APP_DIR/index.js
 COPY ./package-lock.json $APP_DIR/package-lock.json
 COPY ./package.json $APP_DIR/package.json
 COPY ./credentials ~/.aws/credentials
+
 RUN mkdir -p ${APP_DIR}/template && yarn install
 
 EXPOSE 80
