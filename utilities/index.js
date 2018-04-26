@@ -2,7 +2,7 @@ const delay = require('./delay');
 const hash = require('./hash');
 const hmac = require('./hmac');
 const Logger = require('./logger');
-const RateLimiter = require('./rateLimiter');
+const RateLimiter = require('./rate-limiter');
 
 module.exports = {
   delay,
