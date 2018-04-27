@@ -2,4 +2,4 @@ node_modules/
 */node_modules/
 .history/
 */.npmrc
-email-service-client/template
+email-service/template
