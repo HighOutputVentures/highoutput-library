@@ -68,7 +68,7 @@ class RequestApplication extends KoaApplication {
       };
 
       AWS.config.update({ region: region || 'us-east-1' });
-      new AWS.SES({ apiVersion: '2010-12-01' })
+      return new AWS.SES({ apiVersion: '2010-12-01' })
         .sendEmail(params)
         .promise()
         .catch(error => logger.error(error));
