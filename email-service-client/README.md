@@ -14,6 +14,7 @@ Creates an email service client for the specific host and it's secret.
   * cc `<String>|<Array<String>>`
   * template `<String>` Name of the template
   * templateData `<Object>` Object data to be bound to the template
+  * checkValidity `<Boolean>` Determine whether to check first all the email if those email(s) exists of the domain SMTP server
 
 Though `text`, `html`, or `template` property is not required, but one of them must be present.
 

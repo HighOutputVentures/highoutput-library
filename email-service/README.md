@@ -6,6 +6,18 @@ You need to setup amazon credentials. Please see https://docs.aws.amazon.com/cli
 ## Send Email [/email]
 ### POST
 To make the request valid, you need to set a `key` in the header that can be found in `config/server.js` property `key`.
+** Request **
+| Property | Data Type | Required | Description | Default Value |
+| --- | --- | --- | --- | --- |
+| from | `<String>` | true | Verified email from amazon SES |  |
+| to | `<Array<String>> ` | true | Recipient(s) address |  |
+| subject | `<String>` | true | Subject of the email |  |
+| html | `<String>` | false | HTML message |  |
+| text | `<String>` | false | Plain text message (for fallback) |  |
+| cc | `<Array<String>>` | false |  |  |
+| bcc | `<Array<String>>` | false |  |  |
+| region | `<String>` | true | Region to be used of the amazon SES for sending the email | us-east-1 |
+| checkValidity | `<Boolean>` | false | Determine whether to check first all the email if those email(s) exists of the domain SMTP server | false |
 
 **Headers:**
 ```
