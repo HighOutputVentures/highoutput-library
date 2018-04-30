@@ -3,6 +3,7 @@ const hash = require('./hash');
 const hmac = require('./hmac');
 const Logger = require('./logger');
 const RateLimiter = require('./rate-limiter');
+const HttpError = require('./http-error');
 
 module.exports = {
   delay,
@@ -10,4 +11,5 @@ module.exports = {
   hmac,
   Logger,
   RateLimiter,
+  HttpError,
 };
