@@ -1,6 +1,6 @@
 {
   "name": "highoutput-email-service-client",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,6 +9,7 @@
   "author": "High Output Ventures",
   "license": "ISC",
   "dependencies": {
+    "jsonwebtoken": "^8.2.1",
     "node-fetch": "^2.1.2"
   },
   "devDependencies": {

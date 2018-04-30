@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const throttle = require('p-throttle');
 const fileExists = require('file-exists');
+const emailChk = require('email-chk');
 const { KoaApplication } = require('flowd-koa');
 const { Logger } = require('highoutput-utilities');
 const Config = require('./../config');
@@ -24,9 +25,26 @@ class RequestApplication extends KoaApplication {
 
   async sendEmail(ctx) {
     const {
-      from, to, subject, cc, bcc, text,
+      from, to, subject, cc, bcc, text, checkValidity,
       html, region, template, templateData,
     } = ctx.request.body;
+
+    if (checkValidity) {
+      const checkedEmails = await Promise.all(to.map(email =>
+        emailChk(email).then(exists => ({ exists, email }))));
+
+      const invalidEmails = checkedEmails.filter(checked => !checked.exists);
+      if (invalidEmails.length > 0) {
+        ctx.status = 400;
+        ctx.body = {
+          code: 'INVALID_EMAILS',
+          meta: {
+            emails: invalidEmails.map(({ email }) => email),
+          },
+        };
+        return;
+      }
+    }
 
     if (template && !fileExists(getTemplatePath(template))) {
       ctx.status = 404;
@@ -45,7 +63,7 @@ class RequestApplication extends KoaApplication {
       );
     };
 
-    const throttled = throttle((email) => {
+    const throttled = throttle(async (email) => {
       const params = {
         Destination: { CcAddresses: cc, ToAddresses: [email], BccAddresses: bcc },
         Source: from,
@@ -68,7 +86,7 @@ class RequestApplication extends KoaApplication {
       };
 
       AWS.config.update({ region: region || 'us-east-1' });
-      new AWS.SES({ apiVersion: '2010-12-01' })
+      return new AWS.SES({ apiVersion: '2010-12-01' })
         .sendEmail(params)
         .promise()
         .catch(error => logger.error(error));
