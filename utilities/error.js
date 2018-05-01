@@ -35,6 +35,16 @@ class UserNotFoundError extends ApplicationError {
   }
 }
 
+class UserAlreadyExistsError extends ApplicationError {
+  constructor(description, meta) {
+    super('USER_ALREADY_EXISTS', description, meta);
+  }
+
+  get statusCode() {
+    return 400;
+  }
+}
+
 class InvalidParamsError extends ApplicationError {
   constructor(description, meta) {
     super('INVALID_PARAMS', description, meta);
@@ -71,3 +81,4 @@ module.exports.UserNotFoundError = UserNotFoundError;
 module.exports.InvalidParamsError = InvalidParamsError;
 module.exports.InvalidCredentialsError = InvalidCredentialsError;
 module.exports.ForbiddenError = ForbiddenError;
+module.exports.UserAlreadyExistsError = UserAlreadyExistsError;
