@@ -1,6 +1,6 @@
 {
   "name": "highoutput-auth",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Authentication and authorization module",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
   "author": "High Output Ventures",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^2.0.1",
+    "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^8.2.1",
     "ms": "^2.1.1"
   },
@@ -31,7 +31,7 @@
     "timeout": "120s"
   },
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/HighOutputVentures/highoutput-library.git"
+    "type": "git",
+    "url": "https://github.com/HighOutputVentures/highoutput-library.git"
   }
 }
