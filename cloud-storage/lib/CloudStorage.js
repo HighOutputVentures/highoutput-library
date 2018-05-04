@@ -35,7 +35,7 @@ class CloudStorage {
    * @param {number} [params.upperSizeLimit]
    * @param {number} [params.lowerSizeLimit]
    */
-  getUploadInfo(params) {
+  getUploadCredentials(params) {
     assertObjectKeys(params, ['filename']);
 
     const {
@@ -56,8 +56,7 @@ class CloudStorage {
     const key = path.normalize(filename).replace(/^\/+/g, '');
     const credential = `${this.accessKey}/${date}/${this.region}/s3/aws4_request`;
 
-    const msInput = typeof validity === 'string' ? ms(validity) :
-      ms(ms(validity));
+    const msInput = typeof validity === 'string' ? ms(validity) : ms(ms(validity));
 
     const expiration = now.add(msInput, 'ms').toDate();
 

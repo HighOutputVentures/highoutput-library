@@ -61,7 +61,7 @@ test('Should error on missing parameter filename', (t) => {
   });
 
   const error = t.throws(() => {
-    Storage.getUploadInfo({});
+    Storage.getUploadCredentials({});
   }, AssertionError);
 
   t.is(error.message, '\'filename\' is required');
@@ -70,7 +70,7 @@ test('Should error on missing parameter filename', (t) => {
 test('Should error on invalid filename', (t) => {
   const Storage = helpers.getInstance();
   const error = t.throws(() => {
-    Storage.getUploadInfo({
+    Storage.getUploadCredentials({
       filename: '***2341324',
     });
   }, AssertionError);
@@ -81,7 +81,7 @@ test('Should error on invalid filename', (t) => {
 test('Should error on lowerSizeLimit less than or equal to 0', (t) => {
   const Storage = helpers.getInstance();
   const error = t.throws(() => {
-    Storage.getUploadInfo({
+    Storage.getUploadCredentials({
       filename,
       lowerSizeLimit: 0,
     });
@@ -93,7 +93,7 @@ test('Should error on lowerSizeLimit less than or equal to 0', (t) => {
 test('Should error on lowerSizeLimit > upperSizeLimit', (t) => {
   const Storage = helpers.getInstance();
   const error = t.throws(() => {
-    Storage.getUploadInfo({
+    Storage.getUploadCredentials({
       filename,
       lowerSizeLimit: 15,
       upperSizeLimit: 8,
@@ -106,7 +106,7 @@ test('Should error on lowerSizeLimit > upperSizeLimit', (t) => {
 test('Should error on invalid ms validity input', (t) => {
   const Storage = helpers.getInstance();
   const error = t.throws(() => {
-    Storage.getUploadInfo({
+    Storage.getUploadCredentials({
       filename,
       validity: '2234ssa',
     });
@@ -117,7 +117,7 @@ test('Should error on invalid ms validity input', (t) => {
 
 test('Should return upload info', (t) => {
   const Storage = helpers.getInstance();
-  const info = Storage.getUploadInfo({
+  const info = Storage.getUploadCredentials({
     filename,
     validity: '30m',
     lowerSizeLimit: 4,

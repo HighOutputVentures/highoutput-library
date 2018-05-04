@@ -19,7 +19,7 @@ const storage = new CloudStorage({
 });
 ```
 
-### **storage.getUploadInfo(params)**
+### **storage.getUploadCredentials(params)**
 * **params.filename** `string` Filename (with path). Value will be normalized and leading `'/'` will be removed.
 * **params.validity?** `string|number` Time validity of credential. Input should be following `ms` module format.
 * **params.upperSizeLimit?** `number` Upper file size limit to be uploaded in MB. Deafult value is `10`.
@@ -27,7 +27,7 @@ const storage = new CloudStorage({
 
 #### Example
 ```javascript
-const info = storage.getUploadInfo({
+const info = storage.getUploadCredentials({
   filename: 'some/filename.js',
 });
 
