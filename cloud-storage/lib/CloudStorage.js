@@ -3,6 +3,7 @@ const isValidPath = require('is-valid-path');
 const moment = require('moment');
 const ms = require('ms');
 const { hmac } = require('highoutput-utilities');
+const path = require('path');
 
 const assertObjectKeys = require('./assertObjectKeys');
 
@@ -28,29 +29,31 @@ class CloudStorage {
 
   /**
    * Get file url and upload info.
-   * @param {Object} options
-   * @param {string} options.filename
-   * @param {string} [options.validity]
-   * @param {number} [options.upperSizeLimit]
-   * @param {number} [options.lowerSizeLimit]
+   * @param {Object} params
+   * @param {string} params.filename
+   * @param {string|number} [params.validity]
+   * @param {number} [params.upperSizeLimit]
+   * @param {number} [params.lowerSizeLimit]
    */
-  getUploadInfo(options) {
-    assertObjectKeys(options, ['filename']);
+  getUploadInfo(params) {
+    assertObjectKeys(params, ['filename']);
+
     const {
-      validity,
-      upperSizeLimit,
-      lowerSizeLimit,
+      validity = '30m',
+      upperSizeLimit = 10,
+      lowerSizeLimit = 1,
       filename,
-    } = options;
+    } = params;
 
     assert(isValidPath(filename), '\'filename\' should be a valid path');
-    if (lowerSizeLimit) assert(lowerSizeLimit, '\'lowerSizeLimit\' should be greater than 0');
+    assert(lowerSizeLimit > 0, '\'lowerSizeLimit\' should be greater than 0');
+    assert(upperSizeLimit > lowerSizeLimit, '\'upperSizeLimit\' should be greater than \'lowerSizeLimit\'');
     assert(ms(validity), '\'validity\' should be in ms format, a number or a string');
 
     const now = moment();
     const date = now.format('YYYYMMDD');
     const xDate = `${date}T000000Z`;
-    const key = options.filename;
+    const key = path.normalize(filename).replace(/^\/+/g, '');
     const credential = `${this.accessKey}/${date}/${this.region}/s3/aws4_request`;
 
     const msInput = typeof validity === 'string' ? ms(validity) :
@@ -59,8 +62,8 @@ class CloudStorage {
     const expiration = validity ? now.add(msInput, 'ms').toDate() :
       now.add(30, 'minutes').toDate();
 
-    const upperLimit = upperSizeLimit * MiB || 10 * MiB;
-    const lowerLimit = lowerSizeLimit * MiB || 1 * MiB;
+    const upperLimit = upperSizeLimit * MiB;
+    const lowerLimit = lowerSizeLimit * MiB;
 
     const policy = Buffer.from(JSON.stringify({
       expiration,
