@@ -1,0 +1,31 @@
+{
+  "name": "cloud-storage",
+  "version": "1.0.0",
+  "description": "Cloud storage using Amazon S3.",
+  "main": "index.js",
+  "scripts": {
+    "test": "ava"
+  },
+  "author": "ccpacillos",
+  "license": "ISC",
+  "dependencies": {
+    "highoutput-utilities": "0.0.4",
+    "is-valid-path": "^0.1.1",
+    "lodash": "^4.17.10",
+    "moment": "^2.22.1",
+    "ms": "^2.1.1"
+  },
+  "devDependencies": {
+    "ava": "^0.25.0"
+  },
+  "ava": {
+    "files": [
+      "test/*.test.js"
+    ],
+    "timeout": "30s",
+    "failFast": true,
+    "concurrency": 10,
+    "verbose": true,
+    "powerAssert": true
+  }
+}
