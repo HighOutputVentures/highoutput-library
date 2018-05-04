@@ -3,7 +3,7 @@
 ## Class: **CloudStorage**
 
 ### **new CloudStorage(options)**
-* **options.scope** `string` Scope in the single bucket where the file is stored. This should be equivalent to your app name.
+* **options.scope** `string` Scope in the single bucket where the file is going to be stored. This should be equivalent to your app name.
 * **options.region?** `string` Specified region. Default value is `'ap-southeast-1'`.
 * **options.accessKey** `string` AWS Access Key ID.
 * **options.secretKey** `string` AWS Secret Access Key.

@@ -59,8 +59,7 @@ class CloudStorage {
     const msInput = typeof validity === 'string' ? ms(validity) :
       ms(ms(validity));
 
-    const expiration = validity ? now.add(msInput, 'ms').toDate() :
-      now.add(30, 'minutes').toDate();
+    const expiration = now.add(msInput, 'ms').toDate();
 
     const upperLimit = upperSizeLimit * MiB;
     const lowerLimit = lowerSizeLimit * MiB;
