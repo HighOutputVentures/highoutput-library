@@ -53,7 +53,7 @@ class CloudStorage {
     const now = moment();
     const date = now.format('YYYYMMDD');
     const xDate = `${date}T000000Z`;
-    const key = path.normalize(filename).replace(/^\/+/g, '');
+    const key = `${this.scope}/${path.normalize(filename).replace(/^\/+/g, '')}`;
     const credential = `${this.accessKey}/${date}/${this.region}/s3/aws4_request`;
 
     const msInput = typeof validity === 'string' ? ms(validity) : ms(ms(validity));
