@@ -1,6 +1,6 @@
 {
-  "name": "cloud-storage",
-  "version": "1.0.0",
+  "name": "highoutput-cloud-storage",
+  "version": "0.0.1",
   "description": "Cloud storage using Amazon S3.",
   "main": "index.js",
   "scripts": {
@@ -27,5 +27,9 @@
     "concurrency": 10,
     "verbose": true,
     "powerAssert": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HighOutputVentures/highoutput-library.git"
   }
 }

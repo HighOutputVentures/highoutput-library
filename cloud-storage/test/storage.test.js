@@ -126,7 +126,7 @@ test('Should return upload info', (t) => {
 
   const date = moment().format('YYYYMMDD');
   const expectedCredential = `${Storage.accessKey}/${date}/ap-southeast-1/s3/aws4_request`;
-  t.is(info.url, `https://highoutput-public.s3.amazonaws.com/${filename}`);
+  t.is(info.url, `https://highoutput-public.s3.amazonaws.com/${Storage.scope}/${filename}`);
   t.is(info.params['x-amz-credential'], expectedCredential);
   t.is(info.params['x-amz-date'], `${date}T000000Z`);
 });
