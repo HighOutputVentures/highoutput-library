@@ -1,0 +1,9 @@
+type App {
+  id: String
+  name: String
+  clientId: String
+  clientSecret: String
+  domains: String
+  redirectUris: String
+  grants: String
+}
