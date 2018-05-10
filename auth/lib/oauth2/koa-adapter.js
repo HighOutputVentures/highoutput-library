@@ -55,16 +55,16 @@ module.exports = class KoaAdapter {
 
   authenticate() {
     return async (ctx, next) => { /* eslint-disable-line */
-      if (ctx.request.body.variables && ctx.request.body.variables.token) {
-        /* query client secret and use to verify tokens */
-        const { client: { secret, domain } } = await this.model
-          .getAccessToken(ctx.request.body.variables.token);
+      try {
+        if (ctx.request.body.variables && ctx.request.body.variables.token) {
+          /* query client secret and use to verify tokens */
+          const { client: { domain, secret } } = await this.model
+            .getAccessToken(ctx.request.body.variables.token);
 
-        const payload = await verify(ctx.request.body.variables.token, secret);
+          if (domain && secret) {
+            const payload = await verify(ctx.request.body.variables.token, secret);
 
-        if (payload.aud !== this.issuer) {
-          try {
-            if (domain === payload.aud) {
+            if (payload.aud === domain) {
               ctx.request.headers.authorization = `Bearer ${ctx.request.body.variables.token}`;
               const { request, response } = clone(ctx);
 
@@ -74,17 +74,13 @@ module.exports = class KoaAdapter {
             } else {
               throw new UnauthorizedRequestError('Untrusted domain');
             }
-          } catch (e) {
-            return handleError.call(ctx, e);
           }
         }
+      } catch (e) {
+        return handleError.call(ctx, e);
       }
 
-      /*
-        send it to the second level verification
-          - if no token found
-          - if the audience is the owner
-      */
+      /* if token didn't came from oauth2, send it to the graphql level authentication */
       await next();
     };
   }
