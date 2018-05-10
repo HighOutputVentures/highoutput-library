@@ -34,6 +34,7 @@ const info = storage.getUploadCredentials({
 console.log(info);
 // {
 //   url: 'https://highoutput-public.s3.amazonaws.com/my-app-name/some/filename.js',
+//   origin: 'https://highoutput-public.s3.amazonaws.com',
 //   params: {
 //     key: 'my-app-name/some/filename.js',
 //     acl: 'public-read',
