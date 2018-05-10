@@ -3,12 +3,14 @@
 ## Class: **CloudStorage**
 
 ### **new CloudStorage(options)**
+
 * **options.scope** `string` Scope in the single bucket where the file is going to be stored. This should be equivalent to your app name.
 * **options.region?** `string` Specified region. Default value is `'ap-southeast-1'`.
 * **options.accessKey** `string` AWS Access Key ID.
 * **options.secretKey** `string` AWS Secret Access Key.
 
-#### Example
+#### new CloudStorage(options) example
+
 ```javascript
 import CloudStorage from 'highoutput-cloud-storage';
 
@@ -20,12 +22,13 @@ const storage = new CloudStorage({
 ```
 
 ### **storage.getUploadCredentials(params)**
+
 * **params.filename** `string` Filename (with path). Value will be normalized and leading `'/'` will be removed.
 * **params.validity?** `string|number` Time validity of credential. Input should be following `ms` module format.
 * **params.upperSizeLimit?** `number` Upper file size limit to be uploaded in MB. Deafult value is `10`.
-* **params.lowerSizeLimit?** `number` Lower file size limit to be uploaded in MB. Should be greater than `0` and lesser than `upperSizeLimit`. Default value is `1`.
 
-#### Example
+#### getUploadCredentials(params) example
+
 ```javascript
 const info = storage.getUploadCredentials({
   filename: 'some/filename.js',
