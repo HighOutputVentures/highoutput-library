@@ -83,8 +83,11 @@ class CloudStorage {
     const signingKey = hmac('aws4_request', dateRegionServiceKey);
     const signature = hmac(policy, signingKey);
 
+    const origin = `https://${bucket}.s3.amazonaws.com`;
+
     return {
-      url: `https://${bucket}.s3.amazonaws.com/${key}`,
+      url: `${origin}/${key}`,
+      origin,
       params: {
         key,
         acl: 'public-read',

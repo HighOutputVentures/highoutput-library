@@ -1,6 +1,6 @@
 {
   "name": "highoutput-cloud-storage",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "Cloud storage using Amazon S3.",
   "main": "index.js",
   "scripts": {
