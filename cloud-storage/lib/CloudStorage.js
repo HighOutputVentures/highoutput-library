@@ -33,7 +33,6 @@ class CloudStorage {
    * @param {string} params.filename
    * @param {string|number} [params.validity]
    * @param {number} [params.upperSizeLimit]
-   * @param {number} [params.lowerSizeLimit]
    */
   getUploadCredentials(params) {
     assertObjectKeys(params, ['filename']);
@@ -41,13 +40,10 @@ class CloudStorage {
     const {
       validity = '30m',
       upperSizeLimit = 10,
-      lowerSizeLimit = 1,
       filename,
     } = params;
 
     assert(isValidPath(filename), '\'filename\' should be a valid path');
-    assert(lowerSizeLimit > 0, '\'lowerSizeLimit\' should be greater than 0');
-    assert(upperSizeLimit > lowerSizeLimit, '\'upperSizeLimit\' should be greater than \'lowerSizeLimit\'');
     assert(ms(validity), '\'validity\' should be in ms format, a number or a string');
 
     const now = moment();
@@ -61,7 +57,6 @@ class CloudStorage {
     const expiration = now.add(msInput, 'ms').toDate();
 
     const upperLimit = upperSizeLimit * MiB;
-    const lowerLimit = lowerSizeLimit * MiB;
 
     const policy = Buffer.from(JSON.stringify({
       expiration,
@@ -70,7 +65,7 @@ class CloudStorage {
         { key },
         { acl: 'public-read' },
         { success_action_status: '201' },
-        ['content-length-range', lowerLimit, upperLimit],
+        ['content-length-range', 1, upperLimit],
         { 'x-amz-algorithm': 'AWS4-HMAC-SHA256' },
         { 'x-amz-credential': credential },
         { 'x-amz-date': xDate },
