@@ -16,6 +16,12 @@ module.exports = class MongoModel {
     assert(options, ['issuer', 'userModel']);
 
     this.issuer = options.issuer;
+    this.propertyMap = {
+      id: '_id',
+      username: 'username',
+      password: 'password',
+      ...(options.propertyMap || {}),
+    };
     this.model = {
       code: mongoose.connection.model('oauth2-code'),
       token: mongoose.connection.model('oauth2-token'),
@@ -59,15 +65,15 @@ module.exports = class MongoModel {
   async getAccessToken(accessToken) {
     const token = await this.model.token.findOne({ accessToken });
     const client = await this.model.client.findOne({ clientId: token.client });
-    const user = await this.model.user.findOne({ _id: token.user });
+    const user = await this.model.user.findOne({ [this.propertyMap.id]: token.user });
 
     return {
       accessToken: token.accessToken,
       accessTokenExpiresAt: token.accessTokenExpiresAt,
       scope: token.scope,
       user: {
-        id: user._id,
-        username: user.username || user.email,
+        id: user[this.propertyMap.id],
+        username: user[this.propertyMap.username],
       },
       client: {
         id: client.clientId,
@@ -80,15 +86,15 @@ module.exports = class MongoModel {
   async getRefreshToken(refreshToken) {
     const token = await this.model.token.findOne({ refreshToken });
     const client = await this.model.client.findOne({ _id: token.client });
-    const user = await this.model.user.findOne({ _id: token.user });
+    const user = await this.model.user.findOne({ [this.propertyMap.id]: token.user });
 
     return {
       refreshToken: token.refreshToken,
       refreshTokenExpiresAt: token.refreshTokenExpiresAt,
       scope: token.scope,
       user: {
-        id: user._id,
-        username: user.username || user.email,
+        id: user[this.propertyMap.id],
+        username: user[this.propertyMap.username],
       },
       client: {
         id: client.clientId,
@@ -101,7 +107,7 @@ module.exports = class MongoModel {
   async getAuthorizationCode(authorizationCode) {
     const code = await this.model.code.findOne({ code: authorizationCode });
     const client = await this.model.client.findOne({ _id: code.client });
-    const user = await this.model.user.findOne({ _id: code.user });
+    const user = await this.model.user.findOne({ [this.propertyMap.id]: code.user });
 
     return {
       code: code.code,
@@ -109,8 +115,8 @@ module.exports = class MongoModel {
       redirectUri: code.redirectUri,
       scope: code.scope,
       user: {
-        id: user._id,
-        username: user.username || user.email,
+        id: user[this.propertyMap.id],
+        username: user[this.propertyMap.username],
       },
       client: {
         id: client.clientId,
@@ -137,21 +143,21 @@ module.exports = class MongoModel {
   }
 
   async getUser(username, password) {
-    const user = await this.model.user.findOne({ email: username });
-    return await compare(password, user.password) ?
+    const user = await this.model.user.findOne({ [this.propertyMap.username]: username });
+    return await compare(password, user[this.propertyMap.password]) ?
       {
-        id: user._id || user.id,
-        username: user.username || user.email,
+        id: user[this.propertyMap.id],
+        username: user[this.propertyMap.username],
       } : null;
   }
 
   async getUserFromClient(client) {
     const authClient = await this.model.client.findOne({ clientId: client.id });
-    const user = await this.model.user.findOne({ _id: authClient.user });
+    const user = await this.model.user.findOne({ [this.propertyMap.id]: authClient.user });
 
     return {
-      id: user.id || user._id,
-      username: user.username || user.email,
+      id: user[this.propertyMap.id],
+      username: user[this.propertyMap.username],
     };
   }
 

@@ -49,6 +49,7 @@ module.exports = class KoaAdapter {
     this.model = options.model || new MongoModel({
       issuer: options.issuer,
       userModel: options.userModel,
+      propertyMap: options.propertyMap,
     });
     this.server = new OAuth2Server({ model: this.model });
   }
@@ -77,6 +78,7 @@ module.exports = class KoaAdapter {
           }
         }
       } catch (e) {
+        console.log(e);
         return handleError.call(ctx, e);
       }
 
