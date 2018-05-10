@@ -78,31 +78,6 @@ test('Should error on invalid filename', (t) => {
   t.is(error.message, '\'filename\' should be a valid path');
 });
 
-test('Should error on lowerSizeLimit less than or equal to 0', (t) => {
-  const Storage = helpers.getInstance();
-  const error = t.throws(() => {
-    Storage.getUploadCredentials({
-      filename,
-      lowerSizeLimit: 0,
-    });
-  }, AssertionError);
-
-  t.is(error.message, '\'lowerSizeLimit\' should be greater than 0');
-});
-
-test('Should error on lowerSizeLimit > upperSizeLimit', (t) => {
-  const Storage = helpers.getInstance();
-  const error = t.throws(() => {
-    Storage.getUploadCredentials({
-      filename,
-      lowerSizeLimit: 15,
-      upperSizeLimit: 8,
-    });
-  }, AssertionError);
-
-  t.is(error.message, '\'upperSizeLimit\' should be greater than \'lowerSizeLimit\'');
-});
-
 test('Should error on invalid ms validity input', (t) => {
   const Storage = helpers.getInstance();
   const error = t.throws(() => {
