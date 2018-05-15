@@ -1,6 +1,6 @@
 {
   "name": "highoutput-auth",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Authentication and authorization module",
   "main": "index.js",
   "scripts": {
