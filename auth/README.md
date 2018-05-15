@@ -10,6 +10,7 @@
 #### Example
 ```javascript
 import mongoose, { Schema } from 'mongoose';
+import Auth from 'highoutput-auth';
 
 const AccountModel = mongoose.model('Account', new Schema({
   email: {
