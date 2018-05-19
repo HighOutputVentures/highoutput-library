@@ -1,9 +1,7 @@
 const OAuth2Server = require('oauth2-server');
 const { Request, Response } = require('oauth2-server');
 const UnauthorizedRequestError = require('oauth2-server/lib/errors/unauthorized-request-error');
-const assert = require('../assert-key');
-const { verify } = require('../jwt');
-const MongoModel = require('./mongo-model');
+const jwt = require('jsonwebtoken');
 
 const handleError = (ctx, e, response) => {
   if (response) {
@@ -43,14 +41,8 @@ const clone = ctx => ({
 
 module.exports = class KoaAdapter {
   constructor(options = {}) {
-    assert(options, ['issuer', 'userModel']);
-
     this.issuer = options.issuer;
-    this.model = options.model || new MongoModel({
-      issuer: options.issuer,
-      userModel: options.userModel,
-      propertyMap: options.propertyMap,
-    });
+    this.model = options.model;
     this.server = new OAuth2Server({ model: this.model });
   }
 
@@ -63,7 +55,7 @@ module.exports = class KoaAdapter {
             .getAccessToken(ctx.request.body.variables.token);
 
           if (domain && secret) {
-            const payload = await verify(ctx.request.body.variables.token, secret);
+            const payload = jwt.verify(ctx.request.body.variables.token, secret);
 
             if (payload.aud === domain) {
               ctx.request.headers.authorization = `Bearer ${ctx.request.body.variables.token}`;
@@ -78,7 +70,6 @@ module.exports = class KoaAdapter {
           }
         }
       } catch (e) {
-        console.log(e);
         return handleError.call(ctx, e);
       }
 

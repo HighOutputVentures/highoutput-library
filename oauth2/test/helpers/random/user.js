@@ -1,9 +1,7 @@
 const times = require('lodash.times');
-const Chance = require('chance');
+const chance = require('chance')();
 const mongoose = require('mongoose');
-const { bcrypt } = require('../../../');
-
-const chance = new Chance();
+const bcrypt = require('bcryptjs');
 
 module.exports = {
   generate: async () => {

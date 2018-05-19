@@ -4,12 +4,12 @@ const Router = require('koa-router');
 const bodyparser = require('koa-bodyparser');
 const cors = require('@koa/cors');
 const mongoose = require('mongoose');
-
 const { graphqlKoa, graphiqlKoa } = require('apollo-server-koa');
 const { makeExecutableSchema } = require('graphql-tools');
 const { fileLoader, mergeTypes, mergeResolvers } = require('merge-graphql-schemas');
 
-const { OAuth2KoaAdapter } = require('../../../').oauth2;
+const OAuth2Adapter = require('../../../');
+const OAuth2Model = require('./dao/oauth2');
 
 const app = new Koa();
 const router = new Router();
@@ -17,7 +17,13 @@ const router = new Router();
 module.exports = {
   start: async () => {
     await mongoose.connect(process.env.mongo);
-    require('./models/user'); // eslint-disable-line
+
+    /* eslint-disable */
+    require('./models/user');
+    require('./models/oauth2-client');
+    require('./models/oauth2-code');
+    require('./models/oauth2-token');
+    /* eslint-enable */
 
     const graphqlschema = ctx => ({
       schema: makeExecutableSchema({
@@ -36,9 +42,9 @@ module.exports = {
       context: ctx,
     });
 
-    const oauth2 = new OAuth2KoaAdapter({
+    const oauth2 = new OAuth2Adapter({
       issuer: 'api.oauthtest.io',
-      userModel: mongoose.connection.model('user'),
+      model: new OAuth2Model({ issuer: 'api.oauthtest.io' }),
     });
 
     router.post('/oauth/token', oauth2.token());

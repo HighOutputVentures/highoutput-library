@@ -8,9 +8,9 @@ const mongoose = require('mongoose');
 const supertest = require('supertest');
 const chance = require('chance')();
 
-const server = require('./fixtures/koa-mongo');
+const server = require('./fixtures/server');
 const user = require('../helpers/random/user');
-const client = require('../helpers/random/oauth2-client');
+const client = require('../helpers/random/client');
 
 const request = supertest(`http://localhost:${process.env.port}`);
 
