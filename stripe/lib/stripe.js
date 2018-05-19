@@ -1,127 +1,163 @@
-const assert = require('assert');
 const stripe = require('stripe');
-const R = require('ramda');
 
-function isMongooseModel(model) {
-  return typeof model.findOne === 'function' &&
-    typeof model.findById === 'function' &&
-    typeof model.findByIdAndUpdate === 'function';
-}
-
-class Stripe {
-  constuctor(options) {
-    assert(options.key, '\'key\' is required');
-    assert(options.userModel, '\'userModel\' is required');
-
+module.exports = class Stripe {
+  constructor(options = {}) {
     this.stripe = stripe(options.key);
     this.userModel = options.userModel;
+    this.stripeModel = options.stripeModel;
     this.propertyMap = {
-      _id: '_id',
       email: 'email',
-      stripeId: 'stripeId',
       ...(options.propertyMap || {}),
     };
   }
 
-  async checkAccount(params) {
-    assert(params.email, '\'email\' is required');
+  async createCard({ userId, sourceId, description }) {
+    const user = await this.userModel.retrieveUserbyId(userId);
 
-    let account;
+    if (!user.stripeId) {
+      /* if stripe id does not exist, create stripe customer */
+      const customer = await new Promise((resolve, reject) => {
+        this.stripe.customers.create(
+          {
+            email: user[this.propertyMap.email],
+            source: sourceId,
+            description,
+          },
+          (err, data) => {
+            if (err) reject(err);
+            resolve(data);
+          },
+        );
+      });
 
-    if (isMongooseModel(this.userModel)) {
-      account = await this.userModel
-        .findOne({ [this.propertyMap.email]: params.email });
-    } else {
-      account = await this.userModel.findByEmail(params.email);
-    }
+      await this.userModel.mapStripeId(userId, customer.id);
 
-    if (!account) {
-      throw new Error('user not found');
-    }
-
-    return account;
-  }
-
-  async bindUser(params) {
-    assert(params.email, '\'email\' is required');
-    assert(params.invoice_prefix, '\'invoice_prefix\' is required');
-
-    const {
-      balance = 0,
-      description = '',
-      email,
-      invoice_prefix, /* eslint-disable-line */
-    } = params;
-
-    await this.checkAccount(params);
-
-    const customer = this.stripe.customers.create({
-      account_balance: balance,
-      description,
-      email,
-      invoice_prefix,
-    });
-
-    if (isMongooseModel(this.userModel)) {
-      await this.userModel.updateOne(
-        { [this.propertyMap.email]: params.email },
-        { $set: { [this.propertyMap.stripeId]: customer.id } },
-      );
-    } else {
-      await this.userModel.updateUser({
-        [this.propertyMap.email]: params.email,
-        [this.propertyMap.stripeId]: customer.id,
+      return this.stripeModel.save({
+        sourceId,
+        cardId: customer.default_source,
+        stripeId: customer.id,
+        userId,
       });
     }
 
-    return customer;
+    /* if stripe id exist, append card to existing stripe id */
+    const card = await new Promise((resolve, reject) => {
+      this.stripe.customers.createSource(
+        user.stripeId,
+        { source: sourceId },
+        (err, data) => {
+          if (err) reject(err);
+          resolve(data);
+        },
+      );
+    });
+
+    return this.stripeModel.save({
+      sourceId,
+      cardId: card.id,
+      stripeId: user.stripeId,
+      userId,
+    });
   }
 
-  async addPaymentMethod(params) {
-    assert(params.email, '\'email\' is required');
-    assert(params.type, '\'type\' is required');
+  async updateCard({
+    cardId,
+    userId,
+    address_city,
+    address_country,
+    address_line1,
+    address_line2,
+    address_state,
+    address_zip,
+    exp_month,
+    exp_year,
+    name,
+  }) {
+    const card = await this.stripeModel.retrieveCard(cardId, userId);
 
-    /*
-      owner object consists of the following fields
-      [ address, email, name, phone ]
-    */
-    assert(params.owner, '\'owner\' is required');
-    assert(params.owner.email, '\'owner.email\' is required');
+    await new Promise((resolve, reject) => {
+      this.stripe.customers.updateCard(
+        card.stripeId,
+        card.cardId,
+        {
+          address_city,
+          address_country,
+          address_line1,
+          address_line2,
+          address_state,
+          address_zip,
+          exp_month,
+          exp_year,
+          name,
+        },
+        (err, data) => {
+          if (err) reject(err);
+          resolve(data);
+        },
+      );
+    });
 
-    /* additional payment types will be added after we successfully use card payments */
-    if (!R.contains(params.type, ['card'])) {
-      throw new Error('payment type not supported');
+    return this.stripeModel.retrieveByCardId(cardId);
+  }
+
+  async deleteCard({ cardId, userId }) {
+    const card = await this.stripeModel.retrieveCard(cardId, userId);
+
+    if (card) {
+      await new Promise((resolve, reject) => {
+        this.stripe.customers.deleteCard(
+          card.stripeId,
+          card.cardId,
+          (err, data) => {
+            if (err) reject(err);
+            resolve(data);
+          },
+        );
+      });
     }
 
-    const account = await this.checkAccount(params);
-
-    /* create source before appending it to the customers */
-    const source = this.stripe.sources.create({
-      type: params.type,
-      owner: params.owner,
-    });
-
-    /* append source to customer */
-    this.stripe.customers.createSource(
-      account.stripeId,
-      { source: source.id },
-    );
-
-    return source;
+    return !!card;
   }
 
-  chargeCard(params) {
-    assert(params.amount, '\'amount\' is required');
-    assert(params.currency, '\'currency\' is required');
-    assert(params.source, '\'source\' is required');
+  async chargeCard({
+    cardId,
+    userId,
+    amount,
+    description,
+  }) {
+    const card = await this.stripeModel.retrieveCard(cardId, userId);
 
-    return this.stripe.charges.create({
-      amount: params.amount,
-      currency: params.currency,
-      source: params.currency,
-      description: params.description || '',
+    if (card) {
+      await new Promise((resolve, reject) => {
+        this.stripe.charges.create(
+          {
+            amount,
+            currency: 'usd',
+            source: card.sourceId,
+            description,
+          },
+          (err, data) => {
+            if (err) reject(err);
+            resolve(data);
+          },
+        );
+      });
+    }
+
+    return !!card;
+  }
+
+  async retrieveCards(userId) {
+    const { stripeId } = await this.userModel.retrieveById(userId);
+
+    return new Promise((resolve, reject) => {
+      this.stripe.customers.listCards(
+        stripeId,
+        (err, data) => {
+          if (err) reject(err);
+          resolve(data);
+        },
+      );
     });
   }
-}
-
-module.exports = Stripe;
+};
