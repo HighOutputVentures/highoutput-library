@@ -1,8 +1,8 @@
 const test = require('ava');
 const Chance = require('chance');
-const UserModel = require('../helpers/user-model');
-const createUser = require('../helpers/create-user');
-const { Auth } = require('../..').auth;
+const UserModel = require('./helpers/user-model');
+const createUser = require('./helpers/create-user');
+const Auth = require('..');
 
 const chance = new Chance();
 

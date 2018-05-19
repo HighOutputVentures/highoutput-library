@@ -1,7 +1,7 @@
 const assert = require('assert');
 const ms = require('ms');
-const jwt = require('../jwt');
-const bcrypt = require('../bcrypt');
+const jwt = require('./jwt');
+const bcrypt = require('./bcrypt');
 const AuthError = require('./error');
 
 function isMongooseModel(model) {

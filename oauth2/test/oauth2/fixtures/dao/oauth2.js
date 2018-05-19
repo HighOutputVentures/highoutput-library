@@ -4,17 +4,10 @@ const uuid = require('uuid');
 const jwt = require('jsonwebtoken');
 const ms = require('ms');
 const mongoose = require('mongoose');
-const { compare } = require('../bcrypt');
-const assert = require('../assert-key');
-
-require('./models/mongo/oauth2-client');
-require('./models/mongo/oauth2-code');
-require('./models/mongo/oauth2-token');
+const { compare } = require('bcryptjs');
 
 module.exports = class MongoModel {
   constructor(options = {}) {
-    assert(options, ['issuer', 'userModel']);
-
     this.issuer = options.issuer;
     this.propertyMap = {
       id: '_id',
@@ -26,7 +19,7 @@ module.exports = class MongoModel {
       code: mongoose.connection.model('oauth2-code'),
       token: mongoose.connection.model('oauth2-token'),
       client: mongoose.connection.model('oauth2-client'),
-      user: options.userModel,
+      user: mongoose.connection.model('user'),
     };
   }
 
