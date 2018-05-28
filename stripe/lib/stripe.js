@@ -4,10 +4,6 @@ module.exports = class Stripe {
   constructor(options = {}) {
     this.stripe = stripe(options.key);
     this.model = options.model;
-    this.propertyMap = {
-      email: 'email',
-      ...(options.propertyMap || {}),
-    };
   }
 
   async createCard({ userId, sourceId, description }) {
@@ -18,7 +14,7 @@ module.exports = class Stripe {
       const customer = await new Promise((resolve, reject) => {
         this.stripe.customers.create(
           {
-            email: user[this.propertyMap.email],
+            email: user.email,
             source: sourceId,
             description,
           },
