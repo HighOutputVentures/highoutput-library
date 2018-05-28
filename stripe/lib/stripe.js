@@ -3,8 +3,7 @@ const stripe = require('stripe');
 module.exports = class Stripe {
   constructor(options = {}) {
     this.stripe = stripe(options.key);
-    this.userModel = options.userModel;
-    this.stripeModel = options.stripeModel;
+    this.model = options.model;
     this.propertyMap = {
       email: 'email',
       ...(options.propertyMap || {}),
@@ -12,7 +11,7 @@ module.exports = class Stripe {
   }
 
   async createCard({ userId, sourceId, description }) {
-    const user = await this.userModel.retrieveUserbyId(userId);
+    const user = await this.model.retrieveUserbyId(userId);
 
     if (!user.stripeId) {
       /* if stripe id does not exist, create stripe customer */
@@ -30,9 +29,7 @@ module.exports = class Stripe {
         );
       });
 
-      await this.userModel.mapStripeId(userId, customer.id);
-
-      return this.stripeModel.save({
+      return this.model.bindStripeToUser({
         sourceId,
         cardId: customer.default_source,
         stripeId: customer.id,
@@ -52,7 +49,7 @@ module.exports = class Stripe {
       );
     });
 
-    return this.stripeModel.save({
+    return this.model.bindStripeToUser({
       sourceId,
       cardId: card.id,
       stripeId: user.stripeId,
@@ -73,7 +70,7 @@ module.exports = class Stripe {
     exp_year,
     name,
   }) {
-    const card = await this.stripeModel.retrieveCard(cardId, userId);
+    const card = await this.model.retrieveCard(cardId, userId);
 
     await new Promise((resolve, reject) => {
       this.stripe.customers.updateCard(
@@ -97,11 +94,11 @@ module.exports = class Stripe {
       );
     });
 
-    return this.stripeModel.retrieveByCardId(cardId);
+    return card;
   }
 
   async deleteCard({ cardId, userId }) {
-    const card = await this.stripeModel.retrieveCard(cardId, userId);
+    const card = await this.model.retrieveCard(cardId, userId);
 
     if (card) {
       await new Promise((resolve, reject) => {
@@ -125,7 +122,7 @@ module.exports = class Stripe {
     amount,
     description,
   }) {
-    const card = await this.stripeModel.retrieveCard(cardId, userId);
+    const card = await this.model.retrieveCard(cardId, userId);
 
     if (card) {
       await new Promise((resolve, reject) => {
@@ -148,7 +145,7 @@ module.exports = class Stripe {
   }
 
   async retrieveCards(userId) {
-    const { stripeId } = await this.userModel.retrieveById(userId);
+    const { stripeId } = await this.model.retrieveUserbyId(userId);
 
     return new Promise((resolve, reject) => {
       this.stripe.customers.listCards(
