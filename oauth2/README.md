@@ -1,167 +1,103 @@
-# Auth
+# OAuth2 Koa Adapter
 
-## Class: **Auth**
+A custom koa-graphql-oauth2 adapter, this project is an spin off of the [koa-oauth-server](https://github.com/oauthjs/koa-oauth-server) project.
 
-### **new Auth(options)**
-* **options.secretKey** `string` Secret key to use in generating the JWT.
-* **options.userModel** `UserModel` User model.
-* **options.properyMap** `object` (Optional) An object specifying the property to use as `username` and `password`. Only applied if `options.userModel` is a `Mongoose` model.
+## Getting Started
 
-#### Example
+This library is a koa-graphql-oauth2 adapter
+
+### Installation
+
+Run `npm install highoutput-oauth2` to install
+
+### Features
+
+- The api is copied from the [koa-oauth-server](https://github.com/oauthjs/koa-oauth-server) project
+- This is an adapter specific for the [apollo graphql-server](https://github.com/apollographql/apollo-server)
+
+### Quickstart
+
 ```javascript
-import mongoose, { Schema } from 'mongoose';
-import Auth from 'highoutput-auth';
+const path = require('path');
+const Koa = require('koa');
+const Router = require('koa-router');
+const bodyparser = require('koa-bodyparser');
+const cors = require('@koa/cors');
+const mongoose = require('mongoose');
+const { graphqlKoa, graphiqlKoa } = require('apollo-server-koa');
+const { makeExecutableSchema } = require('graphql-tools');
+const { fileLoader, mergeTypes, mergeResolvers } = require('merge-graphql-schemas');
 
-const AccountModel = mongoose.model('Account', new Schema({
-  email: {
-    type: String,
-    required: true,
-    index: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  }
-}));
+const OAuth2Adapter = require('highoutput-oauth2');
+const OAuth2Model = require('./models/node-oauth2');
 
-const auth = new Auth({
-  secretKey: '4fb473f82ba47bf6acbab33e7529fb96',
-  userModel: AccountModel,
-  propertyMap: {
-    username: 'email',
-  },
-});
-```
+const app = new Koa();
+const router = new Router();
 
-### **auth.createAccessToken(params)**
-* **params.username** `string` Username.
-* **params.password** `string` Password.
-* **params.expiresIn** `string` (Optional) Amount of time before the **accessToken** expires. Must be compatible to the `ms` package.
-* **params.claims** `object` (Optional) Additional claims to include in the JWT.
-* Returns: **accessToken** `Promise<string>`
-* Throws:
-  * `INVALID_CREDENTIALS`
+module.exports = {
+  start: async () => {
+    await mongoose.connect(process.env.mongo);
 
-Create an access token.
+    /* eslint-disable */
+    require('./models/user');
+    require('./models/oauth2-client');
+    require('./models/oauth2-code');
+    require('./models/oauth2-token');
+    /* eslint-enable */
 
-#### Example
-```javascript
-await auth.createAccessToken({
-  username: 'roger',
-  password: '123456Seven',
-});
-```
-
-### **auth.verifyAccessToken(params)**
-* **params.accessToken** `string` Access token.
-* **params.subject** `string | number` (Optional) ID of the owner of the **accessToken**.
-* Returns: **claims** `Promise<object>` Claims stored in the JWT.
-* Throws:
-  * `INVALID_TOKEN`
-
-Verify a json web token.
-
-#### Example
-```javascript
-await auth.verifyAccessToken({
-  accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1YWQ3MTZlZjc1ZTZhODc1MTQ0Y2Q0NDQiLCJpYXQiOjE1MjQ2MjYzNjMsImV4cCI6MTUyNTIzMTE2M30.z2xgs0BeLQsTBiG9sphjkP_JljYht2o4AgI4ClWgZqw',
-});
-```
-
-### **auth.changePassword(params)**
-* **params.accessToken** `string` Access token.
-* **params.subject** `string | number` (Optional) ID of the owner of the **accessToken**.
-* **params.oldPassword** `string` Old password.
-* **params.newPassword** `string` New Password.
-* Throws:
-  * `INVALID_TOKEN`
-  * `INVALID_CREDENTIALS`
-
-Change the user password.
-
-#### Example
-```javascript
-await auth.changePassword({
-  accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1YWQ3MTZlZjc1ZTZhODc1MTQ0Y2Q0NDQiLCJpYXQiOjE1MjQ2MjYzNjMsImV4cCI6MTUyNTIzMTE2M30.z2xgs0BeLQsTBiG9sphjkP_JljYht2o4AgI4ClWgZqw',
-  oldPassword: 'password',
-  newPassword: '123456Seven',
-});
-```
-
-### **auth.requestResetPassword(params)**
-* **params.subject** `string | number` ID of the user requesting the password reset.
-* **params.expiresIn** `string` (Optional) Amount of time before the **requestToken** expires.
-* Returns: **requestToken** `Promise<string>`
-* Throws:
-  * `USER_NOT_FOUND`
-
-Request for a password reset.
-
-#### Example
-```javascript
-await auth.requestResetPassword({
-  subject: '507f1f77bcf86cd799439011',
-});
-```
-
-### **auth.resetPassword(params)**
-* **params.requestToken** `string` Request token.
-* **params.subject** `string | number` (Optional) ID of the owner of the **requestToken**.
-* **params.password** `string` New Password.
-* Throws:
-  * `INVALID_TOKEN`
-
-Reset password.
-
-#### Example
-```javascript
-await auth.resetPassword({
-  requestToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1YWQ3MTZlZjc1ZTZhODc1MTQ0Y2Q0NDQiLCJpYXQiOjE1MjQ2MjYzNjMsImV4cCI6MTUyNTIzMTE2M30.z2xgs0BeLQsTBiG9sphjkP_JljYht2o4AgI4ClWgZqw',
-  password: '123456Seven',
-});
-```
-
-## Class: **UserModel**
-The **UserModel** can be any of the following types:
-* `Mongoose` model
-* Custom object containing the following functions:
-  * **findByUsername(username)** `Promise<{ id: string | number, password: string }>`
-  * **findById(id)** `Promise<{ id: string | number, password: string }>`
-  * **updatePassword(id, password)** `Promise<void>`
-
-#### Example
-```javascript
-const { bcrypt } = require('highoutput-auth');
-const R = require('ramda');
-
-class UserModel {
-  constructor() {
-    this.users = [];
-  }
-
-  async insertUser(user) {
-    this.users.push({
-      ...user,
-      password: await bcrypt.hash(user.password),
+    const graphqlschema = ctx => ({
+      schema: makeExecutableSchema({
+        typeDefs: mergeTypes(
+          fileLoader(
+            path.join(process.cwd(), '/graphql/type'),
+            { recursive: true },
+          ),
+          { all: true },
+        ),
+        resolvers: mergeResolvers(fileLoader(
+          path.join(process.cwd(), '/graphql/resolver'),
+          { recursive: true },
+        )),
+      }),
+      context: ctx,
     });
-  }
 
-  async findByUsername(username) {
-    return R.find(R.propEq('username', username))(this.users);
-  }
+    const oauth2 = new OAuth2Adapter({
+      issuer: 'api.oauthtest.io',
+      model: new OAuth2Model({ issuer: 'api.oauthtest.io' }), /* this is a custom model */
+    });
 
-  async findById(id) {
-    return R.find(R.propEq('id', id))(this.users);
-  }
+    router.post('/oauth/token', oauth2.token());
+    router.get('/oauth/authorize', oauth2.authorize());
 
-  async updatePassword(id, password) {
-    const user = R.find(R.propEq('id', id))(this.users);
+    router.post('/graphql', oauth2.authenticate(), graphqlKoa(graphqlschema));
+    router.get('/graphql', oauth2.authenticate(), graphqlKoa(graphqlschema));
+    router.get('/graphiql', graphiqlKoa({ endpointURL: '/graphql' }));
 
-    if (!user) {
-      return;
-    }
+    app.use(cors());
+    app.use(bodyparser());
+    app.use(router.routes());
+    app.use(router.allowedMethods());
 
-    user.password = password;
-  }
-}
+    this.server = app.listen(process.env.port);
+  },
+  stop: async () => {
+    await mongoose.disconnect();
+
+    await new Promise((resolve) => {
+      this.server.close(resolve);
+    });
+  },
+};
 ```
+
+## new OAuth2Adapter(options)
+
+The stripe constructor accepts the following configuration
+
+- __options.issuer__ `{ String }` the jwt issuer value
+- __options.model__ `{ Object }` the model object that contains the defined methods used to access oauth2 data
+
+## Model Specification
+
+The [model spec](https://oauth2-server.readthedocs.io/en/latest/model/spec.html) is exactly how it is defined on [node-oauth2-server](https://github.com/oauthjs/node-oauth2-server), you can instead go to the specified link and follow the model specification.
