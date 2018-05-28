@@ -56,11 +56,11 @@ Retrieve the user by its id
 
 #### Arguments
 
-- __userId__ {string} the user's id
+- __userId__ `{ String }` the user's id
 
 #### Returns
 
-- __obj.stripeId__ {string} its binded stripe's customer id
+- __obj.stripeId__ `{ String }` its binded stripe's customer id
 
 ### async bindStripeToUser()
 
@@ -68,17 +68,17 @@ Map the user by its stripe ids
 
 #### Arguments
 
-- __obj.userId__ {string} the user's id
-- __obj.stripeId__ {string} the stripe customer id
-- __obj.cardId__ {string}  the stripe card id
-- __obj.sourceId__ {string} the stripe source id
+- __obj.userId__ `{ String }` the user's id
+- __obj.stripeId__ `{ String }` the stripe customer id
+- __obj.cardId__ `{ String }`  the stripe card id
+- __obj.sourceId__ `{ String }` the stripe source id
 
 #### Returns
 
-- __obj.userId__ {string} the user's id
-- __obj.stripeId__ {string} the stripe customer id
-- __obj.cardId__ {string}  the stripe card id
-- __obj.sourceId__ {string} the stripe source id
+- __obj.userId__ `{ String }` the user's id
+- __obj.stripeId__ `{ String }` the stripe customer id
+- __obj.cardId__ `{ String }`  the stripe card id
+- __obj.sourceId__ `{ String }` the stripe source id
 
 ### async retrieveCard()
 
@@ -86,12 +86,12 @@ Retrieve the card by userId and cardId
 
 #### Arguments
 
-- __userId__ {string} the user's id
-- __cardId__ {string}  the stripe card id
+- __userId__ `{ String }` the user's id
+- __cardId__ `{ String }`  the stripe card id
 
 #### Returns
 
-- __obj.userId__ {string} the user's id
-- __obj.stripeId__ {string} the stripe customer id
-- __obj.cardId__ {string}  the stripe card id
-- __obj.sourceId__ {string} the stripe source id
+- __obj.userId__ `{ String }` the user's id
+- __obj.stripeId__ `{ String }` the stripe customer id
+- __obj.cardId__ `{ String }`  the stripe card id
+- __obj.sourceId__ `{ String }` the stripe source id
