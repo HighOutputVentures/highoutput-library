@@ -60,7 +60,9 @@ Retrieve the user by its id
 
 #### Returns
 
-- __obj.stripeId__ `{ String }` its binded stripe's customer id
+- __obj.userId__ `{ String }` the user's id
+- __obj.stripeId__ `{ String }` the binded stripe's customer id
+- __obj.email__ `{ String }` the user's email
 
 ### async bindStripeToUser()
 
