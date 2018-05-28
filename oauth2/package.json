@@ -27,7 +27,9 @@
     "lodash.times": "^4.3.2",
     "merge-graphql-schemas": "^1.5.1",
     "mongoose": "^5.1.1",
-    "supertest": "^3.0.0"
+    "ms": "^2.1.1",
+    "supertest": "^3.0.0",
+    "uuid": "^3.2.1"
   },
   "ava": {
     "files": [
