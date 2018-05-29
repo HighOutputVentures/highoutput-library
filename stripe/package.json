@@ -1,6 +1,6 @@
 {
   "name": "highoutput-stripe",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "highoutput stripe module",
   "main": "index.js",
   "scripts": {
