@@ -4,38 +4,20 @@ const jwt = require('./jwt');
 const bcrypt = require('./bcrypt');
 const AuthError = require('./error');
 
-function isMongooseModel(model) {
-  return typeof model.findOne === 'function' &&
-    typeof model.findById === 'function' &&
-    typeof model.findByIdAndUpdate === 'function';
-}
-
 class Auth {
   constructor(options) {
     assert(options.secretKey, '\'secretKey\' is required');
-    assert(options.userModel, '\'userModel\' is required');
+    assert(options.model, '\'model\' is required');
 
     this.secretKey = options.secretKey;
-    this.userModel = options.userModel;
-    this.propertyMap = {
-      username: 'username',
-      password: 'password',
-      ...(options.propertyMap || {}),
-    };
+    this.model = options.model;
   }
 
   async createAccessToken(params) {
     assert(params.username, '\'username\' is required');
     assert(params.password, '\'password\' is required');
 
-    let account;
-    if (isMongooseModel(this.userModel)) {
-      account = await this.userModel
-        .findOne({ [this.propertyMap.username]: params.username })
-        .select({ password: 1 });
-    } else {
-      account = await this.userModel.findByUsername(params.username);
-    }
+    const account = await this.model.findByUsername(params.username);
 
     if (!account) {
       throw new AuthError(
@@ -85,18 +67,11 @@ class Auth {
 
     const decoded = await this.verifyAccessToken(params);
 
-    let account;
-    if (isMongooseModel(this.userModel)) {
-      account = await this.userModel
-        .findById(decoded.sub)
-        .select({ [this.propertyMap.password]: 1 });
-    } else {
-      account = await this.userModel.findById(decoded.sub);
-    }
+    const account = await this.model.findById(decoded.sub);
 
     const valid = await bcrypt.compare(
       params.oldPassword,
-      account[this.propertyMap.password],
+      account.password,
     );
 
     if (!valid) {
@@ -107,25 +82,13 @@ class Auth {
     }
 
     const password = await bcrypt.hash(params.newPassword);
-    if (isMongooseModel(this.userModel)) {
-      await this.userModel
-        .findByIdAndUpdate(decoded.sub, { [this.propertyMap.password]: password });
-    } else {
-      await this.userModel.updatePassword(decoded.sub, password);
-    }
+    await this.model.updatePassword(decoded.sub, password);
   }
 
   async requestResetPassword(params) {
     assert(params.subject, '\'subject\' is required');
 
-    let account;
-    if (isMongooseModel(this.userModel)) {
-      account = await this.userModel
-        .findById(params.subject)
-        .select({ _id: 1 });
-    } else {
-      account = await this.userModel.findById(params.subject);
-    }
+    const account = await this.model.findById(params.subject);
 
     if (!account) {
       throw new AuthError(
@@ -157,12 +120,7 @@ class Auth {
     }
 
     const password = await bcrypt.hash(params.password);
-    if (isMongooseModel(this.userModel)) {
-      await this.userModel
-        .findByIdAndUpdate(decoded.sub, { [this.propertyMap.password]: password });
-    } else {
-      await this.userModel.updatePassword(decoded.sub, password);
-    }
+    await this.model.updatePassword(decoded.sub, password);
   }
 }
 
