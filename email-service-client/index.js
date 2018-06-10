@@ -38,6 +38,32 @@ class EmailServiceClient {
     });
   }
 
+  async createCustomEmailVerification(param) {
+    return fetch(`${this.host}/email/verification`, {
+      method: 'POST',
+      headers: { key: this.key, 'content-type': 'application/json' },
+      body: JSON.stringify({
+        FromEmailAddress: 'no-reply@highoutput.io',
+        ...param,
+      }),
+    });
+  }
+
+  async sendCustomEmailVerification(param) {
+    return fetch(`${this.host}/email/verification/send`, {
+      method: 'POST',
+      headers: { key: this.key, 'content-type': 'application/json' },
+      body: JSON.stringify(param),
+    });
+  }
+
+  async removeCustomEmailVerification(template) {
+    return fetch(`${this.host}/email/verification/${template}`, {
+      method: 'DELETE',
+      headers: { key: this.key, 'content-type': 'application/json' },
+    });
+  }
+
   async sendEmailVerification(param, secret) {
     checkFields(param);
     const key = jwt.sign({ ...param.payloadData, email: param.to }, secret);
