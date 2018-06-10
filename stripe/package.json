@@ -1,0 +1,30 @@
+{
+  "name": "highoutput-stripe",
+  "version": "0.1.2",
+  "description": "highoutput stripe module",
+  "main": "index.js",
+  "scripts": {
+    "test": "ava"
+  },
+  "author": "High Output Ventures",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HighOutputVentures/highoutput-library.git"
+  },
+  "ava": {
+    "files": [
+      "test/**/*.js"
+    ],
+    "concurrency": 5,
+    "failFast": true,
+    "failWithoutAssertions": true,
+    "tap": false,
+    "verbose": true,
+    "powerAssert": false,
+    "timeout": "120s"
+  },
+  "dependencies": {
+    "stripe": "^5.10.0"
+  }
+}

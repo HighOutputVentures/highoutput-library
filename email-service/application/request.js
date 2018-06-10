@@ -10,9 +10,10 @@ const { Logger } = require('highoutput-utilities');
 const Config = require('./../config');
 
 const logger = new Logger([]);
+const TemplateDirectory = Config.TemplateDirectory || path.join(path.dirname(fs.realpathSync(__filename)), './../template');
 
 function getTemplatePath(template) {
-  return path.join(path.dirname(fs.realpathSync(__filename)), `./../template/${template.toLowerCase()}.ejs`);
+  return path.join(TemplateDirectory, `${template.toLowerCase()}.ejs`);
 }
 
 class RequestApplication extends KoaApplication {

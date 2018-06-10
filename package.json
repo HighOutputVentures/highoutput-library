@@ -4,7 +4,7 @@
   "description": "Module library for Hight Output Ventures",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint utilities/"
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",

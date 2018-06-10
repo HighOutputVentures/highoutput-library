@@ -1,10 +1,10 @@
 {
   "name": "highoutput-auth",
-  "version": "2.0.3",
+  "version": "3.0.0",
   "description": "Authentication and authorization module",
   "main": "index.js",
   "scripts": {
-    "test": "ava test"
+    "test": "ava"
   },
   "author": "High Output Ventures",
   "license": "ISC",
@@ -16,11 +16,12 @@
   "devDependencies": {
     "ava": "^0.25.0",
     "chance": "^1.0.13",
-    "ramda": "^0.25.0"
+    "ramda": "^0.25.0",
+    "supertest": "^3.0.0"
   },
   "ava": {
     "files": [
-      "test/**/*.js"
+      "test/**/*.test.js"
     ],
     "concurrency": 5,
     "failFast": true,

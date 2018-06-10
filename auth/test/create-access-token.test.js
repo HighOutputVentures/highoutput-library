@@ -1,21 +1,21 @@
 const test = require('ava');
 const Chance = require('chance');
-const UserModel = require('./helpers/userModel');
-const createUser = require('./helpers/createUser');
-const Auth = require('../index');
+const UserModel = require('./helpers/user-model');
+const createUser = require('./helpers/create-user');
+const Auth = require('../');
 
 const chance = new Chance();
 
-const userModel = new UserModel();
+const model = new UserModel();
 
 const auth = new Auth({
   secretKey: chance.string(),
-  userModel,
+  model,
 });
 
 test('create access token', async (t) => {
   const user = createUser();
-  await userModel.insertUser(user);
+  await model.insertUser(user);
 
   const accessToken = await auth.createAccessToken({
     username: user.username,
@@ -27,7 +27,7 @@ test('create access token', async (t) => {
 
 test('invalid credentials', async (t) => {
   const user = createUser();
-  await userModel.insertUser(user);
+  await model.insertUser(user);
 
   const error = await t.throws(auth.createAccessToken({
     username: user.username,

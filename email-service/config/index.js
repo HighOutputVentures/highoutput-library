@@ -6,4 +6,5 @@ module.exports = {
   Middleware,
   Server,
   AWS,
+  TemplateDirectory: process.env.TEMPLATE_DIRECTORY,
 };

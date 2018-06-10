@@ -1,0 +1,8 @@
+input createAppInput {
+  name: String!
+  clientId: String!
+  clientSecret: String!
+  domains: String!
+  redirectUris: String!
+  grants: String!
+}

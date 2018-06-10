@@ -4,7 +4,8 @@ ENV APP_DIR=/srv/node \
     LOG_DIR=/var/log/node \
     DEBUG=error*,warn*,info*,verbose* \
     TZ=UTC \
-    START_SCRIPT=index.js
+    START_SCRIPT=index.js \
+    TEMPLATE_DIRECTORY=/srv/node/template
 
 RUN mkdir -p $APP_DIR && mkdir -p $LOG_DIR && mkdir -p ~/.aws
 
