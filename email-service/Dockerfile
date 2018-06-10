@@ -21,4 +21,4 @@ RUN mkdir -p ${APP_DIR}/template && yarn install
 
 EXPOSE 80
 
-CMD node $START_SCRIPT >> $LOG_DIR/app.log 2>&1
+CMD node $START_SCRIPT

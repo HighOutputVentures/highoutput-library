@@ -12,6 +12,9 @@ const Config = require('./../config');
 const logger = new Logger([]);
 const TemplateDirectory = Config.TemplateDirectory || path.join(path.dirname(fs.realpathSync(__filename)), './../template');
 
+AWS.config.update({ region: 'us-east-1' });
+const ses = new AWS.SES({ apiVersion: '2010-12-01' });
+
 function getTemplatePath(template) {
   return path.join(TemplateDirectory, `${template.toLowerCase()}.ejs`);
 }
@@ -21,13 +24,31 @@ class RequestApplication extends KoaApplication {
     super('/email', {
       'POST /': 'sendEmail',
       'POST /template': 'saveTemplate',
+      'POST /verification': 'createVerificationTemplate',
+      'POST /verification/send': 'sendEmailVerification',
+      'DELETE /verification/:TemplateName': 'removeEmailVerification',
     });
+  }
+
+  async createVerificationTemplate(ctx) {
+    await ses.createCustomVerificationEmailTemplate(ctx.request.body).promise();
+    ctx.status = 200;
+  }
+
+  async sendEmailVerification(ctx) {
+    await ses.sendCustomVerificationEmail(ctx.request.body).promise();
+    ctx.status = 200;
+  }
+
+  async removeEmailVerification(ctx) {
+    await ses.deleteCustomVerificationEmailTemplate(ctx.params).promise();
+    ctx.status = 200;
   }
 
   async sendEmail(ctx) {
     const {
       from, to, subject, cc, bcc, text, checkValidity,
-      html, region, template, templateData,
+      html, template, templateData,
     } = ctx.request.body;
 
     if (checkValidity) {
@@ -86,8 +107,7 @@ class RequestApplication extends KoaApplication {
         },
       };
 
-      AWS.config.update({ region: region || 'us-east-1' });
-      return new AWS.SES({ apiVersion: '2010-12-01' })
+      return ses
         .sendEmail(params)
         .promise()
         .catch(error => logger.error(error));
