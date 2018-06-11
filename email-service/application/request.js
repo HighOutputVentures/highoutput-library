@@ -26,6 +26,7 @@ class RequestApplication extends KoaApplication {
       'POST /template': 'saveTemplate',
       'POST /verification': 'createVerificationTemplate',
       'POST /verification/send': 'sendEmailVerification',
+      'GET /verification/status/:email': 'getIdentityVerificationStatus',
       'DELETE /verification/:TemplateName': 'removeEmailVerification',
     });
   }
@@ -43,6 +44,18 @@ class RequestApplication extends KoaApplication {
   async removeEmailVerification(ctx) {
     await ses.deleteCustomVerificationEmailTemplate(ctx.params).promise();
     ctx.status = 200;
+  }
+
+  async getIdentityVerificationStatus(ctx) {
+    const { email } = ctx.params;
+    const res = await ses.getIdentityVerificationAttributes({ Identities: [email] }).promise();
+    const verification = res.VerificationAttributes[email];
+    if (!verification) {
+      ctx.status = 404;
+    }
+
+    const status = verification.VerificationStatus.toLowerCase();
+    ctx.body = { status };
   }
 
   async sendEmail(ctx) {
