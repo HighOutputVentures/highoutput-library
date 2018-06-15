@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "clean": "mongo oauth-test --eval 'db.dropDatabase()'",
-    "test": "npm run clean && ava test"
+    "lint": "eslint .",
+    "test": "eslint .",
+    "test-mongoose": "npm run clean && ava"
   },
   "author": "High Output Ventures",
   "license": "ISC",
