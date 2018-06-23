@@ -4,7 +4,6 @@ process.env.mongo = 'mongodb://localhost:27017/oauth-test';
 const path = require('path');
 const qs = require('querystring');
 const test = require('ava');
-const mongoose = require('mongoose');
 const supertest = require('supertest');
 const chance = require('chance')();
 
@@ -21,7 +20,7 @@ test.before(async () => {
   process.chdir(path.join(__dirname, '/fixtures'));
   await server.start();
 
-  /* generate sample data */
+  /* need to have global array persistence for model */
   users = await user.generate();
   clients = await client.generate();
 });

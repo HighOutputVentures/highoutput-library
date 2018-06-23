@@ -1,19 +1,15 @@
 const times = require('lodash.times');
 const chance = require('chance')();
-const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const uuid = require('uuid');
 
 module.exports = {
-  generate: async () => {
+  generate: async (model) => {
     const ids = [];
-    const UserModel = mongoose.connection.model('user');
 
     await Promise.all(times(10, async () => {
-      const id = mongoose.Types.ObjectId();
-      ids.push(id.toHexString());
-
-      await new UserModel({
-        _id: id,
+      model.user.push({
+        id: uuid.v4(),
         username: chance.email(),
         password: await bcrypt.hash('password123', 8),
         firstname: chance.first(),
