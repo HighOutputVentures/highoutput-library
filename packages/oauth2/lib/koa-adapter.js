@@ -51,19 +51,19 @@ module.exports = class KoaAdapter {
       try {
         if (ctx.request.body.variables && ctx.request.body.variables.token) {
           /* query client secret and use to verify tokens */
-          const { client: { domain, secret } } = await this.model
+          const token = await this.model
             .getAccessToken(ctx.request.body.variables.token);
 
-          if (domain && secret) {
+          if (token && token.client) {
+            const { secret, domain } = token.client;
             const payload = jwt.verify(ctx.request.body.variables.token, secret);
 
             if (payload.aud === domain) {
               ctx.request.headers.authorization = `Bearer ${ctx.request.body.variables.token}`;
               const { request, response } = clone(ctx);
 
-              ctx.state.oauth = {
-                token: await this.server.authenticate(request, response),
-              };
+              ctx.state.oauth = await this.server.authenticate(request, response);
+              ctx.state.secret = secret;
             } else {
               throw new UnauthorizedRequestError('Untrusted domain');
             }
