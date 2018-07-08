@@ -3,23 +3,38 @@
 const uuid = require('uuid');
 const jwt = require('jsonwebtoken');
 const ms = require('ms');
-const mongoose = require('mongoose');
-const { compare } = require('bcryptjs');
+const R = require('ramda');
+const chance = require('chance')();
 
 module.exports = class MongoModel {
   constructor(options = {}) {
     this.issuer = options.issuer;
-    this.propertyMap = {
-      id: '_id',
-      username: 'username',
-      password: 'password',
-      ...(options.propertyMap || {}),
-    };
     this.model = {
-      code: mongoose.connection.model('oauth2-code'),
-      token: mongoose.connection.model('oauth2-token'),
-      client: mongoose.connection.model('oauth2-client'),
-      user: mongoose.connection.model('user'),
+      code: [],
+      token: [],
+      client: [
+        {
+          id: '63c47ba5-6fdb-459b-9e80-0f82a8c46783',
+          name: chance.name(),
+          domain: 'app.fixture.io',
+          clientId: 'swyOqkUMIGfearzFTzbe',
+          clientSecret: 'NczCAUWE3I18qVUn6mAk',
+          redirectUris: ['http://localhost:8888/oauth/callback'],
+          grants: ['client_credentials'],
+          user: 'a3711403-7941-428f-9e28-c1b51c86660c',
+          accessTokenLifetime: 10000,
+          refreshTokenLifetime: 50000,
+        },
+      ],
+      user: [
+        {
+          id: 'a3711403-7941-428f-9e28-c1b51c86660c',
+          username: 'test@user.host',
+          password: 'password123',
+          firstname: chance.first(),
+          lastname: chance.last(),
+        },
+      ],
     };
   }
 
@@ -56,17 +71,17 @@ module.exports = class MongoModel {
   }
 
   async getAccessToken(accessToken) {
-    const token = await this.model.token.findOne({ accessToken });
-    const client = await this.model.client.findOne({ clientId: token.client });
-    const user = await this.model.user.findOne({ [this.propertyMap.id]: token.user });
+    const token = R.find(R.propEq('accessToken', accessToken))(this.model.token);
+    const client = R.find(R.propEq('clientId', token.client))(this.model.client);
+    const user = R.find(R.propEq('id', token.user))(this.model.user);
 
     return {
       accessToken: token.accessToken,
       accessTokenExpiresAt: token.accessTokenExpiresAt,
       scope: token.scope,
       user: {
-        id: user[this.propertyMap.id],
-        username: user[this.propertyMap.username],
+        id: user.id,
+        username: user.username,
       },
       client: {
         id: client.clientId,
@@ -77,17 +92,17 @@ module.exports = class MongoModel {
   }
 
   async getRefreshToken(refreshToken) {
-    const token = await this.model.token.findOne({ refreshToken });
-    const client = await this.model.client.findOne({ _id: token.client });
-    const user = await this.model.user.findOne({ [this.propertyMap.id]: token.user });
+    const token = R.find(R.propEq('refreshToken', refreshToken))(this.model.token);
+    const client = R.find(R.propEq('id', token.client))(this.model.client);
+    const user = R.find(R.propEq('id', token.user))(this.model.user);
 
     return {
       refreshToken: token.refreshToken,
       refreshTokenExpiresAt: token.refreshTokenExpiresAt,
       scope: token.scope,
       user: {
-        id: user[this.propertyMap.id],
-        username: user[this.propertyMap.username],
+        id: user.id,
+        username: user.username,
       },
       client: {
         id: client.clientId,
@@ -98,9 +113,9 @@ module.exports = class MongoModel {
   }
 
   async getAuthorizationCode(authorizationCode) {
-    const code = await this.model.code.findOne({ code: authorizationCode });
-    const client = await this.model.client.findOne({ _id: code.client });
-    const user = await this.model.user.findOne({ [this.propertyMap.id]: code.user });
+    const code = R.find(R.propEq('code', authorizationCode))(this.model.code);
+    const client = R.find(R.propEq('id', code.client))(this.model.client);
+    const user = R.find(R.propEq('id', code.user))(this.model.user);
 
     return {
       code: code.code,
@@ -108,8 +123,8 @@ module.exports = class MongoModel {
       redirectUri: code.redirectUri,
       scope: code.scope,
       user: {
-        id: user[this.propertyMap.id],
-        username: user[this.propertyMap.username],
+        id: user.id,
+        username: user.username,
       },
       client: {
         id: client.clientId,
@@ -121,8 +136,10 @@ module.exports = class MongoModel {
 
   async getClient(clientId, clientSecret) {
     const client = clientSecret ?
-      await this.model.client.findOne({ clientId, clientSecret }) :
-      await this.model.client.findOne({ clientId });
+      R.find(R.propSatisfies(obj => (
+        obj.clientId === clientId && obj.clientSecret === clientSecret
+      )))(this.model.client) :
+      R.find(R.propEq('clientId', clientId))(this.model.client);
 
     return {
       id: client.clientId,
@@ -136,22 +153,17 @@ module.exports = class MongoModel {
   }
 
   async getUser(username, password) {
-    const user = await this.model.user.findOne({ [this.propertyMap.username]: username });
-    return await compare(password, user[this.propertyMap.password]) ?
-      {
-        id: user[this.propertyMap.id],
-        username: user[this.propertyMap.username],
-      } : null;
+    const user = R.find(R.propEq('username', username))(this.model.user);
+
+    return (password === user.password) ?
+      { id: user.id, username: user.username } : null;
   }
 
   async getUserFromClient(client) {
-    const authClient = await this.model.client.findOne({ clientId: client.id });
-    const user = await this.model.user.findOne({ [this.propertyMap.id]: authClient.user });
+    const authClient = R.find(R.propEq('clientId', client.id))(this.model.client);
+    const user = R.find(R.propEq('id', authClient.user))(this.model.user);
 
-    return {
-      id: user[this.propertyMap.id],
-      username: user[this.propertyMap.username],
-    };
+    return { id: user.id, username: user.username };
   }
 
   async saveToken(token, client, user) {
@@ -163,7 +175,7 @@ module.exports = class MongoModel {
       scope,
     } = token;
 
-    await this.model.token.create([{
+    this.model.token.push({
       accessToken,
       accessTokenExpiresAt,
       refreshToken,
@@ -171,7 +183,7 @@ module.exports = class MongoModel {
       scope,
       user: user.id,
       client: client.id,
-    }]);
+    });
 
     return {
       accessToken,
@@ -196,28 +208,28 @@ module.exports = class MongoModel {
       scope,
     } = code;
 
-    await this.model.code.create([{
+    this.model.code.push({
       authorizationCode,
       expiresAt,
       redirectUri,
       scope,
       client: client.id,
       user: user.id,
-    }]);
+    });
   }
 
   async revokeToken(token) {
-    const refreshToken = await this.model.token.findOne({ refreshToken: token });
+    const refreshToken = R.find(R.propEq('refreshToken', token))(this.model.token);
 
-    await this.model.token.deleteOne({ refreshToken: token });
+    R.reject(n => R.propEq('refreshToken', n.token), this.model.token);
 
     return !!refreshToken;
   }
 
   async revokeAuthorizationCode(code) {
-    const authcode = await this.model.code.findOne({ code });
+    const authcode = R.find(R.propEq('code', code))(this.model.code);
 
-    await this.model.code.deleteOne({ code });
+    R.reject(n => R.propEq('code', n.code), this.model.code);
 
     return !!authcode;
   }

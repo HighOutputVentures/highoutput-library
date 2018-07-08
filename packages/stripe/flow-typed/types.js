@@ -54,6 +54,7 @@ declare module 'highoutput-stripe' {
   }
 
   declare export default typeof Stripe;
-  declare export Card;
-  declare export Model;
+  declare export var Card;
+  declare export var Model;
+  declare export var User;
 }
