@@ -4,7 +4,7 @@ const uuid = require('uuid');
 const jwt = require('jsonwebtoken');
 const ms = require('ms');
 const R = require('ramda');
-const { compare } = require('bcryptjs');
+const chance = require('chance')();
 
 module.exports = class MongoModel {
   constructor(options = {}) {
@@ -12,8 +12,29 @@ module.exports = class MongoModel {
     this.model = {
       code: [],
       token: [],
-      client: [],
-      user: [],
+      client: [
+        {
+          id: '63c47ba5-6fdb-459b-9e80-0f82a8c46783',
+          name: chance.name(),
+          domain: 'app.fixture.io',
+          clientId: 'swyOqkUMIGfearzFTzbe',
+          clientSecret: 'NczCAUWE3I18qVUn6mAk',
+          redirectUris: ['http://localhost:8888/oauth/callback'],
+          grants: ['client_credentials'],
+          user: 'a3711403-7941-428f-9e28-c1b51c86660c',
+          accessTokenLifetime: 10000,
+          refreshTokenLifetime: 50000,
+        },
+      ],
+      user: [
+        {
+          id: 'a3711403-7941-428f-9e28-c1b51c86660c',
+          username: 'test@user.host',
+          password: 'password123',
+          firstname: chance.first(),
+          lastname: chance.last(),
+        },
+      ],
     };
   }
 
@@ -59,8 +80,8 @@ module.exports = class MongoModel {
       accessTokenExpiresAt: token.accessTokenExpiresAt,
       scope: token.scope,
       user: {
-        id: user[this.propertyMap.id],
-        username: user[this.propertyMap.username],
+        id: user.id,
+        username: user.username,
       },
       client: {
         id: client.clientId,
@@ -80,8 +101,8 @@ module.exports = class MongoModel {
       refreshTokenExpiresAt: token.refreshTokenExpiresAt,
       scope: token.scope,
       user: {
-        id: user[this.propertyMap.id],
-        username: user[this.propertyMap.username],
+        id: user.id,
+        username: user.username,
       },
       client: {
         id: client.clientId,
@@ -102,8 +123,8 @@ module.exports = class MongoModel {
       redirectUri: code.redirectUri,
       scope: code.scope,
       user: {
-        id: user[this.propertyMap.id],
-        username: user[this.propertyMap.username],
+        id: user.id,
+        username: user.username,
       },
       client: {
         id: client.clientId,
@@ -115,8 +136,10 @@ module.exports = class MongoModel {
 
   async getClient(clientId, clientSecret) {
     const client = clientSecret ?
-      R.find(R.propEq('clientId', clientId) && R.propEq('clientSecret', clientSecret))(this.model.token) :
-      R.find(R.propEq('clientId', clientId))(this.model.user);
+      R.find(R.propSatisfies(obj => (
+        obj.clientId === clientId && obj.clientSecret === clientSecret
+      )))(this.model.client) :
+      R.find(R.propEq('clientId', clientId))(this.model.client);
 
     return {
       id: client.clientId,
@@ -132,7 +155,7 @@ module.exports = class MongoModel {
   async getUser(username, password) {
     const user = R.find(R.propEq('username', username))(this.model.user);
 
-    return await compare(password, user.password) ?
+    return (password === user.password) ?
       { id: user.id, username: user.username } : null;
   }
 

@@ -8,21 +8,12 @@ const supertest = require('supertest');
 const chance = require('chance')();
 
 const server = require('./fixtures/server');
-const user = require('../helpers/random/user');
-const client = require('../helpers/random/client');
 
 const request = supertest(`http://localhost:${process.env.port}`);
-
-let users = [];
-let clients = [];
 
 test.before(async () => {
   process.chdir(path.join(__dirname, '/fixtures'));
   await server.start();
-
-  /* need to have global array persistence for model */
-  users = await user.generate();
-  clients = await client.generate();
 });
 
 test.after(async () => {
@@ -30,24 +21,15 @@ test.after(async () => {
 });
 
 test('client_credentials grant', async (t) => {
-  const OAuth2ClientModel = mongoose.connection.model('oauth2-client');
-
-  await OAuth2ClientModel.updateOne(
-    { _id: clients[0] },
-    { $set: { user: users[0] } },
-  );
-
-  const appClient = await OAuth2ClientModel.findOne({ _id: clients[0] });
-
   /* ask for a token directly */
   const { body } = await request
     .post('/oauth/token')
     .set('content-type', 'application/x-www-form-urlencoded')
     .send(qs.stringify({
       grant_type: 'client_credentials',
-      client_id: appClient.clientId,
-      client_secret: appClient.clientSecret,
-      audience: appClient.domain,
+      client_id: 'swyOqkUMIGfearzFTzbe',
+      client_secret: 'NczCAUWE3I18qVUn6mAk',
+      audience: 'app.fixture.io',
     }));
 
   t.truthy(body.access_token);
@@ -56,24 +38,15 @@ test('client_credentials grant', async (t) => {
 });
 
 test('client_credentials grant, graphql mutation', async (t) => {
-  const OAuth2ClientModel = mongoose.connection.model('oauth2-client');
-
-  await OAuth2ClientModel.updateOne(
-    { _id: clients[1] },
-    { $set: { user: users[1] } },
-  );
-
-  const appClient = await OAuth2ClientModel.findOne({ _id: clients[1] });
-
   /* ask for a token directly */
   const { body } = await request
     .post('/oauth/token')
     .set('content-type', 'application/x-www-form-urlencoded')
     .send(qs.stringify({
       grant_type: 'client_credentials',
-      client_id: appClient.clientId,
-      client_secret: appClient.clientSecret,
-      audience: appClient.domain,
+      client_id: 'swyOqkUMIGfearzFTzbe',
+      client_secret: 'NczCAUWE3I18qVUn6mAk',
+      audience: 'app.fixture.io',
     }));
 
   /* use token to access api */
