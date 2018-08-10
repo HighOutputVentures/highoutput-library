@@ -8,8 +8,9 @@ class Logger {
     this.tags = tags;
   }
 
-  tag(tag) {
-    return new Logger([...this.tags, tag]);
+  tag(tags) {
+    const newTags = typeof tags === 'string' ? [tags] : tags;
+    return new Logger([...this.tags, ...newTags]);
   }
 
   log(level, ...args) {
