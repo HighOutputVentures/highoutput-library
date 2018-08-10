@@ -1,6 +1,6 @@
 {
   "name": "highoutput-utilities",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "index.js",
   "dependencies": {
     "debug": "^3.1.0",
