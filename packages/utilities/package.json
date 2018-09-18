@@ -1,7 +1,8 @@
 {
   "name": "highoutput-utilities",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "main": "index.js",
+  "types": "index.d.ts",
   "dependencies": {
     "debug": "^3.1.0",
     "limiter": "^1.1.3",
