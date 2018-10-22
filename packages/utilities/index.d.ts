@@ -8,4 +8,6 @@ declare module 'highoutput-utilities' {
     verbose(...args: any[]): void;
     silly(...args: any[]): void;
   }
+
+  export function delay(duration: string | number): Promise<void>
 }
