@@ -1,7 +1,7 @@
 declare module 'highoutput-utilities' {
   export class Logger {
     constructor(tags: string[]);
-    tag(tag: string): Logger;
+    tag(tag: string | string[]): Logger;
     error(...args: any[]): void;
     warn(...args: any[]): void;
     info(...args: any[]): void;
