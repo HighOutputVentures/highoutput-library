@@ -12,4 +12,6 @@ declare module 'highoutput-utilities' {
   export function delay(duration: string | number): Promise<void>
 
   export function hash(message: string, algorithm?: string, salt?: string): Buffer
+
+  export function hmac(message: string, key: string, algorithm?: string): Buffer
 }
