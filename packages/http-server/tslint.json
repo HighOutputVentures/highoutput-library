@@ -1,0 +1,30 @@
+{
+  "rules": {
+    "max-line-length": {
+      "options": [120]
+    },
+    "new-parens": true,
+    "no-arg": true,
+    "no-shadowed-variable": true,
+    "no-conditional-assignment": true,
+    "no-consecutive-blank-lines": true,
+    "quotemark": [true, "single"],
+    "no-irregular-whitespace": true,
+    "indent": [true, "spaces", 2],
+    "semicolon": [true, "always", "ignore-interfaces"],
+    "whitespace": [
+      true,
+      "check-branch",
+      "check-decl",
+      "check-operator",
+      "check-module",
+      "check-separator",
+      "check-rest-spread",
+      "check-type",
+      "check-typecast",
+      "check-type-operator",
+      "check-preblock"
+    ]
+  },
+  "nodePath": "./node_modules"
+}

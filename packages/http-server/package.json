@@ -1,0 +1,39 @@
+{
+  "name": "highoutput-http-server",
+  "version": "0.0.1",
+  "description": "A simple HTTP server class based on koa",
+  "keywords": [
+    "http",
+    "koa"
+  ],
+  "author": "Roger Madjos <roger.madjos@gmail.com>",
+  "homepage": "https://github.com/Proto-Garage/highoutput-library/tree/master/packages/http-server#README.md",
+  "license": "ISC",
+  "main": "build/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
+  },
+  "scripts": {
+    "clean": "rimraf build/",
+    "build": "npm run clean && tsc --project tsconfig.json",
+    "lint": "tslint --project tsconfig.json"
+  },
+  "bugs": {
+    "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
+  },
+  "dependencies": {
+    "highoutput-auth": "^3.0.0",
+    "highoutput-utilities": "0.0.9",
+    "koa": "^2.6.2",
+    "koa-router": "^7.4.0"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.0.46",
+    "@types/koa-router": "^7.0.34",
+    "rimraf": "^2.6.2",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.11.0",
+    "typescript": "^3.1.6"
+  }
+}

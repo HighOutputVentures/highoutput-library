@@ -19,6 +19,7 @@
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-flowtype": "^2.49.3",
     "eslint-plugin-import": "^2.11.0",
-    "lerna": "^3.4.3"
+    "lerna": "^3.4.3",
+    "prettierrc": "0.0.0-5"
   }
 }
