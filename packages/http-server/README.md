@@ -1,11 +1,14 @@
 # `highoutput-http-server`
 
-> TODO: description
+> A simple wrapper around `koa.js`.
 
 ## Usage
 
 ```
 const HTTPServer = require('highoutput-http-server');
 
-// TODO: DEMONSTRATE API
+const server = new Server({
+  port: 8080
+});
+server.start();
 ```
