@@ -6,13 +6,25 @@ import { Server } from 'http';
 
 const logger = new Logger(['HTTPServer']);
 
-export interface AuthContext extends Koa.Context {
-  request: Koa.Request & {
-    user: {
-      id: string;
-      permissions: string[];
-    };
-  };
+export interface HTTPServerOptions {
+  auth?:
+    | {
+        type: 'jwt';
+        options: {
+          secretKey: string;
+        };
+      }
+    | {
+        type: 'basic';
+        options: {
+          authenticate: (
+            username: string,
+            password: string
+          ) => Promise<boolean>;
+        };
+      };
+  routerOption?: Router.IRouterOptions;
+  port: number;
 }
 
 export default class HTTPServer {
@@ -20,28 +32,7 @@ export default class HTTPServer {
   router: Router;
   server?: Server;
 
-  constructor(
-    protected options: {
-      auth?:
-        | {
-            type: 'jwt';
-            options: {
-              secretKey: string;
-            };
-          }
-        | {
-            type: 'basic';
-            options: {
-              authenticate: (
-                username: string,
-                password: string
-              ) => Promise<boolean>;
-            };
-          };
-      routerOption?: Router.IRouterOptions;
-      port: number;
-    }
-  ) {
+  constructor(protected options: HTTPServerOptions) {
     this.app = new Koa();
     this.router = new Router();
 
