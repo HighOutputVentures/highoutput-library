@@ -11,7 +11,7 @@ export interface HTTPServerOptions {
     | {
         type: 'jwt';
         options: {
-          secretKey: string;
+          secretKey: (() => Promise<string>) | string;
         };
       }
     | {
@@ -23,7 +23,7 @@ export interface HTTPServerOptions {
           ) => Promise<boolean>;
         };
       };
-  routerOption?: Router.IRouterOptions;
+  routerOptions?: Router.IRouterOptions;
   port: number;
 }
 
@@ -35,9 +35,14 @@ export default class HTTPServer {
   constructor(protected options: HTTPServerOptions) {
     this.app = new Koa();
     this.router = new Router();
+  }
 
+  async start() {
     if (this.options.auth && this.options.auth.type === 'jwt') {
-      const { secretKey } = this.options.auth.options;
+      let { secretKey } = this.options.auth.options;
+      if (typeof secretKey !== 'string') {
+        secretKey = await secretKey();
+      }
 
       this.app.use(async (ctx, next) => {
         const invalidToken = () => {
@@ -69,9 +74,7 @@ export default class HTTPServer {
         }
       });
     }
-  }
 
-  async start() {
     this.app.use(this.router.routes());
     this.app.use(this.router.allowedMethods());
 

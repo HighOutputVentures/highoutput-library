@@ -6,7 +6,7 @@ export interface HTTPServerOptions {
     auth?: {
         type: 'jwt';
         options: {
-            secretKey: string;
+            secretKey: (() => Promise<string>) | string;
         };
     } | {
         type: 'basic';
@@ -14,7 +14,7 @@ export interface HTTPServerOptions {
             authenticate: (username: string, password: string) => Promise<boolean>;
         };
     };
-    routerOption?: Router.IRouterOptions;
+    routerOptions?: Router.IRouterOptions;
     port: number;
 }
 export default class HTTPServer {

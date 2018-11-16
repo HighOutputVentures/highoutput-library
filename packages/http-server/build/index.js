@@ -13,8 +13,13 @@ class HTTPServer {
         this.options = options;
         this.app = new koa_1.default();
         this.router = new koa_router_1.default();
+    }
+    async start() {
         if (this.options.auth && this.options.auth.type === 'jwt') {
-            const { secretKey } = this.options.auth.options;
+            let { secretKey } = this.options.auth.options;
+            if (typeof secretKey !== 'string') {
+                secretKey = await secretKey();
+            }
             this.app.use(async (ctx, next) => {
                 const invalidToken = () => {
                     ctx.type = 'application/json';
@@ -43,8 +48,6 @@ class HTTPServer {
                 }
             });
         }
-    }
-    async start() {
         this.app.use(this.router.routes());
         this.app.use(this.router.allowedMethods());
         this.server = await new Promise(resolve => {
