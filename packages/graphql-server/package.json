@@ -1,0 +1,37 @@
+{
+  "name": "highoutput-graphql-server",
+  "version": "0.0.1",
+  "description": "A simple GraphQL server class based on appolo-server-koa",
+  "keywords": [
+    "graphql",
+    "koa"
+  ],
+  "author": "High Output Ventures",
+  "homepage": "https://github.com/Proto-Garage/highoutput-library/tree/master/packages/graphql-server#README.md",
+  "license": "ISC",
+  "main": "build/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
+  },
+  "scripts": {
+    "clean": "rimraf build/",
+    "build": "npm run clean && tsc --project tsconfig.json",
+    "lint": "tslint --project tsconfig.json"
+  },
+  "bugs": {
+    "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
+  },
+  "dependencies": {
+    "@types/graphql": "^14.0.3",
+    "apollo-server-koa": "^2.2.2",
+    "graphql": "^14.0.2",
+    "highoutput-http-server": "0.0.4"
+  },
+  "devDependencies": {
+    "rimraf": "^2.6.2",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.11.0",
+    "typescript": "^3.1.6"
+  }
+}
