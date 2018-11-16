@@ -1,6 +1,6 @@
 {
   "name": "highoutput-oauth2",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "OAuth2 adapter module",
   "main": "index.js",
   "scripts": {

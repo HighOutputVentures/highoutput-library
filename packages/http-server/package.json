@@ -1,6 +1,6 @@
 {
   "name": "highoutput-http-server",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A simple HTTP server class based on koa",
   "keywords": [
     "http",
@@ -23,8 +23,8 @@
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
   },
   "dependencies": {
-    "highoutput-auth": "^3.0.0",
-    "highoutput-utilities": "0.0.9",
+    "highoutput-auth": "^3.0.1",
+    "highoutput-utilities": "^0.0.10",
     "koa": "^2.6.2",
     "koa-router": "^7.4.0"
   },

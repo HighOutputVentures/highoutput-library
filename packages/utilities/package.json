@@ -1,6 +1,6 @@
 {
   "name": "highoutput-utilities",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "main": "index.js",
   "types": "index.d.ts",
   "dependencies": {
@@ -9,7 +9,6 @@
     "ms": "^2.1.1",
     "random-int": "^1.0.0"
   },
-  "devDependencies": {},
   "scripts": {
     "lint": "eslint .",
     "test": "eslint ."
