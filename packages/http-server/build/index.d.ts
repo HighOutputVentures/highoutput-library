@@ -5,11 +5,13 @@ import { Server } from 'http';
 export interface HTTPServerOptions {
     auth?: {
         type: 'jwt';
+        strict?: boolean;
         options: {
             secretKey: (() => Promise<string>) | string;
         };
     } | {
         type: 'basic';
+        strict?: boolean;
         options: {
             authenticate: (username: string, password: string) => Promise<boolean>;
         };

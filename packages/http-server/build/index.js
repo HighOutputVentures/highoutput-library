@@ -28,13 +28,18 @@ class HTTPServer {
                         code: 'INVALID_TOKEN',
                     });
                 };
-                if (!ctx.headers.authorization) {
+                if (this.options.auth.strict && !ctx.headers.authorization) {
                     invalidToken();
                     return;
                 }
                 const match = ctx.headers.authorization.match(/^Bearer (.+)$/);
                 if (!match) {
-                    invalidToken();
+                    if (this.options.auth.strict) {
+                        invalidToken();
+                    }
+                    else {
+                        await next();
+                    }
                     return;
                 }
                 const [, token] = match;
