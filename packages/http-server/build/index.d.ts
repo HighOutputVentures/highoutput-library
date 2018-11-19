@@ -13,7 +13,7 @@ export interface HTTPServerOptions {
         type: 'basic';
         strict?: boolean;
         options: {
-            authenticate: (username: string, password: string) => Promise<boolean>;
+            authenticate: (username: string, password: string) => Promise<any>;
         };
     };
     routerOptions?: Router.IRouterOptions;

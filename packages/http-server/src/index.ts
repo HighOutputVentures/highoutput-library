@@ -19,10 +19,7 @@ export interface HTTPServerOptions {
         type: 'basic';
         strict?: boolean;
         options: {
-          authenticate: (
-            username: string,
-            password: string
-          ) => Promise<boolean>;
+          authenticate: (username: string, password: string) => Promise<any>;
         };
       };
   routerOptions?: Router.IRouterOptions;
@@ -78,6 +75,45 @@ export default class HTTPServer {
         } catch (err) {
           logger.warn(err);
           invalidToken();
+        }
+      });
+    }
+
+    if (this.options.auth && this.options.auth.type === 'basic') {
+      let { authenticate } = this.options.auth.options;
+
+      this.app.use(async (ctx, next) => {
+        const invalidCredentials = () => {
+          ctx.type = 'application/json';
+          ctx.status = 403;
+          ctx.body = JSON.stringify({
+            code: 'INVALID_CREDENTIALS',
+          });
+        };
+
+        if (this.options.auth!.strict && !ctx.headers.authorization) {
+          invalidCredentials();
+          return;
+        }
+
+        const match = ctx.headers.authorization.match(/^Basic (.+)$/);
+        if (!match) {
+          if (this.options.auth!.strict) {
+            invalidCredentials();
+          } else {
+            await next();
+          }
+
+          return;
+        }
+        const [, credentials] = match;
+        const [username, password] = Buffer.from(credentials, 'base64')
+          .toString('utf8')
+          .split(':');
+
+        ctx.state.claims = await authenticate(username, password);
+        if (!ctx.state.claims) {
+          invalidCredentials();
         }
       });
     }
