@@ -12,7 +12,7 @@ export default class GraphQLServer extends HTTPServer {
   }
 
   async start() {
-    super.start();
+    await super.start();
 
     const server = new ApolloServer(this.options);
     server.applyMiddleware({ app: this.app });
