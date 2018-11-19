@@ -1,5 +1,6 @@
 import HTTPServer, { HTTPServerOptions } from 'highoutput-http-server';
 import { ApolloServer } from 'apollo-server-koa';
+import { Context } from 'koa';
 
 export interface GraphQLServerOptions {
   typeDefs: any;
@@ -14,7 +15,10 @@ export default class GraphQLServer extends HTTPServer {
   async start() {
     await super.start();
 
-    const server = new ApolloServer(this.options);
+    const server = new ApolloServer({
+      ...this.options,
+      context: ({ ctx }: { ctx: Context }) => ctx,
+    });
     server.applyMiddleware({ app: this.app });
   }
 }

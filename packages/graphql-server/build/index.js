@@ -12,7 +12,7 @@ class GraphQLServer extends highoutput_http_server_1.default {
     }
     async start() {
         await super.start();
-        const server = new apollo_server_koa_1.ApolloServer(this.options);
+        const server = new apollo_server_koa_1.ApolloServer(Object.assign({}, this.options, { context: ({ ctx }) => ctx }));
         server.applyMiddleware({ app: this.app });
     }
 }
