@@ -24,6 +24,7 @@ export interface HTTPServerOptions {
       };
   routerOptions?: Router.IRouterOptions;
   port: number;
+  middlewares?: Koa.Middleware[];
 }
 
 export default class HTTPServer {
@@ -101,6 +102,11 @@ export default class HTTPServer {
           return;
         }
 
+        if (!ctx.headers.authorization) {
+          await next();
+          return;
+        }
+
         const match = ctx.headers.authorization.match(/^Basic (.+)$/);
         if (!match) {
           if (this.options.auth!.strict) {
@@ -123,6 +129,10 @@ export default class HTTPServer {
       });
     }
 
+    for (const middleware of this.options.middlewares || []) {
+      this.app.use(middleware);
+    }
+
     this.app.use(this.router.routes());
     this.app.use(this.router.allowedMethods());
 
@@ -133,7 +143,6 @@ export default class HTTPServer {
         resolve(server);
       });
     });
-    return;
   }
 
   async stop() {
