@@ -9,9 +9,12 @@ export interface GraphQLServerOptions {
 export default class GraphQLServer extends HTTPServer {
   constructor(protected options: HTTPServerOptions & GraphQLServerOptions) {
     super(options);
+  }
 
-    const server = new ApolloServer(options);
+  async start() {
+    super.start();
 
+    const server = new ApolloServer(this.options);
     server.applyMiddleware({ app: this.app });
   }
 }
