@@ -11,7 +11,7 @@ class GraphQLServer extends highoutput_http_server_1.default {
         this.options = options;
     }
     async start() {
-        super.start();
+        await super.start();
         const server = new apollo_server_koa_1.ApolloServer(this.options);
         server.applyMiddleware({ app: this.app });
     }
