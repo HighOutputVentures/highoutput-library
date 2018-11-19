@@ -32,6 +32,10 @@ class HTTPServer {
                     invalidToken();
                     return;
                 }
+                if (!ctx.headers.authorization) {
+                    await next();
+                    return;
+                }
                 const match = ctx.headers.authorization.match(/^Bearer (.+)$/);
                 if (!match) {
                     if (this.options.auth.strict) {
