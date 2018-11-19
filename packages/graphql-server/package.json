@@ -1,6 +1,6 @@
 {
   "name": "highoutput-graphql-server",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A simple GraphQL server class based on appolo-server-koa",
   "keywords": [
     "graphql",
