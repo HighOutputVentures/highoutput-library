@@ -25,6 +25,7 @@ export interface HTTPServerOptions {
   routerOptions?: Router.IRouterOptions;
   port: number;
   middlewares?: Koa.Middleware[];
+  routes?: { [k: string]: Router.IMiddleware };
 }
 
 export default class HTTPServer {
@@ -131,6 +132,20 @@ export default class HTTPServer {
 
     for (const middleware of this.options.middlewares || []) {
       this.app.use(middleware);
+    }
+
+    for (const route in this.options.routes || {}) {
+      const middleware = this.options.routes![route];
+      const match = route.match(/^(POST|GET|PATCH) (.+)$/);
+      if (!match) {
+        continue;
+      }
+
+      const [, verb, path] = match;
+      this.router[verb.toLowerCase() as 'post' | 'get' | 'patch'](
+        path,
+        middleware
+      );
     }
 
     this.app.use(this.router.routes());
