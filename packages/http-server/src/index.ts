@@ -126,7 +126,10 @@ export default class HTTPServer {
         ctx.state.claims = await authenticate(username, password);
         if (!ctx.state.claims) {
           invalidCredentials();
+          return;
         }
+
+        await next();
       });
     }
 
