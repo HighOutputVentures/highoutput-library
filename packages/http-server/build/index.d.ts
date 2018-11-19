@@ -18,6 +18,10 @@ export interface HTTPServerOptions {
     };
     routerOptions?: Router.IRouterOptions;
     port: number;
+    middlewares?: Koa.Middleware[];
+    routes?: {
+        [k: string]: Router.IMiddleware;
+    };
 }
 export default class HTTPServer {
     protected options: HTTPServerOptions;

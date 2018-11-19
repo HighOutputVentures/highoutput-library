@@ -71,6 +71,10 @@ class HTTPServer {
                     invalidCredentials();
                     return;
                 }
+                if (!ctx.headers.authorization) {
+                    await next();
+                    return;
+                }
                 const match = ctx.headers.authorization.match(/^Basic (.+)$/);
                 if (!match) {
                     if (this.options.auth.strict) {
@@ -91,6 +95,18 @@ class HTTPServer {
                 }
             });
         }
+        for (const middleware of this.options.middlewares || []) {
+            this.app.use(middleware);
+        }
+        for (const route in this.options.routes || {}) {
+            const middleware = this.options.routes[route];
+            const match = route.match(/^(POST|GET|PATCH) (.+)$/);
+            if (!match) {
+                continue;
+            }
+            const [, verb, path] = match;
+            this.router[verb.toLowerCase()](path, middleware);
+        }
         this.app.use(this.router.routes());
         this.app.use(this.router.allowedMethods());
         this.server = await new Promise(resolve => {
@@ -100,7 +116,6 @@ class HTTPServer {
                 resolve(server);
             });
         });
-        return;
     }
     async stop() {
         if (this.server) {
