@@ -2,6 +2,7 @@ import debug, { Debugger } from 'debug';
 
 class Logger {
   private loggers: { [key: string]: Debugger };
+
   private tags: string | string[];
 
   constructor(tags: string | string[]) {
@@ -11,8 +12,8 @@ class Logger {
 
   tag(tags: string | [string]): Logger {
     return new Logger([
-      ...(this.tags as string[] ),
-      ...(typeof tags === 'string' ? [tags] : tags)
+      ...(this.tags as string[]),
+      ...(typeof tags === 'string' ? [tags] : tags),
     ]);
   }
 
@@ -25,16 +26,14 @@ class Logger {
 
     logger(
       null,
-      ...args
-        .map((item: String | Error) => {
+      ...(args
+        .map((item: string | Error) => {
           if (item instanceof Error) {
             const obj = { message: item.message };
 
-            Object
-              .getOwnPropertyNames(item)
-              .forEach(property => {
-                (obj as any)[property] = (item as any)[property];
-              });
+            Object.getOwnPropertyNames(item).forEach(property => {
+              (obj as any)[property] = (item as any)[property];
+            });
 
             return obj;
           }
@@ -51,7 +50,7 @@ class Logger {
           }
 
           return item;
-        }) as string[]
+        }) as string[])
     );
   }
 

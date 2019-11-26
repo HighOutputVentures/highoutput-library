@@ -75,7 +75,7 @@ jobs:
       - restore_package_cache
       - run:
           name: lint
-          command: npx lerna run lint
+          command: npm run lint
       - run:
           name: test
           command: npx lerna run test
