@@ -1,0 +1,100 @@
+---
+version: 2.1
+
+commands:
+  save_package_cache:
+    parameters:
+      cache_prefix:
+        type: string
+        default: dependencies
+    steps:
+      - save_cache:
+          key: << parameters.cache_prefix >>-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+  restore_package_cache:
+    parameters:
+      cache_prefix:
+        type: string
+        default: dependencies
+    steps:
+      - restore_cache:
+          keys:
+            - << parameters.cache_prefix >>-{{ checksum "package.json" }}
+  restore_point:
+    steps:
+      - restore_cache:
+          keys:
+            - repository-{{ checksum ".circle-sha" }}
+  save_point:
+    steps:
+      - run:
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+
+jobs:
+  checkout_source:
+    docker:
+      - image: circleci/node:12.13.0-stretch
+    steps:
+      - checkout
+      - run:
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+      - save_cache:
+          key: repository-{{ checksum ".circle-sha" }}
+          paths:
+            - .
+  install_dependencies:
+    docker:
+      - image: circleci/node:12.13.0-stretch
+    steps:
+      - save_point
+      - restore_point
+      - run: npm install
+      - run: npx lerna bootstrap --hoist
+      - save_package_cache
+  install_prod_dependencies:
+    docker:
+      - image: circleci/node:12.13.0-stretch
+    steps:
+      - save_point
+      - restore_point
+      - restore_package_cache:
+          cache_prefix: prod_dependencies
+      - run: npm install --only=prod
+      - run: npx lerna bootstrap --hoist
+      - save_package_cache:
+          cache_prefix: prod_dependencies
+  test:
+    docker:
+      - image: circleci/node:12.13.0-stretch
+    steps:
+      - save_point
+      - restore_point
+      - restore_package_cache
+      - run:
+          name: lint
+          command: npx lerna run lint
+      - run:
+          name: test
+          command: npx lerna run test
+
+workflows:
+  version: 2
+  test_and_build:
+    jobs:
+      - checkout_source
+      - install_dependencies:
+          requires:
+            - checkout_source
+      - install_prod_dependencies:
+          requires:
+            - checkout_source
+          filters:
+            branches:
+              only:
+                - master
+      - test:
+          requires:
+            - install_dependencies
