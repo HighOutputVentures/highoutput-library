@@ -27,7 +27,7 @@ class Logger {
     logger(
       null,
       ...(args
-        .map((item: String | Error) => {
+        .map((item: string | Error) => {
           if (item instanceof Error) {
             const obj = { message: item.message };
 
@@ -38,7 +38,7 @@ class Logger {
             return obj;
           }
 
-          if (item instanceof String) {
+          if (typeof item === 'string') {
             return item.replace(/\n/, '\\n');
           }
 
