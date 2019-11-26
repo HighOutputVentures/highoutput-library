@@ -27,7 +27,7 @@ class Logger {
     logger(
       null,
       ...(args
-        .map((item: string | Error) => {
+        .map((item: String | Error) => {
           if (item instanceof Error) {
             const obj = { message: item.message };
 

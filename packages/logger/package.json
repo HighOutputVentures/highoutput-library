@@ -7,8 +7,7 @@
   },
   "scripts": {
     "clean": "rimraf build/",
-    "build": "tsc --project tsconfig.json",
-    "lint": "eslint . --ext .ts"
+    "build": "npm run clean && tsc --project tsconfig.json"
   },
   "author": "HighOutput Ventures",
   "license": "MIT",
