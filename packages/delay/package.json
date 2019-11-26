@@ -1,0 +1,17 @@
+{
+  "name": "@highoutput/delay",
+  "version": "0.1.0",
+  "main": "build/index.js",
+  "scripts": {
+    "clean": "rimraf build/",
+    "build": "npm run clean && tsc --project tsconfig.json"
+  },
+  "author": "HighOutput Ventures",
+  "license": "MIT",
+  "dependencies": {
+    "ms": "^2.1.2"
+  },
+  "devDependencies": {
+    "@types/ms": "^0.7.31"
+  }
+}
