@@ -13,8 +13,7 @@ Generate hash.
 ```javascript
 import { hash } from 'highoutput-utilities';
 
-// default algorithm is sha256
 hash('The quick brown fox jumps over the lazy dog.');
-hash('The quick brown fox jumps over the lazy dog.', { algorithm: 'md5' });
-hash('The quick brown fox jumps over the lazy dog.', { algorithm: 'md5', salt: 'secretsalt' });
+hash('The quick brown fox jumps over the lazy dog.', { algorithm: 'sha256' });
+hash('The quick brown fox jumps over the lazy dog.', { algorithm: 'sha256', salt: 'secretsalt' });
 ```
