@@ -8,7 +8,12 @@ const hash = (
     options?: HashOptions;
   }
 ): Buffer => {
-  const options = { algorithm: 'sha256', salt: '', ...opts };
+  const options = {
+    algorithm: 'sha256',
+    salt: '',
+    options: undefined,
+    ...opts,
+  };
 
   return crypto
     .createHash(options.algorithm, options.options)
