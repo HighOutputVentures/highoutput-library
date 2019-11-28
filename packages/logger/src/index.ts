@@ -24,34 +24,33 @@ class Logger {
 
     this.loggers[scope] = logger;
 
-    logger(
-      null,
-      ...(args
-        .map((item: string | Error | object) => {
-          if (item instanceof Error) {
-            const obj = { message: item.message };
+    const items = args
+      .map((item: string | Error | object) => {
+        if (item instanceof Error) {
+          const obj = { message: item.message };
 
-            Object.getOwnPropertyNames(item).forEach(property => {
-              (obj as any)[property] = (item as any)[property];
-            });
+          Object.getOwnPropertyNames(item).forEach(property => {
+            (obj as any)[property] = (item as any)[property];
+          });
 
-            return obj;
-          }
+          return obj;
+        }
 
-          if (typeof item === 'string') {
-            return item.replace(/\n/, '\\n');
-          }
+        if (typeof item === 'string') {
+          return item.replace(/\n/, '\\n');
+        }
 
-          return item;
-        })
-        .map(item => {
-          if (typeof item === 'object') {
-            return JSON.stringify(item);
-          }
+        return item;
+      })
+      .map(item => {
+        if (typeof item === 'object') {
+          return JSON.stringify(item);
+        }
 
-          return item;
-        }) as string[])
-    );
+        return item;
+      }) as string[];
+
+    logger(items[0], ...items.slice(1));
   }
 
   error(...args: (string | Error | object)[]): void {
