@@ -17,7 +17,7 @@ class Logger {
     ]);
   }
 
-  log(level: string, ...args: string[]): void {
+  log(level: string, ...args: (string | Error | object)[]): void {
     const tags = [...this.tags].join(',');
     const scope = `${level}${tags ? `:${tags}` : ''}`;
     const logger = this.loggers[scope] ? this.loggers[scope] : debug(scope);
@@ -27,7 +27,7 @@ class Logger {
     logger(
       null,
       ...(args
-        .map((item: string | Error) => {
+        .map((item: string | Error | object) => {
           if (item instanceof Error) {
             const obj = { message: item.message };
 
@@ -54,23 +54,23 @@ class Logger {
     );
   }
 
-  error(...args: string[]): void {
+  error(...args: (string | Error | object)[]): void {
     this.log.apply(this, ['error', ...args]);
   }
 
-  warn(...args: string[]): void {
+  warn(...args: (string | Error | object)[]): void {
     this.log.apply(this, ['warn', ...args]);
   }
 
-  info(...args: string[]): void {
+  info(...args: (string | Error | object)[]): void {
     this.log.apply(this, ['info', ...args]);
   }
 
-  verbose(...args: string[]): void {
+  verbose(...args: (string | Error | object)[]): void {
     this.log.apply(this, ['verbose', ...args]);
   }
 
-  silly(...args: string[]): void {
+  silly(...args: (string | Error | object)[]): void {
     this.log.apply(this, ['silly', ...args]);
   }
 }
