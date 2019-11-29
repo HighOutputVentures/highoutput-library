@@ -31,6 +31,10 @@ commands:
       - run:
           name: save SHA to a file
           command: echo $CIRCLE_SHA1 > .circle-sha
+      - save_cache:
+          key: repository-{{ checksum ".circle-sha" }}
+          paths:
+            - .
 
 jobs:
   checkout_source:
@@ -38,13 +42,7 @@ jobs:
       - image: circleci/node:12.13.0-stretch
     steps:
       - checkout
-      - run:
-          name: save SHA to a file
-          command: echo $CIRCLE_SHA1 > .circle-sha
-      - save_cache:
-          key: repository-{{ checksum ".circle-sha" }}
-          paths:
-            - .
+      - save_point
   install_dependencies:
     docker:
       - image: circleci/node:12.13.0-stretch
