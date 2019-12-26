@@ -4,7 +4,8 @@
   "main": "build/index.js",
   "scripts": {
     "clean": "rimraf build/",
-    "build": "npm run clean && tsc --project tsconfig.json"
+    "build": "npm run clean && tsc --project tsconfig.json",
+    "test": "mocha \"./test/**/*.spec.ts\""
   },
   "author": "HighOutput Ventures",
   "license": "MIT",

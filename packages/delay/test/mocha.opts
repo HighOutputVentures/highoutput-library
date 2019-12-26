@@ -1,0 +1,6 @@
+--timeout 10s
+--exit
+--colors
+--require ts-node/register/transpile-only
+--recursive
+--bail
