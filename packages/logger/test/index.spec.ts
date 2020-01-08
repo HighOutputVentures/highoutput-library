@@ -1,4 +1,5 @@
 import assert from 'assert';
+
 import Logger from '../src';
 
 describe('logger', () => {

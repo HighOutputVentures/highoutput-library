@@ -13,6 +13,8 @@
   "author": "HighOutput Ventures",
   "license": "MIT",
   "devDependencies": {
-    "@types/debug": "^4.1.5"
+    "@types/debug": "^4.1.5",
+    "@types/mocha": "^5.2.7",
+    "mocha": "^7.0.0"
   }
 }

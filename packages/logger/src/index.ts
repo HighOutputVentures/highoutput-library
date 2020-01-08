@@ -10,7 +10,7 @@ class Logger {
     this.loggers = {};
   }
 
-  tag(tags: string | [string]): Logger {
+  tag(tags: string | string[]): Logger {
     return new Logger([
       ...(this.tags as string[]),
       ...(typeof tags === 'string' ? [tags] : tags),
