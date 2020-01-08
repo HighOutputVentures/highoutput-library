@@ -5,8 +5,13 @@
   "scripts": {
     "clean": "rimraf build/",
     "build": "npm run clean && tsc --project tsconfig.json",
-    "test": "mocha \"./test/**/*.spec.ts\""
+    "test": "mocha \"./test/**/*.spec.ts\"",
+    "preversion": "npm run build && git add -A && (git commit -m \"build(logger): generate distribution files\" || true)"
   },
   "author": "HighOutput Ventures",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "rimraf": "^3.0.0",
+    "typescript": "^3.7.4"
+  }
 }
