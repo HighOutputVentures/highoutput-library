@@ -11,7 +11,7 @@
     "clean": "rimraf build/",
     "build": "npm run clean && tsc --project tsconfig.json",
     "test": "mocha \"./test/**/*.spec.ts\"",
-    "preversion": "npm run build && git add -A && git commit -m \"build(logger): generate distribution files\""
+    "preversion": "npm run build && git add -A && (git commit -m \"build(logger): generate distribution files\" || true)"
   },
   "author": "HighOutput Ventures",
   "license": "MIT",
