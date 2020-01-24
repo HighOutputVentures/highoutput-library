@@ -1,6 +1,6 @@
 # `async-group`
 
-> Groups together multiple promises and allows us to 'wait' for all of them to settle.
+> Groups together multiple promises and allows to 'wait' for all of them to settle.
 
 ## Usage
 
