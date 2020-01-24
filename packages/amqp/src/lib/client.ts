@@ -126,7 +126,7 @@ export default class Client<TInput extends any[] = any[], TOutput = any> {
     return Promise.race([
       promise,
       (async () => {
-        await delay('1m');
+        await delay(this.options.timeout);
 
         this.callbacks.delete(correlationId);
 
