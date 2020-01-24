@@ -5,7 +5,7 @@
   "author": "High Output Ventures",
   "homepage": "https://github.com/Proto-Garage/highoutput-library/tree/master/packages/async-group#README.md",
   "license": "ISC",
-  "main": "src/index.ts",
+  "main": "build/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
@@ -14,7 +14,7 @@
     "clean": "rimraf build/",
     "build": "npm run clean && tsc --project tsconfig.json",
     "test": "echo \"Error: run tests from root\" && exit 1",
-    "preversion": "npm run build"
+    "prepublish": "npm run build"
   },
   "bugs": {
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
