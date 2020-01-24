@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/camelcase */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/camelcase, @typescript-eslint/no-non-null-assertion */
 import {
   Connection, Sender, Receiver, EventContext,
 } from 'rhea';

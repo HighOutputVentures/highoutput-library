@@ -1,4 +1,4 @@
 *
-!src/**/*
+!build/**/*
 !package.json
 !README.md

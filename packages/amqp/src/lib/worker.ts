@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable @typescript-eslint/no-non-null-assertion, @typescript-eslint/camelcase */
 import {
-  Connection, EventContext, Receiver, Sender,
+  Connection, EventContext, Receiver, Sender, Message,
 } from 'rhea';
 import R from 'ramda';
+import AsyncGroup from '@highoutput/async-group';
 import logger from './logger';
 
 export type WorkerOptions = {
@@ -15,9 +15,11 @@ export type WorkerOptions = {
 export default class Worker<TInput extends any[] = any[], TOutput = any> {
   private options: WorkerOptions;
 
-  private senders: Record<string, Promise<Sender>> = {};
+  private senders: Map<string, Promise<Sender>> = new Map();
 
   private receiver: Receiver | null = null;
+
+  private asyncGroup: AsyncGroup = new AsyncGroup();
 
   public constructor(
     private readonly connection: Connection,
@@ -35,7 +37,7 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
   }
 
   private async getSender(address: string) {
-    let promise = this.senders[address];
+    let promise = this.senders.get(address);
 
     if (!promise) {
       promise = (async () => {
@@ -54,10 +56,32 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
         return sender;
       })();
 
-      this.senders[address] = promise;
+      this.senders.set(address, promise);
     }
 
     return promise;
+  }
+
+  private async handleMessage(message: Message) {
+    logger.tag(['worker', 'message']).info(message.body);
+    const sender = await this.getSender(message.reply_to!);
+
+    let result: TOutput | null = null;
+    let error: Error | null = null;
+
+    try {
+      result = await this.handler(...message.body.parameters);
+    } catch (err) {
+      error = err;
+    }
+
+    sender.send({
+      correlation_id: message.correlation_id,
+      body: {
+        result,
+        error,
+      },
+    });
   }
 
   public async start() {
@@ -70,25 +94,8 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
     });
 
     this.receiver.on('message', async (context: EventContext) => {
-      logger.tag(['worker', 'message']).info(context.message?.body);
-      const sender = await this.getSender(context.message?.reply_to!);
-
-      let result: TOutput | null = null;
-      let error: Error | null = null;
-
-      try {
-        result = await this.handler(...context.message?.body.parameters);
-      } catch (err) {
-        error = err;
-      }
-
-      sender.send({
-        correlation_id: context.message?.correlation_id,
-        body: {
-          result,
-          error,
-        },
-      });
+      await this.asyncGroup.add(this.handleMessage(context.message!));
+      context.delivery!.accept();
     });
   }
 
@@ -100,5 +107,21 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
         this.connection.once('receiver_close', resolve);
       });
     }
+
+    await this.asyncGroup.wait();
+
+    await Promise.all(Array.from(this.senders.values()).map(async (promise) => {
+      const sender = await promise;
+
+      if (!sender.is_closed()) {
+        sender.close();
+
+        await new Promise((resolve) => {
+          this.connection.once('sender_close', resolve);
+        });
+      }
+    }));
+
+    this.senders.clear();
   }
 }

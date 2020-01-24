@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable @typescript-eslint/no-non-null-assertion, @typescript-eslint/camelcase */
 import container, { Connection, EventContext } from 'rhea';
 import R from 'ramda';
 import logger from './lib/logger';
