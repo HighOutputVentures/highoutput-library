@@ -1,8 +1,9 @@
 import ms from 'ms';
 
-const delay = (duration: string): Promise<void> =>
-  new Promise(resolve => {
-    setTimeout(resolve, ms(duration));
-  });
+export default async function(param: string | number): Promise<void> {
+  const duration = typeof param === 'string' ? ms(param) : param;
 
-export default delay;
+  return new Promise(resolve => {
+    setTimeout(resolve, duration);
+  });
+}
