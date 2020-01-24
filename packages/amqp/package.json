@@ -1,0 +1,40 @@
+{
+  "name": "@highoutput/amqp",
+  "version": "0.1.0",
+  "description": "A simplified abstraction of the AMQP 1.0 protocol",
+  "keywords": [
+    "AMQP"
+  ],
+  "author": "High Output Ventures",
+  "homepage": "https://github.com/Proto-Garage/highoutput-library/tree/master/packages/amqp#readme",
+  "license": "ISC",
+  "main": "build/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
+  },
+  "scripts": {
+    "test": "TS_NODE_PROJECT=tsconfig.json TS_NODE_FILES=true cucumber-js -p default"
+  },
+  "bugs": {
+    "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.7",
+    "@types/cucumber": "^6.0.0",
+    "@types/ramda": "^0.26.40",
+    "@types/uuid": "^3.4.6",
+    "chai": "^4.2.0",
+    "cucumber": "^6.0.5",
+    "cucumber-pretty": "^6.0.0",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.7.5"
+  },
+  "dependencies": {
+    "@highoutput/delay": "^0.1.2",
+    "@highoutput/logger": "^0.1.5",
+    "ramda": "^0.26.1",
+    "rhea": "^1.0.16",
+    "uuid": "^3.4.0"
+  }
+}

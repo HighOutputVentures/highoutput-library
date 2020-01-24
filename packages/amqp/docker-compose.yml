@@ -1,0 +1,6 @@
+version: '3.2'
+services:
+  rabbit:
+    image: rmohr/activemq:5.13.4
+    ports:
+      - 5672:5672
