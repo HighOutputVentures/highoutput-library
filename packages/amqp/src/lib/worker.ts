@@ -12,7 +12,7 @@ export type WorkerOptions = {
   deserialize: boolean;
 }
 
-export default class Worker<TInput extends any[], TOutput> {
+export default class Worker<TInput extends any[] = any[], TOutput = any> {
   private options: WorkerOptions;
 
   private senders: Record<string, Promise<Sender>> = {};
@@ -34,15 +34,14 @@ export default class Worker<TInput extends any[], TOutput> {
     logger.tag('worker').info(this.options);
   }
 
-  private async getSender(name: string) {
-    let promise = this.senders[name];
+  private async getSender(address: string) {
+    let promise = this.senders[address];
 
     if (!promise) {
       promise = (async () => {
         const sender = this.connection.open_sender({
-          name: this.scope,
           target: {
-            address: '*',
+            address,
           },
         });
 
@@ -55,7 +54,7 @@ export default class Worker<TInput extends any[], TOutput> {
         return sender;
       })();
 
-      this.senders[name] = promise;
+      this.senders[address] = promise;
     }
 
     return promise;
@@ -63,17 +62,15 @@ export default class Worker<TInput extends any[], TOutput> {
 
   public async start() {
     this.receiver = this.connection.open_receiver({
-      name: this.scope,
       source: {
-        address: '*',
+        address: this.scope,
         durable: 2,
         expiry_policy: 'never',
       },
     });
 
     this.receiver.on('message', async (context: EventContext) => {
-      logger.tag('message').info(context.message?.body);
-
+      logger.tag(['worker', 'message']).info(context.message?.body);
       const sender = await this.getSender(context.message?.reply_to!);
 
       let result: TOutput | null = null;
@@ -85,12 +82,23 @@ export default class Worker<TInput extends any[], TOutput> {
         error = err;
       }
 
-      await sender.send({
+      sender.send({
+        correlation_id: context.message?.correlation_id,
         body: {
           result,
           error,
         },
       });
     });
+  }
+
+  public async stop() {
+    if (this.receiver && !this.receiver?.is_closed()) {
+      this.receiver.close();
+
+      await new Promise((resolve) => {
+        this.connection.once('receiver_close', resolve);
+      });
+    }
   }
 }

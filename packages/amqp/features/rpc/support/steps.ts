@@ -2,21 +2,22 @@ import {
   Given, When, Then, Before, After,
 } from 'cucumber';
 import { expect } from 'chai';
-import AMQP from '../../../src/index';
+import Amqp from '../../../src/index';
 
 Before(async function () {
-  const amqp = new AMQP();
-
-  this.client = await amqp.createClient('test');
-  this.worker = await amqp.createWorker('test', async () => this.response);
+  this.amqp = new Amqp();
 });
 
-After(async () => {
-  console.log('after');
+After(async function () {
+  await this.amqp.stop();
 });
 
-Given('a client and a worker in the same scope', () => {
-  expect(true);
+Given('a client and a worker in the same scope', async function () {
+  this.client = await this.amqp.createClient('test');
+  this.worker = await this.amqp.createWorker('test', async (message: string) => {
+    this.message = message;
+    return this.response;
+  });
 });
 
 Given('the worker responds with {}', function (response) {
@@ -24,7 +25,7 @@ Given('the worker responds with {}', function (response) {
 });
 
 When('I send {} from the client', async function (message) {
-  await this.client(JSON.parse(message));
+  this.response = await this.client(JSON.parse(message));
 });
 
 Then('I should receive {} on the worker', function (message) {

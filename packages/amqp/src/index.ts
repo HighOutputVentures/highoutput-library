@@ -21,6 +21,8 @@ export default class Amqp {
 
   private connection: Connection;
 
+  private workers: Worker[] = [];
+
   public constructor(options?: Partial<AmqpOptions>) {
     this.options = R.mergeDeepRight(options || {}, {
       host: 'localhost',
@@ -81,6 +83,18 @@ export default class Amqp {
     );
     await worker.start();
 
+    this.workers.push(worker as Worker);
+
     return worker;
+  }
+
+  public async stop() {
+    await Promise.all(this.workers.map((worker) => worker.stop()));
+
+    this.connection.close();
+
+    await new Promise((resolve) => {
+      this.connection.once('connection_close', resolve);
+    });
   }
 }

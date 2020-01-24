@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/amqp",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "A simplified abstraction of the AMQP 1.0 protocol",
   "keywords": [
     "AMQP"
@@ -14,7 +14,8 @@
     "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
   },
   "scripts": {
-    "test": "TS_NODE_PROJECT=tsconfig.json TS_NODE_FILES=true cucumber-js -p default"
+    "test": "TS_NODE_PROJECT=tsconfig.json TS_NODE_FILES=true cucumber-js -p default",
+    "debug": "node --nolazy --debug-brk=5858 ./node_modules/.bin/cucumberjs"
   },
   "bugs": {
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"

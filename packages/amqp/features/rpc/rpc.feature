@@ -12,12 +12,12 @@ Feature: RPC
     Examples:
       | message             | response          |
       | "Hello World"       | null              |
-      # | 25                  | null              |
-      # | true                | null              |
-      # | { "value": true }   | null              |
-      # | [ 1, 2, 3, 4 ]      | null              |
-      # | null                | "Hello World"     |
-      # | null                | 25                |
-      # | null                | true              |
-      # | null                | { "value": true } |
-      # | null                | [ 1, 2, 3, 4 ]    |
+      | 25                  | null              |
+      | true                | null              |
+      | { "value": true }   | null              |
+      | [ 1, 2, 3, 4 ]      | null              |
+      | null                | "Hello World"     |
+      | null                | 25                |
+      | null                | true              |
+      | null                | { "value": true } |
+      | null                | [ 1, 2, 3, 4 ]    |

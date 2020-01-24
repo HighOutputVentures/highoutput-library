@@ -15,7 +15,7 @@ export type ClientOptions = {
   serialize: boolean;
 }
 
-export default class Client<TInput extends any[], TOutput> {
+export default class Client<TInput extends any[] = any[], TOutput = any> {
   private options: ClientOptions;
 
   private sender: Sender | null = null;
@@ -43,9 +43,8 @@ export default class Client<TInput extends any[], TOutput> {
 
   public async start() {
     this.sender = this.connection.open_sender({
-      name: this.scope,
       target: {
-        address: '*',
+        address: this.scope,
       },
     });
 
@@ -54,15 +53,28 @@ export default class Client<TInput extends any[], TOutput> {
     });
 
     this.receiver = this.connection.open_receiver({
-      name: `${this.scope}:${this.id}`,
       source: {
-        address: '*',
+        address: `${this.scope}:${this.id}`,
         dynamic: true,
       },
     });
 
     this.receiver.on('message', (context: EventContext) => {
-      logger.tag('message').info(context.message?.body);
+      const body = context.message?.body;
+      logger.tag(['client', 'message']).info(body);
+
+      const callback = this.callbacks.get(context.message?.correlation_id as string);
+
+      if (!callback) {
+        return;
+      }
+
+      if (body.error) {
+        callback.reject(new Error(body.error.message));
+        return;
+      }
+
+      callback.resolve(body.result);
     });
 
     await Promise.all([
@@ -87,7 +99,7 @@ export default class Client<TInput extends any[], TOutput> {
     const correlationId = uuid();
 
     this.sender!.send({
-      reply_to: `${this.scope}:${this.id}`,
+      reply_to: this.receiver?.source.address,
       correlation_id: correlationId,
       body: {
         parameters: args,
@@ -99,7 +111,16 @@ export default class Client<TInput extends any[], TOutput> {
     }
 
     const promise = new Promise<TOutput>((resolve, reject) => {
-      this.callbacks.set(correlationId, { resolve, reject });
+      this.callbacks.set(correlationId, {
+        resolve: (result: TOutput) => {
+          this.callbacks.delete(correlationId);
+          resolve(result);
+        },
+        reject: (error: Error) => {
+          this.callbacks.delete(correlationId);
+          reject(error);
+        },
+      });
     });
 
     return Promise.race([
