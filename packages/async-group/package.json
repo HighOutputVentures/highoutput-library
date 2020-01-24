@@ -28,5 +28,6 @@
     "cucumber-pretty": "^6.0.0",
     "ts-node": "^8.6.2",
     "typescript": "^3.7.5"
-  }
+  },
+  "gitHead": "4981eddca0a22b68ed555d885bc79ae4675f1e87"
 }
