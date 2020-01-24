@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/amqp",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A simplified abstraction of the AMQP 1.0 protocol",
   "keywords": [
     "AMQP"
@@ -32,8 +32,8 @@
     "typescript": "^3.7.5"
   },
   "dependencies": {
-    "@highoutput/delay": "^0.2.0",
-    "@highoutput/logger": "^0.1.5",
+    "@highoutput/delay": "^0.2.1",
+    "@highoutput/logger": "^0.1.6",
     "ramda": "^0.26.1",
     "rhea": "^1.0.16",
     "uuid": "^3.4.0"
