@@ -19,5 +19,8 @@
     "mocha": "^7.0.0",
     "rimraf": "^3.0.0",
     "typescript": "^3.7.4"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
