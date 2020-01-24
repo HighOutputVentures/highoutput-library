@@ -4,6 +4,8 @@ import uuid from 'uuid/v4';
 export default class AsyncGroup {
   private funcs: Map<string, Promise<any>> = new Map();
 
+  private static instance: AsyncGroup = new AsyncGroup();
+
   public async add<T = any>(promise: Promise<T>): Promise<T> {
     const id = uuid();
 
@@ -23,5 +25,13 @@ export default class AsyncGroup {
       this.funcs.clear();
       await Promise.all(promises);
     }
+  }
+
+  public static async add<T = any>(promise: Promise<T>): Promise<T> {
+    return this.instance.add(promise);
+  }
+
+  public static async wait(): Promise<void> {
+    await this.instance.wait();
   }
 }
