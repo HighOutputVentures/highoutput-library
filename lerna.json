@@ -7,6 +7,7 @@
     "publish": {
       "ignoreChanges": [
         "*.md",
+        "package-lock.json",
         "test/**"
       ],
       "message": "chore(release): publish",
