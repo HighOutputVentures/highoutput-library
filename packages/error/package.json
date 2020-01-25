@@ -1,0 +1,42 @@
+{
+  "name": "@highoutput/error",
+  "version": "0.0.0",
+  "description": "Wrapper for Error",
+  "keywords": [
+    "error"
+  ],
+  "author": "High Output Ventures",
+  "homepage": "https://github.com/Proto-Garage/highoutput-library/tree/master/packages/error#README.md",
+  "license": "ISC",
+  "main": "build/index.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1",
+    "clean": "rimraf build/",
+    "build": "npm run clean && tsc --project tsconfig.json",
+    "prepublish": "npm run lint && npm run build",
+    "lint": "eslint \"src/**/*.ts\""
+  },
+  "bugs": {
+    "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
+  },
+  "dependencies": {
+    "ramda": "^0.26.1",
+    "shortid": "^2.2.15"
+  },
+  "devDependencies": {
+    "@types/ramda": "^0.26.40",
+    "@types/shortid": "0.0.29",
+    "@typescript-eslint/eslint-plugin": "^2.17.0",
+    "@typescript-eslint/parser": "^2.17.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.20.0",
+    "rimraf": "^3.0.0",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.7.5"
+  }
+}
