@@ -8,7 +8,7 @@
   "author": "High Output Ventures",
   "homepage": "https://github.com/Proto-Garage/highoutput-library/tree/master/packages/error#README.md",
   "license": "ISC",
-  "main": "build/index.ts",
+  "main": "build/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"

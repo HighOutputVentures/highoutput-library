@@ -6,7 +6,7 @@ import R from 'ramda';
 import uuid from 'uuid/v4';
 import delay from '@highoutput/delay';
 import AsyncGroup from '@highoutput/async-group';
-import { deserializeError } from 'serialize-error';
+import AppError from '@highoutput/error';
 import logger from './logger';
 
 export type ClientOptions = {
@@ -119,7 +119,18 @@ export default class Client<TInput extends any[] = any[], TOutput = any> {
       }
 
       if (body.error) {
-        const error = deserializeError(body.error);
+        let error: AppError;
+
+        if (body.error.name === 'AppError') {
+          error = new AppError(body.error.code, body.error.message, {
+            original: body.error,
+          });
+        } else {
+          error = new AppError('WORKER_ERROR', body.error.message, {
+            original: body.error,
+          });
+        }
+
         callback.reject(error);
         return;
       }

@@ -38,6 +38,7 @@
   "dependencies": {
     "@highoutput/async-group": "^0.2.3",
     "@highoutput/delay": "^0.2.1",
+    "@highoutput/error": "^0.1.1",
     "@highoutput/logger": "^0.1.6",
     "ramda": "^0.26.1",
     "rhea": "^1.0.16",
