@@ -6,7 +6,6 @@ import R from 'ramda';
 import uuid from 'uuid/v4';
 import delay from '@highoutput/delay';
 import AsyncGroup from '@highoutput/async-group';
-import AppError from '@highoutput/error';
 import logger from './logger';
 
 export type ClientOptions = {
@@ -119,19 +118,19 @@ export default class Client<TInput extends any[] = any[], TOutput = any> {
       }
 
       if (body.error) {
-        let error: AppError;
+        // let error: AppError;
 
-        if (body.error.name === 'AppError') {
-          error = new AppError(body.error.code, body.error.message, {
-            original: body.error,
-          });
-        } else {
-          error = new AppError('WORKER_ERROR', body.error.message, {
-            original: body.error,
-          });
-        }
+        // if (body.error.name === 'AppError') {
+        //   error = new AppError(body.error.code, body.error.message, {
+        //     original: body.error,
+        //   });
+        // } else {
+        //   error = new AppError('WORKER_ERROR', body.error.message, {
+        //     original: body.error,
+        //   });
+        // }
 
-        callback.reject(error);
+        callback.reject(body.error);
         return;
       }
 
