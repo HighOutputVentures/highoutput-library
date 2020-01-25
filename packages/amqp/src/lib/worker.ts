@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion, @typescript-eslint/camelcase */
 import {
-  Connection, EventContext, Receiver, Sender, Message,
+  Connection, EventContext, Receiver, Sender,
 } from 'rhea';
 import R from 'ramda';
 import AsyncGroup from '@highoutput/async-group';
@@ -27,7 +27,7 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
     private readonly handler: (...args: TInput) => Promise<TOutput>,
     options?: Partial<WorkerOptions>,
   ) {
-    this.options = R.mergeDeepRight(options || {}, {
+    this.options = R.mergeDeepLeft(options || {}, {
       concurrency: 1,
       deserialize: true,
       serialize: true,
@@ -62,7 +62,13 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
     return promise;
   }
 
-  private async handleMessage(message: Message) {
+  private async handleMessage(context: EventContext) {
+    const { message } = context;
+
+    if (!message) {
+      return;
+    }
+
     logger.tag(['worker', 'message']).info(message.body);
     const sender = await this.getSender(message.reply_to!);
 
@@ -91,16 +97,20 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
         durable: 2,
         expiry_policy: 'never',
       },
+      credit_window: 0,
+      autoaccept: false,
     });
+    this.receiver.add_credit(this.options.concurrency);
 
     this.receiver.on('message', async (context: EventContext) => {
-      await this.asyncGroup.add(this.handleMessage(context.message!));
+      await this.asyncGroup.add(this.handleMessage(context));
       context.delivery!.accept();
+      context.receiver!.add_credit(1);
     });
   }
 
   public async stop() {
-    if (this.receiver && !this.receiver?.is_closed()) {
+    if (this.receiver && this.receiver.is_open()) {
       this.receiver.close();
 
       await new Promise((resolve) => {
@@ -113,7 +123,7 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
     await Promise.all(Array.from(this.senders.values()).map(async (promise) => {
       const sender = await promise;
 
-      if (!sender.is_closed()) {
+      if (sender.is_open()) {
         sender.close();
 
         await new Promise((resolve) => {

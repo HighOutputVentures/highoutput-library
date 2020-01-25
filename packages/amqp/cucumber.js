@@ -4,6 +4,7 @@ const common = [
   '--require test/**/*.ts',
   '--format progress-bar',
   '--format node_modules/cucumber-pretty',
+  '--tags "not @ignore"',
 ].join(' ');
 
 module.exports = {

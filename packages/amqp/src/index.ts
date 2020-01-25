@@ -5,7 +5,9 @@ import logger from './lib/logger';
 import Client, { ClientOptions } from './lib/client';
 import Worker, { WorkerOptions } from './lib/worker';
 
-type AmqpOptions = {
+export { Client, Worker };
+
+export type AmqpOptions = {
   host: string;
   port: number;
   username?: string;
@@ -23,7 +25,7 @@ export default class Amqp {
   private workers: Worker[] = [];
 
   public constructor(options?: Partial<AmqpOptions>) {
-    this.options = R.mergeDeepRight(options || {}, {
+    this.options = R.mergeDeepLeft(options || {}, {
       host: 'localhost',
       port: 5672,
       initialReconnectDelay: 100,

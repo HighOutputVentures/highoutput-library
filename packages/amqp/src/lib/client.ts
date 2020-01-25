@@ -5,6 +5,7 @@ import {
 import R from 'ramda';
 import uuid from 'uuid/v4';
 import delay from '@highoutput/delay';
+import AsyncGroup from '@highoutput/async-group';
 import logger from './logger';
 
 export type ClientOptions = {
@@ -25,12 +26,14 @@ export default class Client<TInput extends any[] = any[], TOutput = any> {
 
   private readonly callbacks = new Map<string, { resolve: Function; reject: Function }>();
 
+  private asyncGroup: AsyncGroup = new AsyncGroup();
+
   public constructor(
     private readonly connection: Connection,
     private readonly scope: string,
     options?: Partial<ClientOptions>,
   ) {
-    this.options = R.mergeDeepRight(options || {}, {
+    this.options = R.mergeDeepLeft(options || {}, {
       timeout: '30s',
       noResponse: false,
       deserialize: true,
@@ -90,14 +93,34 @@ export default class Client<TInput extends any[] = any[], TOutput = any> {
     ]);
   }
 
-  public async send(...args: TInput): Promise<TOutput | null> {
-    if (this.sender!.is_closed()) {
+  public async stop() {
+    if (this.sender && this.sender.is_open()) {
+      this.sender.close();
+
+      await new Promise((resolve) => {
+        this.connection.once('sender_close', resolve);
+      });
+    }
+
+    await this.asyncGroup.wait();
+
+    if (this.receiver && this.receiver.is_open()) {
+      this.receiver.close();
+
+      await new Promise((resolve) => {
+        this.connection.once('receiver_close', resolve);
+      });
+    }
+  }
+
+  public async send(...args: TInput) {
+    if (!this.sender || this.sender.is_closed()) {
       throw new Error('Sender is closed.');
     }
 
     const correlationId = uuid();
 
-    this.sender!.send({
+    this.sender.send({
       reply_to: this.receiver?.source.address,
       correlation_id: correlationId,
       body: {
@@ -121,6 +144,8 @@ export default class Client<TInput extends any[] = any[], TOutput = any> {
         },
       });
     });
+
+    this.asyncGroup.add(promise);
 
     return Promise.race([
       promise,

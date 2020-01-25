@@ -15,7 +15,9 @@
   },
   "scripts": {
     "test": "TS_NODE_PROJECT=tsconfig.json TS_NODE_FILES=true cucumber-js -p default",
-    "debug": "node --nolazy --debug-brk=5858 ./node_modules/.bin/cucumberjs"
+    "clean": "rimraf build/",
+    "build": "npm run clean && tsc --project tsconfig.json",
+    "prepublish": "npm run build"
   },
   "bugs": {
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
@@ -28,6 +30,7 @@
     "chai": "^4.2.0",
     "cucumber": "^6.0.5",
     "cucumber-pretty": "^6.0.0",
+    "rimraf": "^3.0.0",
     "ts-node": "^8.6.2",
     "typescript": "^3.7.5"
   },
