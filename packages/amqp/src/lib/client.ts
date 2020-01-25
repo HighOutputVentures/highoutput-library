@@ -6,6 +6,7 @@ import R from 'ramda';
 import uuid from 'uuid/v4';
 import delay from '@highoutput/delay';
 import AsyncGroup from '@highoutput/async-group';
+import { deserializeError } from 'serialize-error';
 import logger from './logger';
 
 export type ClientOptions = {
@@ -41,76 +42,6 @@ export default class Client<TInput extends any[] = any[], TOutput = any> {
     });
 
     logger.tag('client').info(this.options);
-  }
-
-  public async start() {
-    this.sender = this.connection.open_sender({
-      target: {
-        address: this.scope,
-      },
-    });
-
-    this.sender.on('sender_error', (context: EventContext) => {
-      logger.tag('client').error(context.error?.message!);
-    });
-
-    this.receiver = this.connection.open_receiver({
-      source: {
-        address: `${this.scope}:${this.id}`,
-        dynamic: true,
-      },
-    });
-
-    this.receiver.on('message', (context: EventContext) => {
-      const body = context.message?.body;
-      logger.tag(['client', 'message']).info(body);
-
-      const callback = this.callbacks.get(context.message?.correlation_id as string);
-
-      if (!callback) {
-        return;
-      }
-
-      if (body.error) {
-        callback.reject(new Error(body.error.message));
-        return;
-      }
-
-      callback.resolve(body.result);
-    });
-
-    await Promise.all([
-      new Promise((resolve) => {
-        this.sender!.once('sender_open', () => {
-          resolve();
-        });
-      }),
-      new Promise((resolve) => {
-        this.receiver!.once('receiver_open', () => {
-          resolve();
-        });
-      }),
-    ]);
-  }
-
-  public async stop() {
-    if (this.sender && this.sender.is_open()) {
-      this.sender.close();
-
-      await new Promise((resolve) => {
-        this.connection.once('sender_close', resolve);
-      });
-    }
-
-    await this.asyncGroup.wait();
-
-    if (this.receiver && this.receiver.is_open()) {
-      this.receiver.close();
-
-      await new Promise((resolve) => {
-        this.connection.once('receiver_close', resolve);
-      });
-    }
   }
 
   public async send(...args: TInput) {
@@ -157,5 +88,76 @@ export default class Client<TInput extends any[] = any[], TOutput = any> {
         throw new Error('Request timeout.');
       })(),
     ]);
+  }
+
+  public async start() {
+    this.sender = this.connection.open_sender({
+      target: {
+        address: this.scope,
+      },
+    });
+
+    this.sender.on('sender_error', (context: EventContext) => {
+      logger.tag('client').error(context.error?.message!);
+    });
+
+    this.receiver = this.connection.open_receiver({
+      source: {
+        address: `${this.scope}:${this.id}`,
+        dynamic: true,
+      },
+    });
+
+    this.receiver.on('message', (context: EventContext) => {
+      const body = context.message?.body;
+      logger.tag(['client', 'message']).info(body);
+
+      const callback = this.callbacks.get(context.message?.correlation_id as string);
+
+      if (!callback) {
+        return;
+      }
+
+      if (body.error) {
+        const error = deserializeError(body.error);
+        callback.reject(error);
+        return;
+      }
+
+      callback.resolve(body.result);
+    });
+
+    await Promise.all([
+      new Promise((resolve) => {
+        this.sender!.once('sender_open', () => {
+          resolve();
+        });
+      }),
+      new Promise((resolve) => {
+        this.receiver!.once('receiver_open', () => {
+          resolve();
+        });
+      }),
+    ]);
+  }
+
+  public async stop() {
+    if (this.sender && this.sender.is_open()) {
+      this.sender.close();
+
+      await new Promise((resolve) => {
+        this.connection.once('sender_close', resolve);
+      });
+    }
+
+    await this.asyncGroup.wait();
+
+    if (this.receiver && this.receiver.is_open()) {
+      this.receiver.close();
+
+      await new Promise((resolve) => {
+        this.connection.once('receiver_close', resolve);
+      });
+    }
   }
 }

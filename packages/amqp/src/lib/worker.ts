@@ -4,6 +4,7 @@ import {
 } from 'rhea';
 import R from 'ramda';
 import AsyncGroup from '@highoutput/async-group';
+import { serializeError } from 'serialize-error';
 import logger from './logger';
 
 export type WorkerOptions = {
@@ -78,7 +79,7 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
     try {
       result = await this.handler(...message.body.parameters);
     } catch (err) {
-      error = err;
+      error = serializeError(err);
     }
 
     sender.send({
@@ -100,6 +101,7 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
       credit_window: 0,
       autoaccept: false,
     });
+
     this.receiver.add_credit(this.options.concurrency);
 
     this.receiver.on('message', async (context: EventContext) => {
