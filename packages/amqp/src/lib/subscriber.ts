@@ -59,8 +59,6 @@ export default class Subscriber<TInput extends any[] = any[]> extends EventEmitt
     this.receiver = await openReceiver(this.connection, {
       source: {
         address: `topic://${this.topic}`,
-        durable: 2,
-        expiry_policy: 'never',
       },
       credit_window: 0,
       autoaccept: false,
