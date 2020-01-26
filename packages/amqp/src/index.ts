@@ -8,7 +8,10 @@ import Worker, { WorkerOptions } from './lib/worker';
 import Publisher, { PublisherOptions } from './lib/publisher';
 import Subscriber, { SubscriberOptions } from './lib/subscriber';
 
-export { Client, Worker };
+export {
+  Client, Worker, Publisher, Subscriber,
+  ClientOptions, WorkerOptions, PublisherOptions, SubscriberOptions,
+};
 
 export type AmqpOptions = {
   host: string;

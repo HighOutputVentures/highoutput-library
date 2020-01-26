@@ -1,20 +1,11 @@
 /* eslint-disable no-restricted-syntax */
 import {
-  Given, When, Then, Before, After,
+  Given, When, Then,
 } from 'cucumber';
 import { expect } from 'chai';
 import R from 'ramda';
 import delay from '@highoutput/delay';
 import crypto from 'crypto';
-import Amqp from '../../../src/index';
-
-Before(async function () {
-  this.amqp = new Amqp();
-});
-
-After(async function () {
-  await this.amqp.stop();
-});
 
 Given('a client and a worker', async function () {
   this.client = await this.amqp.createClient('test');

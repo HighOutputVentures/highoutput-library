@@ -1,8 +1,13 @@
 Feature: PubSub
   As a developer
   I want to send a message from a remote publisher and all the subscribers should receive the message
-  @only
+
   Scenario: Multiple Subscribers
     Given a single publisher and multiple subscribers
     When I send a message from the publisher
     Then all subscribers should receive the same message
+
+  Scenario: Topic
+    Given multiple publishers with different topics and a subscriber with topic that matches all topics set by publishers
+    When I send a message from each of the publishers
+    Then the subscriber should receive all messages
