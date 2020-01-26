@@ -8,6 +8,7 @@ import delay from '@highoutput/delay';
 import AsyncGroup from '@highoutput/async-group';
 import AppError from '@highoutput/error';
 import logger from './logger';
+import { deserialize, serialize } from './util';
 
 export type ClientOptions = {
   timeout: string;
@@ -51,12 +52,18 @@ export default class Client<TInput extends any[] = any[], TOutput = any> {
 
     const correlationId = uuid();
 
+    const body = {
+      correlationId,
+      arguments: this.options.serialize ? serialize(args) : args,
+      timestamp: Date.now(),
+    };
+
+    logger.tag(['client', 'request']).verbose(body);
+
     this.sender.send({
       reply_to: this.receiver?.source.address,
       correlation_id: correlationId,
-      body: {
-        parameters: args,
-      },
+      body,
     });
 
     if (this.options.noResponse) {
@@ -109,8 +116,7 @@ export default class Client<TInput extends any[] = any[], TOutput = any> {
     });
 
     this.receiver.on('message', (context: EventContext) => {
-      const body = context.message?.body;
-      logger.tag(['client', 'message']).info(body);
+      let body = context.message?.body;
 
       const callback = this.callbacks.get(context.message?.correlation_id as string);
 
@@ -118,17 +124,27 @@ export default class Client<TInput extends any[] = any[], TOutput = any> {
         return;
       }
 
+      body = {
+        ...body,
+        result: this.options.deserialize ? deserialize(body.result) : body.result,
+      };
+
+      logger.tag(['client', 'response']).verbose(body);
+
       if (body.error) {
         let error: AppError;
 
+        const deserialized = deserialize(body.error);
+
+        const meta = {
+          ...R.omit(['id', 'name', 'message', 'stack', 'service'])(deserialized),
+          original: deserialized,
+        };
+
         if (body.error.name === 'AppError') {
-          error = new AppError(body.error.code, body.error.message, {
-            original: body.error,
-          });
+          error = new AppError(body.error.code, body.error.message, meta);
         } else {
-          error = new AppError('WORKER_ERROR', body.error.message, {
-            original: body.error,
-          });
+          error = new AppError('WORKER_ERROR', body.error.message, meta);
         }
 
         callback.reject(error);

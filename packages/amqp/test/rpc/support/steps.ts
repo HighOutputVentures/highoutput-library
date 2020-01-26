@@ -5,6 +5,7 @@ import {
 import { expect } from 'chai';
 import R from 'ramda';
 import delay from '@highoutput/delay';
+import crypto from 'crypto';
 import Amqp from '../../../src/index';
 
 Before(async function () {
@@ -97,4 +98,21 @@ When('I send {int} message\\(s) from the client', async function (messagesCount:
 Then('all the messages should be handled in about {int} milliseconds', function (duration: number) {
   expect(this.duration).to.be.gte(duration);
   expect(this.duration).to.be.lt(duration + (150 / this.concurrency) * this.messagesCount);
+});
+
+Given('a message that contains class objects', async function () {
+  this.examples = {
+    Buffer: crypto.randomBytes(16),
+    Set: new Set([1, 2, 3, 4, 5]),
+    Map: new Set([['one', 1], ['two', 2], ['three', 3], ['four', 4], ['five', 5]]),
+    Date: new Date(),
+  };
+});
+
+When('I send a {} from the client', async function (type: string) {
+  await this.client({ value: this.examples[type] });
+});
+
+Then('the worker should also receive a {}', async function (type: string) {
+  expect(this.message).to.deep.equal({ value: this.examples[type] });
 });

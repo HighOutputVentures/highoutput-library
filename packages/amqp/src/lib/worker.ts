@@ -6,6 +6,7 @@ import R from 'ramda';
 import AsyncGroup from '@highoutput/async-group';
 import { serializeError } from 'serialize-error';
 import logger from './logger';
+import { serialize, deserialize } from './util';
 
 export type WorkerOptions = {
   concurrency: number;
@@ -70,24 +71,36 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
       return;
     }
 
-    logger.tag(['worker', 'message']).info(message.body);
+    const request = {
+      ...message.body,
+      arguments: this.options.deserialize ? deserialize(message.body.arguments) : message.body.arguments,
+    };
+
+    logger.tag(['worker', 'request']).info(request);
+
     const sender = await this.getSender(message.reply_to!);
 
     let result: TOutput | null = null;
-    let error: Error | null = null;
+    let error: Record<string, any> | null = null;
 
     try {
-      result = await this.handler(...message.body.parameters);
+      result = await this.handler(...request.arguments);
     } catch (err) {
-      error = serializeError(err);
+      error = serialize(serializeError(err));
     }
+
+    const response = {
+      correlationId: message.correlation_id,
+      result: this.options.serialize ? serialize(result) : result,
+      error,
+      timestamp: Date.now(),
+    };
+
+    logger.tag(['worker', 'response']).info(request);
 
     sender.send({
       correlation_id: message.correlation_id,
-      body: {
-        result,
-        error,
-      },
+      body: response,
     });
   }
 

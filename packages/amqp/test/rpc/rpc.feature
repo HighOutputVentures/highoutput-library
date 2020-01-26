@@ -43,3 +43,16 @@ Feature: RPC
       | 1           | 800      |
       | 2           | 400      |
       | 4           | 200      |
+
+  Scenario Outline: Serialization
+    Given a client and a worker
+    And a message that contains class objects
+    When I send a <type> from the client
+    Then the worker should also receive a <type>
+    
+    Examples:
+      | type   |
+      | Buffer |
+      | Set    |
+      | Map    |
+      | Date   |
