@@ -6,7 +6,9 @@ import R from 'ramda';
 import AsyncGroup from '@highoutput/async-group';
 import { serializeError } from 'serialize-error';
 import logger from './logger';
-import { serialize, deserialize } from './util';
+import {
+  serialize, deserialize, closeReceiver, closeSender, openSender, openReceiver,
+} from './util';
 
 export type WorkerOptions = {
   concurrency: number;
@@ -42,21 +44,11 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
     let promise = this.senders.get(address);
 
     if (!promise) {
-      promise = (async () => {
-        const sender = this.connection.open_sender({
-          target: {
-            address,
-          },
-        });
-
-        await new Promise((resolve) => {
-          sender.once('sender_open', () => {
-            resolve();
-          });
-        });
-
-        return sender;
-      })();
+      promise = openSender(this.connection, {
+        target: {
+          address,
+        },
+      });
 
       this.senders.set(address, promise);
     }
@@ -105,7 +97,7 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
   }
 
   public async start() {
-    this.receiver = this.connection.open_receiver({
+    this.receiver = await openReceiver(this.connection, {
       source: {
         address: this.scope,
         durable: 2,
@@ -126,11 +118,7 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
 
   public async stop() {
     if (this.receiver && this.receiver.is_open()) {
-      this.receiver.close();
-
-      await new Promise((resolve) => {
-        this.connection.once('receiver_close', resolve);
-      });
+      await closeReceiver(this.receiver);
     }
 
     await this.asyncGroup.wait();
@@ -139,11 +127,7 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
       const sender = await promise;
 
       if (sender.is_open()) {
-        sender.close();
-
-        await new Promise((resolve) => {
-          this.connection.once('sender_close', resolve);
-        });
+        await closeSender(sender);
       }
     }));
 

@@ -8,7 +8,9 @@ import delay from '@highoutput/delay';
 import AsyncGroup from '@highoutput/async-group';
 import AppError from '@highoutput/error';
 import logger from './logger';
-import { deserialize, serialize } from './util';
+import {
+  deserialize, serialize, closeSender, closeReceiver, openSender, openReceiver,
+} from './util';
 
 export type ClientOptions = {
   timeout: string;
@@ -98,22 +100,22 @@ export default class Client<TInput extends any[] = any[], TOutput = any> {
   }
 
   public async start() {
-    this.sender = this.connection.open_sender({
-      target: {
-        address: this.scope,
-      },
-    });
+    const [sender, receiver] = await Promise.all([
+      openSender(this.connection, {
+        target: {
+          address: this.scope,
+        },
+      }),
+      openReceiver(this.connection, {
+        source: {
+          address: `${this.scope}:${this.id}`,
+          dynamic: true,
+        },
+      }),
+    ]);
 
-    this.sender.on('sender_error', (context: EventContext) => {
-      logger.tag('client').error(context.error?.message!);
-    });
-
-    this.receiver = this.connection.open_receiver({
-      source: {
-        address: `${this.scope}:${this.id}`,
-        dynamic: true,
-      },
-    });
+    this.sender = sender;
+    this.receiver = receiver;
 
     this.receiver.on('message', (context: EventContext) => {
       let body = context.message?.body;
@@ -153,38 +155,17 @@ export default class Client<TInput extends any[] = any[], TOutput = any> {
 
       callback.resolve(body.result);
     });
-
-    await Promise.all([
-      new Promise((resolve) => {
-        this.sender!.once('sender_open', () => {
-          resolve();
-        });
-      }),
-      new Promise((resolve) => {
-        this.receiver!.once('receiver_open', () => {
-          resolve();
-        });
-      }),
-    ]);
   }
 
   public async stop() {
     if (this.sender && this.sender.is_open()) {
-      this.sender.close();
-
-      await new Promise((resolve) => {
-        this.connection.once('sender_close', resolve);
-      });
+      await closeSender(this.sender);
     }
 
     await this.asyncGroup.wait();
 
     if (this.receiver && this.receiver.is_open()) {
-      this.receiver.close();
-
-      await new Promise((resolve) => {
-        this.connection.once('receiver_close', resolve);
-      });
+      await closeReceiver(this.receiver);
     }
   }
 }
