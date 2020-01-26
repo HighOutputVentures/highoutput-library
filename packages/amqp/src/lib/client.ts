@@ -26,7 +26,7 @@ export default class Client<TInput extends any[] = any[], TOutput = any> {
 
   private receiver: Receiver | null = null;
 
-  private id: string = uuid();
+  public readonly id: string = uuid();
 
   private readonly callbacks = new Map<string, { resolve: Function; reject: Function }>();
 
@@ -34,7 +34,7 @@ export default class Client<TInput extends any[] = any[], TOutput = any> {
 
   public constructor(
     private readonly connection: Connection,
-    private readonly scope: string,
+    private readonly queue: string,
     options?: Partial<ClientOptions>,
   ) {
     this.options = R.mergeDeepLeft(options || {}, {
@@ -103,12 +103,14 @@ export default class Client<TInput extends any[] = any[], TOutput = any> {
     const [sender, receiver] = await Promise.all([
       openSender(this.connection, {
         target: {
-          address: this.scope,
+          address: `queue://${this.queue}`,
+          durable: 2,
+          expiry_policy: 'never',
         },
       }),
       openReceiver(this.connection, {
         source: {
-          address: `${this.scope}:${this.id}`,
+          address: `queue://${this.queue}/${this.id}`,
           dynamic: true,
         },
       }),

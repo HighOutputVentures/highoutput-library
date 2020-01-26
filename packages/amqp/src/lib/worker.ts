@@ -5,6 +5,7 @@ import {
 import R from 'ramda';
 import AsyncGroup from '@highoutput/async-group';
 import { serializeError } from 'serialize-error';
+import { EventEmitter } from 'events';
 import logger from './logger';
 import {
   serialize, deserialize, closeReceiver, closeSender, openSender, openReceiver,
@@ -16,7 +17,7 @@ export type WorkerOptions = {
   deserialize: boolean;
 }
 
-export default class Worker<TInput extends any[] = any[], TOutput = any> {
+export default class Worker<TInput extends any[] = any[], TOutput = any> extends EventEmitter {
   private options: WorkerOptions;
 
   private senders: Map<string, Promise<Sender>> = new Map();
@@ -27,10 +28,12 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
 
   public constructor(
     private readonly connection: Connection,
-    private readonly scope: string,
+    private readonly queue: string,
     private readonly handler: (...args: TInput) => Promise<TOutput>,
     options?: Partial<WorkerOptions>,
   ) {
+    super();
+
     this.options = R.mergeDeepLeft(options || {}, {
       concurrency: 1,
       deserialize: true,
@@ -99,7 +102,7 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
   public async start() {
     this.receiver = await openReceiver(this.connection, {
       source: {
-        address: this.scope,
+        address: `queue://${this.queue}`,
         durable: 2,
         expiry_policy: 'never',
       },
@@ -107,13 +110,15 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
       autoaccept: false,
     });
 
-    this.receiver.add_credit(this.options.concurrency);
-
     this.receiver.on('message', async (context: EventContext) => {
       await this.asyncGroup.add(this.handleMessage(context));
       context.delivery!.accept();
       context.receiver!.add_credit(1);
     });
+
+    this.receiver.add_credit(this.options.concurrency);
+
+    this.emit('start');
   }
 
   public async stop() {
@@ -132,5 +137,7 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
     }));
 
     this.senders.clear();
+
+    this.emit('stop');
   }
 }

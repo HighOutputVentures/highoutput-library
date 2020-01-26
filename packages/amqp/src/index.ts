@@ -24,6 +24,8 @@ export default class Amqp {
 
   private workers: Worker[] = [];
 
+  private clients: Client[] = [];
+
   public constructor(options?: Partial<AmqpOptions>) {
     this.options = R.mergeDeepLeft(options || {}, {
       host: 'localhost',
@@ -55,33 +57,37 @@ export default class Amqp {
   }
 
   public async createClient<TInput extends any[] = any[], TOutput = any>(
-    scope: string,
+    queue: string,
     options?: ClientOptions,
   ) {
     const client = new Client<TInput, TOutput>(
       this.connection,
-      `${this.options.prefix || ''}${scope}`,
+      `${this.options.prefix || ''}${queue}`,
       options,
     );
+
     await client.start();
 
     const func = (...args: TInput) => client.send(...args);
     func.client = client;
 
+    this.clients.push(client);
+
     return func;
   }
 
   public async createWorker<TInput extends any[] = any[], TOutput = any>(
-    scope: string,
+    queue: string,
     handler: (...args: TInput) => Promise<TOutput>,
     options?: WorkerOptions,
   ) {
     const worker = new Worker(
       this.connection,
-      `${this.options.prefix || ''}${scope}`,
+      `${this.options.prefix || ''}${queue}`,
       handler,
       options,
     );
+
     await worker.start();
 
     this.workers.push(worker as Worker);
@@ -90,7 +96,10 @@ export default class Amqp {
   }
 
   public async stop() {
-    await Promise.all(this.workers.map((worker) => worker.stop()));
+    await Promise.all([
+      Promise.all(this.workers.map((worker) => worker.stop())),
+      Promise.all(this.clients.map((client) => client.stop())),
+    ]);
 
     this.connection.close();
 
