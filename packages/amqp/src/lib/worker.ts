@@ -5,6 +5,7 @@ import {
 import R from 'ramda';
 import AsyncGroup from '@highoutput/async-group';
 import { serializeError } from 'serialize-error';
+import { EventEmitter } from 'events';
 import logger from './logger';
 import {
   serialize, deserialize, closeReceiver, closeSender, openSender, openReceiver,
@@ -16,7 +17,7 @@ export type WorkerOptions = {
   deserialize: boolean;
 }
 
-export default class Worker<TInput extends any[] = any[], TOutput = any> {
+export default class Worker<TInput extends any[] = any[], TOutput = any> extends EventEmitter {
   private options: WorkerOptions;
 
   private senders: Map<string, Promise<Sender>> = new Map();
@@ -31,6 +32,8 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
     private readonly handler: (...args: TInput) => Promise<TOutput>,
     options?: Partial<WorkerOptions>,
   ) {
+    super();
+
     this.options = R.mergeDeepLeft(options || {}, {
       concurrency: 1,
       deserialize: true,
@@ -47,7 +50,6 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
       promise = openSender(this.connection, {
         target: {
           address,
-          dynamic: true,
         },
       });
 
@@ -115,6 +117,8 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
     });
 
     this.receiver.add_credit(this.options.concurrency);
+
+    this.emit('start');
   }
 
   public async stop() {
@@ -133,5 +137,7 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
     }));
 
     this.senders.clear();
+
+    this.emit('stop');
   }
 }

@@ -26,7 +26,7 @@ export default class Client<TInput extends any[] = any[], TOutput = any> {
 
   private receiver: Receiver | null = null;
 
-  private id: string = uuid();
+  public readonly id: string = uuid();
 
   private readonly callbacks = new Map<string, { resolve: Function; reject: Function }>();
 
