@@ -27,7 +27,7 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
 
   public constructor(
     private readonly connection: Connection,
-    private readonly scope: string,
+    private readonly queue: string,
     private readonly handler: (...args: TInput) => Promise<TOutput>,
     options?: Partial<WorkerOptions>,
   ) {
@@ -47,6 +47,7 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
       promise = openSender(this.connection, {
         target: {
           address,
+          dynamic: true,
         },
       });
 
@@ -99,7 +100,7 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
   public async start() {
     this.receiver = await openReceiver(this.connection, {
       source: {
-        address: this.scope,
+        address: `queue://${this.queue}`,
         durable: 2,
         expiry_policy: 'never',
       },
@@ -107,13 +108,13 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
       autoaccept: false,
     });
 
-    this.receiver.add_credit(this.options.concurrency);
-
     this.receiver.on('message', async (context: EventContext) => {
       await this.asyncGroup.add(this.handleMessage(context));
       context.delivery!.accept();
       context.receiver!.add_credit(1);
     });
+
+    this.receiver.add_credit(this.options.concurrency);
   }
 
   public async stop() {
