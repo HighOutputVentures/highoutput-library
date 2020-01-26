@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion, @typescript-eslint/camelcase */
 import container, { Connection, EventContext } from 'rhea';
 import R from 'ramda';
+import uuid from 'uuid';
 import logger from './lib/logger';
 import Client, { ClientOptions } from './lib/client';
 import Worker, { WorkerOptions } from './lib/worker';
+import Publisher, { PublisherOptions } from './lib/publisher';
+import Subscriber, { SubscriberOptions } from './lib/subscriber';
 
 export { Client, Worker };
 
@@ -22,9 +25,13 @@ export default class Amqp {
 
   private connection: Connection;
 
-  private workers: Worker[] = [];
+  private workers: Map<string, Worker> = new Map();
 
-  private clients: Client[] = [];
+  private clients: Map<string, Client> = new Map();
+
+  private publishers: Map<string, Publisher> = new Map();
+
+  private subscribers: Map<string, Subscriber> = new Map();
 
   public constructor(options?: Partial<AmqpOptions>) {
     this.options = R.mergeDeepLeft(options || {}, {
@@ -71,7 +78,8 @@ export default class Amqp {
     const func = (...args: TInput) => client.send(...args);
     func.client = client;
 
-    this.clients.push(client);
+    this.clients.set(client.id, client);
+    client.once('stop', () => this.clients.delete(client.id));
 
     return func;
   }
@@ -81,7 +89,7 @@ export default class Amqp {
     handler: (...args: TInput) => Promise<TOutput>,
     options?: WorkerOptions,
   ) {
-    const worker = new Worker(
+    const worker = new Worker<TInput, TOutput>(
       this.connection,
       `${this.options.prefix || ''}${queue}`,
       handler,
@@ -90,15 +98,59 @@ export default class Amqp {
 
     await worker.start();
 
-    this.workers.push(worker as Worker);
+    const id = uuid();
+    this.workers.set(id, worker as Worker);
+    worker.once('stop', () => this.workers.delete(id));
 
     return worker;
   }
 
+  public async createPublisher<TInput extends any[] = any[]>(
+    topic: string,
+    options?: PublisherOptions,
+  ) {
+    const publisher = new Publisher<TInput>(
+      this.connection,
+      `${this.options.prefix || ''}${topic}`,
+      options,
+    );
+
+    await publisher.start();
+
+    const id = uuid();
+    this.publishers.set(id, publisher);
+    publisher.once('stop', () => this.publishers.delete(id));
+
+    return publisher;
+  }
+
+  public async createSubscriber<TInput extends any[] = any[]>(
+    topic: string,
+    handler: (...args: TInput) => Promise<void>,
+    options?: SubscriberOptions,
+  ) {
+    const subscriber = new Subscriber<TInput>(
+      this.connection,
+      `${this.options.prefix || ''}${topic}`,
+      handler,
+      options,
+    );
+
+    await subscriber.start();
+
+    const id = uuid();
+    this.subscribers.set(id, subscriber as Subscriber);
+    subscriber.once('stop', () => this.subscribers.delete(id));
+
+    return subscriber;
+  }
+
   public async stop() {
     await Promise.all([
-      Promise.all(this.workers.map((worker) => worker.stop())),
-      Promise.all(this.clients.map((client) => client.stop())),
+      Promise.all(Array.from(this.workers.values()).map((worker) => worker.stop())),
+      Promise.all(Array.from(this.clients.values()).map((client) => client.stop())),
+      Promise.all(Array.from(this.publishers.values()).map((publisher) => publisher.stop())),
+      Promise.all(Array.from(this.subscribers.values()).map((subscriber) => subscriber.stop())),
     ]);
 
     this.connection.close();

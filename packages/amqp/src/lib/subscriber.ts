@@ -1,7 +1,8 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/camelcase, @typescript-eslint/no-non-null-assertion  */
 import { Receiver, Connection, EventContext } from 'rhea';
 import R from 'ramda';
 import AsyncGroup from '@highoutput/async-group';
+import { EventEmitter } from 'events';
 import logger from './logger';
 import { openReceiver, closeReceiver, deserialize } from './util';
 
@@ -10,7 +11,7 @@ export type SubscriberOptions = {
   deserialize: boolean;
 }
 
-export default class Publisher<TInput extends any[]> {
+export default class Subscriber<TInput extends any[] = any[]> extends EventEmitter {
   private options: SubscriberOptions;
 
   private receiver: Receiver | null = null;
@@ -23,6 +24,8 @@ export default class Publisher<TInput extends any[]> {
     private readonly handler: (...args: TInput) => Promise<void>,
     options?: Partial<SubscriberOptions>,
   ) {
+    super();
+
     this.options = R.mergeDeepLeft(options || {}, {
       concurrency: 1,
       deserialize: true,
@@ -58,6 +61,8 @@ export default class Publisher<TInput extends any[]> {
         address: `topic://${this.topic}`,
         dynamic: true,
       },
+      credit_window: 0,
+      autoaccept: false,
     });
 
     this.receiver.on('message', async (context: EventContext) => {
@@ -67,6 +72,8 @@ export default class Publisher<TInput extends any[]> {
     });
 
     this.receiver.add_credit(this.options.concurrency);
+
+    this.emit('start');
   }
 
   public async stop() {
@@ -75,5 +82,7 @@ export default class Publisher<TInput extends any[]> {
     }
 
     await this.asyncGroup.wait();
+
+    this.emit('stop');
   }
 }

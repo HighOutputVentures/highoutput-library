@@ -7,6 +7,7 @@ import uuid from 'uuid/v4';
 import delay from '@highoutput/delay';
 import AsyncGroup from '@highoutput/async-group';
 import AppError from '@highoutput/error';
+import { EventEmitter } from 'events';
 import logger from './logger';
 import {
   deserialize, serialize, closeSender, closeReceiver, openSender, openReceiver,
@@ -19,7 +20,7 @@ export type ClientOptions = {
   serialize: boolean;
 }
 
-export default class Client<TInput extends any[] = any[], TOutput = any> {
+export default class Client<TInput extends any[] = any[], TOutput = any> extends EventEmitter {
   private options: ClientOptions;
 
   private sender: Sender | null = null;
@@ -37,6 +38,8 @@ export default class Client<TInput extends any[] = any[], TOutput = any> {
     private readonly queue: string,
     options?: Partial<ClientOptions>,
   ) {
+    super();
+
     this.options = R.mergeDeepLeft(options || {}, {
       timeout: '30s',
       noResponse: false,
@@ -110,7 +113,7 @@ export default class Client<TInput extends any[] = any[], TOutput = any> {
       }),
       openReceiver(this.connection, {
         source: {
-          address: `queue://${this.queue}/${this.id}`,
+          address: `temp-queue://${this.queue}/${this.id}`,
           dynamic: true,
         },
       }),
@@ -157,6 +160,8 @@ export default class Client<TInput extends any[] = any[], TOutput = any> {
 
       callback.resolve(body.result);
     });
+
+    this.emit('start');
   }
 
   public async stop() {
@@ -169,5 +174,7 @@ export default class Client<TInput extends any[] = any[], TOutput = any> {
     if (this.receiver && this.receiver.is_open()) {
       await closeReceiver(this.receiver);
     }
+
+    this.emit('stop');
   }
 }

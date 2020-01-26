@@ -2,6 +2,7 @@ import {
   Connection, Sender,
 } from 'rhea';
 import R from 'ramda';
+import { EventEmitter } from 'events';
 import logger from './logger';
 import { openSender, closeSender, serialize } from './util';
 
@@ -9,7 +10,7 @@ export type PublisherOptions = {
   serialize: boolean;
 }
 
-export default class Publisher<TInput extends any[]> {
+export default class Publisher<TInput extends any[] = any[]> extends EventEmitter {
   private options: PublisherOptions;
 
   private sender: Sender | null = null;
@@ -19,6 +20,8 @@ export default class Publisher<TInput extends any[]> {
     private readonly topic: string,
     options?: Partial<PublisherOptions>,
   ) {
+    super();
+
     this.options = R.mergeDeepLeft(options || {}, {
       serialize: true,
     });
@@ -49,11 +52,15 @@ export default class Publisher<TInput extends any[]> {
         address: `topic://${this.topic}`,
       },
     });
+
+    this.emit('start');
   }
 
   public async stop() {
     if (this.sender && this.sender.is_open()) {
       await closeSender(this.sender);
     }
+
+    this.emit('stop');
   }
 }
