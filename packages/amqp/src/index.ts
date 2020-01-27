@@ -7,10 +7,19 @@ import Client, { ClientOptions } from './lib/client';
 import Worker, { WorkerOptions } from './lib/worker';
 import Publisher, { PublisherOptions } from './lib/publisher';
 import Subscriber, { SubscriberOptions } from './lib/subscriber';
+import { serialize, deserialize } from './lib/util';
 
 export {
-  Client, Worker, Publisher, Subscriber,
-  ClientOptions, WorkerOptions, PublisherOptions, SubscriberOptions,
+  Client,
+  Worker,
+  Publisher,
+  Subscriber,
+  ClientOptions,
+  WorkerOptions,
+  PublisherOptions,
+  SubscriberOptions,
+  serialize,
+  deserialize,
 };
 
 export type AmqpOptions = {
