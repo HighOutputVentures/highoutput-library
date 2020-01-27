@@ -6,7 +6,7 @@
     "AMQP"
   ],
   "author": "High Output Ventures",
-  "homepage": "https://github.com/Proto-Garage/highoutput-library/tree/master/packages/amqp#README.md",
+  "homepage": "https://github.com/HighOutputVentures/highoutput-library/tree/master/packages/amqp#README.md",
   "license": "ISC",
   "main": "src/index.ts",
   "repository": {
