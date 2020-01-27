@@ -76,7 +76,7 @@ export default class Amqp {
 
   public async createClient<TInput extends any[] = any[], TOutput = any>(
     queue: string,
-    options?: ClientOptions,
+    options?: Partial<ClientOptions>,
   ) {
     const client = new Client<TInput, TOutput>(
       this.connection,
@@ -98,7 +98,7 @@ export default class Amqp {
   public async createWorker<TInput extends any[] = any[], TOutput = any>(
     queue: string,
     handler: (...args: TInput) => Promise<TOutput>,
-    options?: WorkerOptions,
+    options?: Partial<WorkerOptions>,
   ) {
     const worker = new Worker<TInput, TOutput>(
       this.connection,
@@ -118,7 +118,7 @@ export default class Amqp {
 
   public async createPublisher<TInput extends any[] = any[]>(
     topic: string,
-    options?: PublisherOptions,
+    options?: Partial<PublisherOptions>,
   ) {
     const publisher = new Publisher<TInput>(
       this.connection,
@@ -138,7 +138,7 @@ export default class Amqp {
   public async createSubscriber<TInput extends any[] = any[]>(
     topic: string,
     handler: (...args: TInput) => Promise<void>,
-    options?: SubscriberOptions,
+    options?: Partial<SubscriberOptions>,
   ) {
     const subscriber = new Subscriber<TInput>(
       this.connection,
