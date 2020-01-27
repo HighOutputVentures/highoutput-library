@@ -8,7 +8,7 @@
   "author": "High Output Ventures",
   "homepage": "https://github.com/HighOutputVentures/highoutput-library/tree/master/packages/amqp#README.md",
   "license": "ISC",
-  "main": "src/index.ts",
+  "main": "build/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
@@ -48,6 +48,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "gitHead": "93849a7d1af96b8c6b5dfb8342c227739aa12a3e"
+  }
 }
