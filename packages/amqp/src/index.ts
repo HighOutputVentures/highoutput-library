@@ -58,7 +58,6 @@ export default class Amqp {
       reconnect: true,
       initial_reconnect_delay: this.options.initialReconnectDelay,
       max_reconnect_delay: this.options.maxReconnectDelay,
-
     });
 
     this.connection.on('connection_open', () => {

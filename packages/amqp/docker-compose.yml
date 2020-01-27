@@ -1,6 +1,8 @@
 version: '3.2'
 services:
   activemq:
-    image: rmohr/activemq:5.13.4
+    image: rmohr/activemq:5.15.9-alpine
     ports:
       - 5672:5672
+    volumes:
+      - ${PWD}/activemq.xml:/opt/apache-activemq-5.15.9/conf/activemq.xml
