@@ -24,7 +24,10 @@ Then('all subscribers should receive the same message', async function () {
   }
 });
 
-Given(/with different topics and a subscriber with topic/, async function () {
+Given([
+  'multiple publishers with different topics and a subscriber',
+  'with topic that matches all topics set by publishers',
+].join(' '), async function () {
   this.publishers = await Promise.all(
     ['one', 'two', 'three'].map((topic) => this.amqp.createPublisher(`test.${topic}`)),
   );
@@ -42,4 +45,20 @@ When('I send a message from each of the publishers', async function () {
 
 Then('the subscriber should receive all messages', async function () {
   expect(this.subscriber.messagesReceivedCount).to.equal(this.publishers.length);
+});
+
+Given([
+  'multiple publishers with different topics and a subscriber',
+  'with topic that matches the topic set by one of the publishers',
+].join(' '), async function () {
+  this.publishers = await Promise.all(
+    ['one', 'two', 'three'].map((topic) => this.amqp.createPublisher(`test.${topic}`)),
+  );
+  this.subscriber = await this.amqp.createSubscriber('test.one', async () => {
+    this.subscriber.messagesReceivedCount = (this.subscriber.messagesReceivedCount || 0) + 1;
+  });
+});
+
+Then('the subscriber should receive only the message sent by one of the publishers', async function () {
+  expect(this.subscriber.messagesReceivedCount).to.equal(1);
 });

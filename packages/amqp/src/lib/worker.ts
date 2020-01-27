@@ -73,8 +73,6 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> extends
 
     logger.tag(['worker', 'request']).info(request);
 
-    const sender = await this.getSender(message.reply_to!);
-
     let result: TOutput | null = null;
     let error: Record<string, any> | null = null;
 
@@ -84,19 +82,23 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> extends
       error = serialize(serializeError(err));
     }
 
-    const response = {
-      correlationId: message.correlation_id,
-      result: this.options.serialize ? serialize(result) : result,
-      error,
-      timestamp: Date.now(),
-    };
+    if (message.reply_to) {
+      const response = {
+        correlationId: message.correlation_id,
+        result: this.options.serialize ? serialize(result) : result,
+        error,
+        timestamp: Date.now(),
+      };
 
-    logger.tag(['worker', 'response']).info(request);
+      logger.tag(['worker', 'response']).info(request);
 
-    sender.send({
-      correlation_id: message.correlation_id,
-      body: response,
-    });
+      const sender = await this.getSender(message.reply_to!);
+
+      sender.send({
+        correlation_id: message.correlation_id,
+        body: response,
+      });
+    }
   }
 
   public async start() {
