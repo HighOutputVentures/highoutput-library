@@ -128,11 +128,14 @@ export default class Amqp {
 
     await publisher.start();
 
+    const func = (...args: TInput) => publisher.send(...args);
+    func.publisher = publisher;
+
     const id = uuid();
     this.publishers.set(id, publisher);
     publisher.once('stop', () => this.publishers.delete(id));
 
-    return publisher;
+    return func;
   }
 
   public async createSubscriber<TInput extends any[] = any[]>(

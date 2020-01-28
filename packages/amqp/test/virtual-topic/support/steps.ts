@@ -12,7 +12,7 @@ Given('a publisher and a worker with virtual topics', async function () {
 
 When('I send a message from the publisher with the virtual topic', async function () {
   this.message = { value: Math.random() };
-  this.publisher.send(this.message);
+  this.publisher(this.message);
   await delay(200);
 });
 

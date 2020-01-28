@@ -3,7 +3,6 @@ import { Given, When, Then } from 'cucumber';
 import R from 'ramda';
 import { expect } from 'chai';
 import delay from '@highoutput/delay';
-import { Publisher } from '../../../src/index';
 
 Given('a single publisher and multiple subscribers', async function () {
   this.publisher = await this.amqp.createPublisher('test');
@@ -14,7 +13,7 @@ Given('a single publisher and multiple subscribers', async function () {
 
 When('I send a message from the publisher', async function () {
   this.message = { value: Math.random() };
-  this.publisher.send(this.message);
+  this.publisher(this.message);
   await delay(200);
 });
 
@@ -37,8 +36,8 @@ Given([
 });
 
 When('I send a message from each of the publishers', async function () {
-  this.publishers.forEach((publisher: Publisher) => {
-    publisher.send({ value: Math.random() });
+  this.publishers.forEach((publisher: (...args: any[]) => void) => {
+    publisher({ value: Math.random() });
   });
   await delay(200);
 });
