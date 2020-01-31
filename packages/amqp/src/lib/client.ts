@@ -14,7 +14,7 @@ import {
 } from './util';
 
 export type ClientOptions = {
-  timeout: string;
+  timeout: string | number;
   noResponse: boolean;
   deserialize: boolean;
   serialize: boolean;
