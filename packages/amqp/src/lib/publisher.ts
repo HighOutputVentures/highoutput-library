@@ -3,6 +3,7 @@ import {
 } from 'rhea';
 import R from 'ramda';
 import { EventEmitter } from 'events';
+import AppError from '@highoutput/error';
 import logger from './logger';
 import { openSender, closeSender, serialize } from './util';
 
@@ -31,7 +32,7 @@ export default class Publisher<TInput extends any[] = any[]> extends EventEmitte
 
   public send(...args: TInput) {
     if (!this.sender || this.sender.is_closed()) {
-      throw new Error('Sender is closed.');
+      throw new AppError('PUBLISHER_ERROR', 'Sender is closed.');
     }
 
     const body = {

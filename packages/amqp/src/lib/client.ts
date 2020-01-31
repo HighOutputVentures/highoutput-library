@@ -52,7 +52,7 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
 
   public async send(...args: TInput) {
     if (!this.sender || this.sender.is_closed()) {
-      throw new Error('Sender is closed.');
+      throw new AppError('CLIENT_ERROR', 'Sender is closed.');
     }
 
     const correlationId = uuid();
@@ -97,7 +97,7 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
 
         this.callbacks.delete(correlationId);
 
-        throw new Error('Request timeout.');
+        throw new AppError('TIMEOUT', 'Request timeout.');
       })(),
     ]);
   }
