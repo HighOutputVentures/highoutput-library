@@ -24,9 +24,14 @@ export {
 
 export type AmqpOptions = {
   host: string;
-  port: number;
-  username?: string;
+  port?: number;
+  username: string;
   password?: string;
+  transport?: 'ssl' | 'tcp' | 'tls';
+  ca?: string;
+  servername?: string;
+  key?: string;
+  cert?: string;
   initialReconnectDelay: number;
   maxReconnectDelay: number;
   prefix?: string;
@@ -48,7 +53,7 @@ export default class Amqp {
   public constructor(options?: Partial<AmqpOptions>) {
     this.options = R.mergeDeepLeft(options || {}, {
       host: 'localhost',
-      port: 5672,
+      username: 'ANONYMOUS',
       initialReconnectDelay: 100,
       maxReconnectDelay: 10000,
     });

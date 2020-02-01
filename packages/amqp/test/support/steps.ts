@@ -2,9 +2,7 @@ import { Before, After } from 'cucumber';
 import Amqp from '../../src/index';
 
 Before(async function () {
-  this.amqp = new Amqp({
-    username: 'ANONYMOUS',
-  });
+  this.amqp = new Amqp();
 });
 
 After(async function () {
