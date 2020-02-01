@@ -90,7 +90,7 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> extends
         timestamp: Date.now(),
       };
 
-      logger.tag(['worker', 'response']).info(request);
+      logger.tag(['worker', 'response']).info(response);
 
       const sender = await this.getSender(message.reply_to!);
 
