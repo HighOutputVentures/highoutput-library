@@ -53,6 +53,10 @@ class Logger {
     logger(items[0], ...items.slice(1));
   }
 
+  critical(...args: (string | Error | object)[]): void {
+    this.log.apply(this, ['critical', ...args]);
+  }
+
   error(...args: (string | Error | object)[]): void {
     this.log.apply(this, ['error', ...args]);
   }
