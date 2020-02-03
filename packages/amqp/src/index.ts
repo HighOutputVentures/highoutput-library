@@ -51,7 +51,7 @@ export default class Amqp {
   private subscribers: Map<string, Subscriber> = new Map();
 
   public constructor(options?: Partial<AmqpOptions>) {
-    this.options = R.mergeDeepLeft(options || {}, {
+    this.options = R.mergeDeepLeft(R.reject(R.isNil)(options || {}) as any, {
       host: 'localhost',
       username: 'ANONYMOUS',
       initialReconnectDelay: 100,
