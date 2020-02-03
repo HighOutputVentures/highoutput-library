@@ -58,6 +58,8 @@ export default class Amqp {
       maxReconnectDelay: 10000,
     });
 
+    logger.tag(['amqp', 'options']).info(R.omit(['password'], this.options));
+
     this.connection = container.connect({
       ...this.options,
       reconnect: true,
