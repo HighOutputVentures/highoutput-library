@@ -42,9 +42,13 @@ export default class Publisher<TInput extends any[] = any[]> extends EventEmitte
 
     logger.tag(['publisher', 'request']).verbose(body);
 
-    this.sender.send({
-      body,
-    });
+    try {
+      this.sender.send({
+        body,
+      });
+    } catch (err) {
+      logger.tag('publisher').warn(err);
+    }
   }
 
   public async start() {

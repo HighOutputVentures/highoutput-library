@@ -94,10 +94,14 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> extends
 
       const sender = await this.getSender(message.reply_to!);
 
-      sender.send({
-        correlation_id: message.correlation_id,
-        body: response,
-      });
+      try {
+        sender.send({
+          correlation_id: message.correlation_id,
+          body: response,
+        });
+      } catch (err) {
+        logger.tag('worker').warn(err);
+      }
     }
   }
 

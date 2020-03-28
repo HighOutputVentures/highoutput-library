@@ -65,11 +65,15 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
 
     logger.tag(['client', 'request']).verbose(body);
 
-    this.sender.send({
-      reply_to: this.receiver?.source.address,
-      correlation_id: correlationId,
-      body,
-    });
+    try {
+      this.sender.send({
+        reply_to: this.receiver?.source.address,
+        correlation_id: correlationId,
+        body,
+      });
+    } catch (err) {
+      logger.tag('client').warn(err);
+    }
 
     if (this.options.noResponse) {
       return null;
