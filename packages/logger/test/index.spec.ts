@@ -6,7 +6,7 @@ describe('logger', () => {
   it('should accept strings', () => {
     const logger = new Logger('test');
 
-    logger.log('log-level', 'Hello world!');
+    logger.log('info', 'Hello world!');
     logger.info('Hello world!');
     logger.error('Hello world!');
     logger.warn('Hello world!');
@@ -19,7 +19,7 @@ describe('logger', () => {
   it('should accept objects', () => {
     const logger = new Logger('test');
 
-    logger.log('log-level', { message: 'Hello world!' });
+    logger.log('info', { message: 'Hello world!' });
     logger.info({ message: 'Hello world!' });
     logger.error({ message: 'Hello world!' });
     logger.warn({ message: 'Hello world!' });
@@ -29,15 +29,31 @@ describe('logger', () => {
     assert.ok(true);
   });
 
-  it.only('should accept Error instance', () => {
+  it('should accept Error instance', () => {
     const logger = new Logger('test');
 
-    // logger.log('log-level', new Error('Hello world!'));
-    // logger.info(new Error('Hello world!'));
+    logger.log('info', new Error('Hello world!'));
+    logger.info(new Error('Hello world!'));
     logger.error(new Error('Hello world!'));
-    // logger.warn(new Error('Hello world!'));
-    // logger.silly(new Error('Hello world!'));
-    // logger.verbose(new Error('Hello world!'));
+    logger.warn(new Error('Hello world!'));
+    logger.silly(new Error('Hello world!'));
+    logger.verbose(new Error('Hello world!'));
+
+    assert.ok(true);
+  });
+
+  it('should accept complex Error instance', () => {
+    const logger = new Logger('test');
+
+    const error: any = new Error('Error');
+    error.code = 'ERROR';
+
+    logger.log('info', error);
+    logger.info(error);
+    logger.error(error);
+    logger.warn(error);
+    logger.silly(error);
+    logger.verbose(error);
 
     assert.ok(true);
   });
