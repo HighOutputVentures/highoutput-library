@@ -29,15 +29,15 @@ describe('logger', () => {
     assert.ok(true);
   });
 
-  it('should accept Error instance', () => {
+  it.only('should accept Error instance', () => {
     const logger = new Logger('test');
 
-    logger.log('log-level', new Error('Hello world!'));
-    logger.info(new Error('Hello world!'));
+    // logger.log('log-level', new Error('Hello world!'));
+    // logger.info(new Error('Hello world!'));
     logger.error(new Error('Hello world!'));
-    logger.warn(new Error('Hello world!'));
-    logger.silly(new Error('Hello world!'));
-    logger.verbose(new Error('Hello world!'));
+    // logger.warn(new Error('Hello world!'));
+    // logger.silly(new Error('Hello world!'));
+    // logger.verbose(new Error('Hello world!'));
 
     assert.ok(true);
   });

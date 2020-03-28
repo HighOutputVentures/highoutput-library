@@ -6,7 +6,11 @@ class Logger {
   private tags: string | string[];
 
   constructor(tags: string | string[]) {
-    this.tags = tags;
+    if (tags instanceof Array) {
+      this.tags = tags;
+    } else {
+      this.tags = [tags];
+    }
     this.loggers = {};
   }
 
