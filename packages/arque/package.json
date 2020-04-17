@@ -1,0 +1,42 @@
+{
+  "name": "arque",
+  "version": "0.0.0",
+  "description": "A TypeScript library for CQRS and Event Sourcing",
+  "keywords": [
+    "cqrs",
+    "event",
+    "microservice",
+    "event sourcing"
+  ],
+  "author": "High Output Ventures",
+  "homepage": "https://github.com/Proto-Garage/highoutput-library/tree/master/packages/arque#README.md",
+  "license": "ISC",
+  "main": "index.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
+  },
+  "dependencies": {
+    "@highoutput/amqp": "^0.4.10",
+    "@highoutput/logger": "^0.2.2",
+    "@types/lokijs": "^1.5.3",
+    "@types/lru-cache": "^5.1.0",
+    "@types/ramda": "^0.27.3",
+    "lokijs": "^1.5.8",
+    "lru-cache": "^5.1.1",
+    "ramda": "^0.27.0"
+  }
+}
