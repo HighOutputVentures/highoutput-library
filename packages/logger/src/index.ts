@@ -1,5 +1,7 @@
 import debug, { Debugger } from 'debug';
 
+type Argument = number | string | Error | object;
+
 class Logger {
   private loggers: { [key: string]: Debugger };
 
@@ -21,7 +23,7 @@ class Logger {
     ]);
   }
 
-  log(level: string, ...args: (string | Error | object)[]): void {
+  log(level: string, ...args: Argument[]): void {
     const tags = [...this.tags].join(',');
     const scope = `${level}${tags ? `:${tags}` : ''}`;
     const logger = this.loggers[scope] ? this.loggers[scope] : debug(scope);
@@ -29,7 +31,7 @@ class Logger {
     this.loggers[scope] = logger;
 
     const items = args
-      .map((item: string | Error | object) => {
+      .map((item: Argument) => {
         if (item instanceof Error) {
           const obj = { message: item.message };
 
@@ -57,27 +59,27 @@ class Logger {
     logger(items[0], ...items.slice(1));
   }
 
-  critical(...args: (string | Error | object)[]): void {
+  critical(...args: Argument[]): void {
     this.log.apply(this, ['critical', ...args]);
   }
 
-  error(...args: (string | Error | object)[]): void {
+  error(...args: Argument[]): void {
     this.log.apply(this, ['error', ...args]);
   }
 
-  warn(...args: (string | Error | object)[]): void {
+  warn(...args: Argument[]): void {
     this.log.apply(this, ['warn', ...args]);
   }
 
-  info(...args: (string | Error | object)[]): void {
+  info(...args: Argument[]): void {
     this.log.apply(this, ['info', ...args]);
   }
 
-  verbose(...args: (string | Error | object)[]): void {
+  verbose(...args: Argument[]): void {
     this.log.apply(this, ['verbose', ...args]);
   }
 
-  silly(...args: (string | Error | object)[]): void {
+  silly(...args: Argument[]): void {
     this.log.apply(this, ['silly', ...args]);
   }
 }
