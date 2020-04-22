@@ -39,10 +39,10 @@ export type EventStoreClient = {
 export default class extends EventEmitter {
   private amqp: Amqp;
 
-  private client?: {
+  private clientPromise: Promise<{
     (...args: any[]): Promise<any>;
     client: Client;
-  };
+  }>;
 
   public readonly initialized: Promise<void>;
 
@@ -56,16 +56,16 @@ export default class extends EventEmitter {
 
     this.amqp = options?.amqp || getAmqp();
 
-    this.initialized = this.start();
-  }
-
-  private async start() {
-    const client = await this.amqp.createClient('EventStore', {
+    this.clientPromise = this.amqp.createClient('EventStore', {
       deserialize: false,
       serialize: false,
     });
 
-    this.client = client;
+    this.initialized = this.start();
+  }
+
+  private async start() {
+    const client = await this.clientPromise;
 
     const backoff = Backoff.fibonacci({
       initialDelay: 100,
@@ -73,29 +73,29 @@ export default class extends EventEmitter {
       randomisationFactor: 0,
     });
 
-    const checkServer = async () => {
-      return Promise.race([
-        client({ type: 'Ping' }).then(() => true),
-        delay('1s').then(() => false),
-      ]);
-    };
-
     await new Promise(async (resolve) => {
-      if (!(await checkServer())) {
-        backoff.on('ready', async () => {
-          if (await checkServer()) {
-            return resolve();
-          }
+      const checkServer = async () => {
+        const available = await Promise.race([
+          client({ type: 'Ping' }).then(() => true), // TODO: set message timeout time to 1 second
+          delay('1s').then(() => false),
+        ]);
 
-          backoff.backoff();
-
-          return null;
-        });
+        if (available) {
+          return resolve();
+        }
 
         backoff.backoff();
-      } else {
-        resolve();
       }
+
+      backoff.on('ready', checkServer);
+
+      await checkServer();
     });
+  }
+
+  public async stop() {
+    const { client } = await this.clientPromise;
+
+    await client.stop();
   }
 }
