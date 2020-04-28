@@ -35,6 +35,7 @@ export type AmqpOptions = {
   initialReconnectDelay: number;
   maxReconnectDelay: number;
   prefix?: string;
+  bufferSize?: number;
 }
 
 export default class Amqp {
