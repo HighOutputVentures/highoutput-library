@@ -1,71 +1,102 @@
-import Amqp, { Subscriber, Client } from '@highoutput/amqp';
 import { EventEmitter } from 'events';
 import Backoff from 'backoff';
 import delay from '@highoutput/delay';
-import { Event, Snapshot, ID } from '../types';
-import { getAmqp } from '../util';
+import { EventStore, ConnectionAdapter, ConnectionAdapterClient, ID, RequestType, Event, Snapshot } from '../types';
+import { getConnection, generateId } from '../util';
 
-export type EventStoreClient = {
-  createEvent(params: {
+export default class extends EventEmitter implements EventStore {
+  private client: Promise<ConnectionAdapterClient>;
+
+  public readonly initialized: Promise<void>;
+
+  private options: {
+    connection: ConnectionAdapter;
+    address: string;
+    timeout: string | number;
+  }
+
+  constructor(
+    options?: {
+      connection?: ConnectionAdapter;
+      address?: string;
+      timeout?: string | number;
+    },
+  ) {
+    super();
+
+    this.options = {
+      connection: options?.connection || getConnection(),
+      address: options?.address || 'EventStore',
+      timeout: options?.timeout || '60s',
+    };
+
+    this.client = this.options.connection.createClient(
+      this.options.address,
+      { timeout: this.options.timeout },
+    );
+
+    this.initialized = this.start();
+  }
+
+  async createEvent(params: {
     type: string;
     body: any;
     aggregateId: ID;
     aggregateType: string;
     aggregateVersion: number;
     version: number;
-  }): Promise<Event>;
-  createSnapshot(params: {
+  }): Promise<Event> {
+    const client = await this.client;
+
+    const timestamp = new Date();
+    const id = generateId(timestamp);
+
+    const data = {
+      ...params,
+      id,
+      timestamp,
+    };
+
+    await client({
+      type: RequestType.SaveEvent,
+      data
+    });
+
+    return data;
+  }
+
+  async createSnapshot(params: {
     aggregateId: ID;
     aggregateType: string;
     aggregateVersion: number;
     state: any;
-  }): Promise<Snapshot>;
-  retrieveLatestSnapshot(params: {
-    aggregateId: string;
-    aggregateType: string;
-    lastAggregateVersion?: number;
-  }): Promise<Snapshot | null>;
-  retrieveEvents(params: {
-    first?: number;
-    after?: Buffer;
-  }): Promise<Event[]>;
-  subscribe(params: {
-    aggregateId?: string;
-    aggregateType?: string;
-    type?: string;
-  }, handler: (ack: () => {}) => Promise<void>): Promise<void>;
-}
+  }): Promise<Snapshot> {
+    const client = await this.client;
 
-export default class extends EventEmitter {
-  private amqp: Amqp;
+    const timestamp = new Date();
+    const id = generateId(timestamp);
 
-  private clientPromise: Promise<{
-    (...args: any[]): Promise<any>;
-    client: Client;
-  }>;
+    const data = {
+      ...params,
+      id,
+      timestamp,
+    };
 
-  public readonly initialized: Promise<void>;
-
-  constructor(
-    options?: {
-      amqp?: Amqp;
-      address?: string;
-    },
-  ) {
-    super();
-
-    this.amqp = options?.amqp || getAmqp();
-
-    this.clientPromise = this.amqp.createClient('EventStore', {
-      deserialize: false,
-      serialize: false,
+    await client({
+      type: RequestType.SaveSnapshot,
+      data,
     });
 
-    this.initialized = this.start();
+    return data;
   }
 
   private async start() {
-    const client = await this.clientPromise;
+    await this.client;
+
+    const client = await this.options.connection.createClient(
+      this.options.address,
+      { timeout: '1s' },
+    );
 
     const backoff = Backoff.fibonacci({
       initialDelay: 100,
@@ -76,9 +107,9 @@ export default class extends EventEmitter {
     await new Promise(async (resolve) => {
       const checkServer = async () => {
         const available = await Promise.race([
-          client({ type: 'Ping' }).then(() => true), // TODO: set message timeout time to 1 second
+          client({ type: 'Ping' }).then(() => true),
           delay('1s').then(() => false),
-        ]);
+        ]).catch(() => false);
 
         if (available) {
           return resolve();
@@ -94,7 +125,7 @@ export default class extends EventEmitter {
   }
 
   public async stop() {
-    const { client } = await this.clientPromise;
+    const client = await this.client;
 
     await client.stop();
   }
