@@ -1,6 +1,6 @@
 import R from 'ramda';
 import Loki, { LokiMemoryAdapter } from 'lokijs';
-import { EventStoreDatabaseAdapter, Event, Snapshot } from '../../types';
+import { EventStoreDatabaseAdapter, Event, Snapshot, ID } from '../../types';
 
 export default class implements EventStoreDatabaseAdapter {
   private readonly loki = new Loki(
@@ -13,7 +13,11 @@ export default class implements EventStoreDatabaseAdapter {
   public readonly SnapshotCollection = this.loki.addCollection('snapshots');
 
   public async saveEvent(params: Event): Promise<void> {
-    this.EventCollection.insertOne(params);
+    this.EventCollection.insertOne({
+      ...params,
+      id: params.id.toString('hex'),
+      aggregateId: params.aggregateId.toString('hex'),
+    });
   }
 
   public async saveSnapshot(params: Snapshot): Promise<void> {
@@ -46,46 +50,75 @@ export default class implements EventStoreDatabaseAdapter {
   }
 
   public async retrieveEvents(params: {
+    aggregate: ID;
+    first?: number;
+    after?: number;
+  }): Promise<Event[]>;
+  public async retrieveEvents(params: {
     first?: number;
     after?: Buffer;
-    filters?: {
-      aggregateId?: string;
-      aggregateType?: string;
+    filters: {
+      aggregateType: string;
       type?: string;
     }[];
-  }): Promise<Event[]> {
+  }): Promise<Event[]>;
+  public async retrieveEvents(params: Record<string, any>): Promise<Event[]> {
     let query: Record<string, any> = {};
 
-    if (params.after) {
+    if (params.aggregate) {
       query = {
-        ...query,
-        id: {
-          $gt: params.after,
-        },
+        aggregateId: params.aggregate.toString('hex')
       };
-    }
 
-    if (params.filters && params.filters.length > 0) {
-      if (R.isEmpty(query)) {
+      if (params.after) {
         query = {
-          $or: params.filters,
+          ...query,
+          aggregateVersion: {
+            $gt: params.after,
+          },
         };
-      } else {
+      }
+    } else {
+      if (params.after) {
         query = {
-          $and: [
-            query,
-            {
-              $or: params.filters,
-            },
-          ],
+          ...query,
+          id: {
+            $gt: params.after.toString('hex'),
+          },
         };
+      }
+
+      if (params.filters && params.filters.length > 0) {
+        if (R.isEmpty(query)) {
+          query = {
+            $or: params.filters,
+          };
+        } else {
+          query = {
+            $and: [
+              query,
+              {
+                $or: params.filters,
+              },
+            ],
+          };
+        }
       }
     }
 
     return this.EventCollection.chain()
       .find(query)
       .sort(R.ascend(R.prop('id')))
-      .limit(params.first || 100)
-      .data();
+      .limit(params.first || 1000)
+      .data()
+      .map(item => {
+        delete item.meta;
+        delete item['$loki'];
+        return {
+          ...item,
+          id: Buffer.from(item.id, 'hex'),
+          aggregateId: Buffer.from(item.aggregateId, 'hex'),
+        };
+      })
   }
 }

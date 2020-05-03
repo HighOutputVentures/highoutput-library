@@ -28,11 +28,15 @@ export interface EventStoreDatabaseAdapter {
     aggregateType: string;
   }): Promise<Snapshot | null>;
   retrieveEvents(params: {
+    aggregate: ID;
     first?: number;
-    after?: Buffer;
-    filters?: {
-      aggregateId?: string;
-      aggregateType?: string;
+    after?: number;
+  }): Promise<Event[]>;
+  retrieveEvents(params: {
+    first?: number;
+    after?: ID;
+    filters: {
+      aggregateType: string;
       type?: string;
     }[];
   }): Promise<Event[]>;

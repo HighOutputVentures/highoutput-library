@@ -8,6 +8,7 @@ import {
   MemoryEventStoreDatabaseAdapter,
 } from '../src';
 import { chance } from './helpers';
+import { generateId } from '../src/lib/util';
 
 type Context = MochaContext & {
   client: EventStoreClient;
@@ -35,8 +36,8 @@ describe('EventStore', () => {
       await this.server.start();
     });
 
-    it('should create event', async function (this: Context) {
-      await this.client.createEvent({
+    it('should generate and save event', async function (this: Context) {
+      const event = this.client.generateEvent({
         type: 'Created',
         aggregateId: crypto.randomBytes(12),
         aggregateType: 'Account',
@@ -46,6 +47,8 @@ describe('EventStore', () => {
         },
         version: 1
       });
+
+      await this.client.saveEvent(event);
   
       expect(this.database.EventCollection.count({ aggregateType: 'Account' })).to.equal(1);
     });
@@ -62,6 +65,57 @@ describe('EventStore', () => {
       });
   
       expect(this.database.SnapshotCollection.count({ aggregateType: 'Account' })).to.equal(1);
+    });
+
+    it('should create snapshot', async function (this: Context) {
+      await this.client.createSnapshot({
+        aggregateId: crypto.randomBytes(12),
+        aggregateType: 'Account',
+        aggregateVersion: 5,
+        state: {
+          username: chance.first().toLowerCase(),
+          realName: chance.name(),
+        },
+      });
+  
+      expect(this.database.SnapshotCollection.count({ aggregateType: 'Account' })).to.equal(1);
+    });
+
+    it('should retrieve events', async function (this: Context) {
+      const aggregateId = crypto.randomBytes(12);
+      const aggregateType = 'Account';
+
+      this.database.saveEvent({
+        id: generateId(),
+        type: 'Created',
+        aggregateId,
+        aggregateType,
+        aggregateVersion: 1,
+        body: {
+          username: chance.first().toLowerCase(),
+        },
+        version: 1,
+        timestamp: new Date(),
+      });
+
+      this.database.saveEvent({
+        id: generateId(),
+        type: 'Updated',
+        aggregateId,
+        aggregateType,
+        aggregateVersion: 2,
+        body: {
+          realName: chance.name(),
+        },
+        version: 1,
+        timestamp: new Date(),
+      });
+
+      const events = await this.client.retrieveEvents({
+        aggregate: aggregateId,
+      });
+
+      expect(events).to.has.length(2);
     });
   });
 

@@ -89,9 +89,9 @@ export default class {
       //   return this.database.retrieveLatestSnapshot(data);
       // }
 
-      // if (type === RequestType.RetrieveEvents) {
-      //   return this.database.retrieveEvents(data);
-      // }
+      if (type === RequestType.RetrieveEvents) {
+        return this.options.database.retrieveEvents(data);
+      }
     }, {
       concurrency: this.options.concurrency
     });

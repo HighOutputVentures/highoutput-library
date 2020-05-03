@@ -12,7 +12,8 @@
     "noUnusedLocals": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "lib": ["esnext", "dom"]
+    "experimentalDecorators": true,
+    "lib": ["esnext"]
   },
   "include": ["src/**/*"]
 }

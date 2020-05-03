@@ -1,10 +1,10 @@
 import { EventEmitter } from 'events';
 import Backoff from 'backoff';
 import delay from '@highoutput/delay';
-import { EventStore, ConnectionAdapter, ConnectionAdapterClient, ID, RequestType, Event, Snapshot } from '../types';
+import { ConnectionAdapter, ConnectionAdapterClient, ID, RequestType, Event, Snapshot } from '../types';
 import { getConnection, generateId } from '../util';
 
-export default class extends EventEmitter implements EventStore {
+export default class extends EventEmitter {
   private client: Promise<ConnectionAdapterClient>;
 
   public readonly initialized: Promise<void>;
@@ -38,31 +38,31 @@ export default class extends EventEmitter implements EventStore {
     this.initialized = this.start();
   }
 
-  async createEvent(params: {
-    type: string;
-    body: any;
-    aggregateId: ID;
-    aggregateType: string;
-    aggregateVersion: number;
-    version: number;
-  }): Promise<Event> {
-    const client = await this.client;
-
+  generateEvent(params: Omit<Event, 'id' | 'timestamp'>): Event {
     const timestamp = new Date();
-    const id = generateId(timestamp);
 
-    const data = {
+    return {
       ...params,
-      id,
+      id: generateId(timestamp),
       timestamp,
     };
+  }
+
+  async saveEvent(event: Event): Promise<void> {
+    const client = await this.client;
 
     await client({
       type: RequestType.SaveEvent,
-      data
+      data: event,
     });
+  }
 
-    return data;
+  async createEvent(params: Omit<Event, 'id' | 'timestamp'>): Promise<Event> {
+    const event = this.generateEvent(params);
+
+    await this.saveEvent(event);
+
+    return event;
   }
 
   async createSnapshot(params: {
@@ -76,7 +76,7 @@ export default class extends EventEmitter implements EventStore {
     const timestamp = new Date();
     const id = generateId(timestamp);
 
-    const data = {
+    const snapshot = {
       ...params,
       id,
       timestamp,
@@ -84,10 +84,34 @@ export default class extends EventEmitter implements EventStore {
 
     await client({
       type: RequestType.SaveSnapshot,
-      data,
+      data: snapshot,
     });
 
-    return data;
+    return snapshot;
+  }
+
+  public async retrieveEvents(params: {
+    aggregate: ID;
+    first?: number;
+    after?: number;
+  }): Promise<Event[]>;
+
+  public async retrieveEvents(params: {
+    first?: number;
+    after?: number;
+    filters: {
+      aggregateType: string;
+      type?: string;
+    }[];
+  }): Promise<Event[]>;
+
+  public async retrieveEvents(params: Record<string, any>): Promise<Event[]> {
+    const client = await this.client;
+
+    return client({
+      type: RequestType.RetrieveEvents,
+      data: params,
+    });
   }
 
   private async start() {
