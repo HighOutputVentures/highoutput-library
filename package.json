@@ -30,6 +30,8 @@
   "dependencies": {
     "@highoutput/delay": "^0.2.1",
     "@types/backoff": "^2.5.1",
-    "backoff": "^2.5.0"
+    "@types/p-queue": "^3.2.1",
+    "backoff": "^2.5.0",
+    "p-queue": "^6.3.0"
   }
 }

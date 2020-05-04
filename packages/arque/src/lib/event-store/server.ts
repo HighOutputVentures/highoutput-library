@@ -62,7 +62,6 @@ export default class {
   public async start() {
     this.worker = await this.options.connection.createWorker(this.options.address, async ({ type, data }: { type: RequestType; data?: any }) => {
       logger.verbose({ type, data });
-
       if (type === RequestType.Ping) {
         return 'Pong';
       }

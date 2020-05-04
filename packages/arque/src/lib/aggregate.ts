@@ -1,7 +1,7 @@
 import Queue from 'p-queue';
 import R from 'ramda';
 import { ID, Event } from './types';
-import { EventStoreClient } from '..';
+import EventStoreClient from '../lib/event-store/client';
 
 export default abstract class<TState = any, TEvent extends Event = Event> {
   private queue: Queue = new Queue({ concurrency: 1 });
@@ -38,7 +38,7 @@ export default abstract class<TState = any, TEvent extends Event = Event> {
   }
 
   get state(): Readonly<TState> {
-    return this._state;
+    return R.clone(this._state);
   }
 
   get id() {
@@ -54,7 +54,7 @@ export default abstract class<TState = any, TEvent extends Event = Event> {
   }
 
   public async fold() {
-    let state = R.clone(this.state);
+    let state = this.state;
     let version = this.version;
 
     let events: TEvent[];
@@ -92,7 +92,7 @@ export default abstract class<TState = any, TEvent extends Event = Event> {
         aggregateType: this.type,
       });
 
-      const state = this.apply(R.clone(this.state), event);
+      const state = this.apply(this.state, event);
 
       await this.eventStore.saveEvent(event);
 
@@ -104,7 +104,7 @@ export default abstract class<TState = any, TEvent extends Event = Event> {
           aggregateId: this.id,
           aggregateType: this.type,
           aggregateVersion: this.version,
-          state: R.clone(this.state),
+          state: this.state,
         });
       }
     });
