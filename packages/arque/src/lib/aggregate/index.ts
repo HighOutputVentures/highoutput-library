@@ -1,9 +1,14 @@
 import Queue from 'p-queue';
 import R from 'ramda';
-import { ID, Event } from './types';
-import EventStoreClient from '../lib/event-store/client';
+import { ID, Event } from '../types';
+import EventStoreClient from '../event-store/client';
 
-export default abstract class<TState = any, TEvent extends Event = Event> {
+// type AggregateEventHandler<TState, TEvent> = {
+//   filter: { type?: string; version?: number; };
+//   handler: (state: TState, event: TEvent) => TState;
+// }
+
+export default abstract class Aggregate<TState = any, TEvent extends Event = Event> {
   private queue: Queue = new Queue({ concurrency: 1 });
 
   private _version: number = 0;
@@ -49,7 +54,15 @@ export default abstract class<TState = any, TEvent extends Event = Event> {
     return this._version;
   }
 
-  private apply(state: TState, _event: Event): TState {
+  private apply(state: TState, event: Event): TState {
+    for (const item of Reflect.getMetadataKeys(this)) {
+      const filter: { type?: string; version?: number; } = Reflect.getMetadata(item, this);
+
+      if (R.equals(filter, R.pick(R.keys(filter), event))) {
+        state = this[item](state, event);
+      }
+    }
+
     return state;
   }
 
