@@ -92,7 +92,7 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
       });
     });
 
-    this.asyncGroup.add(promise);
+    this.asyncGroup.add((async () => promise)().catch(R.identity));
 
     return Promise.race([
       promise,
