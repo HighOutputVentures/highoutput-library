@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import {
   Aggregate,
+  BaseAggregate,
   AggregateEventHandler,
   EventStoreClient,
   MemoryEventStoreDatabaseAdapter,
@@ -9,7 +10,11 @@ import {
 import { expect } from './helpers';
 import { ID, Event } from '../src/lib/types';
 
-class BalanceAggregate extends Aggregate {
+@Aggregate({
+  type: 'Balance',
+  eventStore: new EventStoreClient(),
+})
+class BalanceAggregate extends BaseAggregate {
   constructor(id: ID) {
     super(id, new EventStoreClient(), 0);
   }

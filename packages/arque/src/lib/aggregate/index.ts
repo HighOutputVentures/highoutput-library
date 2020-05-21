@@ -36,7 +36,9 @@ export default abstract class Aggregate<TState = any, TEvent extends Event = Eve
     };
   }
 
-  abstract type: string;
+  protected get type(): string {
+    throw new Error('Not implemented');
+  }
 
   protected get shouldTakeSnapshot() {
     return false;
