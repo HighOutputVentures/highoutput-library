@@ -8,7 +8,7 @@ const Amqp = require('../build/index');
 async function Worker() {
   const amqp = new Amqp.default({});
 
-  await amqp.createSubscriber('PubSub:Reconnection', (...args) => {
+  await amqp.createSubscriber('Reconnection', (...args) => {
     console.log('PubSub: Received...');
     console.dir(args, { depth: null });
     return args;

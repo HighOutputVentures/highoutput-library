@@ -9,12 +9,12 @@ const Amqp = require('../build/index');
 
 async function Client() {
   const amqp = new Amqp.default({});
-  const client = await amqp.createClient('Rpc:Reconnection', { timeout: 10000 });
+  const client = amqp.createClient('Reconnection');
 
   while (true) {
     console.log('Rpc: Sending...');
     (async () => {
-      const response = await client({ num: Math.random() * 100000 });
+      const response = await client[Math.floor(Math.random() * 100) % 2]({ num: Math.random() * 100000 });
       console.log('Response: ', response);
     })();
     await delay(800);

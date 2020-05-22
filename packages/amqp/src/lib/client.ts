@@ -60,7 +60,7 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
       this.disconnected = true;
     });
 
-    this.receiverQueueAddress = `temp-queue://${this.queue}/${this.id}`;
+    this.receiverQueueAddress = `temp-queue://${this.id}:${this.queue}`;
   }
 
   public async send(...args: TInput) {

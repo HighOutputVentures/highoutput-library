@@ -8,7 +8,7 @@ const Amqp = require('../build/index');
 async function Worker() {
   const amqp = new Amqp.default({});
 
-  await amqp.createWorker('Rpc:Reconnection', (...args) => {
+  await amqp.createWorker('Reconnection', (...args) => {
     console.log('Rpc: Received...');
     console.dir(args, { depth: null });
     return args;

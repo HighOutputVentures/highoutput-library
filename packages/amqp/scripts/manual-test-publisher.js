@@ -9,7 +9,7 @@ const Amqp = require('../build/index');
 
 async function Client() {
   const amqp = new Amqp.default({});
-  const client = await amqp.createPublisher('PubSub:Reconnection', { timeout: 10000 });
+  const client = await amqp.createPublisher('Reconnection', { timeout: 10000 });
 
   while (true) {
     console.log('Publishing...');
