@@ -37,7 +37,7 @@ Feature: RPC
     And the worker handles each message for 200 milliseconds
     When I send 4 message(s) from the client
     Then all the messages should be handled in about <duration> milliseconds
-    
+
     Examples:
       | concurrency | duration |
       | 1           | 800      |
@@ -49,7 +49,7 @@ Feature: RPC
     And a message that contains class objects
     When I send a <type> from the client
     Then the worker should also receive a <type>
-    
+
     Examples:
       | type   |
       | Buffer |

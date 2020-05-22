@@ -26,6 +26,12 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> extends
 
   private asyncGroup: AsyncGroup = new AsyncGroup();
 
+  private initialize: Promise<void> | null = null;
+
+  private disconnected = false;
+
+  private shuttingDown = false;
+
   public constructor(
     private readonly connection: Connection,
     private readonly queue: string,
@@ -106,28 +112,54 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> extends
   }
 
   public async start() {
-    this.receiver = await openReceiver(this.connection, {
-      source: {
-        address: `queue://${this.queue}`,
-        durable: 2,
-        expiry_policy: 'never',
-      },
-      credit_window: 0,
-      autoaccept: false,
-    });
+    if (this.initialize) {
+      return this.initialize;
+    }
 
-    this.receiver.on('message', async (context: EventContext) => {
-      await this.asyncGroup.add(this.handleMessage(context));
-      context.delivery!.accept();
-      context.receiver!.add_credit(1);
-    });
+    const connect = async () => {
+      this.receiver = await openReceiver(this.connection, {
+        source: {
+          address: `queue://${this.queue}`,
+          durable: 2,
+          expiry_policy: 'never',
+        },
+        credit_window: 0,
+        autoaccept: false,
+      });
 
-    this.receiver.add_credit(this.options.concurrency);
+      this.receiver.on('message', async (context: EventContext) => {
+        await this.asyncGroup.add(this.handleMessage(context));
+        context.delivery!.accept();
+        context.receiver!.add_credit(1);
+      });
 
-    this.emit('start');
+      this.receiver.add_credit(this.options.concurrency);
+
+      this.emit('start');
+    };
+
+    this.initialize = (async () => {
+      await connect();
+
+      this.connection.on('disconnected', () => {
+        this.disconnected = true;
+      });
+
+      this.connection.on('connection_open', async () => {
+        if (!this.disconnected || this.shuttingDown) {
+          return;
+        }
+
+        await connect();
+        this.disconnected = false;
+      });
+    })();
+
+    return this.initialize;
   }
 
   public async stop() {
+    this.shuttingDown = true;
     if (this.receiver && this.receiver.is_open()) {
       await closeReceiver(this.receiver);
     }

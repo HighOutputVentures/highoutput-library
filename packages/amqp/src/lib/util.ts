@@ -6,7 +6,6 @@ import {
 
 export async function openReceiver(connection: Connection, options: ReceiverOptions) {
   const receiver = connection.open_receiver(options);
-
   await new Promise((resolve, reject) => {
     receiver.once('receiver_open', resolve);
     receiver.once('receiver_error', reject);

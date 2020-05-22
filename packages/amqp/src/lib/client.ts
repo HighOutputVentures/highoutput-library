@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/camelcase, @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/camelcase */
 import {
   Connection, Sender, Receiver, EventContext,
 } from 'rhea';
@@ -33,6 +33,12 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
 
   private asyncGroup: AsyncGroup = new AsyncGroup();
 
+  private initialize: Promise<void> | null = null;
+
+  private shuttingDown = false;
+
+  private disconnected = false;
+
   public constructor(
     private readonly connection: Connection,
     private readonly queue: string,
@@ -48,11 +54,18 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
     });
 
     logger.tag('client').info(this.options);
+    this.connection.on('disconnected', () => {
+      this.disconnected = true;
+    });
   }
 
   public async send(...args: TInput) {
-    if (!this.sender || this.sender.is_closed()) {
-      throw new AppError('CLIENT_ERROR', 'Sender is closed.');
+    if (this.shuttingDown) {
+      throw new AppError('CLIENT_ERROR', 'Client shutting down.');
+    }
+
+    if (this.disconnected && this.initialize !== null) {
+      await this.start();
     }
 
     const correlationId = uuid();
@@ -63,11 +76,17 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
       timestamp: Date.now(),
     };
 
-    logger.tag(['client', 'request']).verbose(body);
+    if (!this.sender || this.sender.is_closed()) {
+      throw new AppError('CLIENT_ERROR', 'Client sender is on invalid state.');
+    }
+
+    if (!this.receiver || this.receiver.is_closed()) {
+      throw new AppError('CLIENT_ERROR', 'Client receiver is on invalid state.');
+    }
 
     try {
       this.sender.send({
-        reply_to: this.receiver?.source.address,
+        reply_to: this.receiver.source.address,
         correlation_id: correlationId,
         body,
       });
@@ -107,68 +126,78 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
   }
 
   public async start() {
-    const [sender, receiver] = await Promise.all([
-      openSender(this.connection, {
-        target: {
-          address: `queue://${this.queue}`,
-          durable: 2,
-          expiry_policy: 'never',
-        },
-      }),
-      openReceiver(this.connection, {
-        source: {
-          address: `temp-queue://${this.queue}/${this.id}`,
-          dynamic: true,
-        },
-      }),
-    ]);
+    if (this.initialize) {
+      return this.initialize;
+    }
 
-    this.sender = sender;
-    this.receiver = receiver;
+    this.initialize = (async () => {
+      const [sender, receiver] = await Promise.all([
+        openSender(this.connection, {
+          target: {
+            address: `queue://${this.queue}`,
+            durable: 2,
+            expiry_policy: 'never',
+          },
+        }),
+        openReceiver(this.connection, {
+          source: {
+            address: `temp-queue://${this.queue}/${this.id}`,
+            dynamic: true,
+          },
+        }),
+      ]);
 
-    this.receiver.on('message', (context: EventContext) => {
-      let body = context.message?.body;
+      this.sender = sender;
+      this.receiver = receiver;
 
-      const callback = this.callbacks.get(context.message?.correlation_id as string);
+      this.receiver.on('message', (context: EventContext) => {
+        let body = context.message?.body;
 
-      if (!callback) {
-        return;
-      }
+        const callback = this.callbacks.get(context.message?.correlation_id as string);
 
-      body = {
-        ...body,
-        result: this.options.deserialize ? deserialize(body.result) : body.result,
-      };
-
-      logger.tag(['client', 'response']).verbose(body);
-
-      if (body.error) {
-        let error: AppError;
-
-        const deserialized = deserialize(body.error);
-
-        const meta = {
-          ...R.omit(['id', 'name', 'message', 'stack', 'service'])(deserialized),
-          original: deserialized,
-        };
-
-        if (body.error.name === 'AppError') {
-          error = new AppError(body.error.code, body.error.message, meta);
-        } else {
-          error = new AppError('WORKER_ERROR', body.error.message, meta);
+        if (!callback) {
+          return;
         }
 
-        callback.reject(error);
-        return;
-      }
+        body = {
+          ...body,
+          result: this.options.deserialize ? deserialize(body.result) : body.result,
+        };
 
-      callback.resolve(body.result);
-    });
+        logger.tag(['client', 'response']).verbose(body);
 
-    this.emit('start');
+        if (body.error) {
+          let error: AppError;
+
+          const deserialized = deserialize(body.error);
+
+          const meta = {
+            ...R.omit(['id', 'name', 'message', 'stack', 'service'])(deserialized),
+            original: deserialized,
+          };
+
+          if (body.error.name === 'AppError') {
+            error = new AppError(body.error.code, body.error.message, meta);
+          } else {
+            error = new AppError('WORKER_ERROR', body.error.message, meta);
+          }
+
+          callback.reject(error);
+          return;
+        }
+
+        callback.resolve(body.result);
+      });
+
+      this.emit('start');
+      this.initialize = null;
+    })();
+
+    return this.initialize;
   }
 
   public async stop() {
+    this.shuttingDown = true;
     if (this.sender && this.sender.is_open()) {
       await closeSender(this.sender);
     }

@@ -14,8 +14,8 @@
     "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
   },
   "scripts": {
-    "test": "TS_NODE_PROJECT=tsconfig.json TS_NODE_FILES=true cucumber-js -p default",
-    "test:only": "TS_NODE_PROJECT=tsconfig.json TS_NODE_FILES=true cucumber-js -p only",
+    "test": " TS_NODE_PROJECT=tsconfig.json TS_NODE_FILES=true cucumber-js -p default",
+    "test:only": "DEBUG=error*,verbose*,silly*,warn* TS_NODE_PROJECT=tsconfig.json TS_NODE_FILES=true cucumber-js -p only",
     "clean": "rimraf build/",
     "build": "npm run clean && tsc --project tsconfig.json",
     "prepublish": "npm run build"

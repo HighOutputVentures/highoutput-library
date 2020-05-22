@@ -16,6 +16,12 @@ export default class Publisher<TInput extends any[] = any[]> extends EventEmitte
 
   private sender: Sender | null = null;
 
+  private initialize: Promise<void> | null = null;
+
+  private disconnected = false;
+
+  private shuttingDown = false;
+
   public constructor(
     private readonly connection: Connection,
     private readonly topic: string,
@@ -27,12 +33,20 @@ export default class Publisher<TInput extends any[] = any[]> extends EventEmitte
       serialize: true,
     });
 
+    this.connection.on('disconnected', () => {
+      this.disconnected = true;
+    });
+
     logger.tag('publisher').info(this.options);
   }
 
-  public send(...args: TInput) {
-    if (!this.sender || this.sender.is_closed()) {
-      throw new AppError('PUBLISHER_ERROR', 'Sender is closed.');
+  public async send(...args: TInput) {
+    if (this.shuttingDown) {
+      throw new AppError('PUBLISHER_ERROR', 'Publisher shutting down.');
+    }
+
+    if (this.disconnected && this.initialize !== null) {
+      await this.start();
     }
 
     const body = {
@@ -41,6 +55,10 @@ export default class Publisher<TInput extends any[] = any[]> extends EventEmitte
     };
 
     logger.tag(['publisher', 'request']).verbose(body);
+
+    if (!this.sender || this.sender.is_closed()) {
+      throw new AppError('PUBLISHER_ERROR', 'Publisher sender is on invalid state.');
+    }
 
     try {
       this.sender.send({
@@ -52,16 +70,27 @@ export default class Publisher<TInput extends any[] = any[]> extends EventEmitte
   }
 
   public async start() {
-    this.sender = await openSender(this.connection, {
-      target: {
-        address: `topic://${this.topic}`,
-      },
-    });
+    if (this.initialize) {
+      return this.initialize;
+    }
 
-    this.emit('start');
+    this.initialize = (async () => {
+      this.sender = await openSender(this.connection, {
+        target: {
+          address: `topic://${this.topic}`,
+        },
+      });
+
+      this.emit('start');
+      this.disconnected = false;
+      this.initialize = null;
+    })();
+
+    return this.initialize;
   }
 
   public async stop() {
+    this.shuttingDown = true;
     if (this.sender && this.sender.is_open()) {
       await closeSender(this.sender);
     }
