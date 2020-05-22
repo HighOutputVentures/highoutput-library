@@ -4,7 +4,7 @@ import {
   Receiver, Sender, Connection, ReceiverOptions, SenderOptions,
 } from 'rhea';
 
-export async function openReceiver(connection: Connection, options: ReceiverOptions) {
+export async function openReceiver(connection: Connection, options: ReceiverOptions | string) {
   const receiver = connection.open_receiver(options);
   await new Promise((resolve, reject) => {
     receiver.once('receiver_open', resolve);

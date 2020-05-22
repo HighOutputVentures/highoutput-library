@@ -39,6 +39,8 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
 
   private disconnected = false;
 
+  private receiverQueueAddress: string;
+
   public constructor(
     private readonly connection: Connection,
     private readonly queue: string,
@@ -57,6 +59,8 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
     this.connection.on('disconnected', () => {
       this.disconnected = true;
     });
+
+    this.receiverQueueAddress = `temp-queue://${this.queue}/${this.id}`;
   }
 
   public async send(...args: TInput) {
@@ -86,7 +90,7 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
 
     try {
       this.sender.send({
-        reply_to: this.receiver.source.address,
+        reply_to: this.receiverQueueAddress,
         correlation_id: correlationId,
         body,
       });
@@ -139,12 +143,7 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
             expiry_policy: 'never',
           },
         }),
-        openReceiver(this.connection, {
-          source: {
-            address: `temp-queue://${this.queue}/${this.id}`,
-            dynamic: true,
-          },
-        }),
+        openReceiver(this.connection, this.receiverQueueAddress),
       ]);
 
       this.sender = sender;
