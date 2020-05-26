@@ -1,4 +1,4 @@
-import { Before, After } from 'cucumber';
+import { Before, After, AfterAll } from 'cucumber';
 import Amqp from '../../src/index';
 
 Before(async function () {
@@ -7,4 +7,8 @@ Before(async function () {
 
 After(async function () {
   await this.amqp.stop();
+});
+
+AfterAll(() => {
+  process.exit(0);
 });

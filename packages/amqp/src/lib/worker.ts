@@ -171,11 +171,16 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> extends
 
   public async stop() {
     this.shuttingDown = true;
+
     if (this.receiver && this.receiver.is_open()) {
-      await closeReceiver(this.receiver);
+      this.receiver.set_credit_window(0);
     }
 
     await this.asyncGroup.wait();
+
+    if (this.receiver && this.receiver.is_open()) {
+      await closeReceiver(this.receiver);
+    }
 
     await Promise.all(Array.from(this.senders.values()).map(async (promise) => {
       const sender = await promise;

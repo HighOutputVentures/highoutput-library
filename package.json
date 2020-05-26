@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@types/mocha": "^5.2.7",
+    "@types/ramda": "^0.27.6",
     "@typescript-eslint/eslint-plugin": "^2.9.0",
     "@typescript-eslint/parser": "^2.9.0",
     "eslint": "^6.7.1",

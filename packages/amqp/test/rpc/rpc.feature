@@ -27,6 +27,12 @@ Feature: RPC
     When I send multiple messages from the client
     Then the messages should be distributed into all of the workers
 
+  Scenario: Worker Failure
+    Given a single client and multiple workers with delayed response
+    When I send multiple messages from the client asynchronously
+    And one of the workers is stopped
+    Then all messages should be handled
+
   Scenario: Multiple Clients
     Given multiple clients and a single worker
     When I send multiple messages from each of the clients
