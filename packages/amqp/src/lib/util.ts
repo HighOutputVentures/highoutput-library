@@ -94,7 +94,8 @@ export function serialize(object: any): any {
 export function deserialize(object: any): any {
   const type = typeof object;
 
-  if (type === 'object' && !(object instanceof Date || object instanceof Set || object instanceof Map || object instanceof Buffer)) {
+  if (type === 'object'
+    && !(object instanceof Date || object instanceof Set || object instanceof Map || object instanceof Buffer)) {
     if (object === null) {
       return null;
     }

@@ -20,7 +20,7 @@ export default class Publisher<TInput extends any[] = any[]> extends EventEmitte
 
   private disconnected = false;
 
-  private shuttingDown = false;
+  private shutdown = false;
 
   public constructor(
     private readonly connection: Connection,
@@ -47,7 +47,7 @@ export default class Publisher<TInput extends any[] = any[]> extends EventEmitte
   }
 
   public async send(...args: TInput) {
-    if (this.shuttingDown) {
+    if (this.shutdown) {
       throw new AppError('PUBLISHER_ERROR', 'Publisher shutting down.');
     }
 
@@ -98,7 +98,8 @@ export default class Publisher<TInput extends any[] = any[]> extends EventEmitte
   }
 
   public async stop() {
-    this.shuttingDown = true;
+    this.shutdown = true;
+
     if (this.sender && this.sender.is_open()) {
       await closeSender(this.sender);
     }

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-non-null-assertion, @typescript-eslint/camelcase */
 import {
   Connection, EventContext, Receiver, Sender,
@@ -30,7 +31,7 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> extends
 
   private disconnected = false;
 
-  private shuttingDown = false;
+  private shutdown = false;
 
   public constructor(
     private readonly connection: Connection,
@@ -92,7 +93,7 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> extends
       arguments: this.options.deserialize ? deserialize(message.body.arguments) : message.body.arguments,
     };
 
-    logger.tag(['worker', 'request']).info(request);
+    logger.tag(['worker', 'request']).verbose(request);
 
     let result: TOutput | null = null;
     let error: Record<string, any> | null = null;
@@ -111,7 +112,7 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> extends
         timestamp: Date.now(),
       };
 
-      logger.tag(['worker', 'response']).info(response);
+      logger.tag(['worker', 'response']).verbose(response);
 
       const sender = await this.getSender(message.reply_to!);
 
@@ -139,13 +140,20 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> extends
           expiry_policy: 'never',
         },
         credit_window: 0,
-        autoaccept: false,
+        autoaccept: true,
       });
 
       this.receiver.on('message', async (context: EventContext) => {
-        await this.asyncGroup.add(this.handleMessage(context));
-        context.delivery!.accept();
-        context.receiver!.add_credit(1);
+        if (this.shutdown) {
+          context.delivery?.release({ delivery_failed: false });
+          return;
+        }
+
+        await this.asyncGroup.add(this.handleMessage(context).catch((err) => logger.tag('worker').warn(err)));
+
+        if (!this.shutdown) {
+          context.receiver!.add_credit(1);
+        }
       });
 
       this.receiver.add_credit(this.options.concurrency);
@@ -157,7 +165,7 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> extends
       await connect();
 
       this.connection.on('connection_open', async () => {
-        if (!this.disconnected || this.shuttingDown) {
+        if (!this.disconnected || this.shutdown) {
           return;
         }
 
@@ -170,11 +178,7 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> extends
   }
 
   public async stop() {
-    this.shuttingDown = true;
-
-    if (this.receiver && this.receiver.is_open()) {
-      this.receiver.set_credit_window(0);
-    }
+    this.shutdown = true;
 
     await this.asyncGroup.wait();
 

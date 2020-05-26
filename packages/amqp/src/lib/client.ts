@@ -35,7 +35,7 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
 
   private initialize: Promise<void> | null = null;
 
-  private shuttingDown = false;
+  private shutdown = false;
 
   private disconnected = false;
 
@@ -71,7 +71,7 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
   }
 
   public async send(...args: TInput) {
-    if (this.shuttingDown) {
+    if (this.shutdown) {
       throw new AppError('CLIENT_ERROR', 'Client shutting down.');
     }
 
@@ -215,7 +215,8 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
   }
 
   public async stop() {
-    this.shuttingDown = true;
+    this.shutdown = true;
+
     if (this.sender && this.sender.is_open()) {
       await closeSender(this.sender);
     }

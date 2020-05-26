@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 /* eslint-disable @typescript-eslint/camelcase, @typescript-eslint/no-non-null-assertion  */
 import { Receiver, Connection, EventContext } from 'rhea';
 import R from 'ramda';
@@ -22,7 +23,7 @@ export default class Subscriber<TInput extends any[] = any[]> extends EventEmitt
 
   private disconnected = false;
 
-  private shuttingDown = false;
+  private shutdown = false;
 
   public constructor(
     private readonly connection: Connection,
@@ -83,13 +84,20 @@ export default class Subscriber<TInput extends any[] = any[]> extends EventEmitt
           address: `topic://${this.topic}`,
         },
         credit_window: 0,
-        autoaccept: false,
+        autoaccept: true,
       });
 
       this.receiver.on('message', async (context: EventContext) => {
-        await this.asyncGroup.add(this.handleMessage(context));
-        context.delivery!.accept();
-        context.receiver!.add_credit(1);
+        if (this.shutdown) {
+          context.delivery?.release({ delivery_failed: false });
+          return;
+        }
+
+        await this.asyncGroup.add(this.handleMessage(context).catch((err) => logger.tag('subscriber').warn(err)));
+
+        if (!this.shutdown) {
+          context.receiver!.add_credit(1);
+        }
       });
 
       this.receiver.add_credit(this.options.concurrency);
@@ -100,7 +108,7 @@ export default class Subscriber<TInput extends any[] = any[]> extends EventEmitt
       await connect();
 
       this.connection.on('connection_open', async () => {
-        if (!this.disconnected || this.shuttingDown) {
+        if (!this.disconnected || this.shutdown) {
           return;
         }
 
@@ -118,11 +126,7 @@ export default class Subscriber<TInput extends any[] = any[]> extends EventEmitt
   }
 
   public async stop() {
-    this.shuttingDown = true;
-
-    if (this.receiver && this.receiver.is_open()) {
-      this.receiver.set_credit_window(0);
-    }
+    this.shutdown = true;
 
     await this.asyncGroup.wait();
 

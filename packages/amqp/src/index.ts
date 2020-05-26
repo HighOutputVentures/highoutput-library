@@ -68,6 +68,8 @@ export default class Amqp {
       max_reconnect_delay: this.options.maxReconnectDelay,
     });
 
+    this.connection.setMaxListeners(100);
+
     this.connection.on('connection_open', () => {
       logger.info('connection established');
     });

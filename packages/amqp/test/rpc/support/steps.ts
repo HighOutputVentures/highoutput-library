@@ -128,7 +128,7 @@ Given('a single client and multiple workers with delayed response', async functi
 });
 
 When('I send multiple messages from the client asynchronously', async function () {
-  this.promise = Promise.all(R.times((value) => this.client({ value }), 50));
+  this.promise = Promise.all(R.times((value) => this.client({ value }), 20));
 });
 
 When('one of the workers is stopped', async function () {
@@ -137,8 +137,30 @@ When('one of the workers is stopped', async function () {
   await chance.pickone<Worker>(this.workers).stop();
 });
 
+When('all workers are restarted', async function () {
+  await delay(250 + 250 * Math.random());
+
+  await Promise.all(R.map((worker) => worker.stop(), this.workers));
+
+  await Promise.all(R.times(async (index) => {
+    const worker = await this.amqp.createWorker('test', async (message: any) => {
+      await delay(100 + 100 * Math.random());
+
+      worker.messagesReceivedCount = (worker.messagesReceivedCount || 0) + 1;
+
+      return {
+        message,
+        worker: 5 + index,
+      };
+    }, { concurrency: 1 });
+
+    this.workers[5 + index] = worker;
+  }, 5));
+});
+
 Then('all messages should be handled', async function () {
   await this.promise;
 
-  expect(R.sum(R.pluck('messagesReceivedCount' as any, this.workers))).to.equal(50);
+  expect(R.sum(R.map<number, number>((item) => item || 0, R.pluck('messagesReceivedCount' as any, this.workers))))
+    .to.equal(20);
 });
