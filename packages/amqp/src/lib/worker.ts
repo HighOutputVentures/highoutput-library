@@ -46,11 +46,26 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> extends
       serialize: true,
     });
 
+    this.connection.on('disconnected', () => {
+      logger.tag(['worker', 'connection', 'disconnected']).tag('Setting disconnected.');
+      this.disconnected = true;
+    });
+
+    this.connection.on('connection_close', () => {
+      logger.tag(['worker', 'connection', 'connection_close']).tag('Setting disconnected.');
+      this.disconnected = true;
+    });
+
     logger.tag('worker').info(this.options);
   }
 
   private async getSender(address: string) {
     let promise = this.senders.get(address);
+
+    if (promise && (await promise).is_closed()) {
+      this.senders.delete(address);
+      promise = undefined;
+    }
 
     if (!promise) {
       promise = openSender(this.connection, {
@@ -140,10 +155,6 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> extends
 
     this.initialize = (async () => {
       await connect();
-
-      this.connection.on('disconnected', () => {
-        this.disconnected = true;
-      });
 
       this.connection.on('connection_open', async () => {
         if (!this.disconnected || this.shuttingDown) {

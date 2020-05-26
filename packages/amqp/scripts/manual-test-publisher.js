@@ -6,9 +6,10 @@
 
 const delay = require('@highoutput/delay').default;
 const Amqp = require('../build/index');
+const config = require('./config');
 
 async function Client() {
-  const amqp = new Amqp.default({});
+  const amqp = new Amqp.default(config);
   const client = await amqp.createPublisher('Reconnection', { timeout: 10000 });
 
   while (true) {

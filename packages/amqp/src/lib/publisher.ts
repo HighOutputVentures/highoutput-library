@@ -34,6 +34,12 @@ export default class Publisher<TInput extends any[] = any[]> extends EventEmitte
     });
 
     this.connection.on('disconnected', () => {
+      logger.tag(['publisher', 'connection', 'disconnected']).tag('Setting disconnected.');
+      this.disconnected = true;
+    });
+
+    this.connection.on('connection_close', () => {
+      logger.tag(['publisher', 'connection', 'connection_close']).tag('Setting disconnected.');
       this.disconnected = true;
     });
 
@@ -45,7 +51,7 @@ export default class Publisher<TInput extends any[] = any[]> extends EventEmitte
       throw new AppError('PUBLISHER_ERROR', 'Publisher shutting down.');
     }
 
-    if (this.disconnected && this.initialize !== null) {
+    if (this.disconnected) {
       await this.start();
     }
 
@@ -74,6 +80,7 @@ export default class Publisher<TInput extends any[] = any[]> extends EventEmitte
       return this.initialize;
     }
 
+    logger.tag(['publisher', 'start']).info('Initializing publisher...');
     this.initialize = (async () => {
       this.sender = await openSender(this.connection, {
         target: {
@@ -84,6 +91,7 @@ export default class Publisher<TInput extends any[] = any[]> extends EventEmitte
       this.emit('start');
       this.disconnected = false;
       this.initialize = null;
+      logger.tag(['publisher', 'start']).info('Publisher initialized.');
     })();
 
     return this.initialize;

@@ -56,7 +56,14 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
     });
 
     logger.tag('client').info(this.options);
+
     this.connection.on('disconnected', () => {
+      logger.tag(['client', 'connection', 'disconnected']).tag('Setting disconnected.');
+      this.disconnected = true;
+    });
+
+    this.connection.on('connection_close', () => {
+      logger.tag(['client', 'connection', 'connection_close']).tag('Setting disconnected.');
       this.disconnected = true;
     });
 
@@ -68,7 +75,7 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
       throw new AppError('CLIENT_ERROR', 'Client shutting down.');
     }
 
-    if (this.disconnected && this.initialize !== null) {
+    if (this.disconnected) {
       await this.start();
     }
 
@@ -81,7 +88,8 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
     };
 
     if (!this.sender || this.sender.is_closed()) {
-      throw new AppError('CLIENT_ERROR', 'Client sender is on invalid state.');
+      throw new AppError('CLIENT_ERROR',
+        `Client sender is on invalid state. sender = ${!!this.sender}, closed = ${this.sender?.is_closed()}`);
     }
 
     if (!this.receiver || this.receiver.is_closed()) {
@@ -134,7 +142,16 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
       return this.initialize;
     }
 
+    logger.tag(['client', 'start']).info('Initializing client...');
     this.initialize = (async () => {
+      if (this.receiver) {
+        this.receiver.close();
+      }
+
+      if (this.sender) {
+        this.sender.close();
+      }
+
       const [sender, receiver] = await Promise.all([
         openSender(this.connection, {
           target: {
@@ -190,6 +207,8 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
 
       this.emit('start');
       this.initialize = null;
+      this.disconnected = false;
+      logger.tag(['client', 'start']).info('Client initialized.');
     })();
 
     return this.initialize;

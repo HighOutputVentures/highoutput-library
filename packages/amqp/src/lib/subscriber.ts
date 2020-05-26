@@ -37,6 +37,16 @@ export default class Subscriber<TInput extends any[] = any[]> extends EventEmitt
       deserialize: true,
     });
 
+    this.connection.on('disconnected', () => {
+      logger.tag(['subscriber', 'connection', 'disconnected']).tag('Setting disconnected.');
+      this.disconnected = true;
+    });
+
+    this.connection.on('connection_close', () => {
+      logger.tag(['subscriber', 'connection', 'connection_close']).tag('Setting disconnected.');
+      this.disconnected = true;
+    });
+
     logger.tag('subscriber').info(this.options);
   }
 
@@ -66,6 +76,7 @@ export default class Subscriber<TInput extends any[] = any[]> extends EventEmitt
       return this.initialize;
     }
 
+    logger.tag(['subscriber', 'start']).info('Initializing subscriber...');
     const connect = async () => {
       this.receiver = await openReceiver(this.connection, {
         source: {
@@ -82,7 +93,6 @@ export default class Subscriber<TInput extends any[] = any[]> extends EventEmitt
       });
 
       this.receiver.add_credit(this.options.concurrency);
-
       this.emit('start');
     };
 
@@ -96,6 +106,7 @@ export default class Subscriber<TInput extends any[] = any[]> extends EventEmitt
 
         await connect();
         this.disconnected = false;
+        logger.tag(['subscriber', 'start']).info('Subscriber initialized.');
       });
 
       this.connection.on('disconnected', () => {
