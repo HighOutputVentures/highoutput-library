@@ -164,3 +164,26 @@ Then('all messages should be handled', async function () {
   expect(R.sum(R.map<number, number>((item) => item || 0, R.pluck('messagesReceivedCount' as any, this.workers))))
     .to.equal(20);
 });
+
+Given('client sent a message', async function () {
+  this.expireClient = await this.amqp.createClient('testExpire', { timeout: '10' });
+  this.error = null;
+  this.expireClient('hello').catch((e: any) => {
+    this.error = e;
+  });
+});
+
+When('worker is not yet available for a period of time and reached the message timeout', async function () {
+  await delay('15');
+  this.called = false;
+  await this.amqp.createWorker('testExpire', async () => {
+    this.called = true;
+    return true;
+  });
+});
+
+Then('it should not process the message', async function () {
+  expect(this.called).to.be.deep.equal(false);
+  expect(this.error).to.have.property('code', 'TIMEOUT');
+  await this.expireClient.client.stop();
+});

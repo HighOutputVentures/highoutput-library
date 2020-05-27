@@ -4,21 +4,24 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable new-cap */
 
+const R = require('ramda');
 const delay = require('@highoutput/delay').default;
 const Amqp = require('../build/index');
 const config = require('./config');
 
 async function Client() {
   const amqp = new Amqp.default(config);
-  const client = await amqp.createClient('Reconnection', { timeout: 5000 });
+  const client = await amqp.createClient('Re.connection', { timeout: '20s' });
 
   while (true) {
     console.log('Rpc: Sending...');
     (async () => {
-      const response = await client({ num: Math.random() * 100000 });
+      const response = await Promise.all(
+        R.times(() => client({ num: Math.random() * 50000 }), Math.ceil(Math.random() * 20)),
+      );
       console.log('Response: ', response);
     })();
-    await delay(800);
+    await delay(800 + Math.ceil(Math.random() * 5000));
   }
 }
 

@@ -148,8 +148,23 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> extends
           context.delivery?.release({ delivery_failed: false });
           return;
         }
+        const { message } = context;
+        if (!message) {
+          return;
+        }
 
-        await this.asyncGroup.add(this.handleMessage(context).catch((err) => logger.tag('worker').warn(err)));
+        const now = Date.now();
+        // message already expired, no need to process this
+        if (message.absolute_expiry_time && now > message.absolute_expiry_time) {
+          logger.tag(['worker', 'message']).verbose('received an expired message.');
+          if (!this.shutdown) {
+            context.receiver!.add_credit(1);
+          }
+          return;
+        }
+
+        await this.asyncGroup.add(this.handleMessage(context)
+          .catch((err) => logger.tag('worker').warn(err)));
 
         if (!this.shutdown) {
           context.receiver!.add_credit(1);

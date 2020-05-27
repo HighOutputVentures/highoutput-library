@@ -9,12 +9,12 @@ const config = require('./config');
 async function Worker() {
   const amqp = new Amqp.default(config);
 
-  await amqp.createWorker('Reconnection', (...args) => {
+  await amqp.createWorker('Re.connection', (...args) => {
     console.log('Rpc: Received...');
     console.dir(args, { depth: null });
     return args;
   }, {
-    concurrency: 10,
+    concurrency: 100,
   });
 }
 

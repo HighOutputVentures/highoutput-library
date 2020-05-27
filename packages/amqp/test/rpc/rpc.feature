@@ -2,6 +2,11 @@ Feature: RPC
   As a developer
   I want to send a message from a remote client into a remote worker and wait for result
 
+  Scenario: Message Expires
+    Given client sent a message
+    When worker is not yet available for a period of time and reached the message timeout
+    Then it should not process the message
+
   Scenario Outline: Simple RPC
     Given a client and a worker
     And the worker responds with <response>

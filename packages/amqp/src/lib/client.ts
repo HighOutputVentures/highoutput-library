@@ -5,6 +5,7 @@ import {
 import R from 'ramda';
 import uuid from 'uuid/v4';
 import delay from '@highoutput/delay';
+import ms from 'ms';
 import AsyncGroup from '@highoutput/async-group';
 import AppError from '@highoutput/error';
 import { EventEmitter } from 'events';
@@ -14,7 +15,7 @@ import {
 } from './util';
 
 export type ClientOptions = {
-  timeout: string | number;
+  timeout: string;
   noResponse: boolean;
   deserialize: boolean;
   serialize: boolean;
@@ -80,11 +81,12 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
     }
 
     const correlationId = uuid();
+    const now = Date.now();
 
     const body = {
       correlationId,
       arguments: this.options.serialize ? serialize(args) : args,
-      timestamp: Date.now(),
+      timestamp: now,
     };
 
     if (!this.sender || this.sender.is_closed()) {
@@ -100,6 +102,8 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
       this.sender.send({
         reply_to: this.receiverQueueAddress,
         correlation_id: correlationId,
+        ttl: ms(this.options.timeout),
+        absolute_expiry_time: now + ms(this.options.timeout),
         body,
       });
     } catch (err) {
@@ -123,9 +127,7 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
       });
     });
 
-    this.asyncGroup.add((async () => promise)().catch(R.identity));
-
-    return Promise.race([
+    const promiseRace = Promise.race([
       promise,
       (async () => {
         await delay(this.options.timeout);
@@ -135,6 +137,10 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
         throw new AppError('TIMEOUT', 'Request timeout.');
       })(),
     ]);
+
+    this.asyncGroup.add((async () => promiseRace)().catch(R.identity));
+
+    return promiseRace;
   }
 
   public async start() {
