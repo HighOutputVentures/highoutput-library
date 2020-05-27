@@ -15,7 +15,7 @@ import {
 } from './util';
 
 export type ClientOptions = {
-  timeout: string;
+  timeout: string | number;
   noResponse: boolean;
   deserialize: boolean;
   serialize: boolean;
@@ -56,6 +56,8 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
       serialize: true,
     });
 
+    const { timeout } = this.options;
+    this.options.timeout = typeof timeout === 'string' ? ms(timeout) : timeout;
     logger.tag('client').info(this.options);
 
     this.connection.on('disconnected', () => {
@@ -102,8 +104,8 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
       this.sender.send({
         reply_to: this.receiverQueueAddress,
         correlation_id: correlationId,
-        ttl: ms(this.options.timeout),
-        absolute_expiry_time: now + ms(this.options.timeout),
+        ttl: this.options.timeout as number,
+        absolute_expiry_time: now + (this.options.timeout as number),
         body,
       });
     } catch (err) {
