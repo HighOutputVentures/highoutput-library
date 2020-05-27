@@ -58,12 +58,12 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
     logger.tag('client').info(this.options);
 
     this.connection.on('disconnected', () => {
-      logger.tag(['client', 'connection', 'disconnected']).tag('Setting disconnected.');
+      logger.tag(['client', 'connection', 'disconnected']).tag('Connection is disconnected.');
       this.disconnected = true;
     });
 
     this.connection.on('connection_close', () => {
-      logger.tag(['client', 'connection', 'connection_close']).tag('Setting disconnected.');
+      logger.tag(['client', 'connection', 'connection_close']).tag('Connection is closed.');
       this.disconnected = true;
     });
 
@@ -208,6 +208,7 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
       this.emit('start');
       this.initialize = null;
       this.disconnected = false;
+
       logger.tag(['client', 'start']).info('Client initialized.');
     })();
 

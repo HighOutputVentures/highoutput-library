@@ -39,12 +39,12 @@ export default class Subscriber<TInput extends any[] = any[]> extends EventEmitt
     });
 
     this.connection.on('disconnected', () => {
-      logger.tag(['subscriber', 'connection', 'disconnected']).tag('Setting disconnected.');
+      logger.tag(['subscriber', 'connection', 'disconnected']).tag('Connection is disconnected.');
       this.disconnected = true;
     });
 
     this.connection.on('connection_close', () => {
-      logger.tag(['subscriber', 'connection', 'connection_close']).tag('Setting disconnected.');
+      logger.tag(['subscriber', 'connection', 'connection_close']).tag('Connection is closed.');
       this.disconnected = true;
     });
 
@@ -78,6 +78,7 @@ export default class Subscriber<TInput extends any[] = any[]> extends EventEmitt
     }
 
     logger.tag(['subscriber', 'start']).info('Initializing subscriber...');
+
     const connect = async () => {
       this.receiver = await openReceiver(this.connection, {
         source: {
@@ -115,10 +116,6 @@ export default class Subscriber<TInput extends any[] = any[]> extends EventEmitt
         await connect();
         this.disconnected = false;
         logger.tag(['subscriber', 'start']).info('Subscriber initialized.');
-      });
-
-      this.connection.on('disconnected', () => {
-        this.disconnected = true;
       });
     })();
 

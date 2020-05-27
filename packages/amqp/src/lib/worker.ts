@@ -48,12 +48,12 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> extends
     });
 
     this.connection.on('disconnected', () => {
-      logger.tag(['worker', 'connection', 'disconnected']).tag('Setting disconnected.');
+      logger.tag(['worker', 'connection', 'disconnected']).tag('Connection is disconnected.');
       this.disconnected = true;
     });
 
     this.connection.on('connection_close', () => {
-      logger.tag(['worker', 'connection', 'connection_close']).tag('Setting disconnected.');
+      logger.tag(['worker', 'connection', 'connection_close']).tag('Connection is closed.');
       this.disconnected = true;
     });
 
