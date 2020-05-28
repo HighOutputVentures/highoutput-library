@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 /* eslint-disable @typescript-eslint/camelcase, @typescript-eslint/no-non-null-assertion  */
 import { Receiver, Connection, EventContext } from 'rhea';
 import R from 'ramda';
@@ -18,6 +19,12 @@ export default class Subscriber<TInput extends any[] = any[]> extends EventEmitt
 
   private asyncGroup: AsyncGroup = new AsyncGroup();
 
+  private initialize: Promise<void> | null = null;
+
+  private disconnected = false;
+
+  private shutdown = false;
+
   public constructor(
     private readonly connection: Connection,
     private readonly topic: string,
@@ -29,6 +36,16 @@ export default class Subscriber<TInput extends any[] = any[]> extends EventEmitt
     this.options = R.mergeDeepLeft(options || {}, {
       concurrency: 1,
       deserialize: true,
+    });
+
+    this.connection.on('disconnected', () => {
+      logger.tag(['subscriber', 'connection', 'disconnected']).tag('Connection is disconnected.');
+      this.disconnected = true;
+    });
+
+    this.connection.on('connection_close', () => {
+      logger.tag(['subscriber', 'connection', 'connection_close']).tag('Connection is closed.');
+      this.disconnected = true;
     });
 
     logger.tag('subscriber').info(this.options);
@@ -56,31 +73,63 @@ export default class Subscriber<TInput extends any[] = any[]> extends EventEmitt
   }
 
   public async start() {
-    this.receiver = await openReceiver(this.connection, {
-      source: {
-        address: `topic://${this.topic}`,
-      },
-      credit_window: 0,
-      autoaccept: false,
-    });
+    if (this.initialize) {
+      return this.initialize;
+    }
 
-    this.receiver.on('message', async (context: EventContext) => {
-      await this.asyncGroup.add(this.handleMessage(context));
-      context.delivery!.accept();
-      context.receiver!.add_credit(1);
-    });
+    logger.tag(['subscriber', 'start']).info('Initializing subscriber...');
 
-    this.receiver.add_credit(this.options.concurrency);
+    const connect = async () => {
+      this.receiver = await openReceiver(this.connection, {
+        source: {
+          address: `topic://${this.topic}`,
+        },
+        credit_window: 0,
+        autoaccept: true,
+      });
 
-    this.emit('start');
+      this.receiver.on('message', async (context: EventContext) => {
+        if (this.shutdown) {
+          context.delivery?.release({ delivery_failed: false });
+          return;
+        }
+
+        await this.asyncGroup.add(this.handleMessage(context).catch((err) => logger.tag('subscriber').warn(err)));
+
+        if (!this.shutdown) {
+          context.receiver!.add_credit(1);
+        }
+      });
+
+      this.receiver.add_credit(this.options.concurrency);
+      this.emit('start');
+    };
+
+    this.initialize = (async () => {
+      await connect();
+
+      this.connection.on('connection_open', async () => {
+        if (!this.disconnected || this.shutdown) {
+          return;
+        }
+
+        await connect();
+        this.disconnected = false;
+        logger.tag(['subscriber', 'start']).info('Subscriber initialized.');
+      });
+    })();
+
+    return this.initialize;
   }
 
   public async stop() {
+    this.shutdown = true;
+
+    await this.asyncGroup.wait();
+
     if (this.receiver && this.receiver.is_open()) {
       await closeReceiver(this.receiver);
     }
-
-    await this.asyncGroup.wait();
 
     this.emit('stop');
   }

@@ -4,9 +4,8 @@ import {
   Receiver, Sender, Connection, ReceiverOptions, SenderOptions,
 } from 'rhea';
 
-export async function openReceiver(connection: Connection, options: ReceiverOptions) {
+export async function openReceiver(connection: Connection, options: ReceiverOptions | string) {
   const receiver = connection.open_receiver(options);
-
   await new Promise((resolve, reject) => {
     receiver.once('receiver_open', resolve);
     receiver.once('receiver_error', reject);
@@ -95,7 +94,8 @@ export function serialize(object: any): any {
 export function deserialize(object: any): any {
   const type = typeof object;
 
-  if (type === 'object' && !(object instanceof Date || object instanceof Set || object instanceof Map || object instanceof Buffer)) {
+  if (type === 'object'
+    && !(object instanceof Date || object instanceof Set || object instanceof Map || object instanceof Buffer)) {
     if (object === null) {
       return null;
     }

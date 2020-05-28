@@ -1,10 +1,11 @@
-/* eslint-disable @typescript-eslint/camelcase, @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/camelcase */
 import {
   Connection, Sender, Receiver, EventContext,
 } from 'rhea';
 import R from 'ramda';
 import uuid from 'uuid/v4';
 import delay from '@highoutput/delay';
+import ms from 'ms';
 import AsyncGroup from '@highoutput/async-group';
 import AppError from '@highoutput/error';
 import { EventEmitter } from 'events';
@@ -33,6 +34,14 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
 
   private asyncGroup: AsyncGroup = new AsyncGroup();
 
+  private initialize: Promise<void> | null = null;
+
+  private shutdown = false;
+
+  private disconnected = false;
+
+  private receiverQueueAddress: string;
+
   public constructor(
     private readonly connection: Connection,
     private readonly queue: string,
@@ -47,28 +56,56 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
       serialize: true,
     });
 
+    const { timeout } = this.options;
+    this.options.timeout = typeof timeout === 'string' ? ms(timeout) : timeout;
     logger.tag('client').info(this.options);
+
+    this.connection.on('disconnected', () => {
+      logger.tag(['client', 'connection', 'disconnected']).tag('Connection is disconnected.');
+      this.disconnected = true;
+    });
+
+    this.connection.on('connection_close', () => {
+      logger.tag(['client', 'connection', 'connection_close']).tag('Connection is closed.');
+      this.disconnected = true;
+    });
+
+    this.receiverQueueAddress = `temp-queue://${this.id}:${this.queue}`;
   }
 
   public async send(...args: TInput) {
-    if (!this.sender || this.sender.is_closed()) {
-      throw new AppError('CLIENT_ERROR', 'Sender is closed.');
+    if (this.shutdown) {
+      throw new AppError('CLIENT_ERROR', 'Client shutting down.');
+    }
+
+    if (this.disconnected) {
+      await this.start();
     }
 
     const correlationId = uuid();
+    const now = Date.now();
 
     const body = {
       correlationId,
       arguments: this.options.serialize ? serialize(args) : args,
-      timestamp: Date.now(),
+      timestamp: now,
     };
 
-    logger.tag(['client', 'request']).verbose(body);
+    if (!this.sender || this.sender.is_closed()) {
+      throw new AppError('CLIENT_ERROR',
+        `Client sender is on invalid state. sender = ${!!this.sender}, closed = ${this.sender?.is_closed()}`);
+    }
+
+    if (!this.receiver || this.receiver.is_closed()) {
+      throw new AppError('CLIENT_ERROR', 'Client receiver is on invalid state.');
+    }
 
     try {
       this.sender.send({
-        reply_to: this.receiver?.source.address,
+        reply_to: this.receiverQueueAddress,
         correlation_id: correlationId,
+        ttl: this.options.timeout as number,
+        absolute_expiry_time: now + (this.options.timeout as number),
         body,
       });
     } catch (err) {
@@ -92,9 +129,7 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
       });
     });
 
-    this.asyncGroup.add(promise);
-
-    return Promise.race([
+    const promiseRace = Promise.race([
       promise,
       (async () => {
         await delay(this.options.timeout);
@@ -104,71 +139,93 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
         throw new AppError('TIMEOUT', 'Request timeout.');
       })(),
     ]);
+
+    this.asyncGroup.add((async () => promiseRace)().catch(R.identity));
+
+    return promiseRace;
   }
 
   public async start() {
-    const [sender, receiver] = await Promise.all([
-      openSender(this.connection, {
-        target: {
-          address: `queue://${this.queue}`,
-          durable: 2,
-          expiry_policy: 'never',
-        },
-      }),
-      openReceiver(this.connection, {
-        source: {
-          address: `temp-queue://${this.queue}/${this.id}`,
-          dynamic: true,
-        },
-      }),
-    ]);
+    if (this.initialize) {
+      return this.initialize;
+    }
 
-    this.sender = sender;
-    this.receiver = receiver;
-
-    this.receiver.on('message', (context: EventContext) => {
-      let body = context.message?.body;
-
-      const callback = this.callbacks.get(context.message?.correlation_id as string);
-
-      if (!callback) {
-        return;
+    logger.tag(['client', 'start']).info('Initializing client...');
+    this.initialize = (async () => {
+      if (this.receiver) {
+        this.receiver.close();
       }
 
-      body = {
-        ...body,
-        result: this.options.deserialize ? deserialize(body.result) : body.result,
-      };
+      if (this.sender) {
+        this.sender.close();
+      }
 
-      logger.tag(['client', 'response']).verbose(body);
+      const [sender, receiver] = await Promise.all([
+        openSender(this.connection, {
+          target: {
+            address: `queue://${this.queue}`,
+            durable: 2,
+            expiry_policy: 'never',
+          },
+        }),
+        openReceiver(this.connection, this.receiverQueueAddress),
+      ]);
 
-      if (body.error) {
-        let error: AppError;
+      this.sender = sender;
+      this.receiver = receiver;
 
-        const deserialized = deserialize(body.error);
+      this.receiver.on('message', (context: EventContext) => {
+        let body = context.message?.body;
 
-        const meta = {
-          ...R.omit(['id', 'name', 'message', 'stack', 'service'])(deserialized),
-          original: deserialized,
-        };
+        const callback = this.callbacks.get(context.message?.correlation_id as string);
 
-        if (body.error.name === 'AppError') {
-          error = new AppError(body.error.code, body.error.message, meta);
-        } else {
-          error = new AppError('WORKER_ERROR', body.error.message, meta);
+        if (!callback) {
+          return;
         }
 
-        callback.reject(error);
-        return;
-      }
+        body = {
+          ...body,
+          result: this.options.deserialize ? deserialize(body.result) : body.result,
+        };
 
-      callback.resolve(body.result);
-    });
+        logger.tag(['client', 'response']).verbose(body);
 
-    this.emit('start');
+        if (body.error) {
+          let error: AppError;
+
+          const deserialized = deserialize(body.error);
+
+          const meta = {
+            ...R.omit(['id', 'name', 'message', 'stack', 'service'])(deserialized),
+            original: deserialized,
+          };
+
+          if (body.error.name === 'AppError') {
+            error = new AppError(body.error.code, body.error.message, meta);
+          } else {
+            error = new AppError('WORKER_ERROR', body.error.message, meta);
+          }
+
+          callback.reject(error);
+          return;
+        }
+
+        callback.resolve(body.result);
+      });
+
+      this.emit('start');
+      this.initialize = null;
+      this.disconnected = false;
+
+      logger.tag(['client', 'start']).info('Client initialized.');
+    })();
+
+    return this.initialize;
   }
 
   public async stop() {
+    this.shutdown = true;
+
     if (this.sender && this.sender.is_open()) {
       await closeSender(this.sender);
     }

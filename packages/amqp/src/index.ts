@@ -68,6 +68,8 @@ export default class Amqp {
       max_reconnect_delay: this.options.maxReconnectDelay,
     });
 
+    this.connection.setMaxListeners(100);
+
     this.connection.on('connection_open', () => {
       logger.info('connection established');
     });
@@ -136,7 +138,7 @@ export default class Amqp {
 
     await publisher.start();
 
-    const func = (...args: TInput) => publisher.send(...args);
+    const func = async (...args: TInput) => publisher.send(...args);
     func.publisher = publisher;
 
     const id = uuid();

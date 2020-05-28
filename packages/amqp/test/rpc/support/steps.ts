@@ -5,7 +5,11 @@ import {
 import { expect } from 'chai';
 import R from 'ramda';
 import delay from '@highoutput/delay';
+import Chance from 'chance';
 import crypto from 'crypto';
+import { Worker } from '../../../src/index';
+
+const chance = new Chance();
 
 Given('a client and a worker', async function () {
   this.client = await this.amqp.createClient('test');
@@ -106,4 +110,80 @@ When('I send a {} from the client', async function (type: string) {
 
 Then('the worker should also receive a {}', async function (type: string) {
   expect(this.message).to.deep.equal({ value: this.examples[type] });
+});
+
+Given('a single client and multiple workers with delayed response', async function () {
+  this.client = await this.amqp.createClient('test');
+
+  this.workers = await Promise.all(R.times((index) => this.amqp.createWorker('test', async (message: any) => {
+    this.workers[index].messagesReceivedCount = (this.workers[index].messagesReceivedCount || 0) + 1;
+
+    await delay(100 + 100 * Math.random());
+
+    return {
+      message,
+      worker: index,
+    };
+  }, { concurrency: 1 }), 5));
+});
+
+When('I send multiple messages from the client asynchronously', async function () {
+  this.promise = Promise.all(R.times((value) => this.client({ value }), 20));
+});
+
+When('one of the workers is stopped', async function () {
+  await delay(250 + 250 * Math.random());
+
+  await chance.pickone<Worker>(this.workers).stop();
+});
+
+When('all workers are restarted', async function () {
+  await delay(250 + 250 * Math.random());
+
+  await Promise.all(R.map((worker) => worker.stop(), this.workers));
+
+  await Promise.all(R.times(async (index) => {
+    const worker = await this.amqp.createWorker('test', async (message: any) => {
+      await delay(100 + 100 * Math.random());
+
+      worker.messagesReceivedCount = (worker.messagesReceivedCount || 0) + 1;
+
+      return {
+        message,
+        worker: 5 + index,
+      };
+    }, { concurrency: 1 });
+
+    this.workers[5 + index] = worker;
+  }, 5));
+});
+
+Then('all messages should be handled', async function () {
+  await this.promise;
+
+  expect(R.sum(R.map<number, number>((item) => item || 0, R.pluck('messagesReceivedCount' as any, this.workers))))
+    .to.equal(20);
+});
+
+Given('client sent a message', async function () {
+  this.expireClient = await this.amqp.createClient('testExpire', { timeout: '10' });
+  this.error = null;
+  this.expireClient('hello').catch((e: any) => {
+    this.error = e;
+  });
+});
+
+When('worker is not yet available for a period of time and reached the message timeout', async function () {
+  await delay('15');
+  this.called = false;
+  await this.amqp.createWorker('testExpire', async () => {
+    this.called = true;
+    return true;
+  });
+});
+
+Then('it should not process the message', async function () {
+  expect(this.called).to.be.deep.equal(false);
+  expect(this.error).to.have.property('code', 'TIMEOUT');
+  await this.expireClient.client.stop();
 });
