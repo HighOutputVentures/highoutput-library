@@ -1,31 +1,26 @@
 import crypto from 'crypto';
 import {
   Aggregate,
-  BaseAggregate,
   AggregateEventHandler,
   EventStoreClient,
-  MemoryEventStoreDatabaseAdapter,
+  MemoryEventStoreDatabase,
   EventStoreServer,
 } from '../src';
 import { expect } from './helpers';
 import { ID, Event } from '../src/lib/types';
 
-@Aggregate({
-  type: 'Balance',
-  eventStore: new EventStoreClient(),
-})
-class BalanceAggregate extends BaseAggregate {
+class BalanceAggregate extends Aggregate {
   constructor(id: ID) {
     super(id, new EventStoreClient(), 0);
   }
 
   @AggregateEventHandler({ type: 'Credited' })
-  onCredited(state: number, event: Event) {
+  onCredited(state: number, event: Event): number {
     return state + event.body.amount;
   }
 
   @AggregateEventHandler({ type: 'Debited' })
-  onDebited(state: number, event: Event) {
+  onDebited(state: number, event: Event): number {
     const result = state - event.body.amount;
 
     if (result < 0) {
@@ -35,19 +30,19 @@ class BalanceAggregate extends BaseAggregate {
     return result;
   }
 
-  get type() {
+  get type(): string {
     return 'Balance';
   }
 }
 
-describe.only('Aggregate', () => {
-  before(async function() {
-    this.database = new MemoryEventStoreDatabaseAdapter();
+describe('Aggregate', () => {
+  before(async function () {
+    this.database = new MemoryEventStoreDatabase();
     this.server = new EventStoreServer({ database: this.database });
     await this.server.start();
   });
 
-  afterEach(async function() {
+  afterEach(async function () {
     this.database.EventCollection.clear();
     this.database.SnapshotCollection.clear();
   });
@@ -63,58 +58,62 @@ describe.only('Aggregate', () => {
       await aggregate.createEvent({
         type: 'Credited',
         body: {
-          amount: 100
+          amount: 100,
         },
       });
 
-      const event = this.database.EventCollection.findOne({ aggregateType: 'Balance' });
+      const event = this.database.EventCollection.findOne({
+        aggregateType: 'Balance',
+      });
       expect(event).to.has.property('type', 'Credited');
       expect(event).to.has.property('body').that.deep.equals({ amount: 100 });
     });
 
-    it('should update the state correctly', async function () {
+    it('should update the state correctly', async () => {
       const aggregate = new BalanceAggregate(crypto.randomBytes(12));
 
       await aggregate.createEvent({
         type: 'Credited',
         body: {
-          amount: 100
+          amount: 100,
         },
       });
 
       await aggregate.createEvent({
         type: 'Debited',
         body: {
-          amount: 25
+          amount: 25,
         },
       });
 
       await aggregate.createEvent({
         type: 'Credited',
         body: {
-          amount: 5
+          amount: 5,
         },
       });
 
       expect(aggregate.state).to.equal(80);
     });
 
-    it('should protect the business invariant', async function () {
+    it('should protect the business invariant', async () => {
       const aggregate = new BalanceAggregate(crypto.randomBytes(12));
 
       await aggregate.createEvent({
         type: 'Credited',
         body: {
-          amount: 100
+          amount: 100,
         },
       });
 
-      await expect(aggregate.createEvent({
-        type: 'Debited',
-        body: {
-          amount: 125
-        },
-      })).to.eventually.be.rejectedWith('Cannot be less than 0.');
+      await expect(
+        aggregate.createEvent({
+          type: 'Debited',
+          body: {
+            amount: 125,
+          },
+        }),
+      ).to.eventually.be.rejectedWith('Cannot be less than 0.');
     });
   });
 });

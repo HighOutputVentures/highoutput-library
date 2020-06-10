@@ -1,7 +1,6 @@
 import delay from '@highoutput/delay';
 import { expect } from 'chai';
 import crypto from 'crypto';
-import { Context as MochaContext } from 'mocha';
 import {
   EventStoreClient,
   EventStoreServer,
@@ -10,12 +9,6 @@ import {
 import { chance } from './helpers';
 import { generateId } from '../src/lib/util';
 
-type Context = MochaContext & {
-  client: EventStoreClient;
-  database: MemoryEventStoreDatabaseAdapter;
-  server: EventStoreServer;
-};
-
 describe('EventStore', () => {
   beforeEach(async function () {
     this.client = new EventStoreClient();
@@ -23,7 +16,7 @@ describe('EventStore', () => {
     this.server = new EventStoreServer({ database: this.database });
   });
 
-  it('should wait for server to become available', async function (this: Context) {
+  it('should wait for server to become available', async function () {
     delay(2000).then(() => this.server.start());
 
     const timestamp = Date.now();
@@ -36,7 +29,7 @@ describe('EventStore', () => {
       await this.server.start();
     });
 
-    it('should generate and save event', async function (this: Context) {
+    it('should generate and save event', async function () {
       const event = this.client.generateEvent({
         type: 'Created',
         aggregateId: crypto.randomBytes(12),
@@ -45,15 +38,17 @@ describe('EventStore', () => {
         body: {
           username: chance.first().toLowerCase(),
         },
-        version: 1
+        version: 1,
       });
 
       await this.client.saveEvent(event);
-  
-      expect(this.database.EventCollection.count({ aggregateType: 'Account' })).to.equal(1);
+
+      expect(
+        this.database.EventCollection.count({ aggregateType: 'Account' }),
+      ).to.equal(1);
     });
 
-    it('should create snapshot', async function (this: Context) {
+    it('should create snapshot', async function () {
       await this.client.createSnapshot({
         aggregateId: crypto.randomBytes(12),
         aggregateType: 'Account',
@@ -63,11 +58,13 @@ describe('EventStore', () => {
           realName: chance.name(),
         },
       });
-  
-      expect(this.database.SnapshotCollection.count({ aggregateType: 'Account' })).to.equal(1);
+
+      expect(
+        this.database.SnapshotCollection.count({ aggregateType: 'Account' }),
+      ).to.equal(1);
     });
 
-    it('should create snapshot', async function (this: Context) {
+    it('should create snapshot', async function () {
       await this.client.createSnapshot({
         aggregateId: crypto.randomBytes(12),
         aggregateType: 'Account',
@@ -77,11 +74,13 @@ describe('EventStore', () => {
           realName: chance.name(),
         },
       });
-  
-      expect(this.database.SnapshotCollection.count({ aggregateType: 'Account' })).to.equal(1);
+
+      expect(
+        this.database.SnapshotCollection.count({ aggregateType: 'Account' }),
+      ).to.equal(1);
     });
 
-    it('should retrieve events', async function (this: Context) {
+    it('should retrieve events', async function () {
       const aggregateId = crypto.randomBytes(12);
       const aggregateType = 'Account';
 

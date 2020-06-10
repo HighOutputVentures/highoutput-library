@@ -1,3 +1,6 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable no-underscore-dangle */
 import Queue from 'p-queue';
 import R from 'ramda';
 import { ID, Event } from '../types';
@@ -11,7 +14,7 @@ import EventStoreClient from '../event-store/client';
 export default abstract class Aggregate<TState = any, TEvent extends Event = Event> {
   private queue: Queue = new Queue({ concurrency: 1 });
 
-  private _version: number = 0;
+  private _version = 0;
 
   private _state: TState;
 
@@ -27,7 +30,7 @@ export default abstract class Aggregate<TState = any, TEvent extends Event = Eve
     state: TState,
     options?: {
       batchSize?: number;
-    }
+    },
   ) {
     this._id = id;
     this._state = Object.freeze(state);
@@ -57,27 +60,29 @@ export default abstract class Aggregate<TState = any, TEvent extends Event = Eve
   }
 
   private apply(state: TState, event: Event): TState {
+    let newState = state;
+
     for (const item of Reflect.getMetadataKeys(this)) {
-      const filter: { type?: string; version?: number; } = Reflect.getMetadata(item, this);
+      const filter: { type?: string; version?: number } = Reflect.getMetadata(item, this);
 
       if (R.equals(filter, R.pick(R.keys(filter), event))) {
-        state = this[item](state, event);
+        newState = this[item](state, event);
       }
     }
 
-    return state;
+    return newState;
   }
 
   public async fold() {
-    let state = this.state;
-    let version = this.version;
+    let { state } = this;
+    let { version } = this;
 
     let events: TEvent[];
     do {
-      events = (await this.eventStore.retrieveEvents({
+      events = (await this.eventStore.retrieveAggregateEvents({
+        aggregateId: this.id,
         first: this.options.batchSize,
         after: version,
-        aggregate: this.id,
       })) as TEvent[];
 
       for (const event of events) {
@@ -92,9 +97,9 @@ export default abstract class Aggregate<TState = any, TEvent extends Event = Eve
   }
 
   public async createEvent(params: {
-    type: TEvent['type'],
-    body: TEvent['body'],
-    version?: number,
+    type: TEvent['type'];
+    body: TEvent['body'];
+    version?: number;
   }) {
     return this.queue.add(async () => {
       await this.fold();

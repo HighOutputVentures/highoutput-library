@@ -1,23 +1,26 @@
 import { EventEmitter } from 'events';
 import Backoff from 'backoff';
 import delay from '@highoutput/delay';
-import { ConnectionAdapter, ConnectionAdapterClient, ID, RequestType, Event, Snapshot } from '../types';
-import { getConnection, generateId } from '../util';
+import {
+  Connection, ConnectionClient, ID, RequestType, Event, Snapshot,
+} from '../types';
+import getConnection from '../util/get-connection';
+import generateId from '../util/generate-id';
 
 export default class extends EventEmitter {
-  private client: Promise<ConnectionAdapterClient>;
+  private client: Promise<ConnectionClient>;
 
   public readonly initialized: Promise<void>;
 
   private options: {
-    connection: ConnectionAdapter;
+    connection: Connection;
     address: string;
     timeout: string | number;
   }
 
   constructor(
     options?: {
-      connection?: ConnectionAdapter;
+      connection?: Connection;
       address?: string;
       timeout?: string | number;
     },
@@ -91,21 +94,13 @@ export default class extends EventEmitter {
   }
 
   public async retrieveEvents(params: {
-    aggregate: ID;
-    first?: number;
-    after?: number;
-  }): Promise<Event[]>;
-
-  public async retrieveEvents(params: {
     first?: number;
     after?: number;
     filters: {
       aggregateType: string;
       type?: string;
     }[];
-  }): Promise<Event[]>;
-
-  public async retrieveEvents(params: Record<string, any>): Promise<Event[]> {
+  }): Promise<Event[]> {
     const client = await this.client;
 
     return client({
@@ -128,7 +123,7 @@ export default class extends EventEmitter {
       randomisationFactor: 0,
     });
 
-    await new Promise(async (resolve) => {
+    await new Promise((resolve) => {
       const checkServer = async () => {
         const available = await Promise.race([
           client({ type: 'Ping' }).then(() => true),
@@ -136,15 +131,15 @@ export default class extends EventEmitter {
         ]).catch(() => false);
 
         if (available) {
-          return resolve();
+          resolve();
+        } else {
+          backoff.backoff();
         }
-
-        backoff.backoff();
-      }
+      };
 
       backoff.on('ready', checkServer);
 
-      await checkServer();
+      checkServer();
     });
   }
 

@@ -1,25 +1,18 @@
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { Context as MochaContext } from 'mocha';
-import {
-  AmqpConnectionAdapter
-} from '../src';
+import { AmqpConnectionAdapter } from '../src';
 import { chance } from './helpers';
-
-type Context = MochaContext & {
-  connection: AmqpConnectionAdapter;
-};
 
 describe('AmqpConnectionAdapter', () => {
   beforeEach(async function () {
     this.connection = new AmqpConnectionAdapter();
   });
 
-  afterEach(async function (this: Context) {
+  afterEach(async function () {
     await this.connection.stop();
   });
 
-  it('should establish connection between client and worker', async function (this: Context) {
+  it('should establish connection between client and worker', async function () {
     const client = await this.connection.createClient('TestClient');
 
     const workerHandlerSpy = sinon.spy(async (params) => params);

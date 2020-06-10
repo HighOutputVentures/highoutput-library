@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 export type ID = Buffer;
 
 export type Event<TAggregateType extends string = string, TEventType extends string = string, TBody = any> = Readonly<{
@@ -11,24 +12,27 @@ export type Event<TAggregateType extends string = string, TEventType extends str
   timestamp: Date;
 }>;
 
-export type Snapshot<TState = any> = Readonly<{
+export type Snapshot = Readonly<{
   id: ID;
-  aggregateId: ID;
-  aggregateType: string;
-  aggregateVersion: number;
-  state: TState;
+  aggregate: {
+    id: ID;
+    type: string;
+    version: number;
+  };
+  state: any;
   timestamp: Date;
 }>;
 
-export interface EventStoreDatabaseAdapter {
+export interface EventStoreDatabase {
   saveEvent(event: Event): Promise<void>;
   saveSnapshot(snapshot: Snapshot): Promise<void>;
   retrieveLatestSnapshot(params: {
-    aggregateId: string;
+    aggregateId: ID;
     aggregateType: string;
   }): Promise<Snapshot | null>;
-  retrieveEvents(params: {
-    aggregate: ID;
+  retrieveAggregateEvents(params: {
+    aggregateId: ID;
+    aggregateType: string;
     first?: number;
     after?: number;
   }): Promise<Event[]>;
@@ -42,22 +46,44 @@ export interface EventStoreDatabaseAdapter {
   }): Promise<Event[]>;
 }
 
-export type ConnectionAdapterClient = {
+export type SnapshotStore = {
+  createSnapshot(params: {
+    aggregate: {
+      id: ID;
+      type: string;
+      version: number;
+    };
+    state: any;
+  }): Promise<Snapshot>;
+  retrieveLatestSnapshot(aggregate: {
+    id: ID;
+    type: string;
+    version: number;
+  }): Promise<Snapshot | null>;
+}
+
+export type ConnectionClient = {
   (...args: any[]): Promise<any>;
   stop(): Promise<void>;
 };
 
-export type ConnectionAdapterWorker = {
+export type ConnectionWorker = {
   stop(): Promise<void>;
 };
 
-export type ConnectionAdapterSubscriber = {};
+export type ConnectionSubscriber = {};
 
-export type ConnectionAdapterPublisher = {};
+export type ConnectionPublisher = {};
 
-export type ConnectionAdapter = {
-  createClient(address: string, options?: { timeout?: string | number }): Promise<ConnectionAdapterClient>;
-  createWorker(address: string, handler: (...args: any[]) => Promise<any>, options?: { concurrency?: number }): Promise<ConnectionAdapterWorker>;
+export type Connection = {
+  createClient(
+    address: string,
+    options?: { timeout?: string | number },
+  ): Promise<ConnectionClient>;
+  createWorker(
+    address: string,
+    handler: (...args: any[]) => Promise<any>, options?: { concurrency?: number },
+  ): Promise<ConnectionWorker>;
   // createSubscriber(address: string): Promise<ConnectionAdapterSubscriber>;
   // createPublisher(address: string): Promise<ConnectionAdapterSubscriber>;
   stop(): Promise<void>;
@@ -86,4 +112,4 @@ export enum RequestType {
   SaveSnapshot = 'SaveSnapshot',
   RetrieveLatestSnapshot = 'RetrieveLatestSnapshot',
   RetrieveEvents = 'RetrieveEvents',
-};
+}

@@ -1,6 +1,6 @@
 import R from 'ramda';
 import { expect } from 'chai';
-import { generateId } from '../../src/lib/util';
+import generateId from '../../../src/lib/util/generate-id';
 
 describe('generateId', () => {
   it('should generate unique event id', () => {

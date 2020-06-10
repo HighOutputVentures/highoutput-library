@@ -1,25 +1,27 @@
 // import { Publisher } from '@highoutput/amqp';
 // import Cache from 'lru-cache';
+import AppError from '@highoutput/error';
 import {
   Event,
-  EventStoreDatabaseAdapter,
+  EventStoreDatabase,
   RequestType,
-  ConnectionAdapter,
-  ConnectionAdapterWorker,
+  Connection,
+  ConnectionWorker,
   Snapshot,
 } from '../types';
-import { getDatabase, getConnection } from '../util';
+import getDatabase from '../util/get-database';
+import getConnection from '../util/get-connection';
 import baseLogger from '../logger';
 
-const logger = baseLogger.tag(['event-store', 'server']);
+const logger = baseLogger.tag(['EventStore', 'server']);
 
 export default class {
-  private worker: ConnectionAdapterWorker | null = null;
+  private worker: ConnectionWorker | null = null;
 
   private options: {
-    connection: ConnectionAdapter;
+    connection: Connection;
+    database: EventStoreDatabase;
     concurrency: number;
-    database: EventStoreDatabaseAdapter;
     address: string;
   };
 
@@ -33,18 +35,18 @@ export default class {
 
   constructor(
     options?: {
-      connection?: ConnectionAdapter;
+      connection?: Connection;
+      database?: EventStoreDatabase;
       concurrency?: number;
-      database?: EventStoreDatabaseAdapter;
       address?: string;
     },
   ) {
     this.options = {
       connection: options?.connection || getConnection(),
-      concurrency: options?.concurrency || 100,
       database: options?.database || getDatabase(),
+      concurrency: options?.concurrency || 100,
       address: options?.address || 'EventStore',
-    }
+    };
   }
 
   // private async getPublisher(topic: string) {
@@ -60,40 +62,45 @@ export default class {
   // }
 
   public async start() {
-    this.worker = await this.options.connection.createWorker(this.options.address, async ({ type, data }: { type: RequestType; data?: any }) => {
-      logger.verbose({ type, data });
-      if (type === RequestType.Ping) {
-        return 'Pong';
-      }
+    this.worker = await this.options.connection.createWorker(
+      this.options.address,
+      async ({ type, data }: { type: RequestType; data?: any }) => {
+        logger.verbose({ type, data });
+        if (type === RequestType.Ping) {
+          return 'Pong';
+        }
 
-      if (type === RequestType.SaveEvent) {
-        const event = data as Event;
-        
-        await this.options.database.saveEvent(event);
+        if (type === RequestType.SaveEvent) {
+          const event = data as Event;
 
-        // const publish = await this.getPublisher(`${data.aggregateType}.${data.type}`);
-        // publish(event);
-      }
-
-      if (type === RequestType.SaveSnapshot) {
-        const snapshot = data as Snapshot;
-        
-        await this.options.database.saveSnapshot(snapshot);
+          await this.options.database.saveEvent(event);
 
         // const publish = await this.getPublisher(`${data.aggregateType}.${data.type}`);
         // publish(event);
-      }
+        }
 
-      // if (type === RequestType.RetrieveLatestSnapshot) {
-      //   return this.database.retrieveLatestSnapshot(data);
-      // }
+        if (type === RequestType.SaveSnapshot) {
+          const snapshot = data as Snapshot;
 
-      if (type === RequestType.RetrieveEvents) {
-        return this.options.database.retrieveEvents(data);
-      }
-    }, {
-      concurrency: this.options.concurrency
-    });
+          await this.options.database.saveSnapshot(snapshot);
+
+        // const publish = await this.getPublisher(`${data.aggregateType}.${data.type}`);
+        // publish(event);
+        }
+
+        // if (type === RequestType.RetrieveLatestSnapshot) {
+        //   return this.database.retrieveLatestSnapshot(data);
+        // }
+
+        if (type === RequestType.RetrieveEvents) {
+          return this.options.database.retrieveEvents(data);
+        }
+
+        throw new AppError('INVALID_OPERATION', `${type} is not supported.`);
+      }, {
+        concurrency: this.options.concurrency,
+      },
+    );
   }
 
   public async stop() {
