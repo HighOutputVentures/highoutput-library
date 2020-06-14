@@ -48,14 +48,14 @@ export default class MemorySnapshotStore implements SnapshotStore {
     .loki
     .addCollection<SerializedSnapshot>('snapshots');
 
-  public async createSnapshot(params: {
+  public createSnapshot(params: {
     aggregate: {
       id: ID;
       type: string;
       version: number;
     };
     state: any;
-  }): Promise<Snapshot> {
+  }) {
     const id = generateSnapshotId(params.aggregate);
 
     const snapshot = {
@@ -64,11 +64,15 @@ export default class MemorySnapshotStore implements SnapshotStore {
       timestamp: new Date(),
     };
 
-    this.collection.findAndRemove({ id: id.toString('base64') });
 
-    this.collection.insert(serializeSnapshot(snapshot));
+    return {
+      ...snapshot,
+      save: async () => {
+        this.collection.findAndRemove({ id: id.toString('base64') });
 
-    return snapshot;
+        this.collection.insert(serializeSnapshot(snapshot));
+      },
+    };
   }
 
   public async retrieveLatestSnapshot(aggregate: {

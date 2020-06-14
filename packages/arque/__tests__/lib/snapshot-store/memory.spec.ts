@@ -1,8 +1,8 @@
 import crypto from 'crypto';
 import R from 'ramda';
 import MemorySnapshotStore, { serializeSnapshot } from '../../../src/lib/snapshot-store/memory';
-import { chance, expect } from '../../helpers';
 import generateSnapshotId from '../../../src/lib/util/generate-snapshot-id';
+import { chance, expect, generateFakeSnapshot } from '../../helpers';
 
 describe('MemorySnapshotStore', () => {
   beforeEach(function () {
@@ -11,50 +11,31 @@ describe('MemorySnapshotStore', () => {
 
   describe('#createSnapshot', () => {
     it('should create and store snapshot', async function () {
-      const snapshot = await this.store.createSnapshot({
-        aggregate: {
-          id: crypto.randomBytes(16),
-          type: 'Account',
-          version: 1,
-        },
-        state: {
-          username: chance.first().toLowerCase(),
-        },
-      });
+      const snapshot = await this.store.createSnapshot(generateFakeSnapshot());
+      await snapshot.save();
 
       expect(snapshot).to.has.all.keys([
         'id',
         'aggregate',
         'state',
         'timestamp',
+        'save',
       ]);
       expect(this.store.collection.findOne({ id: snapshot.id.toString('base64') })).to.be.ok;
     });
 
     it('should replace the existing snapshot', async function () {
-      await this.store.createSnapshot({
-        aggregate: {
-          id: crypto.randomBytes(16),
-          type: 'Account',
-          version: 1,
-        },
-        state: {
-          username: chance.first().toLowerCase(),
-        },
-      });
+      await this.store.createSnapshot(generateFakeSnapshot()).save();
 
       const username = chance.first().toLowerCase();
 
       const snapshot = await this.store.createSnapshot({
-        aggregate: {
-          id: crypto.randomBytes(16),
-          type: 'Account',
-          version: 1,
-        },
+        ...generateFakeSnapshot(),
         state: {
           username,
         },
       });
+      await snapshot.save();
 
       expect(this.store.collection.findOne({ id: snapshot.id.toString('base64') }))
         .to.be.ok.to.has.property('state').to.deep.equal({ username });

@@ -9,7 +9,7 @@ import {
   ConnectionWorker,
   Snapshot,
 } from '../types';
-import getDatabase from '../util/get-database';
+import getDatabase from '../util/get-event-store-database';
 import getConnection from '../util/get-connection';
 import baseLogger from '../logger';
 

@@ -1,17 +1,18 @@
 import crypto from 'crypto';
 import {
   Aggregate,
+  BaseAggregate,
   AggregateEventHandler,
-  EventStoreClient,
-  MemoryEventStoreDatabase,
-  EventStoreServer,
 } from '../src';
 import { expect } from './helpers';
-import { ID, Event } from '../src/lib/types';
+import {
+  ID, Event, EVENT_STORE_METADATA_KEY, SNAPSHOT_STORE_METADATA_KEY,
+} from '../src/lib/types';
 
-class BalanceAggregate extends Aggregate {
+@Aggregate({ type: 'Balance' })
+class BalanceAggregate extends BaseAggregate {
   constructor(id: ID) {
-    super(id, new EventStoreClient(), 0);
+    super(id, 0);
   }
 
   @AggregateEventHandler({ type: 'Credited' })
@@ -24,36 +25,27 @@ class BalanceAggregate extends Aggregate {
     const result = state - event.body.amount;
 
     if (result < 0) {
-      throw new Error('Cannot be less than 0.');
+      throw new Error('Cannot be negative.');
     }
 
     return result;
   }
-
-  get type(): string {
-    return 'Balance';
-  }
 }
 
 describe('Aggregate', () => {
-  before(async function () {
-    this.database = new MemoryEventStoreDatabase();
-    this.server = new EventStoreServer({ database: this.database });
-    await this.server.start();
+  before(function () {
+    this.eventStore = Reflect.getMetadata(EVENT_STORE_METADATA_KEY, BalanceAggregate.prototype);
+    this.snapshotStore = Reflect.getMetadata(SNAPSHOT_STORE_METADATA_KEY, BalanceAggregate.prototype);
   });
 
-  afterEach(async function () {
-    this.database.EventCollection.clear();
-    this.database.SnapshotCollection.clear();
-  });
-
-  after(async function () {
-    await this.server.stop();
+  afterEach(function () {
+    this.eventStore.database.collection.clear();
+    this.snapshotStore.collection.clear();
   });
 
   describe('#createEvent', () => {
     it('should create event', async function () {
-      const aggregate = new BalanceAggregate(crypto.randomBytes(12));
+      const aggregate = new BalanceAggregate(crypto.randomBytes(16));
 
       await aggregate.createEvent({
         type: 'Credited',
@@ -62,15 +54,15 @@ describe('Aggregate', () => {
         },
       });
 
-      const event = this.database.EventCollection.findOne({
-        aggregateType: 'Balance',
+      const event = this.eventStore.database.collection.findOne({
+        'aggregate.type': 'Balance',
       });
       expect(event).to.has.property('type', 'Credited');
       expect(event).to.has.property('body').that.deep.equals({ amount: 100 });
     });
 
     it('should update the state correctly', async () => {
-      const aggregate = new BalanceAggregate(crypto.randomBytes(12));
+      const aggregate = new BalanceAggregate(crypto.randomBytes(16));
 
       await aggregate.createEvent({
         type: 'Credited',
@@ -97,7 +89,7 @@ describe('Aggregate', () => {
     });
 
     it('should protect the business invariant', async () => {
-      const aggregate = new BalanceAggregate(crypto.randomBytes(12));
+      const aggregate = new BalanceAggregate(crypto.randomBytes(16));
 
       await aggregate.createEvent({
         type: 'Credited',
@@ -113,7 +105,7 @@ describe('Aggregate', () => {
             amount: 125,
           },
         }),
-      ).to.eventually.be.rejectedWith('Cannot be less than 0.');
+      ).to.eventually.be.rejectedWith('Cannot be negative.');
     });
   });
 });

@@ -1,4 +1,9 @@
 /* eslint-disable import/prefer-default-export */
+export const AGGREGATE_TYPE_METADATA_KEY = 'aggregateType';
+export const EVENT_STORE_METADATA_KEY = 'eventStore';
+export const SNAPSHOT_STORE_METADATA_KEY = 'snapshotStore';
+export const EVENT_HANDLERS_METADATA_KEY = 'eventHandlers';
+
 export type ID = Buffer;
 
 export type Event<TEventType extends string = string, TBody = any> = Readonly<{
@@ -54,7 +59,7 @@ export type SnapshotStore = {
       version: number;
     };
     state: any;
-  }): Promise<Snapshot>;
+  }): Snapshot & { save: () => Promise<void> };
   retrieveLatestSnapshot(aggregate: {
     id: ID;
     type: string;
@@ -90,19 +95,24 @@ export type Connection = {
 }
 
 export type EventStore = {
-  createEvent(params: Omit<Event, 'id' | 'timestamp'>): Promise<Event>;
-  // retrieveAggregateEvents(params: {
-  //   aggregate: {
-  //     id: ID;
-  //     type: string;
-  //   };
-  //   first?: number;
-  //   after?: number;
-  // }): Promise<Event[]>;
-  // retrieveEvents(params: {
-  //   first?: number;
-  //   after?: ID;
-  // }): Promise<Event[]>;
+  createEvent(params: Omit<Event, 'id' | 'timestamp'>): Event & { save: () => Promise<void> };
+  retrieveAggregateEvents(params: {
+    aggregate: ID;
+    first?: number;
+    after?: number;
+  }): Promise<Event[]>;
+  retrieveEvents(params: {
+    first?: number;
+    after?: ID;
+    filters: {
+      aggregate?: {
+        id?: ID;
+        type?: string;
+      };
+      version?: number;
+      type?: string;
+    }[];
+  }): Promise<Event[]>;
   // subscribe(params: {
   //   aggregateId?: string;
   //   aggregateType?: string;

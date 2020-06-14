@@ -2,8 +2,8 @@ import Chance from 'chance';
 import chai, { expect } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import crypto from 'crypto';
-import generateId from '../src/lib/util/generate-id';
 import generateEventId from '../src/lib/util/generate-event-id';
+import generateSnapshotId from '../src/lib/util/generate-snapshot-id';
 
 chai.use(chaiAsPromised);
 
@@ -32,13 +32,16 @@ export function generateFakeEvent() {
 
 export function generateFakeSnapshot() {
   const timestamp = new Date();
-  const aggregate = crypto.randomBytes(16);
+
+  const aggregate = {
+    id: crypto.randomBytes(16),
+    type: 'Account',
+    version: 1,
+  };
 
   return {
-    id: generateId(timestamp),
-    aggregateId: crypto.randomBytes(12),
-    aggregateType: 'Account',
-    aggregateVersion: 1,
+    id: generateSnapshotId(aggregate),
+    aggregate,
     state: {
       username: chance.first().toLowerCase(),
     },
