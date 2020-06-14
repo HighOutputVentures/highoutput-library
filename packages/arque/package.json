@@ -38,6 +38,7 @@
     "@highoutput/logger": "^0.2.3",
     "@types/lru-cache": "^5.1.0",
     "@types/ramda": "^0.27.3",
+    "clean-deep": "^3.3.0",
     "lokijs": "^1.5.8",
     "lru-cache": "^5.1.1",
     "luxon": "^1.24.1",

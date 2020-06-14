@@ -11,6 +11,9 @@ type SerializedSnapshot = Omit<Snapshot, 'id' | 'aggregate'> &
       type: string;
       version: number;
     };
+    'aggregate.id'?: string;
+    'aggregate.type'?: string;
+    'aggregate.version'?: number;
   };
 
 export function serializeSnapshot(snapshot: Snapshot): SerializedSnapshot {
@@ -81,7 +84,7 @@ export default class MemorySnapshotStore implements SnapshotStore {
         'aggregate.version': {
           $lte: aggregate.version,
         },
-      } as any)
+      })
       .sort(R.descend(R.path(['aggregate', 'version'])))
       .limit(1)
       .data()

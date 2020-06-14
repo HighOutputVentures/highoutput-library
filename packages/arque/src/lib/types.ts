@@ -1,13 +1,15 @@
 /* eslint-disable import/prefer-default-export */
 export type ID = Buffer;
 
-export type Event<TAggregateType extends string = string, TEventType extends string = string, TBody = any> = Readonly<{
+export type Event<TEventType extends string = string, TBody = any> = Readonly<{
   id: ID;
   type: TEventType;
   body: TBody;
-  aggregateId: ID;
-  aggregateType: TAggregateType;
-  aggregateVersion: number;
+  aggregate: {
+    id: ID;
+    type: string;
+    version: number;
+  };
   version: number;
   timestamp: Date;
 }>;
@@ -25,14 +27,8 @@ export type Snapshot = Readonly<{
 
 export interface EventStoreDatabase {
   saveEvent(event: Event): Promise<void>;
-  saveSnapshot(snapshot: Snapshot): Promise<void>;
-  retrieveLatestSnapshot(params: {
-    aggregateId: ID;
-    aggregateType: string;
-  }): Promise<Snapshot | null>;
   retrieveAggregateEvents(params: {
-    aggregateId: ID;
-    aggregateType: string;
+    aggregate: ID;
     first?: number;
     after?: number;
   }): Promise<Event[]>;
@@ -40,7 +36,11 @@ export interface EventStoreDatabase {
     first?: number;
     after?: ID;
     filters: {
-      aggregateType: string;
+      aggregate?: {
+        id?: ID;
+        type?: string;
+      };
+      version?: number;
       type?: string;
     }[];
   }): Promise<Event[]>;
@@ -90,15 +90,19 @@ export type Connection = {
 }
 
 export type EventStore = {
+  createEvent(params: Omit<Event, 'id' | 'timestamp'>): Promise<Event>;
+  // retrieveAggregateEvents(params: {
+  //   aggregate: {
+  //     id: ID;
+  //     type: string;
+  //   };
+  //   first?: number;
+  //   after?: number;
+  // }): Promise<Event[]>;
   // retrieveEvents(params: {
   //   first?: number;
-  //   after?: Buffer;
+  //   after?: ID;
   // }): Promise<Event[]>;
-  // retrieveLatestSnapshot(params: {
-  //   aggregateId: string;
-  //   aggregateType: string;
-  //   lastAggregateVersion?: number;
-  // }): Promise<Snapshot | null>;
   // subscribe(params: {
   //   aggregateId?: string;
   //   aggregateType?: string;

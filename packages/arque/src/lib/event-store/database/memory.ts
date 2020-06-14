@@ -1,9 +1,45 @@
 import R from 'ramda';
 import Loki, { LokiMemoryAdapter } from 'lokijs';
 import AppError from '@highoutput/error';
+import cleanDeep from 'clean-deep';
 import {
-  EventStoreDatabase, Event, Snapshot, ID,
+  EventStoreDatabase, Event, ID,
 } from '../../types';
+
+type SerializedEvent = Omit<Event, 'id' | 'aggregate'> &
+  {
+    id: string;
+    aggregate: {
+      id: string;
+      type: string;
+      version: number;
+    };
+    'aggregate.id'?: string;
+    'aggregate.type'?: string;
+    'aggregate.version'?: number;
+  };
+
+export function serializeEvent(event: Event): SerializedEvent {
+  return {
+    ...R.pick(['type', 'body', 'version', 'timestamp'], event),
+    id: event.id.toString('hex'),
+    aggregate: {
+      ...event.aggregate,
+      id: event.aggregate.id.toString('hex'),
+    },
+  };
+}
+
+export function deserializeEvent(event: SerializedEvent): Event {
+  return {
+    ...R.pick(['type', 'body', 'version', 'timestamp'], event),
+    id: Buffer.from(event.id, 'hex'),
+    aggregate: {
+      ...event.aggregate,
+      id: Buffer.from(event.aggregate.id, 'hex'),
+    },
+  };
+}
 
 export default class implements EventStoreDatabase {
   private readonly loki = new Loki(
@@ -11,111 +47,73 @@ export default class implements EventStoreDatabase {
     { adapter: new LokiMemoryAdapter() },
   );
 
-  public readonly collections = {
-    Event: this
-      .loki
-      .addCollection<
-      Omit<Event, 'id' | 'aggregateId'> &
-      { id: string; aggregateId: string }
-    >('events'),
-    Snapshot: this
-      .loki
-      .addCollection<
-      Omit<Snapshot, 'id' | 'aggregateId'> &
-      { id: string; aggregateId: string }
-    >('snapshots'),
-  }
+  public readonly collection = this
+    .loki
+    .addCollection<SerializedEvent>('events');
 
-  public async saveEvent(params: Event): Promise<void> {
-    if (this.collections.Event.findOne({
-      aggregateId: params.aggregateId.toString('hex'),
-      aggregateType: params.aggregateType,
+  public async saveEvent(event: Event): Promise<void> {
+    if (this.collection.findOne({
+      'aggregate.id': event.aggregate.id.toString('hex'),
+      'aggregate.version': event.aggregate.version,
     })) {
       throw new AppError('AGGREGATE_VERSION_EXISTS', 'Aggregate version already exists.');
     }
 
-    this.collections.Event.insertOne({
-      ...params,
-      id: params.id.toString('hex'),
-      aggregateId: params.aggregateId.toString('hex'),
-    });
-  }
-
-  public async saveSnapshot(params: Snapshot): Promise<void> {
-    this.collections.Snapshot.insertOne({
-      ...params,
-      id: params.id.toString('hex'),
-      aggregateId: params.aggregateId.toString('hex'),
-    });
-  }
-
-  public async retrieveLatestSnapshot(params: {
-    aggregateId: ID;
-    aggregateType: string;
-  }): Promise<Snapshot | null> {
-    const [result] = this.collections.Snapshot
-      .chain()
-      .find({
-        ...params,
-        aggregateId: params.aggregateId.toString('hex'),
-      })
-      .sort(R.descend(R.prop('aggregateVersion')))
-      .limit(1)
-      .data()
-      .map<Snapshot>((item) => ({
-        ...R.omit(['$loki', 'meta'], item),
-        id: Buffer.from(item.id, 'hex'),
-        aggregateId: Buffer.from(item.aggregateId, 'hex'),
-      }));
-
-    if (!result) {
-      return null;
-    }
-
-    return result || null;
+    this.collection.insertOne(serializeEvent(event));
   }
 
   public async retrieveAggregateEvents(params: {
-    aggregateId: ID;
-    aggregateType: string;
+    aggregate: ID;
     first?: number;
     after?: number;
   }): Promise<Event[]> {
     let query: Record<string, any> = {
-      aggregateId: params.aggregateId.toString('hex'),
-      aggregateType: params.aggregateType,
+      'aggregate.id': params.aggregate.toString('hex'),
     };
 
     if (params.after) {
       query = {
         ...query,
-        aggregateVersion: {
+        'aggregate.version': {
           $gt: params.after,
         },
       };
     }
 
-    return this.collections.Event.chain()
+    return this.collection
+      .chain()
       .find(query)
-      .sort(R.ascend(R.prop('aggregateVersion')))
+      .sort(R.ascend(R.path(['aggregate', 'version'])))
       .limit(params.first || 1000)
       .data()
-      .map((item) => ({
-        ...R.omit(['$loki', 'meta'], item),
-        id: Buffer.from(item.id, 'hex'),
-        aggregateId: Buffer.from(item.aggregateId, 'hex'),
-      }));
+      .map(deserializeEvent);
   }
 
   public async retrieveEvents(params: {
     first?: number;
     after?: ID;
     filters: {
-      aggregateType: string;
+      aggregate?: {
+        id?: ID;
+        type?: string;
+      };
+      version?: number;
       type?: string;
     }[];
   }): Promise<Event[]> {
-    if (params.filters.length === 0) {
+    const filters = R.map((filter) => {
+      if (filter.aggregate) {
+        return cleanDeep({
+          ...R.omit(['aggregate'], filter),
+          'aggregate.id': filter.aggregate.id?.toString('hex'),
+          'aggregate.type': filter.aggregate.type,
+        });
+      }
+
+      return filter;
+    }, params.filters);
+
+    if (filters.length === 0) {
       return [];
     }
 
@@ -132,28 +130,25 @@ export default class implements EventStoreDatabase {
 
     if (R.isEmpty(query)) {
       query = {
-        $or: params.filters,
+        $or: filters,
       };
     } else {
       query = {
         $and: [
           query,
           {
-            $or: params.filters,
+            $or: filters,
           },
         ],
       };
     }
 
-    return this.collections.Event.chain()
+    return this.collection
+      .chain()
       .find(query)
       .sort(R.ascend(R.prop('id')))
       .limit(params.first || 1000)
       .data()
-      .map((item) => ({
-        ...R.omit(['$loki', 'meta'], item),
-        id: Buffer.from(item.id, 'hex'),
-        aggregateId: Buffer.from(item.aggregateId, 'hex'),
-      }));
+      .map(deserializeEvent);
   }
 }
