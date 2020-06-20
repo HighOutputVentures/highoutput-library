@@ -51,7 +51,7 @@ export interface EventStoreDatabase {
   }): Promise<Event[]>;
 }
 
-export type SnapshotStore = {
+export interface SnapshotStore {
   createSnapshot(params: {
     aggregate: {
       id: ID;
@@ -80,7 +80,7 @@ export type ConnectionSubscriber = {};
 
 export type ConnectionPublisher = {};
 
-export type Connection = {
+export interface Connection {
   createClient(
     address: string,
     options?: { timeout?: string | number },
@@ -94,7 +94,7 @@ export type Connection = {
   stop(): Promise<void>;
 }
 
-export type EventStore = {
+export interface EventStore {
   createEvent(params: Omit<Event, 'id' | 'timestamp'>): Event & { save: () => Promise<void> };
   retrieveAggregateEvents(params: {
     aggregate: ID;
