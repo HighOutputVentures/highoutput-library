@@ -2,17 +2,17 @@
 export const AGGREGATE_TYPE_METADATA_KEY = 'AGGREGATE_TYPE';
 export const EVENT_STORE_METADATA_KEY = 'EVENT_STORE';
 export const SNAPSHOT_STORE_METADATA_KEY = 'SNAPSHOT_STORE';
-export const EVENT_HANDLERS_METADATA_KEY = 'EVENT_HANDLERS';
+export const AGGREGATE_EVENT_HANDLERS_METADATA_KEY = 'AGGREGATE_EVENT_HANDLERS';
 export const PROJECTION_ID_METADATA_KEY = 'PROJECTION_ID';
 export const PROJECTION_STORE_METADATA_KEY = 'PROJECTION_STORE';
 export const PROJECTION_EVENT_HANDLERS_METADATA_KEY = 'PROJECTION_EVENT_HANDLERS';
 
 export type ID = Buffer;
 
-export type Event<TEventType extends string = string, TBody = any> = Readonly<{
+export type Event<T extends any = any> = Readonly<{
   id: ID;
-  type: TEventType;
-  body: TBody;
+  type: string;
+  body: T;
   aggregate: {
     id: ID;
     type: string;

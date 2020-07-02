@@ -1,34 +1,39 @@
 import crypto from 'crypto';
 import {
   Aggregate,
-  BaseAggregate,
   AggregateEventHandler,
+  BaseAggregate,
 } from '../src';
 import { expect } from './helpers';
 import {
-  ID, Event, EVENT_STORE_METADATA_KEY, SNAPSHOT_STORE_METADATA_KEY,
+  ID,
+  Event,
+  EVENT_STORE_METADATA_KEY,
+  SNAPSHOT_STORE_METADATA_KEY,
 } from '../src/lib/types';
 
-@Aggregate({ type: 'Balance' })
+const onDebited = (state: number, event: Event<{ amount: number }>) => {
+  const result = state - event.body.amount;
+
+  if (result < 0) {
+    throw new Error('Cannot be negative.');
+  }
+
+  return result;
+};
+
+@Aggregate({
+  type: 'Balance',
+  eventHandlers: [{ filter: { type: 'Debited' }, handler: onDebited }],
+})
 class BalanceAggregate extends BaseAggregate {
   constructor(id: ID) {
     super(id, 0);
   }
 
   @AggregateEventHandler({ type: 'Credited' })
-  onCredited(state: number, event: Event): number {
+  onCredited(state: number, event: Event<{ amount: number }>) {
     return state + event.body.amount;
-  }
-
-  @AggregateEventHandler({ type: 'Debited' })
-  onDebited(state: number, event: Event): number {
-    const result = state - event.body.amount;
-
-    if (result < 0) {
-      throw new Error('Cannot be negative.');
-    }
-
-    return result;
   }
 }
 

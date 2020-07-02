@@ -11,6 +11,7 @@ import {
   AGGREGATE_TYPE_METADATA_KEY,
   EVENT_STORE_METADATA_KEY,
   SNAPSHOT_STORE_METADATA_KEY,
+  AGGREGATE_EVENT_HANDLERS_METADATA_KEY,
 } from '../types';
 
 export default abstract class BaseAggregate<TState = any, TEvent extends Event = Event> {
@@ -63,15 +64,15 @@ export default abstract class BaseAggregate<TState = any, TEvent extends Event =
   }
 
   private apply(state: TState, event: Event): TState {
-    let newState = state;
+    let next = R.clone(state);
 
-    for (const [key, filter] of R.toPairs(Reflect.getMetadata('eventHandlers', this))) {
-      if (R.equals(filter, R.pick(R.keys(filter), event))) {
-        newState = this[key](state, event);
+    for (const { filter, handler } of Reflect.getMetadata(AGGREGATE_EVENT_HANDLERS_METADATA_KEY, this)) {
+      if (R.equals(filter, R.pick(R.keys(filter) as any, event))) {
+        next = handler(state, event);
       }
     }
 
-    return newState;
+    return next;
   }
 
   public async fold() {
@@ -87,7 +88,7 @@ export default abstract class BaseAggregate<TState = any, TEvent extends Event =
       })) as TEvent[];
 
       for (const event of events) {
-        state = this.apply(R.clone(state), event);
+        state = this.apply(state, event);
 
         version = event.aggregate.version;
       }
@@ -115,7 +116,7 @@ export default abstract class BaseAggregate<TState = any, TEvent extends Event =
         },
       });
 
-      const state = this.apply(R.clone(this.state), event);
+      const state = this.apply(this.state, event);
 
       await event.save();
 
