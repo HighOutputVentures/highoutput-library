@@ -8,7 +8,10 @@ export default class implements Connection {
     this.amqp = new Amqp(options);
   }
 
-  async createClient(address: string, options?: { timeout?: string | number }) {
+  async createClient(
+    address: string,
+    options?: { timeout?: string | number },
+  ) {
     const client = await this.amqp.createClient(address, {
       ...options,
       deserialize: true,
@@ -24,7 +27,11 @@ export default class implements Connection {
     );
   }
 
-  async createWorker(address: string, handler: (...args: any[]) => Promise<any>, options?: { concurrency?: number }) {
+  async createWorker(
+    address: string,
+    handler: (...args: any[]) => Promise<any>,
+    options?: { concurrency?: number },
+  ) {
     const worker = await this.amqp.createWorker(address, handler, {
       ...options,
       deserialize: true,
@@ -33,6 +40,34 @@ export default class implements Connection {
 
     return {
       stop: () => worker.stop(),
+    };
+  }
+
+  async createPublisher(topic: string) {
+    const publisher = await this.amqp.createPublisher(topic, {
+      serialize: true,
+    });
+
+    return Object.assign(
+      async (...args: any[]) => publisher(...args),
+      {
+        stop: () => publisher.publisher.stop(),
+      },
+    );
+  }
+
+  async createSubscriber(
+    topic: string,
+    handler: (...args: any[]) => Promise<any>,
+    options?: { concurrency?: number },
+  ) {
+    const subscriber = await this.amqp.createSubscriber(topic, handler, {
+      ...options,
+      deserialize: true,
+    });
+
+    return {
+      stop: () => subscriber.stop(),
     };
   }
 

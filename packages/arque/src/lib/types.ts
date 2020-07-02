@@ -1,8 +1,11 @@
 /* eslint-disable import/prefer-default-export */
-export const AGGREGATE_TYPE_METADATA_KEY = 'aggregateType';
-export const EVENT_STORE_METADATA_KEY = 'eventStore';
-export const SNAPSHOT_STORE_METADATA_KEY = 'snapshotStore';
-export const EVENT_HANDLERS_METADATA_KEY = 'eventHandlers';
+export const AGGREGATE_TYPE_METADATA_KEY = 'AGGREGATE_TYPE';
+export const EVENT_STORE_METADATA_KEY = 'EVENT_STORE';
+export const SNAPSHOT_STORE_METADATA_KEY = 'SNAPSHOT_STORE';
+export const EVENT_HANDLERS_METADATA_KEY = 'EVENT_HANDLERS';
+export const PROJECTION_ID_METADATA_KEY = 'PROJECTION_ID';
+export const PROJECTION_STORE_METADATA_KEY = 'PROJECTION_STORE';
+export const PROJECTION_EVENT_HANDLERS_METADATA_KEY = 'PROJECTION_EVENT_HANDLERS';
 
 export type ID = Buffer;
 
@@ -76,9 +79,14 @@ export type ConnectionWorker = {
   stop(): Promise<void>;
 };
 
-export type ConnectionSubscriber = {};
+export type ConnectionPublisher = {
+  (...args: any[]): Promise<void>;
+  stop(): Promise<void>;
+};
 
-export type ConnectionPublisher = {};
+export type ConnectionSubscriber = {
+  stop(): Promise<void>;
+};
 
 export interface Connection {
   createClient(
@@ -87,12 +95,26 @@ export interface Connection {
   ): Promise<ConnectionClient>;
   createWorker(
     address: string,
-    handler: (...args: any[]) => Promise<any>, options?: { concurrency?: number },
+    handler: (...args: any[]) => Promise<any>,
+    options?: { concurrency?: number },
   ): Promise<ConnectionWorker>;
-  // createSubscriber(address: string): Promise<ConnectionAdapterSubscriber>;
-  // createPublisher(address: string): Promise<ConnectionAdapterSubscriber>;
+  createPublisher(topic: string): Promise<ConnectionPublisher>;
+  createSubscriber(
+    topic: string,
+    handler: (...args: any[]) => Promise<any>,
+    options?: { concurrency?: number },
+  ): Promise<ConnectionSubscriber>;
   stop(): Promise<void>;
 }
+
+export type EventFilter = {
+  aggregate?: {
+    id?: ID;
+    type?: string;
+  };
+  type?: string;
+  version?: number;
+};
 
 export interface EventStore {
   createEvent(params: Omit<Event, 'id' | 'timestamp'>): Event & { save: () => Promise<void> };
@@ -104,20 +126,35 @@ export interface EventStore {
   retrieveEvents(params: {
     first?: number;
     after?: ID;
-    filters: {
-      aggregate?: {
-        id?: ID;
-        type?: string;
-      };
-      version?: number;
-      type?: string;
-    }[];
+    filters: EventFilter[];
   }): Promise<Event[]>;
-  // subscribe(params: {
-  //   aggregateId?: string;
-  //   aggregateType?: string;
-  //   type?: string;
-  // }, handler: (ack: () => {}) => Promise<void>): Promise<void>;
+  subscribe(
+    params: {
+      aggregate?: {
+        id: ID;
+        type: string;
+      };
+      type?: string;
+    },
+    handler: (event: Event) => Promise<void>,
+  ): Promise<void>;
+}
+
+export enum ProjectionStatus {
+  INITIALIZING = 'INITIALIZING',
+  LIVE = 'LIVE',
+}
+
+export type Projection = {
+  id: string;
+  status: ProjectionStatus;
+  lastEvent: ID;
+  lastUpdated: Date;
+};
+
+export interface ProjectionStore {
+  findById(id: string): Promise<Projection | null>;
+  save: (params: Pick<Projection, 'id' | 'lastEvent' | 'status'>) => Promise<boolean>;
 }
 
 export enum RequestType {
