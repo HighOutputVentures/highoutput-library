@@ -1,8 +1,8 @@
 import sinon from 'sinon';
 import delay from '@highoutput/delay';
 import R from 'ramda';
-import { chance, expect } from '../../helpers';
-import LocalConnection from '../../../src/lib/connection/local';
+import { chance, expect } from '../helpers';
+import { LocalConnection } from '../../src';
 
 describe('LocalConnection', () => {
   beforeEach(async function () {
