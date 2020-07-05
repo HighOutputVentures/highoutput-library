@@ -1,11 +1,11 @@
-import AmqpConnection from '../connection/amqp';
+import LocalConnection from '../connection/local';
 import { Connection } from '../types';
 
 let connection: Connection;
 
 export default function () {
   if (!connection) {
-    connection = new AmqpConnection();
+    connection = new LocalConnection();
   }
 
   return connection;

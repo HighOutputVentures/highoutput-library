@@ -4,15 +4,18 @@
 import Queue from 'p-queue';
 import R from 'ramda';
 import {
-  Event,
   PROJECTION_STORE_METADATA_KEY,
-  ProjectionStore,
   PROJECTION_ID_METADATA_KEY,
-  EventStore,
   EVENT_STORE_METADATA_KEY,
   PROJECTION_EVENT_HANDLERS_METADATA_KEY,
+  Event,
+  EventStore,
+  ProjectionStore,
   EventFilter,
+  ProjectionStatus,
+  ID,
 } from '../types';
+import canHandleEvent from '../util/can-handle-event';
 
 export default abstract class <TEvent extends Event = Event> {
   private startPromise: Promise<void> | null = null;
@@ -23,20 +26,61 @@ export default abstract class <TEvent extends Event = Event> {
     batchSize: number;
   }
 
+  private lastEvent?: ID;
+
+  private filters: EventFilter[];
+
   public constructor(options: {
     batchSize?: number;
   } = {}) {
     this.options = R.mergeDeepLeft({
       batchSize: 100,
     }, options);
+
+    this.filters = R.compose<{ filter: EventFilter }[], EventFilter[], EventFilter[]>(
+      R.uniq,
+      R.pluck('filter'),
+    )(Reflect.getMetadata(PROJECTION_EVENT_HANDLERS_METADATA_KEY, this));
   }
 
   private async apply(event: Event) {
-    // for (const [key, filter] of R.toPairs(Reflect.getMetadata(PROJECTION_EVENT_HANDLERS_METADATA_KEY, this))) {
-    //   if (R.equals(filter, R.pick(R.keys(filter), event))) {
-    //     await this[key](event);
-    //   }
-    // }
+    const projectionStore: ProjectionStore = Reflect.getMetadata(PROJECTION_STORE_METADATA_KEY, this);
+    const id: string = Reflect.getMetadata(PROJECTION_ID_METADATA_KEY, this);
+
+    for (const { filter, handler } of Reflect.getMetadata(PROJECTION_EVENT_HANDLERS_METADATA_KEY, this)) {
+      if (canHandleEvent(filter, event)) {
+        await handler.apply(this, [event]);
+      }
+    }
+
+    await projectionStore.save({
+      id,
+      lastEvent: event.id,
+    });
+
+    this.lastEvent = event.id;
+  }
+
+  private async digest() {
+    const eventStore: EventStore = Reflect.getMetadata(EVENT_STORE_METADATA_KEY, this);
+
+    const first = this.options.batchSize;
+
+    while (true) {
+      const events = await eventStore.retrieveEvents({
+        filters: this.filters,
+        after: this.lastEvent,
+        first,
+      });
+
+      for (const event of events) {
+        await this.apply(event);
+      }
+
+      if (events.length < first) {
+        break;
+      }
+    }
   }
 
   public async start() {
@@ -46,33 +90,38 @@ export default abstract class <TEvent extends Event = Event> {
         const eventStore: EventStore = Reflect.getMetadata(EVENT_STORE_METADATA_KEY, this);
         const id: string = Reflect.getMetadata(PROJECTION_ID_METADATA_KEY, this);
 
-        const projection = await projectionStore.findById(id);
+        await projectionStore.save({
+          id,
+          status: ProjectionStatus.Initializing,
+        });
 
-        let after = projection?.lastEvent;
-        const first = this.options.batchSize;
-
-        const filters = R.compose<Record<string, EventFilter>, EventFilter[], EventFilter[]>(
-          R.uniq,
-          R.values,
-        )(Reflect.getMetadata(PROJECTION_EVENT_HANDLERS_METADATA_KEY, this));
-
-        while (true) {
-          const events = await eventStore.retrieveEvents({
-            filters,
-            after,
-            first,
-          });
-
-          for (const event of events) {
-            await this.apply(event);
-
-            after = event.id;
-          }
-
-          if (events.length < first) {
-            break;
-          }
+        const state = await projectionStore.find(id);
+        if (state) {
+          this.lastEvent = state.lastEvent || undefined;
         }
+
+        await this.digest();
+
+        await Promise.all(this.filters.map((filter) => eventStore.subscribe(
+          filter,
+          async (event: Event) => {
+            this.queue.add(async () => {
+              if (!this.lastEvent || Buffer.compare(event.id, this.lastEvent) > 0) {
+                await this.apply(event);
+              }
+            });
+          },
+          { concurrency: 100 },
+        )));
+
+        await this.digest();
+
+        this.queue.start();
+
+        await projectionStore.save({
+          id,
+          status: ProjectionStatus.Live,
+        });
       })();
     }
 

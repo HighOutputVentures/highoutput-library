@@ -131,30 +131,33 @@ export interface EventStore {
   subscribe(
     params: {
       aggregate?: {
-        id: ID;
-        type: string;
+        type?: string;
       };
       type?: string;
+      version?: number;
     },
     handler: (event: Event) => Promise<void>,
+    options?: { queue?: string; concurrency?: number }
   ): Promise<void>;
 }
 
 export enum ProjectionStatus {
-  INITIALIZING = 'INITIALIZING',
-  LIVE = 'LIVE',
+  Pending = 'PENDING',
+  Initializing = 'INITIALIZING',
+  Live = 'LIVE',
 }
 
-export type Projection = {
+export type ProjectionState = {
   id: string;
   status: ProjectionStatus;
-  lastEvent: ID;
+  lastEvent?: ID | null;
   lastUpdated: Date;
 };
 
 export interface ProjectionStore {
-  findById(id: string): Promise<Projection | null>;
-  save: (params: Pick<Projection, 'id' | 'lastEvent' | 'status'>) => Promise<boolean>;
+  find(id: string): Promise<ProjectionState | null>;
+  save: (params: Pick<ProjectionState, 'id'>
+    & Partial<Pick<ProjectionState, 'status' | 'lastEvent'>>) => Promise<boolean>;
 }
 
 export enum RequestType {

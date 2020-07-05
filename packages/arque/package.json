@@ -1,9 +1,8 @@
 {
   "name": "arque",
   "version": "0.0.0",
-  "description": "A TypeScript library for CQRS and Event Sourcing",
+  "description": "A library for Event Sourcing",
   "keywords": [
-    "cqrs",
     "event",
     "microservice",
     "event sourcing"
@@ -37,7 +36,10 @@
     "@highoutput/error": "^0.1.3",
     "@highoutput/hash": "^0.1.4",
     "@highoutput/logger": "^0.2.3",
+    "@types/lokijs": "^1.5.3",
     "@types/lru-cache": "^5.1.0",
+    "@types/luxon": "^1.24.1",
+    "@types/node": "^14.0.14",
     "@types/ramda": "^0.27.3",
     "@types/serialize-error": "^4.0.1",
     "clean-deep": "^3.3.0",
@@ -52,10 +54,7 @@
     "@types/chai": "^4.2.11",
     "@types/chai-as-promised": "^7.1.2",
     "@types/chance": "^1.0.10",
-    "@types/lokijs": "^1.5.3",
-    "@types/luxon": "^1.24.0",
     "@types/mocha": "^7.0.2",
-    "@types/node": "^13.13.4",
     "@types/sinon": "^9.0.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",

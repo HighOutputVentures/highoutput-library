@@ -1,20 +1,21 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import Loki, { LokiMemoryAdapter } from 'lokijs';
 import R from 'ramda';
-import { ProjectionStore, Projection } from '../types';
+import { ProjectionStore, ProjectionState, ProjectionStatus } from '../types';
 
-type SerializedProjection = Omit<Projection, 'lastEvent'> & { lastEvent: string };
+type SerializedProjection = Omit<ProjectionState, 'lastEvent'> & { lastEvent?: string | null };
 
-export function serialize(projection: Projection): SerializedProjection {
+export function serialize(projection: ProjectionState): SerializedProjection {
   return {
     ...R.pick(['id', 'status', 'lastUpdated'], projection),
-    lastEvent: projection.lastEvent.toString('hex'),
+    lastEvent: projection.lastEvent?.toString('hex') || null,
   };
 }
 
-export function deserialize(projection: SerializedProjection): Projection {
+export function deserialize(projection: SerializedProjection): ProjectionState {
   return {
     ...R.pick(['id', 'status', 'lastUpdated'], projection),
-    lastEvent: Buffer.from(projection.lastEvent, 'hex'),
+    lastEvent: projection.lastEvent ? Buffer.from(projection.lastEvent, 'hex') : null,
   };
 }
 
@@ -28,7 +29,7 @@ export default class implements ProjectionStore {
     .loki
     .addCollection<SerializedProjection>('projections');
 
-  async findById(id: string) {
+  async find(id: string) {
     const projection = this.collection.findOne({ id });
 
     if (!projection) {
@@ -38,17 +39,29 @@ export default class implements ProjectionStore {
     return deserialize(projection);
   }
 
-  async save(params: Pick<Projection, 'id' | 'lastEvent' | 'status'>) {
-    const projection = this.collection.findOne({ id: params.id });
+  async save(params: Pick<ProjectionState, 'id'>
+  & Partial<Pick<ProjectionState, 'status' | 'lastEvent'>>) {
+    let projection = this.collection.findOne({ id: params.id });
 
-    if (projection) {
-      this.collection.remove(projection);
+    if (!projection) {
+      this.collection.insert(serialize({
+        ...R.mergeLeft({
+          status: ProjectionStatus.Pending,
+        }, params),
+        lastUpdated: new Date(),
+      }));
+      projection = this.collection.findOne({ id: params.id })!;
     }
 
-    this.collection.insert(serialize({
-      ...params,
-      lastUpdated: new Date(),
-    }));
+    if (params.status) {
+      projection.status = params.status;
+    }
+
+    if (params.lastEvent) {
+      projection.lastEvent = params.lastEvent.toString('hex');
+    }
+
+    this.collection.update(projection);
 
     return true;
   }
