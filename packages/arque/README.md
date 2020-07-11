@@ -44,6 +44,7 @@ class BalanceAggregate extends BaseAggregate {
 ### Distributed
 
 ## TODO
+- Documentation
 - MongoDBEventStoreDatabase
 - RedisEventStoreDatabase
 - KafkaConnection

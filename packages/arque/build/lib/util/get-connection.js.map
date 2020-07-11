@@ -1,0 +1,1 @@
+{"version":3,"file":"get-connection.js","sourceRoot":"","sources":["../../../src/lib/util/get-connection.ts"],"names":[],"mappings":";;;;;AAAA,gEAAkD;AAGlD,IAAI,UAAsB,CAAC;AAE3B;IACE,IAAI,CAAC,UAAU,EAAE;QACf,UAAU,GAAG,IAAI,eAAe,EAAE,CAAC;KACpC;IAED,OAAO,UAAU,CAAC;AACpB,CAAC;AAND,4BAMC"}
