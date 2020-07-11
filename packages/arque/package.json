@@ -52,7 +52,8 @@
     "mongoose": "^5.9.23",
     "ramda": "^0.27.0",
     "reflect-metadata": "^0.1.13",
-    "serialize-error": "^7.0.1"
+    "serialize-error": "^7.0.1",
+    "typescript": "^3.9.6"
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
@@ -67,11 +68,10 @@
     "mocha": "^7.1.2",
     "rimraf": "^3.0.2",
     "sinon": "^9.0.2",
-    "ts-node": "^8.9.1",
-    "typescript": "^3.9.3"
+    "ts-node": "^8.9.1"
   },
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "ca66a880c9a9d82769deeb0b8b14f085ab7f4407"
+  "gitHead": "f86f2c4d168cded612f51f66fccc9bb887d1267b"
 }
