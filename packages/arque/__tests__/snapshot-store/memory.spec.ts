@@ -5,39 +5,39 @@ import { serializeSnapshot } from '../../src/lib/snapshot-store/memory';
 import generateSnapshotId from '../../src/lib/util/generate-snapshot-id';
 import { chance, expect, generateFakeSnapshot } from '../helpers';
 
-describe.only('MemorySnapshotStore', () => {
+describe('MemorySnapshotStore', () => {
   beforeEach(function () {
     this.store = new MemorySnapshotStore();
   });
 
   describe('#createSnapshot', () => {
     it('should create and store snapshot', async function () {
-      const snapshot = await this.store.createSnapshot(generateFakeSnapshot());
-      await snapshot.save();
+      const snapshot = await this.store.createSnapshot(generateFakeSnapshot()).save();
 
-      expect(R.omit(['save'], snapshot)).to.has.all.keys([
+      expect(snapshot).to.has.all.keys([
         'id',
         'aggregate',
         'state',
         'timestamp',
       ]);
-      expect(this.store.collection.findOne({ id: snapshot.id.toString('base64') })).to.be.ok;
+      expect(this.store.collection.findOne({ id: snapshot.id.toString('hex') })).to.be.ok;
     });
 
     it('should replace the existing snapshot', async function () {
-      await this.store.createSnapshot(generateFakeSnapshot()).save();
+      const snapshot = generateFakeSnapshot();
+
+      await this.store.createSnapshot(snapshot).save();
 
       const username = chance.first().toLowerCase();
 
-      const snapshot = await this.store.createSnapshot({
-        ...generateFakeSnapshot(),
+      await this.store.createSnapshot({
+        ...snapshot,
         state: {
           username,
         },
-      });
-      await snapshot.save();
+      }).save();
 
-      expect(this.store.collection.findOne({ id: snapshot.id.toString('base64') }))
+      expect(this.store.collection.findOne({ id: snapshot.id.toString('hex') }))
         .to.be.ok.to.has.property('state').to.deep.equal({ username });
     });
   });

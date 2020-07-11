@@ -19,10 +19,10 @@ type SerializedSnapshot = Omit<Snapshot, 'id' | 'aggregate'> &
 export function serializeSnapshot(snapshot: Snapshot): SerializedSnapshot {
   return {
     ...R.pick(['state', 'timestamp'], snapshot),
-    id: snapshot.id.toString('base64'),
+    id: snapshot.id.toString('hex'),
     aggregate: {
       ...snapshot.aggregate,
-      id: snapshot.aggregate.id.toString('base64'),
+      id: snapshot.aggregate.id.toString('hex'),
     },
   };
 }
@@ -30,10 +30,10 @@ export function serializeSnapshot(snapshot: Snapshot): SerializedSnapshot {
 export function deserializeSnapshot(snapshot: SerializedSnapshot): Snapshot {
   return {
     ...R.pick(['state', 'timestamp'], snapshot),
-    id: Buffer.from(snapshot.id, 'base64'),
+    id: Buffer.from(snapshot.id, 'hex'),
     aggregate: {
       ...snapshot.aggregate,
-      id: Buffer.from(snapshot.aggregate.id, 'base64'),
+      id: Buffer.from(snapshot.aggregate.id, 'hex'),
     },
   };
 }
@@ -68,7 +68,7 @@ export default class MemorySnapshotStore implements SnapshotStore {
     return {
       ...snapshot,
       save: async () => {
-        this.collection.findAndRemove({ id: id.toString('base64') });
+        this.collection.findAndRemove({ id: id.toString('hex') });
 
         this.collection.insert(serializeSnapshot(snapshot));
 
@@ -84,7 +84,7 @@ export default class MemorySnapshotStore implements SnapshotStore {
     const [result] = this.collection
       .chain()
       .find({
-        'aggregate.id': aggregate.id.toString('base64'),
+        'aggregate.id': aggregate.id.toString('hex'),
         'aggregate.version': {
           $lte: aggregate.version,
         },
