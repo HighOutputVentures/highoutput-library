@@ -9,7 +9,7 @@
   "author": "High Output Ventures",
   "homepage": "https://github.com/Proto-Garage/highoutput-library/tree/master/packages/arque#README.md",
   "license": "ISC",
-  "main": "build/index.ts",
+  "main": "build/index.js",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -41,7 +41,7 @@
     "@types/lokijs": "^1.5.3",
     "@types/lru-cache": "^5.1.0",
     "@types/luxon": "^1.24.1",
-    "@types/mongoose": "^5.7.29",
+    "@types/mongoose": "^5.7.31",
     "@types/node": "^14.0.14",
     "@types/ramda": "^0.27.3",
     "@types/serialize-error": "^4.0.1",
@@ -49,7 +49,7 @@
     "lokijs": "^1.5.8",
     "lru-cache": "^5.1.1",
     "luxon": "^1.24.1",
-    "mongoose": "^5.9.21",
+    "mongoose": "^5.9.23",
     "ramda": "^0.27.0",
     "reflect-metadata": "^0.1.13",
     "serialize-error": "^7.0.1"

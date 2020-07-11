@@ -3,6 +3,8 @@
     "target": "es2017",
     "module": "commonjs",
     "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
     "outDir": "build",
     "strictNullChecks": true,
     "strictFunctionTypes": true,

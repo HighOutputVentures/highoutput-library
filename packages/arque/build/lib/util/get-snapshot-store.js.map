@@ -1,1 +1,0 @@
-{"version":3,"file":"get-snapshot-store.js","sourceRoot":"","sources":["../../../src/lib/util/get-snapshot-store.ts"],"names":[],"mappings":";;;;;AACA,sEAA2D;AAE3D,IAAI,KAAoB,CAAC;AAEzB;IACE,IAAI,CAAC,KAAK,EAAE;QACV,KAAK,GAAG,IAAI,gBAAmB,EAAE,CAAC;KACnC;IAED,OAAO,KAAK,CAAC;AACf,CAAC;AAND,4BAMC"}

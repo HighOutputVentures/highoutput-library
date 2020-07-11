@@ -1,1 +1,0 @@
-{"version":3,"file":"get-event-store.js","sourceRoot":"","sources":["../../../src/lib/util/get-event-store.ts"],"names":[],"mappings":";;AACA,gDAAkD;AAElD,IAAI,KAAiB,CAAC;AAEtB;IACE,IAAI,CAAC,KAAK,EAAE;QACV,KAAK,GAAG,IAAI,8BAAgB,EAAE,CAAC;KAChC;IAED,OAAO,KAAK,CAAC;AACf,CAAC;AAND,4BAMC"}

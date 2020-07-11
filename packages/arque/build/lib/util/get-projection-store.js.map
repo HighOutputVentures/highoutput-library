@@ -1,1 +1,0 @@
-{"version":3,"file":"get-projection-store.js","sourceRoot":"","sources":["../../../src/lib/util/get-projection-store.ts"],"names":[],"mappings":";;;;;AACA,wEAAoE;AAEpE,IAAI,KAAsB,CAAC;AAE3B;IACE,IAAI,CAAC,KAAK,EAAE;QACV,KAAK,GAAG,IAAI,gBAA0B,EAAE,CAAC;KAC1C;IAED,OAAO,KAAK,CAAC;AACf,CAAC;AAND,4BAMC"}
