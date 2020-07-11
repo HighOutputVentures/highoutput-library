@@ -10,13 +10,6 @@
   "homepage": "https://github.com/Proto-Garage/highoutput-library/tree/master/packages/arque#README.md",
   "license": "ISC",
   "main": "build/index.js",
-  "directories": {
-    "lib": "src/lib",
-    "test": "__tests__"
-  },
-  "files": [
-    "lib"
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
@@ -25,7 +18,8 @@
     "test": "cross-env TS_NODE_PROJECT=tsconfig.json TS_NODE_FILES=true mocha \"__tests__/**/*.spec.ts\"",
     "typecheck": "tsc --noEmit",
     "clean": "rimraf build/",
-    "build": "npm run clean && tsc --project tsconfig.json"
+    "build": "npm run clean && tsc --project tsconfig.json",
+    "prepublish": "npm run build"
   },
   "bugs": {
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
