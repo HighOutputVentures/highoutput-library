@@ -1,6 +1,6 @@
 # `arque`
 
-> TODO: description
+A NodeJS library for building event-sourced systems.
 
 ## Usage
 
@@ -23,6 +23,17 @@ class BalanceAggregate extends BaseAggregate {
   onCredited(state: number, event: Event<{ amount: number }>) {
     return state + event.body.amount;
   }
+
+  @AggregateEventHandler({ type: 'Debited' })
+  onDebited(state: number, event: Event<{ amount: number }>) {
+    const result = state - event.body.amount;
+
+    if (result < 0) {
+      throw new Error('Cannot be negative.');
+    }
+
+    return result;
+  }
 }
 ```
 
@@ -31,3 +42,8 @@ class BalanceAggregate extends BaseAggregate {
 ### Projection
 
 ### Distributed
+
+## TODO
+- MongoDBEventStoreDatabase
+- RedisEventStoreDatabase
+- KafkaConnection
