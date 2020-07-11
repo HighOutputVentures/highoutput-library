@@ -40,7 +40,7 @@ export default class implements ProjectionStore {
   }
 
   async save(params: Pick<ProjectionState, 'id'>
-  & Partial<Pick<ProjectionState, 'status' | 'lastEvent'>>) {
+    & Partial<Pick<ProjectionState, 'status' | 'lastEvent'>>) {
     let projection = this.collection.findOne({ id: params.id });
 
     if (!projection) {
@@ -62,7 +62,5 @@ export default class implements ProjectionStore {
     }
 
     this.collection.update(projection);
-
-    return true;
   }
 }

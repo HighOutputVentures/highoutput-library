@@ -157,7 +157,7 @@ export type ProjectionState = {
 export interface ProjectionStore {
   find(id: string): Promise<ProjectionState | null>;
   save: (params: Pick<ProjectionState, 'id'>
-    & Partial<Pick<ProjectionState, 'status' | 'lastEvent'>>) => Promise<boolean>;
+    & Partial<Pick<ProjectionState, 'status' | 'lastEvent'>>) => Promise<void>;
 }
 
 export enum RequestType {

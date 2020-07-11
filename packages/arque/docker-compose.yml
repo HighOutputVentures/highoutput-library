@@ -4,3 +4,7 @@ services:
     image: highoutputdev/activemq:latest
     ports:
       - 5672:5672
+  mongo:
+    image: mongo:latest
+    ports:
+      - 27017:27017
