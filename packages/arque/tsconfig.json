@@ -2,20 +2,27 @@
   "compilerOptions": {
     "target": "es2017",
     "module": "commonjs",
-    "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
-    "outDir": "build",
+    "sourceMap": true,
+    "outDir": "./build",
+    "strict": true,
     "strictNullChecks": true,
     "strictFunctionTypes": true,
     "strictPropertyInitialization": true,
+    "noImplicitAny": true,
     "removeComments": true,
     "noImplicitThis": true,
+    "alwaysStrict": true,
     "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "lib": ["esnext"]
+    "lib": [
+      "es2020"
+    ]
   },
-  "include": ["src/**/*"]
+  "include": [
+    "src/**/*"
+  ]
 }

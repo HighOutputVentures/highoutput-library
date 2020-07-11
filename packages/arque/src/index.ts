@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-export { default as MemoryEventStoreDatabase } from './lib/event-store/database/memory';
+export * from './lib/event-store';
 export * from './lib/aggregate';
 export * from './lib/projection';
 export * from './lib/projection-store';
