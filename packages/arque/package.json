@@ -9,7 +9,7 @@
   "author": "High Output Ventures",
   "homepage": "https://github.com/Proto-Garage/highoutput-library/tree/master/packages/arque#README.md",
   "license": "ISC",
-  "main": "src/index.ts",
+  "main": "build/index.js",
   "directories": {
     "lib": "src/lib",
     "test": "__tests__"
