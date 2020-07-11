@@ -1,10 +1,11 @@
 import crypto from 'crypto';
 import R from 'ramda';
-import MemorySnapshotStore, { serializeSnapshot } from '../../../src/lib/snapshot-store/memory';
-import generateSnapshotId from '../../../src/lib/util/generate-snapshot-id';
-import { chance, expect, generateFakeSnapshot } from '../../helpers';
+import { MemorySnapshotStore } from '../../src';
+import { serializeSnapshot } from '../../src/lib/snapshot-store/memory';
+import generateSnapshotId from '../../src/lib/util/generate-snapshot-id';
+import { chance, expect, generateFakeSnapshot } from '../helpers';
 
-describe('MemorySnapshotStore', () => {
+describe.only('MemorySnapshotStore', () => {
   beforeEach(function () {
     this.store = new MemorySnapshotStore();
   });
@@ -14,12 +15,11 @@ describe('MemorySnapshotStore', () => {
       const snapshot = await this.store.createSnapshot(generateFakeSnapshot());
       await snapshot.save();
 
-      expect(snapshot).to.has.all.keys([
+      expect(R.omit(['save'], snapshot)).to.has.all.keys([
         'id',
         'aggregate',
         'state',
         'timestamp',
-        'save',
       ]);
       expect(this.store.collection.findOne({ id: snapshot.id.toString('base64') })).to.be.ok;
     });

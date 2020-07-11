@@ -12,20 +12,7 @@ import {
   SNAPSHOT_STORE_METADATA_KEY,
 } from '../src/lib/types';
 
-const onDebited = (state: number, event: Event<{ amount: number }>) => {
-  const result = state - event.body.amount;
-
-  if (result < 0) {
-    throw new Error('Cannot be negative.');
-  }
-
-  return result;
-};
-
-@Aggregate({
-  type: 'Balance',
-  eventHandlers: [{ filter: { type: 'Debited' }, handler: onDebited }],
-})
+@Aggregate({ type: 'Balance' })
 class BalanceAggregate extends BaseAggregate {
   constructor(id: ID) {
     super(id, 0);
@@ -34,6 +21,17 @@ class BalanceAggregate extends BaseAggregate {
   @AggregateEventHandler({ type: 'Credited' })
   onCredited(state: number, event: Event<{ amount: number }>) {
     return state + event.body.amount;
+  }
+
+  @AggregateEventHandler({ type: 'Debited' })
+  onDebited(state: number, event: Event<{ amount: number }>) {
+    const result = state - event.body.amount;
+
+    if (result < 0) {
+      throw new Error('Cannot be negative.');
+    }
+
+    return result;
   }
 }
 

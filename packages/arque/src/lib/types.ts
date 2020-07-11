@@ -62,10 +62,9 @@ export interface SnapshotStore {
       version: number;
     };
     state: any;
-  }): Snapshot & { save: () => Promise<void> };
+  }): Snapshot & { save: () => Promise<Snapshot> };
   retrieveLatestSnapshot(aggregate: {
     id: ID;
-    type: string;
     version: number;
   }): Promise<Snapshot | null>;
 }

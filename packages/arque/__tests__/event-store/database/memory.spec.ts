@@ -1,10 +1,10 @@
 /* eslint-disable no-restricted-syntax */
 import R from 'ramda';
 import crypto from 'crypto';
-import MemoryEventStoreDatabase, { serializeEvent } from '../../../../src/lib/event-store/database/memory';
+import MemoryEventStoreDatabase, { serializeEvent } from '../../../src/lib/event-store/database/memory';
 import {
   generateFakeEvent, expect, chance,
-} from '../../../helpers';
+} from '../../helpers';
 
 describe('MemoryEventStoreDatabase', () => {
   beforeEach(function () {

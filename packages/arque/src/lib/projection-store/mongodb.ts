@@ -12,7 +12,7 @@ export default class implements ProjectionStore {
   constructor(connection?: Connection) {
     this.connection = connection || mongoose.createConnection('mongodb://localhost');
 
-    this.model = this.connection.model('Projection', new Schema({
+    const schema = new Schema({
       _id: {
         type: String,
         required: true,
@@ -29,7 +29,8 @@ export default class implements ProjectionStore {
         type: Date,
         default: () => Date.now(),
       },
-    }, { _id: false }));
+    }, { _id: false });
+    this.model = this.connection.model('Projection', schema);
   }
 
   async find(id: string) {

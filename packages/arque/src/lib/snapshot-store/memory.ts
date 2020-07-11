@@ -71,20 +71,20 @@ export default class MemorySnapshotStore implements SnapshotStore {
         this.collection.findAndRemove({ id: id.toString('base64') });
 
         this.collection.insert(serializeSnapshot(snapshot));
+
+        return snapshot;
       },
     };
   }
 
   public async retrieveLatestSnapshot(aggregate: {
     id: ID;
-    type: string;
     version: number;
   }): Promise<Snapshot | null> {
     const [result] = this.collection
       .chain()
       .find({
         'aggregate.id': aggregate.id.toString('base64'),
-        'aggregate.type': aggregate.type,
         'aggregate.version': {
           $lte: aggregate.version,
         },

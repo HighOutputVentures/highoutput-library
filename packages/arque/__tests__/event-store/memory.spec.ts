@@ -2,9 +2,9 @@
 import R from 'ramda';
 import { expect } from 'chai';
 import crypto from 'crypto';
-import { MemoryEventStore } from '../../../src/lib/event-store';
-import { generateFakeEvent, chance } from '../../helpers';
-import { serializeEvent } from '../../../src/lib/event-store/database/memory';
+import { MemoryEventStore } from '../../src/lib/event-store';
+import { generateFakeEvent, chance } from '../helpers';
+import { serializeEvent } from '../../src/lib/event-store/database/memory';
 
 describe('MemoryEventStore', () => {
   before(async function () {
