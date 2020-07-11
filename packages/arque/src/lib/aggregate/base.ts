@@ -124,6 +124,7 @@ export default abstract class BaseAggregate<TState = any, TEvent extends Event =
       this._state = Object.freeze(state);
 
       if (this.shouldTakeSnapshot) {
+        // create snapshot asynchronously
         this.snapshotStore.createSnapshot({
           aggregate: {
             id: this.id,

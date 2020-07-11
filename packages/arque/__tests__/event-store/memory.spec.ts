@@ -6,7 +6,7 @@ import { MemoryEventStore } from '../../src/lib/event-store';
 import { generateFakeEvent, chance } from '../helpers';
 import { serializeEvent } from '../../src/lib/event-store/database/memory';
 
-describe('MemoryEventStore', () => {
+describe.only('MemoryEventStore', () => {
   before(async function () {
     this.store = new MemoryEventStore();
   });
@@ -17,8 +17,7 @@ describe('MemoryEventStore', () => {
 
   describe('#createEvent', () => {
     it('should be able to create and save event', async function () {
-      const event = this.store.createEvent(R.omit(['id', 'timestamp'], generateFakeEvent()));
-      await event.save();
+      const event = await this.store.createEvent(R.omit(['id', 'timestamp'], generateFakeEvent())).save();
 
       expect(event).to.has.all.keys([
         'id',
@@ -27,7 +26,6 @@ describe('MemoryEventStore', () => {
         'aggregate',
         'version',
         'timestamp',
-        'save',
       ]);
       expect(this.store.database.collection.findOne({ id: event.id.toString('hex') })).to.be.ok;
     });

@@ -141,6 +141,8 @@ export default class extends EventEmitter {
 
       checkServer();
     });
+
+    await client.stop();
   }
 
   public async stop() {

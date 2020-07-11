@@ -3,7 +3,7 @@ import {
   EventStore, Event, ID, Connection, ConnectionSubscriber, ConnectionPublisher,
 } from '../types';
 import generateEventId from '../util/generate-event-id';
-import { MemoryEventStoreDatabase } from '../..';
+import MemoryEventStoreDatabase from './database/memory';
 import getConnection from '../util/get-connection';
 
 export default class MemoryEventStore implements EventStore {
@@ -57,6 +57,8 @@ export default class MemoryEventStore implements EventStore {
       save: async () => {
         await this.database.saveEvent(event);
         await this.publish(event);
+
+        return event;
       },
     };
   }
@@ -95,8 +97,10 @@ export default class MemoryEventStore implements EventStore {
     handler: (event: Event) => Promise<void>,
     options?: { queue?: string; concurrency?: number },
   ) {
+    const topic = `${params.aggregate?.type || '*'}.${params.type || '*'}.${params.version || '*'}`;
+
     const subscriber = await this.connection.createSubscriber(
-      `${params.aggregate?.type || '*'}.${params.type || '*'}.${params.version || '*'}`,
+      topic,
       handler,
       options,
     );

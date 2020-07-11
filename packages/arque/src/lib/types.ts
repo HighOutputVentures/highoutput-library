@@ -116,7 +116,7 @@ export type EventFilter = {
 };
 
 export interface EventStore {
-  createEvent(params: Omit<Event, 'id' | 'timestamp'>): Event & { save: () => Promise<void> };
+  createEvent(params: Omit<Event, 'id' | 'timestamp'>): Event & { save: () => Promise<Event> };
   retrieveAggregateEvents(params: {
     aggregate: ID;
     first?: number;

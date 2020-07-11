@@ -35,7 +35,7 @@ class BalanceAggregate extends BaseAggregate {
   }
 }
 
-describe('Aggregate', () => {
+describe.only('Aggregate', () => {
   before(function () {
     this.eventStore = Reflect.getMetadata(EVENT_STORE_METADATA_KEY, BalanceAggregate.prototype);
     this.snapshotStore = Reflect.getMetadata(SNAPSHOT_STORE_METADATA_KEY, BalanceAggregate.prototype);
