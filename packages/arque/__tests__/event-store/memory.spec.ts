@@ -6,7 +6,7 @@ import { MemoryEventStore } from '../../src/lib/event-store';
 import { generateFakeEvent, chance } from '../helpers';
 import { serializeEvent } from '../../src/lib/event-store/database/memory';
 
-describe.only('MemoryEventStore', () => {
+describe('MemoryEventStore', () => {
   before(async function () {
     this.store = new MemoryEventStore();
   });

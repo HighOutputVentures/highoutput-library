@@ -11,7 +11,7 @@
   "license": "ISC",
   "main": "build/index.js",
   "directories": {
-    "lib": "lib",
+    "lib": "src/lib",
     "test": "__tests__"
   },
   "files": [
@@ -47,7 +47,7 @@
     "@types/serialize-error": "^4.0.1",
     "clean-deep": "^3.3.0",
     "lokijs": "^1.5.8",
-    "lru-cache": "^5.1.1",
+    "lru-cache": "^6.0.0",
     "luxon": "^1.24.1",
     "mongoose": "^5.9.23",
     "ramda": "^0.27.0",
