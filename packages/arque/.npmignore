@@ -2,3 +2,4 @@
 !build/**/*
 !package.json
 !README.md
+build/examples/**/*
