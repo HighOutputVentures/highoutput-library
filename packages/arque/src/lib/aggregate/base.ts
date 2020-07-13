@@ -12,9 +12,10 @@ import {
   EVENT_STORE_METADATA_KEY,
   SNAPSHOT_STORE_METADATA_KEY,
   AGGREGATE_EVENT_HANDLERS_METADATA_KEY,
+  AGGREGATE_INITIAL_STATE_METADATA_KEY,
 } from '../types';
 
-export default abstract class BaseAggregate<TState = any, TEvent extends Event = Event> {
+export default class BaseAggregate<TState = any, TEvent extends Event = Event> {
   private queue: Queue = new Queue({ concurrency: 1 });
 
   private _version = 0;
@@ -29,10 +30,13 @@ export default abstract class BaseAggregate<TState = any, TEvent extends Event =
 
   protected constructor(
     id: ID,
-    state: TState,
   ) {
     this._id = id;
-    this._state = Object.freeze(state);
+    this._state = Object.freeze(Reflect.getMetadata(AGGREGATE_INITIAL_STATE_METADATA_KEY, this));
+  }
+
+  public static async load(id: ID) {
+    return new this(id);
   }
 
   get type(): string {

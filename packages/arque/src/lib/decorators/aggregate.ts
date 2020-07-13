@@ -6,6 +6,7 @@ import {
   SNAPSHOT_STORE_METADATA_KEY,
   Event,
   AGGREGATE_EVENT_HANDLERS_METADATA_KEY,
+  AGGREGATE_INITIAL_STATE_METADATA_KEY,
 } from '../types';
 import getEventStore from '../util/get-event-store';
 import getSnapshotStore from '../util/get-snapshot-store';
@@ -19,6 +20,7 @@ export default function (params: {
     filter: { type?: string; version?: number };
     handler: (state: any, event: Event) => any;
   }[];
+  initialState?: any;
 }): ClassDecorator {
   return function (target) {
     Reflect.defineMetadata(AGGREGATE_TYPE_METADATA_KEY, params.type, target.prototype);
@@ -28,5 +30,6 @@ export default function (params: {
       ...(Reflect.getMetadata(AGGREGATE_EVENT_HANDLERS_METADATA_KEY, target.prototype) || []),
       ...params.eventHandlers || [],
     ], target.prototype);
+    Reflect.defineMetadata(AGGREGATE_INITIAL_STATE_METADATA_KEY, params.initialState || null, target.prototype);
   };
 }

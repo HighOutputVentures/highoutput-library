@@ -6,26 +6,21 @@ import {
 } from '../src';
 import { expect } from './helpers';
 import {
-  ID,
   Event,
   EVENT_STORE_METADATA_KEY,
   SNAPSHOT_STORE_METADATA_KEY,
 } from '../src/lib/types';
 
-@Aggregate({ type: 'Balance' })
+@Aggregate({ type: 'Balance', initialState: 0 })
 class BalanceAggregate extends BaseAggregate {
-  constructor(id: ID) {
-    super(id, 0);
-  }
-
   @AggregateEventHandler({ type: 'Credited' })
-  onCredited(state: number, event: Event<{ amount: number }>) {
-    return state + event.body.amount;
+  onCredited(state: number, event: Event<{ delta: number }>) {
+    return state + event.body.delta;
   }
 
   @AggregateEventHandler({ type: 'Debited' })
-  onDebited(state: number, event: Event<{ amount: number }>) {
-    const result = state - event.body.amount;
+  onDebited(state: number, event: Event<{ delta: number }>) {
+    const result = state - event.body.delta;
 
     if (result < 0) {
       throw new Error('Cannot be negative.');
@@ -48,12 +43,12 @@ describe('Aggregate', () => {
 
   describe('#createEvent', () => {
     it('should create event', async function () {
-      const aggregate = new BalanceAggregate(crypto.randomBytes(16));
+      const aggregate = await BalanceAggregate.load(crypto.randomBytes(16));
 
       await aggregate.createEvent({
         type: 'Credited',
         body: {
-          amount: 100,
+          delta: 100,
         },
       });
 
@@ -61,30 +56,30 @@ describe('Aggregate', () => {
         'aggregate.type': 'Balance',
       });
       expect(event).to.has.property('type', 'Credited');
-      expect(event).to.has.property('body').that.deep.equals({ amount: 100 });
+      expect(event).to.has.property('body').that.deep.equals({ delta: 100 });
     });
 
     it('should update the state correctly', async () => {
-      const aggregate = new BalanceAggregate(crypto.randomBytes(16));
+      const aggregate = await BalanceAggregate.load(crypto.randomBytes(16));
 
       await aggregate.createEvent({
         type: 'Credited',
         body: {
-          amount: 100,
+          delta: 100,
         },
       });
 
       await aggregate.createEvent({
         type: 'Debited',
         body: {
-          amount: 25,
+          delta: 25,
         },
       });
 
       await aggregate.createEvent({
         type: 'Credited',
         body: {
-          amount: 5,
+          delta: 5,
         },
       });
 
@@ -92,12 +87,12 @@ describe('Aggregate', () => {
     });
 
     it('should protect the business invariant', async () => {
-      const aggregate = new BalanceAggregate(crypto.randomBytes(16));
+      const aggregate = await BalanceAggregate.load(crypto.randomBytes(16));
 
       await aggregate.createEvent({
         type: 'Credited',
         body: {
-          amount: 100,
+          delta: 100,
         },
       });
 
@@ -105,7 +100,7 @@ describe('Aggregate', () => {
         aggregate.createEvent({
           type: 'Debited',
           body: {
-            amount: 125,
+            delta: 125,
           },
         }),
       ).to.eventually.be.rejectedWith('Cannot be negative.');

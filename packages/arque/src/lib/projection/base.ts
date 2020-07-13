@@ -17,7 +17,7 @@ import {
 } from '../types';
 import canHandleEvent from '../util/can-handle-event';
 
-export default abstract class <TEvent extends Event = Event> {
+export default class <TEvent extends Event = Event> {
   private startPromise: Promise<void> | null = null;
 
   private readonly queue = new Queue({ concurrency: 1, autoStart: false });

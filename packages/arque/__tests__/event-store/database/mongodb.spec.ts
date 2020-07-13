@@ -6,7 +6,7 @@ import {
   generateFakeEvent, expect, chance,
 } from '../../helpers';
 
-describe.only('MongoDBEventStoreDatabase', () => {
+describe('MongoDBEventStoreDatabase', () => {
   before(function () {
     this.database = new MongoDBEventStoreDatabase();
   });
