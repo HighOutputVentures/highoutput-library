@@ -4,9 +4,7 @@ import BalanceModel from './model';
 
 export default {
   async start() {
-    const projection = new BalanceProjection();
-
-    await projection.start();
+    await new BalanceProjection().start();
   },
   command: {
     async credit(id: Buffer, delta: number) {

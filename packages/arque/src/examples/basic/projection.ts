@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { BaseProjection, ProjectionEventHandler, Event } from '../..';
+import {
+  BaseProjection, ProjectionEventHandler, Event, Projection,
+} from '../..';
 import BalanceModel from './model';
 
+@Projection({ id: 'Balance' })
 export default class BalanceProjection extends BaseProjection {
   @ProjectionEventHandler({ aggregate: { type: 'Balance' }, type: 'Credited' })
   onCredited(event: Event<{ delta: number }>) {
