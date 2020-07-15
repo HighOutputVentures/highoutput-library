@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion, @typescript-eslint/camelcase */
-import container, { Connection, EventContext } from 'rhea';
+import {
+  Connection, EventContext, Container, create_container,
+} from 'rhea';
 import R from 'ramda';
 import uuid from 'uuid';
 import logger from './lib/logger';
@@ -41,6 +43,8 @@ export type AmqpOptions = {
 export default class Amqp {
   private options: AmqpOptions;
 
+  private container: Container = create_container();
+
   private connection: Connection;
 
   private workers: Map<string, Worker> = new Map();
@@ -61,7 +65,7 @@ export default class Amqp {
 
     logger.tag(['amqp', 'options']).info(R.omit(['password'], this.options));
 
-    this.connection = container.connect({
+    this.connection = this.container.connect({
       ...this.options,
       reconnect: true,
       initial_reconnect_delay: this.options.initialReconnectDelay,
