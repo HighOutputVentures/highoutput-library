@@ -20,7 +20,8 @@
     "clean": "rimraf build/",
     "build": "npm run clean && tsc --project tsconfig.json",
     "prepublish": "npm run build",
-    "example:basic": "cross-env TS_NODE_PROJECT=tsconfig.json TS_NODE_FILES=true ts-node src/examples/basic/test.ts"
+    "examples:basic": "cross-env TS_NODE_PROJECT=tsconfig.json TS_NODE_FILES=true ts-node src/examples/basic/test.ts",
+    "examples:distributed": "cross-env TS_NODE_PROJECT=tsconfig.json TS_NODE_FILES=true ts-node src/examples/distributed/test.ts"
   },
   "bugs": {
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"

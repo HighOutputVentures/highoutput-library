@@ -36,7 +36,10 @@ export default class BaseAggregate<TState = any, TEvent extends Event = Event> {
   }
 
   public static async load(id: ID) {
-    return new this(id);
+    const aggregate = new this(id);
+
+    await aggregate.fold();
+    return aggregate;
   }
 
   get type(): string {

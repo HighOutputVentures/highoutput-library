@@ -16,7 +16,7 @@ export default {
   },
   query: {
     async balance(id: Buffer) {
-      const document = BalanceModel.findOne({ id: id.toString('hex') });
+      const document = await BalanceModel.findOne({ _id: id });
 
       return document?.value || 0;
     },

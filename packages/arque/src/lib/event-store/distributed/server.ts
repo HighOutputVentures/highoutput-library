@@ -89,6 +89,7 @@ export default class {
         concurrency: this.options.concurrency,
       },
     );
+    console.log('worker');
   }
 
   public async stop() {

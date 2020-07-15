@@ -16,6 +16,7 @@ export default function (params: {
   return function (target) {
     Reflect.defineMetadata(PROJECTION_ID_METADATA_KEY, params.id, target.prototype);
     Reflect.defineMetadata(EVENT_STORE_METADATA_KEY, params.eventStore || getEventStore(), target.prototype);
-    Reflect.defineMetadata(PROJECTION_STORE_METADATA_KEY, params.eventStore || getProjectionStore(), target.prototype);
+    Reflect.defineMetadata(PROJECTION_STORE_METADATA_KEY,
+      params.projectionStore || getProjectionStore(), target.prototype);
   };
 }
