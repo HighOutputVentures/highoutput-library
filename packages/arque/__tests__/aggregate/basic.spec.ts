@@ -3,13 +3,13 @@ import {
   Aggregate,
   AggregateEventHandler,
   BaseAggregate,
-} from '../src';
-import { expect } from './helpers';
+} from '../../src';
+import { expect } from '../helpers';
 import {
   Event,
   EVENT_STORE_METADATA_KEY,
   SNAPSHOT_STORE_METADATA_KEY,
-} from '../src/lib/types';
+} from '../../src/lib/types';
 
 @Aggregate({ type: 'Balance', initialState: 0 })
 class BalanceAggregate extends BaseAggregate {
