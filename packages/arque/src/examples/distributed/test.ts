@@ -2,7 +2,6 @@ import crypto from 'crypto';
 import R from 'ramda';
 import { expect } from 'chai';
 import delay from '@highoutput/delay';
-import mongoose from 'mongoose';
 import app from '.';
 import eventStore from './event-store';
 
@@ -39,10 +38,8 @@ async function main() {
     0,
   ]);
 
-  await mongoose.createConnection('mongodb://localhost/arque').db.dropCollection('balances');
-
   // TODO: graceful shutdown
-  process.exit(1);
+  process.exit(0);
 }
 
 main();

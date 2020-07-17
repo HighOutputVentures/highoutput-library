@@ -17,9 +17,11 @@ const logger = baseLogger.tag(['EventStore', 'server']);
 export default class {
   private worker: ConnectionWorker | null = null;
 
+  public readonly connection: Connection;
+
+  public readonly database: EventStoreDatabase;
+
   private options: {
-    connection: Connection;
-    database: EventStoreDatabase;
     concurrency: number;
     address: string;
   };
@@ -38,18 +40,19 @@ export default class {
     },
   ) {
     this.options = {
-      connection: options?.connection || getConnection(),
-      database: options?.database || new MemoryEventStoreDatabase(),
       concurrency: options?.concurrency || 100,
       address: options?.address || 'EventStore',
     };
+
+    this.connection = options?.connection || getConnection();
+    this.database = options?.database || new MemoryEventStoreDatabase();
   }
 
   private async getPublisher(topic: string) {
     let promise = this.publishers.get(topic);
 
     if (!promise) {
-      promise = this.options.connection.createPublisher(topic);
+      promise = this.connection.createPublisher(topic);
 
       this.publishers.set(topic, promise);
     }
@@ -58,7 +61,7 @@ export default class {
   }
 
   public async start() {
-    this.worker = await this.options.connection.createWorker(
+    this.worker = await this.connection.createWorker(
       this.options.address,
       async ({ type, data }: { type: RequestType; data?: any }) => {
         logger.verbose({ type, data });
@@ -69,19 +72,21 @@ export default class {
         if (type === RequestType.SaveEvent) {
           const event = data as Event;
 
-          await this.options.database.saveEvent(event);
+          await this.database.saveEvent(event);
 
           const topic = `${event.aggregate.type}.${event.type}.${event.version}`;
           const publisher = await this.getPublisher(topic);
           await publisher(event);
+
+          return true;
         }
 
         if (type === RequestType.RetrieveAggregateEvents) {
-          return this.options.database.retrieveAggregateEvents(data);
+          return this.database.retrieveAggregateEvents(data);
         }
 
         if (type === RequestType.RetrieveEvents) {
-          return this.options.database.retrieveEvents(data);
+          return this.database.retrieveEvents(data);
         }
 
         throw new AppError('INVALID_OPERATION', `${type} is not supported.`);
@@ -89,7 +94,6 @@ export default class {
         concurrency: this.options.concurrency,
       },
     );
-    console.log('worker');
   }
 
   public async stop() {

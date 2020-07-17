@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 export enum RequestType {
-  Ping = 'Ping',
-  SaveEvent = 'SaveEvent',
-  RetrieveAggregateEvents = 'RetrieveAggregateEvents',
-  RetrieveEvents = 'RetrieveEvents',
+  Ping = 'PING',
+  SaveEvent = 'SAVE_EVENT',
+  RetrieveAggregateEvents = 'RETRIEVE_AGGREGATE_EVENTS',
+  RetrieveEvents = 'RETRIEVE_EVENTS',
 }

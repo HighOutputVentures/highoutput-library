@@ -1,10 +1,14 @@
+import mongoose from 'mongoose';
 import BalanceProjection from './projection';
 import BalanceAggregate from './aggregate';
 import BalanceModel from './model';
 
 export default {
   async start() {
-    await new BalanceProjection().start();
+    await Promise.all([
+      new BalanceProjection().start(),
+      mongoose.connect('mongodb://localhost/arque'),
+    ]);
   },
   command: {
     async credit(id: Buffer, delta: number) {

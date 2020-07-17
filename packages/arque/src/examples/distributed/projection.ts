@@ -19,11 +19,13 @@ export default class BalanceProjection extends BaseProjection {
 
     if (!document) {
       await BalanceModel.create({ _id: event.aggregate.id, value: event.body.delta });
+      return;
     }
 
-    await document?.update({
-      $inc: { value: event.body.delta },
-    });
+    await BalanceModel.updateOne(
+      { _id: event.aggregate.id },
+      { $inc: { value: event.body.delta } },
+    );
   }
 
   @ProjectionEventHandler({ aggregate: { type: 'Balance' }, type: 'Debited' })

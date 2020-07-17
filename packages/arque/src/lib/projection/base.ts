@@ -30,6 +30,8 @@ export default class <TEvent extends Event = Event> {
 
   private filters: EventFilter[];
 
+  private initializing = false;
+
   public constructor(options: {
     batchSize?: number;
   } = {}) {
@@ -86,6 +88,8 @@ export default class <TEvent extends Event = Event> {
   public async start() {
     if (!this.startPromise) {
       this.startPromise = (async () => {
+        this.initializing = true;
+
         const projectionStore: ProjectionStore = Reflect.getMetadata(PROJECTION_STORE_METADATA_KEY, this);
         const eventStore: EventStore = Reflect.getMetadata(EVENT_STORE_METADATA_KEY, this);
         const id: string = Reflect.getMetadata(PROJECTION_ID_METADATA_KEY, this);
@@ -106,7 +110,7 @@ export default class <TEvent extends Event = Event> {
           filter,
           async (event: Event) => {
             this.queue.add(async () => {
-              if (!this.lastEvent || Buffer.compare(event.id, this.lastEvent) > 0) {
+              if (!this.initializing) {
                 await this.apply(event);
               }
             });
@@ -115,6 +119,8 @@ export default class <TEvent extends Event = Event> {
         )));
 
         await this.digest();
+
+        this.initializing = false;
 
         this.queue.start();
 

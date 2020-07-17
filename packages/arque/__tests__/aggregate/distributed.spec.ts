@@ -43,11 +43,13 @@ class BalanceAggregate extends BaseAggregate {
 }
 
 describe('Aggregate', () => {
-  before(function () {
+  before(async function () {
     this.eventStoreServer = new DistributedEventStoreServer({
       connection: new ActiveMQConnection(),
       database: new MongoDBEventStoreDatabase(mongoose.createConnection('mongodb://localhost/test')),
     });
+    await this.eventStoreServer.start();
+
     this.snapshotStore = Reflect.getMetadata(SNAPSHOT_STORE_METADATA_KEY, BalanceAggregate.prototype);
   });
 
@@ -55,7 +57,7 @@ describe('Aggregate', () => {
     await this.eventStoreServer.stop();
   });
 
-  describe.skip('#createEvent', () => {
+  describe('#createEvent', () => {
     it('should create event', async function () {
       const aggregate = await BalanceAggregate.load(crypto.randomBytes(16));
 
@@ -66,11 +68,58 @@ describe('Aggregate', () => {
         },
       });
 
-      const event = this.eventStore.database.collection.findOne({
+      const event = await this.eventStoreServer.database.model.findOne({
         'aggregate.type': 'Balance',
       });
       expect(event).to.has.property('type', 'Credited');
       expect(event).to.has.property('body').that.deep.equals({ delta: 100 });
+    });
+
+    it('should update the state correctly', async () => {
+      const aggregate = await BalanceAggregate.load(crypto.randomBytes(16));
+
+      await aggregate.createEvent({
+        type: 'Credited',
+        body: {
+          delta: 100,
+        },
+      });
+
+      await aggregate.createEvent({
+        type: 'Debited',
+        body: {
+          delta: 25,
+        },
+      });
+
+      await aggregate.createEvent({
+        type: 'Credited',
+        body: {
+          delta: 5,
+        },
+      });
+
+      expect(aggregate.state).to.equal(80);
+    });
+
+    it('should protect the business invariant', async () => {
+      const aggregate = await BalanceAggregate.load(crypto.randomBytes(16));
+
+      await aggregate.createEvent({
+        type: 'Credited',
+        body: {
+          delta: 100,
+        },
+      });
+
+      await expect(
+        aggregate.createEvent({
+          type: 'Debited',
+          body: {
+            delta: 125,
+          },
+        }),
+      ).to.eventually.be.rejectedWith('Cannot be negative.');
     });
   });
 });
