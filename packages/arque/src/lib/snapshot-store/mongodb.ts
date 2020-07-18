@@ -99,8 +99,9 @@ export default class implements SnapshotStore {
     }
 
     return {
-      ...R.omit(['_id', '__v'], snapshot.toObject()) as any,
+      ...R.pick(['state', 'timestamp'], snapshot),
       id: snapshot._id,
+      aggregate: R.pick(['id', 'type', 'version'], snapshot.aggregate),
     };
   }
 }
