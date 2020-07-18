@@ -47,11 +47,12 @@
     "chance": "^1.1.6",
     "ms": "^2.1.2",
     "ramda": "^0.27.0",
-    "rhea": "git+ssh://git@github.com/HighOutputVentures/rhea.git#semver:~1.1.1",
+    "rhea": "git+https://github.com/HighOutputVentures/rhea.git#semver:~1.1.1",
     "serialize-error": "^5.0.0",
     "uuid": "^3.4.0"
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "gitHead": "9720b91d1e6c66dd6a0d2939cc923ae54e42936e"
 }
