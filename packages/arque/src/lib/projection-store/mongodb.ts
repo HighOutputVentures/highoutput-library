@@ -31,10 +31,11 @@ export default class implements ProjectionStore {
         default: () => Date.now(),
       },
     }, { _id: false });
+
     this.model = this.connection.model('Projection', schema);
   }
 
-  async find(id: string) {
+  async find(id: string): Promise<ProjectionState | null> {
     const projection = await this.model.findOne({ _id: id });
 
     if (!projection) {
@@ -42,9 +43,9 @@ export default class implements ProjectionStore {
     }
 
     return {
-      ...R.omit(['_id', '__v'], projection.toObject()),
+      ...R.pick(['status', 'lastEvent', 'lastUpdated'], projection),
       id: projection._id,
-    } as ProjectionState;
+    };
   }
 
   async save(params: Pick<ProjectionState, 'id'>

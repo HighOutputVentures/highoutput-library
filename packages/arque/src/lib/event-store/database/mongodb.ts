@@ -9,7 +9,7 @@ import {
   EventStoreDatabase, Event, ID,
 } from '../../types';
 
-function deserializeEvent(document: Event & Document): Event {
+function deserialize(document: Event & Document): Event {
   return {
     ...R.pick(['type', 'body', 'version', 'timestamp'], document),
     id: document._id,
@@ -109,7 +109,7 @@ export default class implements EventStoreDatabase {
       .sort({ 'aggregate.version': 1 })
       .limit(params.first || 1000);
 
-    return R.map(deserializeEvent, result);
+    return R.map(deserialize, result);
   }
 
   public async retrieveEvents(params: {
@@ -150,6 +150,6 @@ export default class implements EventStoreDatabase {
       .sort({ _id: 1 })
       .limit(params.first || 1000);
 
-    return R.map(deserializeEvent, result);
+    return R.map(deserialize, result);
   }
 }

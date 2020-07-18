@@ -1,8 +1,8 @@
 import sinon from 'sinon';
 import delay from '@highoutput/delay';
 import R from 'ramda';
-import { chance, expect } from '../helpers';
-import { ActiveMQConnection } from '../../src';
+import { chance, expect, generateFakeEvent } from '../helpers';
+import { ActiveMQConnection, Event } from '../../src';
 
 describe('ActiveMQConnection', () => {
   beforeEach(async function () {
@@ -29,7 +29,22 @@ describe('ActiveMQConnection', () => {
     await client(message);
 
     expect(handler.calledOnce).to.be.true;
-    expect(handler.args[0][0]).to.equal(message);
+    expect(handler.args[0][0]).to.deep.equal(message);
+  });
+
+  it('should be able to send complex objects', async function () {
+    const message = generateFakeEvent();
+
+    const client = await this.connection.createClient('Test');
+
+    const handler = sinon.spy(async (params: Event) => params);
+
+    await this.connection.createWorker('Test', handler);
+
+    await client(message);
+
+    expect(handler.calledOnce).to.be.true;
+    expect(handler.args[0][0]).to.deep.equal(message);
   });
 
   it('should distribute messages to multiple workers', async function () {
