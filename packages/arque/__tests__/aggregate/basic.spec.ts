@@ -4,7 +4,7 @@ import {
   AggregateEventHandler,
   BaseAggregate,
 } from '../../src';
-import { expect } from '../helpers';
+import { expect, generateFakeEvent } from '../helpers';
 import {
   Event,
   EVENT_STORE_METADATA_KEY,
@@ -39,6 +39,28 @@ describe('Aggregate', () => {
   afterEach(function () {
     this.eventStore.database.collection.clear();
     this.snapshotStore.collection.clear();
+  });
+
+  describe('load', () => {
+    it('should load an aggregate correctly', async function () {
+      let event = generateFakeEvent();
+
+      event = {
+        ...event,
+        type: 'Credited',
+        aggregate: {
+          ...event.aggregate,
+          type: 'Balance',
+        },
+        body: { delta: 100 },
+      };
+
+      await this.eventStore.database.saveEvent(event);
+
+      const aggregate = await BalanceAggregate.load(event.aggregate.id);
+      expect(aggregate.state).to.equal(100);
+      expect(aggregate.version).to.equal(1);
+    });
   });
 
   describe('#createEvent', () => {

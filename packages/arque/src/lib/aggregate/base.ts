@@ -1,8 +1,10 @@
+/* eslint-disable max-len */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-underscore-dangle */
 import Queue from 'p-queue';
 import R from 'ramda';
+import Cache from 'lru-cache';
 import {
   ID,
   Event,
@@ -13,6 +15,7 @@ import {
   SNAPSHOT_STORE_METADATA_KEY,
   AGGREGATE_EVENT_HANDLERS_METADATA_KEY,
   AGGREGATE_INITIAL_STATE_METADATA_KEY,
+  AGGREGATE_CACHE_METADATA_KEY,
 } from '../types';
 
 export default class BaseAggregate<TState = any, TEvent extends Event = Event> {
@@ -36,9 +39,28 @@ export default class BaseAggregate<TState = any, TEvent extends Event = Event> {
   }
 
   public static async load(id: ID) {
-    const aggregate = new this(id);
+    if (!(this as any).cache) {
+      (this as any).cache = new Cache<string, Promise<BaseAggregate>>(Object.freeze(Reflect.getMetadata(AGGREGATE_CACHE_METADATA_KEY, this)));
+    }
 
+    const { cache } = (this as any) as { cache: Cache<string, Promise<BaseAggregate>> };
+
+    let promise = cache.get(id.toString('hex'));
+
+    if (!promise) {
+      promise = (async () => {
+        const aggregate = new this(id);
+
+        await aggregate.restoreFromLatestSnapshot();
+
+        return aggregate;
+      })();
+      cache.set(id.toString('hex'), promise);
+    }
+
+    const aggregate = await promise;
     await aggregate.fold();
+
     return aggregate;
   }
 
@@ -80,6 +102,19 @@ export default class BaseAggregate<TState = any, TEvent extends Event = Event> {
     }
 
     return next;
+  }
+
+  public async restoreFromLatestSnapshot() {
+    const store: SnapshotStore = Reflect.getMetadata(SNAPSHOT_STORE_METADATA_KEY, this);
+    const snapshot = await store.retrieveLatestSnapshot({
+      id: this.id,
+      version: this.version,
+    });
+
+    if (snapshot) {
+      this._version = snapshot.aggregate.version;
+      this._state = R.clone(snapshot.state);
+    }
   }
 
   public async fold() {

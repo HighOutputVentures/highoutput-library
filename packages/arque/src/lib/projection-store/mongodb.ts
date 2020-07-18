@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import mongoose, {
   Connection, Schema, Document, Model,
 } from 'mongoose';
@@ -42,7 +43,7 @@ export default class implements ProjectionStore {
 
     return {
       ...R.omit(['_id', '__v'], projection.toObject()),
-      id: projection.id,
+      id: projection._id,
     } as ProjectionState;
   }
 

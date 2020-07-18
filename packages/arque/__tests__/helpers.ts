@@ -4,6 +4,7 @@ import chaiAsPromised from 'chai-as-promised';
 import crypto from 'crypto';
 import generateEventId from '../src/lib/util/generate-event-id';
 import generateSnapshotId from '../src/lib/util/generate-snapshot-id';
+import { Event } from '../src/lib/types';
 
 chai.use(chaiAsPromised);
 
@@ -11,7 +12,7 @@ export const chance = new Chance();
 
 export { expect };
 
-export function generateFakeEvent() {
+export function generateFakeEvent(): Event {
   const { id, timestamp } = generateEventId();
 
   return {

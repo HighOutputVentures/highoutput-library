@@ -1,3 +1,4 @@
+import R from 'ramda';
 import {
   EventStore,
   SnapshotStore,
@@ -7,11 +8,11 @@ import {
   Event,
   AGGREGATE_EVENT_HANDLERS_METADATA_KEY,
   AGGREGATE_INITIAL_STATE_METADATA_KEY,
+  AGGREGATE_CACHE_METADATA_KEY,
 } from '../types';
 import getEventStore from '../util/get-event-store';
 import getSnapshotStore from '../util/get-snapshot-store';
 
-/* eslint-disable func-names */
 export default function (params: {
   type: string;
   eventStore?: EventStore;
@@ -21,6 +22,10 @@ export default function (params: {
     handler: (state: any, event: Event) => any;
   }[];
   initialState?: any;
+  cache?: {
+    max?: number;
+    maxAge?: number;
+  };
 }): ClassDecorator {
   return function (target) {
     Reflect.defineMetadata(AGGREGATE_TYPE_METADATA_KEY, params.type, target.prototype);
@@ -30,6 +35,14 @@ export default function (params: {
       ...(Reflect.getMetadata(AGGREGATE_EVENT_HANDLERS_METADATA_KEY, target.prototype) || []),
       ...params.eventHandlers || [],
     ], target.prototype);
-    Reflect.defineMetadata(AGGREGATE_INITIAL_STATE_METADATA_KEY, params.initialState || null, target.prototype);
+    Reflect.defineMetadata(
+      AGGREGATE_INITIAL_STATE_METADATA_KEY,
+      R.isNil(params.initialState) ? null : params.initialState,
+      target.prototype,
+    );
+    Reflect.defineMetadata(AGGREGATE_CACHE_METADATA_KEY, R.mergeDeepLeft({
+      max: 1024,
+      maxAge: 1440000,
+    }, params.cache || {}), target);
   };
 }
