@@ -68,8 +68,9 @@ Feature: RPC
     Then the worker should also receive a <type>
 
     Examples:
-      | type   |
-      | Buffer |
-      | Set    |
-      | Map    |
-      | Date   |
+      | type    |
+      | Buffer  |
+      | Set     |
+      | Map     |
+      | Date    |
+      | Complex |

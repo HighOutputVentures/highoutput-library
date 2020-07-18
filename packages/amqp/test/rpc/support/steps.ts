@@ -99,8 +99,14 @@ Given('a message that contains class objects', async function () {
   this.examples = {
     Buffer: crypto.randomBytes(16),
     Set: new Set([1, 2, 3, 4, 5]),
-    Map: new Set([['one', 1], ['two', 2], ['three', 3], ['four', 4], ['five', 5]]),
+    Map: new Map([['one', 1], ['two', 2], ['three', 3], ['four', 4], ['five', 5]]),
     Date: new Date(),
+    Complex: {
+      Buffer: crypto.randomBytes(16),
+      Set: new Set([1, 2, 3, 4, 5]),
+      Map: new Map([['one', 1], ['two', 2], ['three', 3], ['four', 4], ['five', 5]]),
+      Date: new Date(),
+    },
   };
 });
 
