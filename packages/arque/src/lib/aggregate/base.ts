@@ -93,7 +93,7 @@ export default class BaseAggregate<TState = any, TEvent extends Event = Event> {
   }
 
   private apply(state: TState, event: Event): TState {
-    let next = R.clone(state);
+    let next = state;
 
     for (const { filter, handler } of Reflect.getMetadata(AGGREGATE_EVENT_HANDLERS_METADATA_KEY, this)) {
       if (R.equals(filter, R.pick(R.keys(filter) as any, event))) {
@@ -105,39 +105,44 @@ export default class BaseAggregate<TState = any, TEvent extends Event = Event> {
   }
 
   public async restoreFromLatestSnapshot() {
-    const store: SnapshotStore = Reflect.getMetadata(SNAPSHOT_STORE_METADATA_KEY, this);
-    const snapshot = await store.retrieveLatestSnapshot({
-      id: this.id,
-      version: this.version,
-    });
+    await this.queue.add(async () => {
+      const store: SnapshotStore = Reflect.getMetadata(SNAPSHOT_STORE_METADATA_KEY, this);
+      const snapshot = await store.retrieveLatestSnapshot({
+        id: this.id,
+        version: this.version,
+      });
 
-    if (snapshot) {
-      this._version = snapshot.aggregate.version;
-      this._state = R.clone(snapshot.state);
-    }
+      if (snapshot) {
+        this._version = snapshot.aggregate.version;
+        this._state = R.clone(snapshot.state);
+      }
+    });
   }
 
   public async fold() {
-    let { state } = this;
-    let { version } = this;
+    await this.queue.add(async () => {
+      let state = R.clone(this.state);
 
-    let events: TEvent[];
-    do {
-      events = (await this.eventStore.retrieveAggregateEvents({
-        aggregate: this.id,
-        first: this.options.batchSize,
-        after: version,
-      })) as TEvent[];
+      let { version } = this;
 
-      for (const event of events) {
-        state = this.apply(state, event);
+      let events: TEvent[];
+      do {
+        events = (await this.eventStore.retrieveAggregateEvents({
+          aggregate: this.id,
+          first: this.options.batchSize,
+          after: version,
+        })) as TEvent[];
 
-        version = event.aggregate.version;
-      }
-    } while (events.length === this.options.batchSize);
+        for (const event of events) {
+          state = this.apply(state, event);
 
-    this._version = version;
-    this._state = Object.freeze(state);
+          version = event.aggregate.version;
+        }
+      } while (events.length === this.options.batchSize);
+
+      this._version = version;
+      this._state = Object.freeze(state);
+    });
   }
 
   public async createEvent(params: {
@@ -145,9 +150,9 @@ export default class BaseAggregate<TState = any, TEvent extends Event = Event> {
     body: TEvent['body'];
     version?: number;
   }) {
-    return this.queue.add(async () => {
-      await this.fold();
+    await this.fold();
 
+    await this.queue.add(async () => {
       const event = await this.eventStore.createEvent({
         ...params,
         version: params.version || 1,
@@ -158,7 +163,7 @@ export default class BaseAggregate<TState = any, TEvent extends Event = Event> {
         },
       });
 
-      const state = this.apply(this.state, event);
+      const state = this.apply(R.clone(this.state), event);
 
       await event.save();
 
