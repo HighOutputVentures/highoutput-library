@@ -58,7 +58,7 @@ export default class implements EventStore {
     await new Promise((resolve) => {
       const checkServer = async () => {
         const available = await Promise.race([
-          client({ type: 'Ping' }).then(() => true),
+          client({ type: RequestType.Ping }).then(() => true),
           delay('1s').then(() => false),
         ]).catch(() => false);
 
