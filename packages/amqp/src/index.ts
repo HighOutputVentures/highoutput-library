@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion, @typescript-eslint/camelcase */
+/* eslint-disable no-underscore-dangle, @typescript-eslint/no-non-null-assertion, @typescript-eslint/camelcase */
 import {
   Connection, EventContext, Container, create_container,
 } from 'rhea';
@@ -45,8 +45,6 @@ export default class Amqp {
 
   private container: Container = create_container();
 
-  private connection: Connection;
-
   private workers: Map<string, Worker> = new Map();
 
   private clients: Map<string, Client> = new Map();
@@ -54,6 +52,8 @@ export default class Amqp {
   private publishers: Map<string, Publisher> = new Map();
 
   private subscribers: Map<string, Subscriber> = new Map();
+
+  private _connection?: Connection;
 
   public constructor(options?: Partial<AmqpOptions>) {
     this.options = R.mergeDeepLeft(R.reject(R.isNil)(options || {}) as any, {
@@ -64,28 +64,34 @@ export default class Amqp {
     });
 
     logger.tag(['amqp', 'options']).info(R.omit(['password'], this.options));
+  }
 
-    this.connection = this.container.connect({
-      ...this.options,
-      reconnect: true,
-      initial_reconnect_delay: this.options.initialReconnectDelay,
-      max_reconnect_delay: this.options.maxReconnectDelay,
-    });
+  private get connection() {
+    if (!this._connection) {
+      this._connection = this.container.connect({
+        ...this.options,
+        reconnect: true,
+        initial_reconnect_delay: this.options.initialReconnectDelay,
+        max_reconnect_delay: this.options.maxReconnectDelay,
+      });
 
-    this.connection.setMaxListeners(100);
+      this.connection.setMaxListeners(100);
 
-    this.connection.on('connection_open', () => {
-      logger.info('connection established');
-    });
-    this.connection.on('connection_close', () => {
-      logger.info('connection closed');
-    });
-    this.connection.on('connection_error', (context: EventContext) => {
-      logger.error(context.error?.message!);
-    });
-    this.connection.on('disconnected', () => {
-      logger.info('disconnected');
-    });
+      this.connection.on('connection_open', () => {
+        logger.info('connection established');
+      });
+      this.connection.on('connection_close', () => {
+        logger.info('connection closed');
+      });
+      this.connection.on('connection_error', (context: EventContext) => {
+        logger.error(context.error?.message!);
+      });
+      this.connection.on('disconnected', () => {
+        logger.info('disconnected');
+      });
+    }
+
+    return this._connection;
   }
 
   public async createClient<TInput extends any[] = any[], TOutput = any>(
@@ -181,10 +187,12 @@ export default class Amqp {
       Promise.all(Array.from(this.subscribers.values()).map((subscriber) => subscriber.stop())),
     ]);
 
-    this.connection.close();
-
-    await new Promise((resolve) => {
+    const promise = new Promise((resolve) => {
       this.connection.once('connection_close', resolve);
     });
+
+    this.connection.close();
+
+    await promise;
   }
 }
