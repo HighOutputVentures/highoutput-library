@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import Backoff from 'backoff';
 import delay from '@highoutput/delay';
 import {
@@ -8,7 +9,7 @@ import generateEventId from '../../util/generate-event-id';
 import { RequestType } from './lib';
 
 export default class implements EventStore {
-  private client: Promise<ConnectionClient>;
+  private _client?: ConnectionClient;
 
   private options: {
     connection: Connection;
@@ -16,7 +17,7 @@ export default class implements EventStore {
     timeout: string | number;
   }
 
-  public readonly initialized: Promise<void>;
+  private initializePromise?: Promise<void>;
 
   private subscribers: ConnectionSubscriber[] = [];
 
@@ -32,49 +33,59 @@ export default class implements EventStore {
       address: options?.address || 'EventStore',
       timeout: options?.timeout || '60s',
     };
-
-    this.client = this.options.connection.createClient(
-      this.options.address,
-      { timeout: this.options.timeout },
-    );
-
-    this.initialized = this.start();
   }
 
-  private async start() {
-    await this.client;
+  private get client() {
+    if (!this._client) {
+      throw new Error('Client connection not established.');
+    }
 
-    const client = await this.options.connection.createClient(
-      this.options.address,
-      { timeout: '1s' },
-    );
+    return this._client;
+  }
 
-    const backoff = Backoff.fibonacci({
-      initialDelay: 100,
-      maxDelay: 10000,
-      randomisationFactor: 0,
-    });
+  private async initialize() {
+    if (!this.initializePromise) {
+      this.initializePromise = (async () => {
+        this._client = await this.options.connection.createClient(
+          this.options.address,
+          { timeout: this.options.timeout },
+        );
 
-    await new Promise((resolve) => {
-      const checkServer = async () => {
-        const available = await Promise.race([
-          client({ type: RequestType.Ping }).then(() => true),
-          delay('1s').then(() => false),
-        ]).catch(() => false);
+        const client = await this.options.connection.createClient(
+          this.options.address,
+          { timeout: '1s' },
+        );
 
-        if (available) {
-          resolve();
-        } else {
-          backoff.backoff();
-        }
-      };
+        const backoff = Backoff.fibonacci({
+          initialDelay: 100,
+          maxDelay: 10000,
+          randomisationFactor: 0,
+        });
 
-      backoff.on('ready', checkServer);
+        await new Promise((resolve) => {
+          const checkServer = async () => {
+            const available = await Promise.race([
+              client({ type: RequestType.Ping }).then(() => true),
+              delay('1s').then(() => false),
+            ]).catch(() => false);
 
-      checkServer();
-    });
+            if (available) {
+              resolve();
+            } else {
+              backoff.backoff();
+            }
+          };
 
-    await client.stop();
+          backoff.on('ready', checkServer);
+
+          checkServer();
+        });
+
+        await client.stop();
+      })();
+    }
+
+    return this.initializePromise;
   }
 
   public createEvent(params: Omit<Event, 'id' | 'timestamp'>) {
@@ -93,9 +104,9 @@ export default class implements EventStore {
     return {
       ...event,
       save: async () => {
-        const client = await this.client;
+        await this.initialize();
 
-        await client({
+        await this.client({
           type: RequestType.SaveEvent,
           data: event,
         });
@@ -110,9 +121,9 @@ export default class implements EventStore {
     first?: number;
     after?: number;
   }): Promise<Event[]> {
-    const client = await this.client;
+    await this.initialize();
 
-    return client({
+    return this.client({
       type: RequestType.RetrieveAggregateEvents,
       data: params,
     });
@@ -123,9 +134,9 @@ export default class implements EventStore {
     after?: ID;
     filters: EventFilter[];
   }): Promise<Event[]> {
-    const client = await this.client;
+    await this.initialize();
 
-    return client({
+    return this.client({
       type: RequestType.RetrieveEvents,
       data: params,
     });
