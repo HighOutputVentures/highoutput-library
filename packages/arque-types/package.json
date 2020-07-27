@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
   },
-  "gitHead": "12eae0e825177e6b8c4a9600d3e1122c0eecc768"
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "1f7bf60cb4d12ac9773642f924e879cc6866e4ca"
 }
