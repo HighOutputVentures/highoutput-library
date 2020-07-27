@@ -1,0 +1,22 @@
+{
+  "name": "@arque/types",
+  "version": "0.0.1",
+  "description": "Typescript type definitions for `arque`",
+  "keywords": [
+    "microservice",
+    "event-sourcing",
+    "cqrs"
+  ],
+  "author": "High Output Ventures",
+  "homepage": "https://github.com/Proto-Garage/highoutput-library/tree/master/packages/arque-types#readme",
+  "license": "ISC",
+  "main": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
+  },
+  "types": "index.d.ts",
+  "bugs": {
+    "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
+  }
+}

@@ -3,3 +3,4 @@ node_modules
 .vscode
 **/.vscode
 .circleci
+lerna-debug.log
