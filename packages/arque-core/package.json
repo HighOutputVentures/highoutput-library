@@ -1,6 +1,6 @@
 {
   "name": "@arque/core",
-  "version": "1.0.0-alpha.2",
+  "version": "1.0.0-alpha.3",
   "description": "Core for `arque`",
   "keywords": [
     "microservice",
@@ -26,7 +26,7 @@
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
   },
   "dependencies": {
-    "@arque/types": "^1.0.0-alpha.3",
+    "@arque/types": "^1.0.0-alpha.4",
     "@highoutput/amqp": "^0.6.1",
     "@highoutput/async-group": "^0.3.0",
     "@highoutput/delay": "^0.2.1",
