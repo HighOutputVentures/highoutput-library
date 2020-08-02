@@ -15,6 +15,10 @@
     "type": "git",
     "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
   },
+  "files": [
+    "build/**/*.js",
+    "build/**/*.d.ts"
+  ],
   "scripts": {
     "typecheck": "tsc --noEmit",
     "clean": "rimraf build/",
