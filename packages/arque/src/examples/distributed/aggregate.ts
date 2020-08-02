@@ -1,12 +1,14 @@
 import mongoose from 'mongoose';
 import {
+  ID,
+  Event,
+} from '@arque/types';
+import {
   Aggregate,
   AggregateEventHandler,
   BaseAggregate,
-  ID,
-  Event,
-} from '../..';
-import { MongoDBSnapshotStore } from '../../lib/snapshot-store';
+  MongoDBSnapshotStore,
+} from '@arque/core';
 import { eventStore } from './common';
 
 @Aggregate({

@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { Event } from '@arque/types';
 import {
-  BaseProjection, ProjectionEventHandler, Event, Projection,
-} from '../..';
+  BaseProjection, ProjectionEventHandler, Projection,
+} from '@arque/core';
 import BalanceModel from './model';
 
 @Projection({ id: 'Balance' })

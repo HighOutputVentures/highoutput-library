@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import mongoose from 'mongoose';
+import { Event } from '@arque/types';
 import {
-  BaseProjection, ProjectionEventHandler, Event, Projection,
-} from '../..';
+  BaseProjection, ProjectionEventHandler, MongoDBProjectionStore, Projection,
+} from '@arque/core';
 import BalanceModel from './model';
-import { MongoDBProjectionStore } from '../../lib/projection-store';
 import { eventStore } from './common';
 
 @Projection({

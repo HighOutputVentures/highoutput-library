@@ -1,6 +1,4 @@
-/* eslint-disable import/prefer-default-export */
-import { DistributedEventStore } from '../../lib/event-store';
-import { ActiveMQConnection } from '../../lib/connection';
+import { DistributedEventStore, ActiveMQConnection } from '@arque/core';
 
 export const connection = new ActiveMQConnection();
 

@@ -1,10 +1,12 @@
 import {
+  ID,
+  Event,
+} from '@arque/types';
+import {
   Aggregate,
   AggregateEventHandler,
   BaseAggregate,
-  ID,
-  Event,
-} from '../..';
+} from '@arque/core';
 
 @Aggregate({ type: 'Balance', initialState: 0 })
 export default class BalanceAggregate extends BaseAggregate {

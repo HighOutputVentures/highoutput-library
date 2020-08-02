@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
-import { DistributedEventStoreServer } from '../..';
-import { MongoDBEventStoreDatabase } from '../../lib/event-store';
+import { DistributedEventStoreServer, MongoDBEventStoreDatabase } from '@arque/core';
 import { connection } from './common';
 
 export default {
