@@ -1,0 +1,3 @@
+# `arque`
+
+> Core for `arque`.

@@ -1,6 +1,6 @@
 {
   "name": "@arque/types",
-  "version": "0.0.2-alpha.1",
+  "version": "1.0.0-alpha.1",
   "description": "Typescript type definitions for `arque`",
   "keywords": [
     "microservice",
@@ -8,19 +8,28 @@
     "cqrs"
   ],
   "author": "High Output Ventures",
-  "homepage": "https://github.com/Proto-Garage/highoutput-library/tree/master/packages/arque-types#readme",
+  "homepage": "https://github.com/Proto-Garage/highoutput-library/tree/master/packages/arque-types#README.md",
   "license": "ISC",
-  "main": "",
+  "main": "build/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
   },
-  "types": "index.d.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf build/",
+    "build": "npm run clean && tsc --project tsconfig.json",
+    "prepublish": "npm run build"
+  },
   "bugs": {
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
   },
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "1f7bf60cb4d12ac9773642f924e879cc6866e4ca"
+  "gitHead": "1f7bf60cb4d12ac9773642f924e879cc6866e4ca",
+  "devDependencies": {
+    "rimraf": "^3.0.2",
+    "typescript": "^3.9.7"
+  }
 }
