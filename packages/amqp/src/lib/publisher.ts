@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import {
-  Connection, Sender,
-} from 'rhea';
+import { Connection, Sender } from 'rhea';
 import R from 'ramda';
 import { EventEmitter } from 'events';
 import AppError from '@highoutput/error';
@@ -10,9 +8,11 @@ import { openSender, closeSender, serialize } from './util';
 
 export type PublisherOptions = {
   serialize: boolean;
-}
+};
 
-export default class Publisher<TInput extends any[] = any[]> extends EventEmitter {
+export default class Publisher<
+  TInput extends any[] = any[]
+> extends EventEmitter {
   private options: PublisherOptions;
 
   private sender: Sender | null = null;
@@ -26,7 +26,7 @@ export default class Publisher<TInput extends any[] = any[]> extends EventEmitte
   public constructor(
     private readonly connection: Connection,
     private readonly topic: string,
-    options?: Partial<PublisherOptions>,
+    options?: Partial<PublisherOptions>
   ) {
     super();
 
@@ -35,12 +35,16 @@ export default class Publisher<TInput extends any[] = any[]> extends EventEmitte
     });
 
     this.connection.on('disconnected', () => {
-      logger.tag(['publisher', 'connection', 'disconnected']).tag('Connection is disconnected.');
+      logger
+        .tag(['publisher', 'connection', 'disconnected'])
+        .tag('Connection is disconnected.');
       this.disconnected = true;
     });
 
     this.connection.on('connection_close', () => {
-      logger.tag(['publisher', 'connection', 'connection_close']).tag('Connection is closed.');
+      logger
+        .tag(['publisher', 'connection', 'connection_close'])
+        .tag('Connection is closed.');
       this.disconnected = true;
     });
 
@@ -56,15 +60,22 @@ export default class Publisher<TInput extends any[] = any[]> extends EventEmitte
       await this.start();
     }
 
+    const stringifyArgs = JSON.stringify(
+      this.options.serialize ? serialize(args) : args
+    );
+
     const body = {
-      arguments: this.options.serialize ? serialize(args) : args,
+      arguments: stringifyArgs,
       timestamp: Date.now(),
     };
 
     logger.tag(['publisher', 'request']).verbose(body);
 
     if (!this.sender || this.sender.is_closed()) {
-      throw new AppError('PUBLISHER_ERROR', 'Publisher sender is on invalid state.');
+      throw new AppError(
+        'PUBLISHER_ERROR',
+        'Publisher sender is on invalid state.'
+      );
     }
 
     try {

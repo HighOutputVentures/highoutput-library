@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import {
-  Connection, Sender, Receiver, EventContext,
-} from 'rhea';
+import { Connection, Sender, Receiver, EventContext } from 'rhea';
 import R from 'ramda';
 import uuid from 'uuid/v4';
 import delay from '@highoutput/delay';
@@ -11,7 +9,12 @@ import AppError from '@highoutput/error';
 import { EventEmitter } from 'events';
 import logger from './logger';
 import {
-  deserialize, serialize, closeSender, closeReceiver, openSender, openReceiver,
+  deserialize,
+  serialize,
+  closeSender,
+  closeReceiver,
+  openSender,
+  openReceiver,
 } from './util';
 
 export type ClientOptions = {
@@ -19,9 +22,12 @@ export type ClientOptions = {
   noResponse: boolean;
   deserialize: boolean;
   serialize: boolean;
-}
+};
 
-export default class Client<TInput extends any[] = any[], TOutput = any> extends EventEmitter {
+export default class Client<
+  TInput extends any[] = any[],
+  TOutput = any
+> extends EventEmitter {
   private options: ClientOptions;
 
   private sender: Sender | null = null;
@@ -30,7 +36,10 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
 
   public readonly id: string = uuid();
 
-  private readonly callbacks = new Map<string, { resolve: Function; reject: Function }>();
+  private readonly callbacks = new Map<
+    string,
+    { resolve: Function; reject: Function }
+  >();
 
   private asyncGroup: AsyncGroup = new AsyncGroup();
 
@@ -45,7 +54,7 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
   public constructor(
     private readonly connection: Connection,
     private readonly queue: string,
-    options?: Partial<ClientOptions>,
+    options?: Partial<ClientOptions>
   ) {
     super();
 
@@ -61,12 +70,16 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
     logger.tag('client').info(this.options);
 
     this.connection.on('disconnected', () => {
-      logger.tag(['client', 'connection', 'disconnected']).tag('Connection is disconnected.');
+      logger
+        .tag(['client', 'connection', 'disconnected'])
+        .tag('Connection is disconnected.');
       this.disconnected = true;
     });
 
     this.connection.on('connection_close', () => {
-      logger.tag(['client', 'connection', 'connection_close']).tag('Connection is closed.');
+      logger
+        .tag(['client', 'connection', 'connection_close'])
+        .tag('Connection is closed.');
       this.disconnected = true;
     });
 
@@ -85,19 +98,29 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
     const correlationId = uuid();
     const now = Date.now();
 
+    const stringifyArgs = JSON.stringify(
+      this.options.serialize ? serialize(args) : args
+    );
+
     const body = {
       correlationId,
-      arguments: this.options.serialize ? serialize(args) : args,
+      arguments: stringifyArgs,
       timestamp: now,
     };
 
     if (!this.sender || this.sender.is_closed()) {
-      throw new AppError('CLIENT_ERROR',
-        `Client sender is on invalid state. sender = ${!!this.sender}, closed = ${this.sender?.is_closed()}`);
+      throw new AppError(
+        'CLIENT_ERROR',
+        `Client sender is on invalid state. sender = ${!!this
+          .sender}, closed = ${this.sender?.is_closed()}`
+      );
     }
 
     if (!this.receiver || this.receiver.is_closed()) {
-      throw new AppError('CLIENT_ERROR', 'Client receiver is on invalid state.');
+      throw new AppError(
+        'CLIENT_ERROR',
+        'Client receiver is on invalid state.'
+      );
     }
 
     try {
@@ -106,7 +129,7 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
         correlation_id: correlationId,
         ttl: this.options.timeout as number,
         absolute_expiry_time: now + (this.options.timeout as number),
-        body,
+        body: body,
       });
     } catch (err) {
       logger.tag('client').warn(err);
@@ -177,7 +200,9 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
       this.receiver.on('message', (context: EventContext) => {
         let body = context.message?.body;
 
-        const callback = this.callbacks.get(context.message?.correlation_id as string);
+        const callback = this.callbacks.get(
+          context.message?.correlation_id as string
+        );
 
         if (!callback) {
           return;
@@ -185,7 +210,9 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
 
         body = {
           ...body,
-          result: this.options.deserialize ? deserialize(body.result) : body.result,
+          result: this.options.deserialize
+            ? deserialize(body.result)
+            : body.result,
         };
 
         logger.tag(['client', 'response']).verbose(body);
@@ -196,7 +223,9 @@ export default class Client<TInput extends any[] = any[], TOutput = any> extends
           const deserialized = deserialize(body.error);
 
           const meta = {
-            ...R.omit(['id', 'name', 'message', 'stack', 'service'])(deserialized),
+            ...R.omit(['id', 'name', 'message', 'stack', 'service'])(
+              deserialized
+            ),
             original: deserialized,
           };
 

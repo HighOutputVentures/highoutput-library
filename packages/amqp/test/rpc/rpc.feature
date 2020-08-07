@@ -26,6 +26,7 @@ Feature: RPC
       | null              | true              |
       | null              | { "value": true } |
       | null              | [ 1, 2, 3, 4 ]    |
+      | 999999999999999999| null              |
 
   Scenario: Multiple Workers
     Given a single client and multiple workers
