@@ -64,7 +64,10 @@ export default class Subscriber<
       return;
     }
 
-    const parseArgs = JSON.parse(message.body.arguments);
+    const parseArgs =
+    typeof message.body.arguments === 'string'
+      ? JSON.parse(message.body.arguments)
+      : message.body.arguments;
 
     const body = {
       ...message.body,

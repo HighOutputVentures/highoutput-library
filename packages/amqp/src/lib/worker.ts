@@ -1,8 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-non-null-assertion, @typescript-eslint/camelcase */
-import {
-  Connection, EventContext, Receiver, Sender,
-} from 'rhea';
+import { Connection, EventContext, Receiver, Sender } from 'rhea';
 import R from 'ramda';
 import AsyncGroup from '@highoutput/async-group';
 import { serializeError } from 'serialize-error';
@@ -45,7 +43,7 @@ export default class Worker<
     private readonly connection: Connection,
     private readonly queue: string,
     private readonly handler: (...args: TInput) => Promise<TOutput>,
-    options?: Partial<WorkerOptions>,
+    options?: Partial<WorkerOptions>
   ) {
     super();
 
@@ -100,7 +98,10 @@ export default class Worker<
       return;
     }
 
-    const parseArgs = JSON.parse(message.body.arguments);
+    const parseArgs =
+      typeof message.body.arguments === 'string'
+        ? JSON.parse(message.body.arguments)
+        : message.body.arguments;
 
     const request = {
       ...message.body,
@@ -170,8 +171,8 @@ export default class Worker<
         const now = Date.now();
         // message already expired, no need to process this
         if (
-          message.absolute_expiry_time
-          && now > message.absolute_expiry_time
+          message.absolute_expiry_time &&
+          now > message.absolute_expiry_time
         ) {
           logger
             .tag(['worker', 'message'])
@@ -183,7 +184,9 @@ export default class Worker<
         }
 
         await this.asyncGroup.add(
-          this.handleMessage(context).catch((err) => logger.tag('worker').warn(err)),
+          this.handleMessage(context).catch((err) =>
+            logger.tag('worker').warn(err)
+          )
         );
 
         if (!this.shutdown) {
@@ -228,7 +231,7 @@ export default class Worker<
         if (sender.is_open()) {
           await closeSender(sender);
         }
-      }),
+      })
     );
 
     this.senders.clear();
