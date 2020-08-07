@@ -8,7 +8,8 @@
       "ignoreChanges": [
         "*.md",
         "package-lock.json",
-        "test/**"
+        "test/**",
+        "packages/arque-kafka-connection/**"
       ],
       "message": "chore(release): publish",
       "registry": "https://registry.npmjs.org"
