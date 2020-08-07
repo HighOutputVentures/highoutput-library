@@ -100,13 +100,11 @@ export default class Client<
     const correlationId = uuid();
     const now = Date.now();
 
-    const stringifyArgs = JSON.stringify(
-      this.options.serialize ? serialize(args) : args,
-    );
-
     const body = {
       correlationId,
-      arguments: stringifyArgs,
+      arguments: JSON.stringify(
+        this.options.serialize ? serialize(args) : args,
+      ),
       timestamp: now,
     };
 

@@ -60,12 +60,10 @@ export default class Publisher<
       await this.start();
     }
 
-    const stringifyArgs = JSON.stringify(
-      this.options.serialize ? serialize(args) : args,
-    );
-
     const body = {
-      arguments: stringifyArgs,
+      arguments: JSON.stringify(
+        this.options.serialize ? serialize(args) : args,
+      ),
       timestamp: Date.now(),
     };
 

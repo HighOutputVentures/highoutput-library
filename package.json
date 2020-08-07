@@ -36,6 +36,7 @@
     "@types/backoff": "^2.5.1",
     "@types/p-queue": "^3.2.1",
     "backoff": "^2.5.0",
+    "bson": "^4.0.4",
     "p-queue": "^6.3.0"
   }
 }

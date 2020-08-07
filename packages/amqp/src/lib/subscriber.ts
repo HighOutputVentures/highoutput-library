@@ -64,14 +64,13 @@ export default class Subscriber<
       return;
     }
 
-    const parseArgs =
-    typeof message.body.arguments === 'string'
+    const parsed = typeof message.body.arguments === 'string'
       ? JSON.parse(message.body.arguments)
       : message.body.arguments;
 
     const body = {
       ...message.body,
-      arguments: this.options.deserialize ? deserialize(parseArgs) : parseArgs,
+      arguments: this.options.deserialize ? deserialize(parsed) : parsed,
     };
 
     logger.tag(['subscriber', 'request']).info(body);
