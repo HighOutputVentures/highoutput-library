@@ -10,9 +10,11 @@ import { openReceiver, closeReceiver, deserialize } from './util';
 export type SubscriberOptions = {
   concurrency: number;
   deserialize: boolean;
-}
+};
 
-export default class Subscriber<TInput extends any[] = any[]> extends EventEmitter {
+export default class Subscriber<
+  TInput extends any[] = any[]
+> extends EventEmitter {
   private options: SubscriberOptions;
 
   private receiver: Receiver | null = null;
@@ -39,12 +41,16 @@ export default class Subscriber<TInput extends any[] = any[]> extends EventEmitt
     });
 
     this.connection.on('disconnected', () => {
-      logger.tag(['subscriber', 'connection', 'disconnected']).tag('Connection is disconnected.');
+      logger
+        .tag(['subscriber', 'connection', 'disconnected'])
+        .tag('Connection is disconnected.');
       this.disconnected = true;
     });
 
     this.connection.on('connection_close', () => {
-      logger.tag(['subscriber', 'connection', 'connection_close']).tag('Connection is closed.');
+      logger
+        .tag(['subscriber', 'connection', 'connection_close'])
+        .tag('Connection is closed.');
       this.disconnected = true;
     });
 
@@ -58,9 +64,14 @@ export default class Subscriber<TInput extends any[] = any[]> extends EventEmitt
       return;
     }
 
+    const parseArgs =
+    typeof message.body.arguments === 'string'
+      ? JSON.parse(message.body.arguments)
+      : message.body.arguments;
+
     const body = {
       ...message.body,
-      arguments: this.options.deserialize ? deserialize(message.body.arguments) : message.body.arguments,
+      arguments: this.options.deserialize ? deserialize(parseArgs) : parseArgs,
     };
 
     logger.tag(['subscriber', 'request']).info(body);
@@ -94,7 +105,9 @@ export default class Subscriber<TInput extends any[] = any[]> extends EventEmitt
           return;
         }
 
-        await this.asyncGroup.add(this.handleMessage(context).catch((err) => logger.tag('subscriber').warn(err)));
+        await this.asyncGroup.add(
+          this.handleMessage(context).catch((err) => logger.tag('subscriber').warn(err)),
+        );
 
         if (!this.shutdown) {
           context.receiver!.add_credit(1);
