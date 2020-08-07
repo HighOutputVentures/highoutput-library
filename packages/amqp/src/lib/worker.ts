@@ -1,24 +1,30 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-non-null-assertion, @typescript-eslint/camelcase */
-import {
-  Connection, EventContext, Receiver, Sender,
-} from 'rhea';
+import { Connection, EventContext, Receiver, Sender } from 'rhea';
 import R from 'ramda';
 import AsyncGroup from '@highoutput/async-group';
 import { serializeError } from 'serialize-error';
 import { EventEmitter } from 'events';
 import logger from './logger';
 import {
-  serialize, deserialize, closeReceiver, closeSender, openSender, openReceiver,
+  serialize,
+  deserialize,
+  closeReceiver,
+  closeSender,
+  openSender,
+  openReceiver,
 } from './util';
 
 export type WorkerOptions = {
   concurrency: number;
   serialize: boolean;
   deserialize: boolean;
-}
+};
 
-export default class Worker<TInput extends any[] = any[], TOutput = any> extends EventEmitter {
+export default class Worker<
+  TInput extends any[] = any[],
+  TOutput = any
+> extends EventEmitter {
   private options: WorkerOptions;
 
   private senders: Map<string, Promise<Sender>> = new Map();
@@ -37,7 +43,7 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> extends
     private readonly connection: Connection,
     private readonly queue: string,
     private readonly handler: (...args: TInput) => Promise<TOutput>,
-    options?: Partial<WorkerOptions>,
+    options?: Partial<WorkerOptions>
   ) {
     super();
 
@@ -48,12 +54,16 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> extends
     });
 
     this.connection.on('disconnected', () => {
-      logger.tag(['worker', 'connection', 'disconnected']).tag('Connection is disconnected.');
+      logger
+        .tag(['worker', 'connection', 'disconnected'])
+        .tag('Connection is disconnected.');
       this.disconnected = true;
     });
 
     this.connection.on('connection_close', () => {
-      logger.tag(['worker', 'connection', 'connection_close']).tag('Connection is closed.');
+      logger
+        .tag(['worker', 'connection', 'connection_close'])
+        .tag('Connection is closed.');
       this.disconnected = true;
     });
 
@@ -88,9 +98,14 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> extends
       return;
     }
 
+    const parseArgs =
+      typeof message.body.arguments === 'string'
+        ? JSON.parse(message.body.arguments)
+        : message.body.arguments;
+
     const request = {
       ...message.body,
-      arguments: this.options.deserialize ? deserialize(message.body.arguments) : message.body.arguments,
+      arguments: this.options.deserialize ? deserialize(parseArgs) : parseArgs,
     };
 
     logger.tag(['worker', 'request']).verbose(request);
@@ -155,16 +170,24 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> extends
 
         const now = Date.now();
         // message already expired, no need to process this
-        if (message.absolute_expiry_time && now > message.absolute_expiry_time) {
-          logger.tag(['worker', 'message']).verbose('received an expired message.');
+        if (
+          message.absolute_expiry_time &&
+          now > message.absolute_expiry_time
+        ) {
+          logger
+            .tag(['worker', 'message'])
+            .verbose('received an expired message.');
           if (!this.shutdown) {
             context.receiver!.add_credit(1);
           }
           return;
         }
 
-        await this.asyncGroup.add(this.handleMessage(context)
-          .catch((err) => logger.tag('worker').warn(err)));
+        await this.asyncGroup.add(
+          this.handleMessage(context).catch((err) =>
+            logger.tag('worker').warn(err)
+          )
+        );
 
         if (!this.shutdown) {
           context.receiver!.add_credit(1);
@@ -201,13 +224,15 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> extends
       await closeReceiver(this.receiver);
     }
 
-    await Promise.all(Array.from(this.senders.values()).map(async (promise) => {
-      const sender = await promise;
+    await Promise.all(
+      Array.from(this.senders.values()).map(async (promise) => {
+        const sender = await promise;
 
-      if (sender.is_open()) {
-        await closeSender(sender);
-      }
-    }));
+        if (sender.is_open()) {
+          await closeSender(sender);
+        }
+      })
+    );
 
     this.senders.clear();
 
