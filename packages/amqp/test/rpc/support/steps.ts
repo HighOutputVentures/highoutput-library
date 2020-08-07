@@ -16,7 +16,7 @@ Given('a client and a worker', async function () {
     async (message: string) => {
       this.message = message;
       return this.response;
-    }
+    },
   );
 });
 
@@ -41,17 +41,15 @@ Given('a single client and multiple workers', async function () {
 
   this.workers = await Promise.all(
     R.times(
-      (index) =>
-        this.amqp.createWorker(
-          'test',
-          async () => {
-            this.workers[index].messagesReceivedCount =
-              (this.workers[index].messagesReceivedCount || 0) + 1;
-          },
-          { concurrency: 5 }
-        ),
-      3
-    )
+      (index) => this.amqp.createWorker(
+        'test',
+        async () => {
+          this.workers[index].messagesReceivedCount = (this.workers[index].messagesReceivedCount || 0) + 1;
+        },
+        { concurrency: 5 },
+      ),
+      3,
+    ),
   );
 });
 
@@ -67,24 +65,21 @@ Then('the messages should be distributed into all of the workers', function () {
 
 Given('multiple clients and a single worker', async function () {
   this.clients = await Promise.all(
-    R.times(() => this.amqp.createClient('test'), 3)
+    R.times(() => this.amqp.createClient('test'), 3),
   );
 
   this.worker = await this.amqp.createWorker(
     'test',
     async () => {
-      this.worker.messagesReceivedCount =
-        (this.worker.messagesReceivedCount || 0) + 1;
+      this.worker.messagesReceivedCount = (this.worker.messagesReceivedCount || 0) + 1;
     },
-    { concurrency: 1000 }
+    { concurrency: 1000 },
   );
 });
 
 When('I send multiple messages from each of the clients', async function () {
   await Promise.all(
-    this.clients.map((client: any) =>
-      Promise.all(R.times((value) => client({ value }), 50))
-    )
+    this.clients.map((client: any) => Promise.all(R.times((value) => client({ value }), 50))),
   );
 });
 
@@ -92,11 +87,11 @@ Then(
   'the worker should receive all the messages sent by all the clients',
   function () {
     expect(this.worker.messagesReceivedCount).to.equal(150);
-  }
+  },
 );
 
 Given('a worker with a concurrency of {int}', async function (
-  concurrency: number
+  concurrency: number,
 ) {
   this.concurrency = concurrency;
   this.client = await this.amqp.createClient('test');
@@ -107,18 +102,18 @@ Given('a worker with a concurrency of {int}', async function (
     },
     {
       concurrency,
-    }
+    },
   );
 });
 
 Given('the worker handles each message for {int} milliseconds', async function (
-  duration: number
+  duration: number,
 ) {
   this.handleMessage = () => delay(duration);
 });
 
 When('I send {int} message\\(s) from the client', async function (
-  messagesCount: number
+  messagesCount: number,
 ) {
   this.messagesCount = messagesCount;
   const timestamp = Date.now();
@@ -131,9 +126,9 @@ Then(
   function (duration: number) {
     expect(this.duration).to.be.gte(duration);
     expect(this.duration).to.be.lt(
-      duration + (150 / this.concurrency) * this.messagesCount
+      duration + (150 / this.concurrency) * this.messagesCount,
     );
-  }
+  },
 );
 
 Given('a message that contains class objects', async function () {
@@ -178,33 +173,31 @@ Given(
 
     this.workers = await Promise.all(
       R.times(
-        (index) =>
-          this.amqp.createWorker(
-            'test',
-            async (message: any) => {
-              this.workers[index].messagesReceivedCount =
-                (this.workers[index].messagesReceivedCount || 0) + 1;
+        (index) => this.amqp.createWorker(
+          'test',
+          async (message: any) => {
+            this.workers[index].messagesReceivedCount = (this.workers[index].messagesReceivedCount || 0) + 1;
 
-              await delay(100 + 100 * Math.random());
+            await delay(100 + 100 * Math.random());
 
-              return {
-                message,
-                worker: index,
-              };
-            },
-            { concurrency: 1 }
-          ),
-        5
-      )
+            return {
+              message,
+              worker: index,
+            };
+          },
+          { concurrency: 1 },
+        ),
+        5,
+      ),
     );
-  }
+  },
 );
 
 When(
   'I send multiple messages from the client asynchronously',
   async function () {
     this.promise = Promise.all(R.times((value) => this.client({ value }), 20));
-  }
+  },
 );
 
 When('one of the workers is stopped', async function () {
@@ -225,19 +218,18 @@ When('all workers are restarted', async function () {
         async (message: any) => {
           await delay(100 + 100 * Math.random());
 
-          worker.messagesReceivedCount =
-            (worker.messagesReceivedCount || 0) + 1;
+          worker.messagesReceivedCount = (worker.messagesReceivedCount || 0) + 1;
 
           return {
             message,
             worker: 5 + index,
           };
         },
-        { concurrency: 1 }
+        { concurrency: 1 },
       );
 
       this.workers[5 + index] = worker;
-    }, 5)
+    }, 5),
   );
 });
 
@@ -248,9 +240,9 @@ Then('all messages should be handled', async function () {
     R.sum(
       R.map<number, number>(
         (item) => item || 0,
-        R.pluck('messagesReceivedCount' as any, this.workers)
-      )
-    )
+        R.pluck('messagesReceivedCount' as any, this.workers),
+      ),
+    ),
   ).to.equal(20);
 });
 
@@ -273,7 +265,7 @@ When(
       this.called = true;
       return true;
     });
-  }
+  },
 );
 
 Then('it should not process the message', async function () {

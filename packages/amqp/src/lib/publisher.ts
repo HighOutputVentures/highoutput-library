@@ -26,7 +26,7 @@ export default class Publisher<
   public constructor(
     private readonly connection: Connection,
     private readonly topic: string,
-    options?: Partial<PublisherOptions>
+    options?: Partial<PublisherOptions>,
   ) {
     super();
 
@@ -61,7 +61,7 @@ export default class Publisher<
     }
 
     const stringifyArgs = JSON.stringify(
-      this.options.serialize ? serialize(args) : args
+      this.options.serialize ? serialize(args) : args,
     );
 
     const body = {
@@ -74,7 +74,7 @@ export default class Publisher<
     if (!this.sender || this.sender.is_closed()) {
       throw new AppError(
         'PUBLISHER_ERROR',
-        'Publisher sender is on invalid state.'
+        'Publisher sender is on invalid state.',
       );
     }
 

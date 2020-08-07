@@ -31,7 +31,7 @@ export default class Subscriber<
     private readonly connection: Connection,
     private readonly topic: string,
     private readonly handler: (...args: TInput) => Promise<void>,
-    options?: Partial<SubscriberOptions>
+    options?: Partial<SubscriberOptions>,
   ) {
     super();
 
@@ -103,9 +103,7 @@ export default class Subscriber<
         }
 
         await this.asyncGroup.add(
-          this.handleMessage(context).catch((err) =>
-            logger.tag('subscriber').warn(err)
-          )
+          this.handleMessage(context).catch((err) => logger.tag('subscriber').warn(err)),
         );
 
         if (!this.shutdown) {

@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { Connection, Sender, Receiver, EventContext } from 'rhea';
+import {
+  Connection, Sender, Receiver, EventContext,
+} from 'rhea';
 import R from 'ramda';
 import uuid from 'uuid/v4';
 import delay from '@highoutput/delay';
@@ -54,7 +56,7 @@ export default class Client<
   public constructor(
     private readonly connection: Connection,
     private readonly queue: string,
-    options?: Partial<ClientOptions>
+    options?: Partial<ClientOptions>,
   ) {
     super();
 
@@ -99,7 +101,7 @@ export default class Client<
     const now = Date.now();
 
     const stringifyArgs = JSON.stringify(
-      this.options.serialize ? serialize(args) : args
+      this.options.serialize ? serialize(args) : args,
     );
 
     const body = {
@@ -112,14 +114,14 @@ export default class Client<
       throw new AppError(
         'CLIENT_ERROR',
         `Client sender is on invalid state. sender = ${!!this
-          .sender}, closed = ${this.sender?.is_closed()}`
+          .sender}, closed = ${this.sender?.is_closed()}`,
       );
     }
 
     if (!this.receiver || this.receiver.is_closed()) {
       throw new AppError(
         'CLIENT_ERROR',
-        'Client receiver is on invalid state.'
+        'Client receiver is on invalid state.',
       );
     }
 
@@ -129,7 +131,7 @@ export default class Client<
         correlation_id: correlationId,
         ttl: this.options.timeout as number,
         absolute_expiry_time: now + (this.options.timeout as number),
-        body: body,
+        body,
       });
     } catch (err) {
       logger.tag('client').warn(err);
@@ -201,7 +203,7 @@ export default class Client<
         let body = context.message?.body;
 
         const callback = this.callbacks.get(
-          context.message?.correlation_id as string
+          context.message?.correlation_id as string,
         );
 
         if (!callback) {
@@ -224,7 +226,7 @@ export default class Client<
 
           const meta = {
             ...R.omit(['id', 'name', 'message', 'stack', 'service'])(
-              deserialized
+              deserialized,
             ),
             original: deserialized,
           };
