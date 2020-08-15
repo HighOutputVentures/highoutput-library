@@ -52,7 +52,7 @@ export default class BaseAggregate<TState = any> {
 
     if (!promise) {
       promise = (async () => {
-        const aggregate = new BaseAggregate(id);
+        const aggregate = new this(id) as never as BaseAggregate;
 
         await aggregate.restoreFromLatestSnapshot();
 
@@ -108,8 +108,9 @@ export default class BaseAggregate<TState = any> {
   }
 
   public async restoreFromLatestSnapshot() {
+    const store: SnapshotStore = Reflect.getMetadata(SNAPSHOT_STORE_METADATA_KEY, this);
+
     await this.queue.add(async () => {
-      const store: SnapshotStore = Reflect.getMetadata(SNAPSHOT_STORE_METADATA_KEY, this);
       const snapshot = await store.retrieveLatestSnapshot({
         id: this.id,
         version: this.version,

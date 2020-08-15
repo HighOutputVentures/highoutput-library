@@ -24,7 +24,7 @@ import {
   }),
   snapshotStore: new MongoDBSnapshotStore(mongoose.createConnection('mongodb://localhost/test')),
 })
-class BalanceAggregate extends BaseAggregate {
+class BalanceAggregate extends BaseAggregate<number> {
   @AggregateEventHandler({ type: 'Credited' })
   onCredited(state: number, event: Event<{ delta: number }>) {
     return state + event.body.delta;
