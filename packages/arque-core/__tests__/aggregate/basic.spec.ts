@@ -12,7 +12,7 @@ import {
 } from '../../src/lib/util/metadata-keys';
 
 @Aggregate({ type: 'Balance', initialState: 0 })
-class BalanceAggregate extends BaseAggregate {
+class BalanceAggregate extends BaseAggregate<number> {
   @AggregateEventHandler({ type: 'Credited' })
   onCredited(state: number, event: Event<{ delta: number }>) {
     return state + event.body.delta;

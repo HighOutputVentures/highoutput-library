@@ -19,7 +19,7 @@ import {
   AGGREGATE_CACHE_METADATA_KEY,
 } from '../util/metadata-keys';
 
-export default class BaseAggregate<TState = any, TEvent extends Event = Event> {
+export default class BaseAggregate<TState = any> {
   private queue: Queue = new Queue({ concurrency: 1 });
 
   private _version = 0;
@@ -32,14 +32,14 @@ export default class BaseAggregate<TState = any, TEvent extends Event = Event> {
     batchSize: 100,
   }
 
-  protected constructor(
+  constructor(
     id: ID,
   ) {
     this._id = id;
     this._state = Object.freeze(Reflect.getMetadata(AGGREGATE_INITIAL_STATE_METADATA_KEY, this));
   }
 
-  public static async load(id: ID) {
+  public static async load<T>(this: new (id: ID) => T, id: ID) {
     if (!(this as any).cache) {
       (this as any).cache = new Cache<string, Promise<BaseAggregate>>(
         Object.freeze(Reflect.getMetadata(AGGREGATE_CACHE_METADATA_KEY, this)),
@@ -52,7 +52,7 @@ export default class BaseAggregate<TState = any, TEvent extends Event = Event> {
 
     if (!promise) {
       promise = (async () => {
-        const aggregate = new this(id);
+        const aggregate = new BaseAggregate(id);
 
         await aggregate.restoreFromLatestSnapshot();
 
@@ -64,7 +64,7 @@ export default class BaseAggregate<TState = any, TEvent extends Event = Event> {
     const aggregate = await promise;
     await aggregate.fold();
 
-    return aggregate;
+    return aggregate as never as T;
   }
 
   get type(): string {
@@ -128,13 +128,13 @@ export default class BaseAggregate<TState = any, TEvent extends Event = Event> {
 
       let { version } = this;
 
-      let events: TEvent[];
+      let events: Event[];
       do {
         events = (await this.eventStore.retrieveAggregateEvents({
           aggregate: this.id,
           first: this.options.batchSize,
           after: version,
-        })) as TEvent[];
+        })) as Event[];
 
         for (const event of events) {
           state = this.apply(state, event);
@@ -148,9 +148,9 @@ export default class BaseAggregate<TState = any, TEvent extends Event = Event> {
     });
   }
 
-  public async createEvent(params: {
-    type: TEvent['type'];
-    body: TEvent['body'];
+  public async createEvent<T extends Event = Event>(params: {
+    type: T['type'];
+    body: T['body'];
     version?: number;
   }) {
     await this.fold();
