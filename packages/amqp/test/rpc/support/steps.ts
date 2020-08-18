@@ -90,6 +90,22 @@ Then(
   },
 );
 
+Given('there are {int} workers', async function (
+  concurrency: number,
+) {
+  this.concurrency = concurrency;
+  this.client = await this.amqp.createClient('test');
+  this.workers = await Promise.all(R.times(async () => this.amqp.createWorker(
+    'test',
+    async () => {
+      await this.handleMessage();
+    },
+    {
+      concurrency: 1,
+    },
+  ), concurrency));
+});
+
 Given('a worker with a concurrency of {int}', async function (
   concurrency: number,
 ) {
