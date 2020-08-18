@@ -102,9 +102,7 @@ export default class Client<
 
     const body = {
       correlationId,
-      arguments: JSON.stringify(
-        this.options.serialize ? serialize(args) : args,
-      ),
+      arguments: this.options.serialize ? serialize(args) : args,
       timestamp: now,
     };
 
@@ -129,7 +127,7 @@ export default class Client<
         correlation_id: correlationId,
         ttl: this.options.timeout as number,
         absolute_expiry_time: now + (this.options.timeout as number),
-        body,
+        body: JSON.stringify(body),
       });
     } catch (err) {
       logger.tag('client').warn(err);
@@ -198,7 +196,9 @@ export default class Client<
       this.receiver = receiver;
 
       this.receiver.on('message', (context: EventContext) => {
-        let body = context.message?.body;
+        let body = typeof context.message?.body === 'string'
+          ? JSON.parse(context.message?.body)
+          : context.message?.body;
 
         const callback = this.callbacks.get(
           context.message?.correlation_id as string,
@@ -208,13 +208,10 @@ export default class Client<
           return;
         }
 
-        const parsed = typeof body.result === 'string'
-          ? JSON.parse(body.result)
-          : body.result;
 
         body = {
           ...body,
-          result: this.options.deserialize ? deserialize(parsed) : parsed,
+          result: this.options.deserialize ? deserialize(body.result) : body.result,
         };
 
         logger.tag(['client', 'response']).verbose(body);

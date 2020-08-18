@@ -64,13 +64,13 @@ export default class Subscriber<
       return;
     }
 
-    const parsed = typeof message.body.arguments === 'string'
-      ? JSON.parse(message.body.arguments)
-      : message.body.arguments;
+    let body = typeof message.body === 'string'
+      ? JSON.parse(message.body)
+      : message.body;
 
-    const body = {
-      ...message.body,
-      arguments: this.options.deserialize ? deserialize(parsed) : parsed,
+    body = {
+      ...body,
+      arguments: this.options.deserialize ? deserialize(body.arguments) : body.arguments,
     };
 
     logger.tag(['subscriber', 'request']).info(body);

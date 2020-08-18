@@ -100,13 +100,13 @@ export default class Worker<
       return;
     }
 
-    const parsed = typeof message.body.arguments === 'string'
-      ? JSON.parse(message.body.arguments)
-      : message.body.arguments;
+    const body = typeof message.body === 'string'
+      ? JSON.parse(message.body)
+      : message.body;
 
     const request = {
-      ...message.body,
-      arguments: this.options.deserialize ? deserialize(parsed) : parsed,
+      ...body,
+      arguments: this.options.deserialize ? deserialize(body.arguments) : body.arguments,
     };
 
     logger.tag(['worker', 'request']).verbose(request);
@@ -123,9 +123,7 @@ export default class Worker<
     if (message.reply_to) {
       const response = {
         correlationId: message.correlation_id,
-        result: JSON.stringify(
-          this.options.serialize ? serialize(result) : result,
-        ),
+        result: this.options.serialize ? serialize(result) : result,
         error,
         timestamp: Date.now(),
       };
@@ -137,7 +135,7 @@ export default class Worker<
       try {
         sender.send({
           correlation_id: message.correlation_id,
-          body: response,
+          body: JSON.stringify(response),
         });
       } catch (err) {
         logger.tag('worker').warn(err);

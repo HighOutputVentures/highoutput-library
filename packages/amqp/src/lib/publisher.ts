@@ -61,9 +61,7 @@ export default class Publisher<
     }
 
     const body = {
-      arguments: JSON.stringify(
-        this.options.serialize ? serialize(args) : args,
-      ),
+      arguments: this.options.serialize ? serialize(args) : args,
       timestamp: Date.now(),
     };
 
@@ -78,7 +76,7 @@ export default class Publisher<
 
     try {
       this.sender.send({
-        body,
+        body: JSON.stringify(body),
       });
     } catch (err) {
       logger.tag('publisher').warn(err);
