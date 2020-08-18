@@ -208,11 +208,13 @@ export default class Client<
           return;
         }
 
+        const parsed = typeof body.result === 'string'
+          ? JSON.parse(body.result)
+          : body.result;
+
         body = {
           ...body,
-          result: this.options.deserialize
-            ? deserialize(body.result)
-            : body.result,
+          result: this.options.deserialize ? deserialize(parsed) : parsed,
         };
 
         logger.tag(['client', 'response']).verbose(body);
