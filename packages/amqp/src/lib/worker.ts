@@ -123,7 +123,9 @@ export default class Worker<
     if (message.reply_to) {
       const response = {
         correlationId: message.correlation_id,
-        result: this.options.serialize ? serialize(result) : result,
+        result: JSON.stringify(
+          this.options.serialize ? serialize(result) : result,
+        ),
         error,
         timestamp: Date.now(),
       };
