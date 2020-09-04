@@ -1,0 +1,50 @@
+{
+  "name": "@arque/activemq-connection",
+  "version": "0.0.0",
+  "description": "ActiveMQ Connection for `arque`",
+  "keywords": [
+    "event-sourcing",
+    "cqrs",
+    "microservice"
+  ],
+  "author": "High Output Ventures",
+  "homepage": "https://github.com/Proto-Garage/highoutput-library/tree/master/packages/arque-activemq-connection#README.md",
+  "license": "ISC",
+  "main": "build/index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
+  },
+  "scripts": {
+    "test": "cross-env TS_NODE_PROJECT=__tests__/tsconfig.json TS_NODE_FILES=true mocha \"__tests__/**/*.test.ts\""
+  },
+  "bugs": {
+    "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
+  },
+  "dependencies": {
+    "@arque/types": "^1.0.0-alpha.4",
+    "@highoutput/amqp": "^0.8.0"
+  },
+  "devDependencies": {
+    "@highoutput/delay": "^0.2.1",
+    "@types/chai": "^4.2.12",
+    "@types/chance": "^1.1.0",
+    "@types/mocha": "^8.0.1",
+    "@types/ramda": "^0.27.14",
+    "@types/sinon": "^9.0.5",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "chance": "^1.1.7",
+    "cross-env": "^7.0.2",
+    "mocha": "^8.1.0",
+    "ramda": "^0.27.1",
+    "rimraf": "^3.0.2",
+    "sinon": "^9.0.3",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.7"
+  }
+}
