@@ -1,7 +1,7 @@
-import { DistributedEventStore, ActiveMQConnection } from '@arque/core';
+import { DistributedEventStore, LocalConnection } from '@arque/core';
 
-export const connection = new ActiveMQConnection();
+export const connection = new LocalConnection();
 
 export const eventStore = new DistributedEventStore({
-  connection: new ActiveMQConnection(),
+  connection: new LocalConnection(),
 });
