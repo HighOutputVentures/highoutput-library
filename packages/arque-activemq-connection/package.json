@@ -47,5 +47,8 @@
     "ts-node": "^9.0.0",
     "typescript": "^4.0.2"
   },
-  "gitHead": "99b6a092af8a8fb00827b2b3a99e377993e980a6"
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "8a1da10c61f4d3ee98d6bb7a73e36e5b7e9b353c"
 }
