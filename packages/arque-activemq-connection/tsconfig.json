@@ -2,9 +2,12 @@
   "compilerOptions": {
     "target": "es2017",
     "module": "commonjs",
+    "declaration": true,
+    "outDir": "build",
     "strictNullChecks": true,
     "strictFunctionTypes": true,
     "strictPropertyInitialization": true,
+    "removeComments": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "moduleResolution": "node",
@@ -12,5 +15,5 @@
     "experimentalDecorators": true,
     "lib": ["esnext"]
   },
-  "include": ["../src/**/*", "./**/*.ts"]
+  "include": ["src/**/*"]
 }
