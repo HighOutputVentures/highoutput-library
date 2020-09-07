@@ -1,13 +1,14 @@
 import crypto from 'crypto';
 import mongoose from 'mongoose';
 import { Event } from '@arque/types';
+// import ActiveMQConnection from '@arque/activemq-connection';
 import {
   Aggregate,
   AggregateEventHandler,
   BaseAggregate,
   DistributedEventStore,
-  ActiveMQConnection,
   MongoDBSnapshotStore,
+  LocalConnection as ActiveMQConnection,
   DistributedEventStoreServer,
   MongoDBEventStoreDatabase,
 } from '../../src';
