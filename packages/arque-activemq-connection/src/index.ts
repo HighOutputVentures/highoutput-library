@@ -10,11 +10,11 @@ import {
 export default class implements Connection {
   private amqp: Amqp;
 
-  constructor(options?: AmqpOptions) {
+  public constructor(options?: AmqpOptions) {
     this.amqp = new Amqp(options);
   }
 
-  async createClient(
+  public async createClient(
     address: string,
     options?: { timeout?: string | number },
   ): Promise<ConnectionClient> {
@@ -30,7 +30,7 @@ export default class implements Connection {
     });
   }
 
-  async createWorker(
+  public async createWorker(
     address: string,
     handler: (...args: any[]) => Promise<any>,
     options?: { concurrency?: number },
@@ -46,7 +46,7 @@ export default class implements Connection {
     };
   }
 
-  async createPublisher(topic: string): Promise<ConnectionPublisher> {
+  public async createPublisher(topic: string): Promise<ConnectionPublisher> {
     const publisher = await this.amqp.createPublisher(topic, {
       serialize: true,
     });
@@ -56,7 +56,7 @@ export default class implements Connection {
     });
   }
 
-  async createSubscriber(
+  public async createSubscriber(
     topic: string,
     handler: (...args: any[]) => Promise<any>,
     options?: { concurrency?: number },
@@ -71,7 +71,7 @@ export default class implements Connection {
     };
   }
 
-  async stop(): Promise<void> {
+  public async stop(): Promise<void> {
     await this.amqp.stop();
   }
 }
