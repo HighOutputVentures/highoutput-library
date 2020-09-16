@@ -67,6 +67,8 @@ jobs:
   test:
     docker:
       - image: circleci/node:12.13.0-stretch
+      - image: highoutputdev/activemq:latest
+      - image: mongo:latest
     steps:
       - save_point
       - restore_point
