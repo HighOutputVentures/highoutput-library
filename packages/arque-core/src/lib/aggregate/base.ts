@@ -62,6 +62,7 @@ export default class BaseAggregate<TState = any> {
     }
 
     const aggregate = await promise;
+
     await aggregate.fold();
 
     return aggregate as never as T;
@@ -130,6 +131,7 @@ export default class BaseAggregate<TState = any> {
       let { version } = this;
 
       let events: Event[];
+
       do {
         events = (await this.eventStore.retrieveAggregateEvents({
           aggregate: this.id,

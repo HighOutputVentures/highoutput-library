@@ -1,14 +1,13 @@
 import crypto from 'crypto';
 import mongoose from 'mongoose';
 import { Event } from '@arque/types';
-// import ActiveMQConnection from '@arque/activemq-connection';
 import {
   Aggregate,
   AggregateEventHandler,
   BaseAggregate,
   DistributedEventStore,
   MongoDBSnapshotStore,
-  LocalConnection as ActiveMQConnection,
+  LocalConnection,
   DistributedEventStoreServer,
   MongoDBEventStoreDatabase,
 } from '../../src';
@@ -17,11 +16,13 @@ import {
   SNAPSHOT_STORE_METADATA_KEY,
 } from '../../src/lib/util/metadata-keys';
 
+const connection = new LocalConnection();
+
 @Aggregate({
   type: 'Balance',
   initialState: 0,
   eventStore: new DistributedEventStore({
-    connection: new ActiveMQConnection(),
+    connection,
   }),
   snapshotStore: new MongoDBSnapshotStore(mongoose.createConnection('mongodb://localhost/test')),
 })
@@ -46,9 +47,10 @@ class BalanceAggregate extends BaseAggregate<number> {
 describe('Aggregate', () => {
   before(async function () {
     this.eventStoreServer = new DistributedEventStoreServer({
-      connection: new ActiveMQConnection(),
+      connection,
       database: new MongoDBEventStoreDatabase(mongoose.createConnection('mongodb://localhost/test')),
     });
+
     await this.eventStoreServer.start();
 
     this.snapshotStore = Reflect.getMetadata(SNAPSHOT_STORE_METADATA_KEY, BalanceAggregate.prototype);
