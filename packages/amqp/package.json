@@ -28,7 +28,7 @@
     "@types/chance": "^1.1.0",
     "@types/cucumber": "^6.0.0",
     "@types/ms": "^0.7.31",
-    "@types/node": "^13.7.0",
+    "@types/node": "^13.13.21",
     "@types/ramda": "^0.27.6",
     "@types/serialize-error": "^4.0.1",
     "@types/uuid": "^3.4.6",

@@ -19,6 +19,7 @@
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
   },
   "dependencies": {
+    "@types/node": "^14.11.1",
     "uuid": "^3.4.0"
   },
   "devDependencies": {

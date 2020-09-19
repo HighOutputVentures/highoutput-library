@@ -31,7 +31,8 @@
   },
   "dependencies": {
     "@arque/types": "^1.0.0-alpha.4",
-    "@highoutput/amqp": "^0.8.0"
+    "@highoutput/amqp": "^0.8.0",
+    "@types/node": "^14.11.1"
   },
   "devDependencies": {
     "@highoutput/delay": "^0.2.1",
