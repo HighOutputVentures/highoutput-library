@@ -1,9 +1,7 @@
-/* eslint-disable no-useless-constructor */
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { Connection } from '@arque/types';
-import { Kafka, logLevel, Producer, CompressionTypes, Consumer } from 'kafkajs';
+import {
+  Kafka, logLevel, Producer, CompressionTypes, Consumer,
+} from 'kafkajs';
 import { v4 as uuid } from 'uuid';
 import R from 'ramda';
 
@@ -32,7 +30,7 @@ export default class implements Connection {
   async createSubscriber(
     topic: string,
     handler: (...args: any[]) => Promise<any>,
-    options?: { concurrency?: number }
+    options?: { concurrency?: number },
   ) {
     const id = uuid();
 
@@ -59,8 +57,14 @@ export default class implements Connection {
       autoCommit: true,
       partitionsConsumedConcurrently: options?.concurrency || 1,
       eachMessage: async ({ message }) => {
+        const { value } = message;
+
+        if (!value) {
+          return;
+        }
+
         const body: { arguments: any[] } = JSON.parse(
-          message.value.toString('utf8')
+          value.toString('utf8'),
         );
 
         await handler(...body.arguments);
@@ -112,7 +116,7 @@ export default class implements Connection {
           await producer.disconnect();
           delete this.producers[id];
         },
-      }
+      },
     );
   }
 

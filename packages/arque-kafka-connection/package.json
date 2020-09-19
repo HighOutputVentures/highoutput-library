@@ -20,11 +20,12 @@
     "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
   },
   "scripts": {
-    "test:ignore": "cross-env TS_NODE_PROJECT=__tests__/tsconfig.json TS_NODE_FILES=true mocha \"__tests__/**/*.test.ts\"",
+    "lint": "eslint \"src/**/*.ts\"",
     "typecheck": "tsc --noEmit",
     "clean": "rimraf build/",
     "build": "npm run clean && tsc --project tsconfig.json",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "test:ignore": "cross-env TS_NODE_PROJECT=__tests__/tsconfig.json TS_NODE_FILES=true mocha \"__tests__/**/*.test.ts\""
   },
   "bugs": {
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
@@ -41,10 +42,15 @@
     "@types/chai": "^4.2.12",
     "@types/chance": "^1.1.0",
     "@types/mocha": "^8.0.1",
+    "@typescript-eslint/eslint-plugin": "^4.1.1",
+    "@typescript-eslint/parser": "^4.1.1",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chance": "^1.1.6",
     "cross-env": "^7.0.2",
+    "eslint": "^7.9.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.0",
     "mocha": "^8.1.0",
     "rimraf": "^3.0.2",
     "ts-node": "^8.10.2",
