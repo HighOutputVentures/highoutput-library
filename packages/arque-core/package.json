@@ -42,6 +42,7 @@
     "@types/p-queue": "^3.2.1",
     "@types/ramda": "^0.27.14",
     "@types/serialize-error": "^4.0.1",
+    "@types/uuid": "^8.3.0",
     "backoff": "^2.5.0",
     "clean-deep": "^3.3.0",
     "lokijs": "^1.5.9",
@@ -51,7 +52,8 @@
     "p-queue": "^6.6.0",
     "ramda": "^0.27.1",
     "reflect-metadata": "^0.1.13",
-    "serialize-error": "^7.0.1"
+    "serialize-error": "^7.0.1",
+    "uuid": "^8.3.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
