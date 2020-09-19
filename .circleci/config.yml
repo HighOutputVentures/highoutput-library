@@ -23,6 +23,9 @@ commands:
             - << parameters.cache_prefix >>-{{ checksum "package.json" }}
   restore_point:
     steps:
+      - run:
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
       - restore_cache:
           keys:
             - repository-{{ checksum ".circle-sha" }}
