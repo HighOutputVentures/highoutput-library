@@ -20,7 +20,11 @@
     "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
   },
   "scripts": {
-    "test": "cross-env TS_NODE_PROJECT=__tests__/tsconfig.json TS_NODE_FILES=true mocha \"__tests__/**/*.test.ts\""
+    "test:ignore": "cross-env TS_NODE_PROJECT=__tests__/tsconfig.json TS_NODE_FILES=true mocha \"__tests__/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf build/",
+    "build": "npm run clean && tsc --project tsconfig.json",
+    "prepublish": "npm run build"
   },
   "bugs": {
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
