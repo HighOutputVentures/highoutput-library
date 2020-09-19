@@ -25,7 +25,7 @@ async function main() {
     })(),
     (async () => {
       await app.command.credit(third, 15);
-      await app.command.debit(third, 25).catch(() => {});
+      await app.command.debit(third, 25).catch(() => R.always);
     })(),
   ]);
 

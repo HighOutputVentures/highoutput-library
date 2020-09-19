@@ -54,7 +54,6 @@
     "serialize-error": "^7.0.1"
   },
   "devDependencies": {
-    "@arque/activemq-connection": "0.0.1-alpha.7",
     "@types/chai": "^4.2.11",
     "@types/chai-as-promised": "^7.1.2",
     "@types/chance": "^1.0.10",
