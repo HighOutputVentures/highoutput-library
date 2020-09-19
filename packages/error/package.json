@@ -16,8 +16,8 @@
   "scripts": {
     "clean": "rimraf build/",
     "build": "npm run clean && tsc --project tsconfig.json",
-    "prepublish": "npm run lint && npm run build",
-    "lint": "eslint \"src/**/*.ts\""
+    "lint": "eslint \"src/**/*.ts\"",
+    "prepublish": "npm run build"
   },
   "bugs": {
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
@@ -41,6 +41,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "gitHead": "8daf8a7ad15c646cc93879b077e873dd697c0d9a"
+  }
 }

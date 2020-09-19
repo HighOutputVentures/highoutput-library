@@ -6,7 +6,7 @@
     "clean": "rimraf build/",
     "build": "npm run clean && tsc --project tsconfig.json",
     "test": "mocha \"./test/**/*.spec.ts\"",
-    "preversion": "npm run build && git add -A && (git commit -m \"build(logger): generate distribution files\" || true)"
+    "prepublish": "npm run build"
   },
   "author": "High Output Ventures",
   "license": "MIT",
@@ -17,11 +17,10 @@
     "ts-node": "^9.0.0",
     "typescript": "^3.7.4"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "dependencies": {
     "@types/node": "^14.11.1"
   },
-  "gitHead": "8daf8a7ad15c646cc93879b077e873dd697c0d9a"
+  "publishConfig": {
+    "access": "public"
+  }
 }
