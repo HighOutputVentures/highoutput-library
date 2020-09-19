@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/error",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Wrapper for Error",
   "keywords": [
     "error"
@@ -41,5 +41,6 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "gitHead": "8daf8a7ad15c646cc93879b077e873dd697c0d9a"
 }

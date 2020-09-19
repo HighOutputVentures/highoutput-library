@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/logger",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "main": "build/index.js",
   "dependencies": {
     "debug": "^3.1.0"
@@ -11,7 +11,7 @@
     "test": "mocha \"./test/**/*.spec.ts\"",
     "prepublish": "npm run build"
   },
-  "author": "HighOutput Ventures",
+  "author": "High Output Ventures",
   "license": "MIT",
   "devDependencies": {
     "@types/debug": "^4.1.5",
@@ -24,5 +24,6 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "gitHead": "8daf8a7ad15c646cc93879b077e873dd697c0d9a"
 }

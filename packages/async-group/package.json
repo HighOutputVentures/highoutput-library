@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/async-group",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Groups together multiple promises and allows to 'wait' for all of them to settle.",
   "author": "High Output Ventures",
   "homepage": "https://github.com/Proto-Garage/highoutput-library/tree/master/packages/async-group#README.md",
@@ -29,5 +29,6 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "gitHead": "8daf8a7ad15c646cc93879b077e873dd697c0d9a"
 }

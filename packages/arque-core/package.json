@@ -1,6 +1,6 @@
 {
   "name": "@arque/core",
-  "version": "1.0.0-alpha.14",
+  "version": "1.0.0-alpha.15",
   "description": "Core for `arque`",
   "keywords": [
     "microservice",
@@ -74,5 +74,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "d503600ad08b28382eb6a92a68d89381367fcef1"
+  "gitHead": "8daf8a7ad15c646cc93879b077e873dd697c0d9a"
 }

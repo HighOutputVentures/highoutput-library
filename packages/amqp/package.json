@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/amqp",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "A simplified abstraction of the AMQP 1.0 protocol",
   "keywords": [
     "AMQP"
@@ -54,5 +54,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "ed78f2be6e428fde196dbb485553f40c18a06155"
+  "gitHead": "8daf8a7ad15c646cc93879b077e873dd697c0d9a"
 }
