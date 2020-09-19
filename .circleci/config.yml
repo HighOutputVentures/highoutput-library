@@ -9,7 +9,7 @@ commands:
         default: dependencies
     steps:
       - save_cache:
-          key: << parameters.cache_prefix >>-{{ checksum "package.json" }}
+          key: << parameters.cache_prefix >>-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
             - packages/amqp/node_modules
@@ -32,7 +32,7 @@ commands:
     steps:
       - restore_cache:
           keys:
-            - << parameters.cache_prefix >>-{{ checksum "package.json" }}
+            - << parameters.cache_prefix >>-{{ checksum "package-lock.json" }}
   restore_point:
     steps:
       - run:
@@ -64,7 +64,7 @@ jobs:
     steps:
       - restore_point
       - run: npm install
-      - run: npx lerna bootstrap
+      - run: npx lerna bootstrap --hoist
       - save_package_cache
   test:
     docker:
