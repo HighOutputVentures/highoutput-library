@@ -47,23 +47,10 @@ jobs:
     docker:
       - image: circleci/node:12.18.4-stretch
     steps:
-      - save_point
       - restore_point
       - run: npm install
       - run: npx lerna bootstrap
       - save_package_cache
-  install_prod_dependencies:
-    docker:
-      - image: circleci/node:12.18.4-stretch
-    steps:
-      - save_point
-      - restore_point
-      - restore_package_cache:
-          cache_prefix: prod_dependencies
-      - run: npm install --only=prod
-      - run: npx lerna bootstrap
-      - save_package_cache:
-          cache_prefix: prod_dependencies
   test:
     docker:
       - image: circleci/node:12.18.4-stretch
@@ -91,13 +78,6 @@ workflows:
       - install_dependencies:
           requires:
             - checkout_source
-      - install_prod_dependencies:
-          requires:
-            - checkout_source
-          filters:
-            branches:
-              only:
-                - master
       - test:
           requires:
             - install_dependencies
