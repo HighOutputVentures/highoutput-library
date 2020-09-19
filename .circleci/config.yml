@@ -12,6 +12,7 @@ commands:
           key: << parameters.cache_prefix >>-{{ checksum "package.json" }}
           paths:
             - node_modules
+            - packages/*/node_modules
   restore_package_cache:
     parameters:
       cache_prefix:
