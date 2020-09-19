@@ -19,7 +19,7 @@ import {
 } from '../util/metadata-keys';
 import canHandleEvent from '../util/can-handle-event';
 
-export default class <TEvent extends Event = Event> {
+export default class {
   private startPromise: Promise<void> | null = null;
 
   private readonly queue = new Queue({ concurrency: 1, autoStart: false });

@@ -208,7 +208,8 @@ export default class {
         }
       }, matches);
     };
-    publisher.stop = async () => {};
+
+    publisher.stop = () => Promise.resolve();
 
     this.publishers.set(id, publisher);
 

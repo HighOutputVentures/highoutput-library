@@ -20,10 +20,11 @@
     "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
   },
   "scripts": {
-    "test": "cross-env TS_NODE_PROJECT=__tests__/tsconfig.json TS_NODE_FILES=true mocha \"__tests__/**/*.test.ts\"",
+    "lint": "eslint \"src/**/*.ts\"",
     "typecheck": "tsc --noEmit",
     "clean": "rimraf build/",
     "build": "npm run clean && tsc --project tsconfig.json",
+    "test": "cross-env TS_NODE_PROJECT=__tests__/tsconfig.json TS_NODE_FILES=true mocha \"__tests__/**/*.test.ts\"",
     "prepublish": "npm run build"
   },
   "bugs": {
@@ -41,10 +42,15 @@
     "@types/mocha": "^8.0.3",
     "@types/ramda": "^0.27.14",
     "@types/sinon": "^9.0.5",
+    "@typescript-eslint/eslint-plugin": "^4.1.1",
+    "@typescript-eslint/parser": "^4.1.1",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chance": "^1.1.7",
     "cross-env": "^7.0.2",
+    "eslint": "^7.9.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.0",
     "mocha": "^8.1.3",
     "ramda": "^0.27.1",
     "rimraf": "^3.0.2",

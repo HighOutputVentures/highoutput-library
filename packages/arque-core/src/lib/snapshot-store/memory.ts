@@ -64,7 +64,6 @@ export default class MemorySnapshotStore implements SnapshotStore {
       timestamp: new Date(),
     };
 
-
     return {
       ...snapshot,
       save: async () => {
