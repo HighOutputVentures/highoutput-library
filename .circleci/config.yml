@@ -69,6 +69,9 @@ jobs:
       - image: circleci/node:12.18.4-stretch
       - image: highoutputdev/activemq:latest
       - image: mongo:latest
+      - image: wurstmeister/zookeeper
+        ports:
+          - 2181:2181
     steps:
       - save_point
       - restore_point
