@@ -1,0 +1,25 @@
+version: '3.2'
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - '2181:2181'
+  kafka:
+    image: wurstmeister/kafka
+    ports:
+      - '9092:9092'
+    links:
+      - zookeeper
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: localhost
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  activemq:
+    image: highoutputdev/activemq:latest
+    ports:
+      - 5672:5672
+  mongo:
+    image: mongo:latest
+    ports:
+      - 27017:27017

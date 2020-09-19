@@ -13,7 +13,6 @@
   "scripts": {
     "clean": "rimraf build/",
     "build": "npm run clean && tsc --project tsconfig.json",
-    "test": "echo \"Error: run tests from root\" && exit 1",
     "prepublish": "npm run build"
   },
   "bugs": {

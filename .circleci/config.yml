@@ -39,34 +39,34 @@ commands:
 jobs:
   checkout_source:
     docker:
-      - image: circleci/node:12.13.0-stretch
+      - image: circleci/node:12.18.4-stretch
     steps:
       - checkout
       - save_point
   install_dependencies:
     docker:
-      - image: circleci/node:12.13.0-stretch
+      - image: circleci/node:12.18.4-stretch
     steps:
       - save_point
       - restore_point
       - run: npm install
-      - run: npx lerna bootstrap --hoist
+      - run: npx lerna bootstrap
       - save_package_cache
   install_prod_dependencies:
     docker:
-      - image: circleci/node:12.13.0-stretch
+      - image: circleci/node:12.18.4-stretch
     steps:
       - save_point
       - restore_point
       - restore_package_cache:
           cache_prefix: prod_dependencies
       - run: npm install --only=prod
-      - run: npx lerna bootstrap --hoist
+      - run: npx lerna bootstrap
       - save_package_cache:
           cache_prefix: prod_dependencies
   test:
     docker:
-      - image: circleci/node:12.13.0-stretch
+      - image: circleci/node:12.18.4-stretch
       - image: highoutputdev/activemq:latest
       - image: mongo:latest
     steps:

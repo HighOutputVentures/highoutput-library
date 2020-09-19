@@ -21,7 +21,7 @@
     "prepublish": "npm run build",
     "examples:basic": "cross-env TS_NODE_PROJECT=tsconfig.json TS_NODE_FILES=true ts-node src/examples/basic/test.ts && echo 'Success'",
     "examples:distributed": "cross-env TS_NODE_PROJECT=tsconfig.json TS_NODE_FILES=true ts-node src/examples/distributed/test.ts && echo 'Success'",
-    "test": "npm run examples:basic && npm run examples:distributed"
+    "test:disabled": "npm run examples:basic && npm run examples:distributed"
   },
   "bugs": {
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
