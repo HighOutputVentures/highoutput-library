@@ -3,6 +3,7 @@ import R from 'ramda';
 import {
   Receiver, Sender, Connection, ReceiverOptions, SenderOptions,
 } from 'rhea';
+import { Binary } from 'bson';
 
 export async function openReceiver(connection: Connection, options: ReceiverOptions | string) {
   const receiver = connection.open_receiver(options);
@@ -78,6 +79,14 @@ export function serialize(object: any): any {
         __classObject: true,
         type: 'Buffer',
         data: object.toString('base64'),
+      };
+    }
+
+    if (object instanceof Binary) {
+      return {
+        __classObject: true,
+        type: 'Buffer',
+        data: object.buffer.toString('base64'),
       };
     }
 
