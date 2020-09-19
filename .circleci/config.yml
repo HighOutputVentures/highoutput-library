@@ -66,13 +66,13 @@ jobs:
       - run: npm install
       - run: npx lerna bootstrap --hoist
       - save_package_cache
+      - save_point
   test:
     docker:
       - image: circleci/node:12.18.4-stretch
       - image: highoutputdev/activemq:latest
       - image: mongo:latest
     steps:
-      - save_point
       - restore_point
       - restore_package_cache
       - run:
