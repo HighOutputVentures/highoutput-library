@@ -5,7 +5,7 @@ type Argument = number | string | Error | object;
 class Logger {
   private loggers: { [key: string]: Debugger };
 
-  private tags: string | string[];
+  private tags: string[];
 
   constructor(tags: string | string[]) {
     if (tags instanceof Array) {
@@ -13,6 +13,7 @@ class Logger {
     } else {
       this.tags = [tags];
     }
+    
     this.loggers = {};
   }
 
