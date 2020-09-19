@@ -12,7 +12,18 @@ commands:
           key: << parameters.cache_prefix >>-{{ checksum "package.json" }}
           paths:
             - node_modules
-            - packages/*/node_modules
+            - packages/amqp/node_modules
+            - packages/arque/node_modules
+            - packages/arque-activemq-connection/node_modules
+            - packages/arque-core/node_modules
+            - packages/arque-kafka-connection/node_modules
+            - packages/arque-types/node_modules
+            - packages/arque-group/node_modules
+            - packages/delay/node_modules
+            - packages/error/node_modules
+            - packages/hash/node_modules
+            - packages/hmac/node_modules
+            - packages/logger/node_modules
   restore_package_cache:
     parameters:
       cache_prefix:
