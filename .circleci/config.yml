@@ -36,7 +36,7 @@ jobs:
       - restore_point
       - run:
           name: bootstrap
-          command: npx lerna bootstrap --hoist
+          command: npx lerna bootstrap
       - run:
           name: lint
           command: npx lerna run lint
