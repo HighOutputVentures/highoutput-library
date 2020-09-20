@@ -215,4 +215,36 @@ describe('MongoDBEventStoreDatabase', () => {
       }
     });
   });
+
+  describe('#deserialize', () => {
+    beforeEach(async function () {
+      const event = generateFakeEvent({
+        binary: crypto.randomBytes(16),
+        nested: {
+          binary: crypto.randomBytes(16),
+        },
+        binaryArray: [crypto.randomBytes(16)],
+      });
+
+      await this.database.model.create({
+        ...event,
+        _id: event.id,
+      });
+    });
+
+    it('should deeply convert event.body binary properties to buffer', async function () {
+      const [{ body }] = await this.database.retrieveEvents({
+        first: 1,
+        filters: [{
+          aggregate: {
+            type: 'Account',
+          },
+        }],
+      });
+
+      expect(body.binary instanceof Buffer).to.be.true;
+      expect(body.nested.binary instanceof Buffer).to.be.true;
+      expect(body.binaryArray[0] instanceof Buffer).to.be.true;
+    });
+  });
 });

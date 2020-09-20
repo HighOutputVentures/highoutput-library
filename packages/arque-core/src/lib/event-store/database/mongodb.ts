@@ -9,9 +9,22 @@ import {
   EventStoreDatabase, Event, ID,
 } from '@arque/types';
 
+function binaryToBufferDeep(body: any): any {
+  if (typeof body === 'object') {
+    if (body instanceof mongoose.mongo.Binary) {
+      return body.buffer;
+    }
+
+    return R.map(binaryToBufferDeep)(body);
+  }
+
+  return body;
+}
+
 function deserialize(document: Event & Document): Event {
   return {
-    ...R.pick(['type', 'body', 'version', 'timestamp'], document),
+    ...R.pick(['type', 'version', 'timestamp'], document),
+    body: binaryToBufferDeep(document.body),
     id: document._id,
     aggregate: R.pick(['id', 'type', 'version'], document.aggregate),
   };

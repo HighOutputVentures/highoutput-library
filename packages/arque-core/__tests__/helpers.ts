@@ -12,13 +12,13 @@ export const chance = new Chance();
 
 export { expect };
 
-export function generateFakeEvent(): Event {
+export function generateFakeEvent(body?: any): Event {
   const { id, timestamp } = generateEventId();
 
   return {
     id,
     type: 'Created',
-    body: {
+    body: body || {
       username: chance.first().toLowerCase(),
     },
     aggregate: {
