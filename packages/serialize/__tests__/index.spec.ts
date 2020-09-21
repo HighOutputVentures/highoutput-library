@@ -1,5 +1,6 @@
 import 'mocha';
 import { expect } from 'chai';
+import assert from 'assert';
 import { serialize, deserialize } from '../src';
 
 const data: { deserialized: any, serialized: any }[] = [
