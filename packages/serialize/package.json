@@ -15,6 +15,7 @@
   },
   "scripts": {
     "lint": "eslint \"src/**/*.ts\"",
+    "lint:fix": "eslint \"src/**/*.ts\" --fix",
     "typecheck": "tsc --noEmit",
     "clean": "rimraf build/",
     "build": "npm run clean && tsc --project tsconfig.json",

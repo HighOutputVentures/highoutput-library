@@ -20,6 +20,7 @@
     "func-names": "off",
     "max-classes-per-file": "off",
     "max-len": ["error", 120],
+    "no-underscore-dangle": "off",
     "prettier/prettier": "off",
     "import/no-extraneous-dependencies": "off",
     "no-restricted-syntax": "off"
