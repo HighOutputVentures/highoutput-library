@@ -34,6 +34,7 @@
     "@highoutput/error": "^0.1.8",
     "@highoutput/hash": "^0.1.8",
     "@highoutput/logger": "^0.2.8",
+    "@highoutput/serialize": "^0.1.1",
     "@types/backoff": "^2.5.1",
     "@types/lokijs": "^1.5.3",
     "@types/lru-cache": "^5.1.0",

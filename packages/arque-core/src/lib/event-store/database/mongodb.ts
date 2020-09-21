@@ -3,28 +3,25 @@ import mongoose, {
   Connection, Document, Model, Schema,
 } from 'mongoose';
 import AppError from '@highoutput/error';
+import * as S from '@highoutput/serialize';
 import R from 'ramda';
 import cleanDeep from 'clean-deep';
 import {
   EventStoreDatabase, Event, ID,
 } from '@arque/types';
 
-function binaryToBufferDeep(body: any): any {
-  if (typeof body === 'object') {
-    if (body instanceof mongoose.mongo.Binary) {
-      return body.buffer;
-    }
-
-    return R.map(binaryToBufferDeep)(body);
-  }
-
-  return body;
+function serialize(event: Event) {
+  return {
+    ...event,
+    _id: event.id,
+    body: S.serialize(event.body),
+  };
 }
 
 function deserialize(document: Event & Document): Event {
   return {
     ...R.pick(['type', 'version', 'timestamp'], document),
-    body: binaryToBufferDeep(document.body),
+    body: S.deserialize(document.body),
     id: document._id,
     aggregate: R.pick(['id', 'type', 'version'], document.aggregate),
   };
@@ -86,10 +83,7 @@ export default class implements EventStoreDatabase {
 
   public async saveEvent(event: Event): Promise<void> {
     try {
-      await this.model.create({
-        ...event,
-        _id: event.id,
-      });
+      await this.model.create(serialize(event));
     } catch (err) {
       if (err.code === 11000) {
         throw new AppError('AGGREGATE_VERSION_EXISTS', 'Aggregate version already exists.');
