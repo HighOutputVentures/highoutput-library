@@ -1,6 +1,6 @@
 # `error`
 
-> Wrapper for Error
+> Error with code and metadata.
 
 ## Usage
 
@@ -9,7 +9,7 @@ import AppError from '@highoutput/error';
 
 new AppError(
   'RESOURCE_NOT_FOUND',
-  'User account does not exist.',
-  { account: 'ec6756c7264dcd6851f0345278face9a' },
+  'Account does not exist.',
+  { id: 'ec6756c7264dcd6851f0345278face9a' },
 )
 ```
