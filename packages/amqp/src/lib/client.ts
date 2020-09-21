@@ -9,10 +9,12 @@ import ms from 'ms';
 import AsyncGroup from '@highoutput/async-group';
 import AppError from '@highoutput/error';
 import { EventEmitter } from 'events';
-import logger from './logger';
 import {
   deserialize,
   serialize,
+} from '@highoutput/serialize';
+import logger from './logger';
+import {
   closeSender,
   closeReceiver,
   openSender,

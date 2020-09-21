@@ -4,12 +4,12 @@ import {
 } from 'rhea';
 import R from 'ramda';
 import uuid from 'uuid';
+import { serialize, deserialize } from '@highoutput/serialize';
 import logger from './lib/logger';
 import Client, { ClientOptions } from './lib/client';
 import Worker, { WorkerOptions } from './lib/worker';
 import Publisher, { PublisherOptions } from './lib/publisher';
 import Subscriber, { SubscriberOptions } from './lib/subscriber';
-import { serialize, deserialize } from './lib/util';
 
 export {
   Client,

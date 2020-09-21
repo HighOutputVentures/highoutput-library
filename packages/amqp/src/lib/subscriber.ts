@@ -3,9 +3,10 @@
 import { Receiver, Connection, EventContext } from 'rhea';
 import R from 'ramda';
 import AsyncGroup from '@highoutput/async-group';
+import { deserialize } from '@highoutput/serialize';
 import { EventEmitter } from 'events';
 import logger from './logger';
-import { openReceiver, closeReceiver, deserialize } from './util';
+import { openReceiver, closeReceiver } from './util';
 
 export type SubscriberOptions = {
   concurrency: number;

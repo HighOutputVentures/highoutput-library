@@ -3,8 +3,9 @@ import { Connection, Sender } from 'rhea';
 import R from 'ramda';
 import { EventEmitter } from 'events';
 import AppError from '@highoutput/error';
+import { serialize } from '@highoutput/serialize';
 import logger from './logger';
-import { openSender, closeSender, serialize } from './util';
+import { openSender, closeSender } from './util';
 
 export type PublisherOptions = {
   serialize: boolean;
