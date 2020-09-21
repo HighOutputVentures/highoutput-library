@@ -5,12 +5,14 @@ import {
 } from 'rhea';
 import R from 'ramda';
 import AsyncGroup from '@highoutput/async-group';
+import {
+  serialize,
+  deserialize,
+} from '@highoutput/serialize';
 import { serializeError } from 'serialize-error';
 import { EventEmitter } from 'events';
 import logger from './logger';
 import {
-  serialize,
-  deserialize,
   closeReceiver,
   closeSender,
   openSender,

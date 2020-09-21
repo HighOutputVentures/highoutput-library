@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/serialize",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Object serialization library",
   "keywords": [
     "error"
