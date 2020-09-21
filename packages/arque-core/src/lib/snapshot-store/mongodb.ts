@@ -4,6 +4,7 @@ import mongoose, {
 } from 'mongoose';
 import R from 'ramda';
 import { SnapshotStore, Snapshot, ID } from '@arque/types';
+import { serialize, deserialize } from '@highoutput/serialize';
 import generateSnapshotId from '../util/generate-snapshot-id';
 
 export default class implements SnapshotStore {
@@ -74,6 +75,7 @@ export default class implements SnapshotStore {
         await this.model.create({
           ...snapshot,
           _id: snapshot.id,
+          state: serialize(snapshot.state),
         });
 
         return snapshot;
@@ -99,9 +101,10 @@ export default class implements SnapshotStore {
     }
 
     return {
-      ...R.pick(['state', 'timestamp'], snapshot),
+      timestamp: snapshot.timestamp,
       id: snapshot._id,
       aggregate: R.pick(['id', 'type', 'version'], snapshot.aggregate),
+      state: deserialize(snapshot.state),
     };
   }
 }
