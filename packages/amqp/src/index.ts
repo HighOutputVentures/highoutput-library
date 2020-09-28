@@ -70,13 +70,11 @@ export default class Amqp {
     const checkPorts = !!(portsPath && portsPath.length);
 
     this.options = R.mergeDeepLeft(R.reject(R.isNil)(options || {}) as any, {
-      ...(checkHosts ? { host: defaultHost  } : {}),
-      ...(checkPorts ? { port: defaultPort } : {}),
+      ...(!checkHosts ? { host: defaultHost  } : {}),
+      ...(!checkPorts ? { port: defaultPort } : {}),
       ...(checkHosts || checkPorts
         ? {
             connection_details: () => {
-              let attempts = this.attempts;
-
               let details = {
                 host: defaultHost,
                 port: defaultPort,
@@ -85,18 +83,18 @@ export default class Amqp {
               if (hostsPath && hostsPath.length) {
                 details = {
                   ...details,
-                  host: hostsPath[attempts % hostsPath.length] || defaultHost,
+                  host: hostsPath[this.attempts % hostsPath.length] || defaultHost,
                 }
               }
 
               if (portsPath && portsPath.length) {
                 details = {
                   ...details,
-                  port: portsPath[attempts % portsPath.length] || defaultPort,
+                  port: portsPath[this.attempts % portsPath.length] || defaultPort,
                 }
               }
 
-              attempts++;
+              this.attempts++;
 
               return details;
             },
