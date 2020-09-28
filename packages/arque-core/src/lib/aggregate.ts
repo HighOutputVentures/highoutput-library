@@ -1,6 +1,4 @@
-/* eslint-disable no-await-in-loop */
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-await-in-loop, no-restricted-syntax, no-underscore-dangle */
 import Queue from 'p-queue';
 import R from 'ramda';
 import Cache from 'lru-cache';
@@ -17,9 +15,11 @@ import {
   AGGREGATE_EVENT_HANDLERS_METADATA_KEY,
   AGGREGATE_INITIAL_STATE_METADATA_KEY,
   AGGREGATE_CACHE_METADATA_KEY,
-} from '../util/metadata-keys';
+} from './util/metadata-keys';
+import getEventStore from './util/get-event-store';
+import getSnapshotStore from './util/get-snapshot-store';
 
-export default class BaseAggregate<TState = any> {
+export default class Aggregate<TState = any> {
   private queue: Queue = new Queue({ concurrency: 1 });
 
   private _version = 0;
@@ -36,23 +36,26 @@ export default class BaseAggregate<TState = any> {
     id: ID,
   ) {
     this._id = id;
-    this._state = Object.freeze(Reflect.getMetadata(AGGREGATE_INITIAL_STATE_METADATA_KEY, this));
+    this._state = Object.freeze(this.initialState);
   }
 
   public static async load<T>(this: new (id: ID) => T, id: ID) {
     if (!(this as any).cache) {
-      (this as any).cache = new Cache<string, Promise<BaseAggregate>>(
-        Object.freeze(Reflect.getMetadata(AGGREGATE_CACHE_METADATA_KEY, this)),
+      (this as any).cache = new Cache<string, Promise<Aggregate>>(
+        Object.freeze(R.mergeDeepLeft({
+          max: 1024,
+          maxAge: 1440000,
+        }, Reflect.getMetadata(AGGREGATE_CACHE_METADATA_KEY, this) || {})),
       );
     }
 
-    const { cache } = (this as any) as { cache: Cache<string, Promise<BaseAggregate>> };
+    const { cache } = (this as any) as { cache: Cache<string, Promise<Aggregate>> };
 
     let promise = cache.get(id.toString('hex'));
 
     if (!promise) {
       promise = (async () => {
-        const aggregate = new this(id) as never as BaseAggregate;
+        const aggregate = new this(id) as never as Aggregate;
 
         await aggregate.restoreFromLatestSnapshot();
 
@@ -69,15 +72,27 @@ export default class BaseAggregate<TState = any> {
   }
 
   get type(): string {
-    return Reflect.getMetadata(AGGREGATE_TYPE_METADATA_KEY, this);
+    return Reflect.getMetadata(AGGREGATE_TYPE_METADATA_KEY, this) || this.constructor.name;
   }
 
-  get eventStore(): EventStore {
-    return Reflect.getMetadata(EVENT_STORE_METADATA_KEY, this);
+  private get eventStore(): EventStore {
+    return Reflect.getMetadata(EVENT_STORE_METADATA_KEY, this) || getEventStore();
   }
 
-  get snapshotStore(): SnapshotStore {
-    return Reflect.getMetadata(SNAPSHOT_STORE_METADATA_KEY, this);
+  private get snapshotStore(): SnapshotStore {
+    return Reflect.getMetadata(SNAPSHOT_STORE_METADATA_KEY, this) || getSnapshotStore();
+  }
+
+  private get initialState(): any {
+    const initialState = Reflect.getMetadata(AGGREGATE_INITIAL_STATE_METADATA_KEY, this);
+    return R.isNil(initialState) ? null : initialState;
+  }
+
+  private get eventHandlers(): {
+    filter: { type?: string; version?: number };
+    handler: (state: TState, event: Event) => TState;
+  }[] {
+    return Reflect.getMetadata(AGGREGATE_EVENT_HANDLERS_METADATA_KEY, this) || [];
   }
 
   protected get shouldTakeSnapshot() {
@@ -99,7 +114,7 @@ export default class BaseAggregate<TState = any> {
   private apply(state: TState, event: Event): TState {
     let next = state;
 
-    for (const { filter, handler } of Reflect.getMetadata(AGGREGATE_EVENT_HANDLERS_METADATA_KEY, this)) {
+    for (const { filter, handler } of this.eventHandlers) {
       if (R.equals(filter, R.pick(R.keys(filter) as any, event))) {
         next = handler(state, event);
       }
@@ -109,10 +124,8 @@ export default class BaseAggregate<TState = any> {
   }
 
   public async restoreFromLatestSnapshot() {
-    const store: SnapshotStore = Reflect.getMetadata(SNAPSHOT_STORE_METADATA_KEY, this);
-
     await this.queue.add(async () => {
-      const snapshot = await store.retrieveLatestSnapshot({
+      const snapshot = await this.snapshotStore.retrieveLatestSnapshot({
         id: this.id,
         version: this.version,
       });
@@ -177,7 +190,6 @@ export default class BaseAggregate<TState = any> {
       this._state = Object.freeze(state);
 
       if (this.shouldTakeSnapshot) {
-        // create snapshot asynchronously
         this.snapshotStore.createSnapshot({
           aggregate: {
             id: this.id,

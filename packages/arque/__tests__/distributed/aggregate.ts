@@ -5,19 +5,19 @@ import {
 } from '@arque/types';
 import {
   Aggregate,
+  AggregateClass,
   AggregateEventHandler,
-  BaseAggregate,
   MongoDBSnapshotStore,
 } from '@arque/core';
-import { eventStore } from './common';
+import { eventStore } from './library';
 
-@Aggregate({
+@AggregateClass({
   type: 'Balance',
   initialState: 0,
   snapshotStore: new MongoDBSnapshotStore(mongoose.createConnection('mongodb://localhost/arque')),
   eventStore,
 })
-export default class BalanceAggregate extends BaseAggregate {
+export default class BalanceAggregate extends Aggregate<number> {
   @AggregateEventHandler({ type: 'Credited' })
   onCredited(state: number, event: Event<{ delta: number }>) {
     return state + event.body.delta;

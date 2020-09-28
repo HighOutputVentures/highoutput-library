@@ -4,12 +4,12 @@ import {
 } from '@arque/types';
 import {
   Aggregate,
+  AggregateClass,
   AggregateEventHandler,
-  BaseAggregate,
 } from '@arque/core';
 
-@Aggregate({ type: 'Balance', initialState: 0 })
-export default class BalanceAggregate extends BaseAggregate {
+@AggregateClass({ type: 'Balance', initialState: 0 })
+export default class BalanceAggregate extends Aggregate<number> {
   @AggregateEventHandler({ type: 'Credited' })
   onCredited(state: number, event: Event<{ delta: number }>) {
     return state + event.body.delta;

@@ -12,7 +12,7 @@ import {
 
 function serialize(event: Event) {
   return {
-    ...event,
+    ...R.pick(['type', 'version', 'aggregate', 'timestamp'], event),
     _id: event.id,
     body: S.serialize(event.body),
   };
@@ -73,7 +73,7 @@ export default class implements EventStoreDatabase {
         type: Date,
         required: true,
       },
-    }, { _id: false });
+    }, { _id: false, id: false });
     schema.index({ 'aggregate.id': 1, 'aggregate.version': -1 }, { unique: true });
     schema.index({ 'aggregate.id': 1 });
     schema.index({ 'aggregate.version': -1 });

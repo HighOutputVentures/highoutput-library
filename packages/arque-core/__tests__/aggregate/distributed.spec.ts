@@ -1,32 +1,20 @@
 import crypto from 'crypto';
-import mongoose from 'mongoose';
 import { Event } from '@arque/types';
 import {
-  Aggregate,
   AggregateEventHandler,
-  BaseAggregate,
+  AggregateClass,
+  Aggregate,
   DistributedEventStore,
-  MongoDBSnapshotStore,
-  LocalConnection,
   DistributedEventStoreServer,
-  MongoDBEventStoreDatabase,
 } from '../../src';
-import { expect } from '../helpers';
-import {
-  SNAPSHOT_STORE_METADATA_KEY,
-} from '../../src/lib/util/metadata-keys';
+import { expect, generateFakeEvent } from '../helpers';
+import getSnapshotStore from '../../src/lib/util/get-snapshot-store';
 
-const connection = new LocalConnection();
-
-@Aggregate({
-  type: 'Balance',
+@AggregateClass({
   initialState: 0,
-  eventStore: new DistributedEventStore({
-    connection,
-  }),
-  snapshotStore: new MongoDBSnapshotStore(mongoose.createConnection('mongodb://localhost/test')),
+  eventStore: new DistributedEventStore(),
 })
-class BalanceAggregate extends BaseAggregate<number> {
+class BalanceAggregate extends Aggregate<number> {
   @AggregateEventHandler({ type: 'Credited' })
   onCredited(state: number, event: Event<{ delta: number }>) {
     return state + event.body.delta;
@@ -46,18 +34,39 @@ class BalanceAggregate extends BaseAggregate<number> {
 
 describe('Aggregate', () => {
   before(async function () {
-    this.eventStoreServer = new DistributedEventStoreServer({
-      connection,
-      database: new MongoDBEventStoreDatabase(mongoose.createConnection('mongodb://localhost/test')),
-    });
+    this.eventStore = new DistributedEventStoreServer();
 
-    await this.eventStoreServer.start();
+    await this.eventStore.start();
 
-    this.snapshotStore = Reflect.getMetadata(SNAPSHOT_STORE_METADATA_KEY, BalanceAggregate.prototype);
+    this.snapshotStore = getSnapshotStore();
   });
 
   after(async function () {
-    await this.eventStoreServer.stop();
+    await this.eventStore.stop();
+    this.eventStore.database.collection.clear();
+    this.snapshotStore.collection.clear();
+  });
+
+  describe('load', () => {
+    it('should load an aggregate correctly', async function () {
+      let event = generateFakeEvent();
+
+      event = {
+        ...event,
+        type: 'Credited',
+        aggregate: {
+          ...event.aggregate,
+          type: 'Balance',
+        },
+        body: { delta: 100 },
+      };
+
+      await this.eventStore.database.saveEvent(event);
+
+      const aggregate = await BalanceAggregate.load(event.aggregate.id);
+      expect(aggregate.state).to.equal(100);
+      expect(aggregate.version).to.equal(1);
+    });
   });
 
   describe('#createEvent', () => {
@@ -71,8 +80,8 @@ describe('Aggregate', () => {
         },
       });
 
-      const event = await this.eventStoreServer.database.model.findOne({
-        'aggregate.type': 'Balance',
+      const event = await this.eventStore.database.collection.findOne({
+        'aggregate.type': aggregate.type,
       });
       expect(event).to.has.property('type', 'Credited');
       expect(event).to.has.property('body').that.deep.equals({ delta: 100 });

@@ -20,9 +20,7 @@
     "clean": "rimraf build/",
     "build": "npm run clean && tsc --project tsconfig.json",
     "prepublish": "npm run build",
-    "examples:basic": "cross-env TS_NODE_PROJECT=tsconfig.json TS_NODE_FILES=true ts-node examples/basic/test.ts && echo 'Success'",
-    "examples:distributed": "cross-env TS_NODE_PROJECT=tsconfig.json TS_NODE_FILES=true ts-node examples/distributed/test.ts && echo 'Success'",
-    "test:disabled": "npm run examples:basic && npm run examples:distributed"
+    "test": "cross-env TS_NODE_PROJECT=__tests__/tsconfig.json TS_NODE_FILES=true mocha __tests__/**/*.spec.ts"
   },
   "bugs": {
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
@@ -32,9 +30,12 @@
     "@arque/types": "^1.0.0-alpha.9"
   },
   "devDependencies": {
+    "@arque/activemq-connection": "0.0.1-alpha.15",
     "@highoutput/delay": "^0.2.5",
     "@types/chai": "^4.2.12",
     "@types/lokijs": "^1.5.3",
+    "@types/mocha": "^8.0.3",
+    "@types/mongoose": "^5.7.36",
     "@types/node": "^14.11.1",
     "@types/ramda": "^0.27.17",
     "@typescript-eslint/eslint-plugin": "^4.1.1",
@@ -45,6 +46,8 @@
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.22.0",
     "lokijs": "^1.5.11",
+    "mocha": "^8.1.3",
+    "mongoose": "5.10.6",
     "ramda": "^0.27.1",
     "rimraf": "^3.0.2",
     "ts-node": "^9.0.0",
