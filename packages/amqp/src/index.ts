@@ -60,50 +60,25 @@ export default class Amqp {
   private attempts = 0;
 
   public constructor(options?: Partial<AmqpOptions>) {
-    const defaultHost = 'localhost';
-    const defaultPort = 5672;
-
-    const hostsPath = R.path<string[]>(['hosts'])(options);
-    const portsPath = R.path<number[]>(['ports'])(options);
-
-    const checkHosts = !!(hostsPath && hostsPath.length);
-    const checkPorts = !!(portsPath && portsPath.length);
-
     this.options = R.mergeDeepLeft(R.reject(R.isNil)(options || {}) as any, {
-      ...(!checkHosts ? { host: defaultHost  } : {}),
-      ...(!checkPorts ? { port: defaultPort } : {}),
-      ...(checkHosts || checkPorts
-        ? {
-            connection_details: () => {
-              let details = {
-                host: defaultHost,
-                port: defaultPort,
-              };
-
-              if (hostsPath && hostsPath.length) {
-                details = {
-                  ...details,
-                  host: hostsPath[this.attempts % hostsPath.length] || defaultHost,
-                }
-              }
-
-              if (portsPath && portsPath.length) {
-                details = {
-                  ...details,
-                  port: portsPath[this.attempts % portsPath.length] || defaultPort,
-                }
-              }
-
-              this.attempts++;
-
-              return details;
-            },
-          }
-        : {}
-      ),
       username: 'ANONYMOUS',
       initialReconnectDelay: 100,
       maxReconnectDelay: 10000,
+      connection_details: () => {
+        const hosts = R.path<string[]>(['hosts'])(options)
+          || [R.path<string>(['host'])(options) || 'localhost'];
+        const ports = R.path<number[]>(['ports'])(options)
+          || [R.path<number>(['port'])(options) || 5672];
+
+        const details = {
+          host: hosts[this.attempts % hosts.length],
+          port: ports[this.attempts % ports.length],
+        };
+
+        this.attempts++;
+
+        return details;
+      },
     });
 
     logger.tag(['amqp', 'options']).info(R.omit(['password'], this.options));
