@@ -71,26 +71,31 @@ export default class Amqp {
       ...(options && options!.hosts && options!.hosts.length
         ? {
             connection_details() {
-              const details = {
-                host: options!.hosts![attempts % options!.hosts!.length] || options.hosts,
-                port: options!.ports![attempts % options!.ports!.length] || options.ports,
+              let details = {
+                host: 'localhost',
+                port: 5672,
               };
+
+              if (options && options.hosts && options.hosts.length) {
+                details = {
+                  ...details,
+                  host: options.hosts[attempts % options.hosts.length]
+                }
+              }
+
+              if (options && options.ports && options.ports.length) {
+                details = {
+                  ...details,
+                  port: options.ports[attempts % options.ports.length] || options.port || 5672,
+                }
+              }
 
               attempts++;
 
               return details;
             },
           }
-        : {
-          connection_details() {
-            const details = {
-              host: options!.host || 'localhost',
-              port: options!.port || 5672,
-            };
-            console.log(details);
-            return details;
-          }
-        }
+        : {}
       )
     });
 
