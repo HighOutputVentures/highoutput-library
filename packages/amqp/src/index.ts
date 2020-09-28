@@ -60,33 +60,39 @@ export default class Amqp {
   private attempts = 0;
 
   public constructor(options?: Partial<AmqpOptions>) {
-    let attempts = this.attempts;
+    const defaultHost = 'localhost';
+    const defaultPort = 5672;
+
+    const hostsPath = R.path<string[]>(['hosts'])(options);
+    const portsPath = R.path<number[]>(['ports'])(options);
+
+    const checkHosts = !!(hostsPath && hostsPath.length);
+    const checkPorts = !!(portsPath && portsPath.length);
 
     this.options = R.mergeDeepLeft(R.reject(R.isNil)(options || {}) as any, {
-      host: 'localhost',
-      port: 5672,
-      username: 'ANONYMOUS',
-      initialReconnectDelay: 100,
-      maxReconnectDelay: 10000,
-      ...(options && options!.hosts && options!.hosts.length
+      ...(checkHosts ? { host: defaultHost  } : {}),
+      ...(checkPorts ? { port: defaultPort } : {}),
+      ...(checkHosts || checkPorts
         ? {
-            connection_details() {
+            connection_details: () => {
+              let attempts = this.attempts;
+
               let details = {
-                host: 'localhost',
-                port: 5672,
+                host: defaultHost,
+                port: defaultPort,
               };
 
-              if (options && options.hosts && options.hosts.length) {
+              if (hostsPath && hostsPath.length) {
                 details = {
                   ...details,
-                  host: options.hosts[attempts % options.hosts.length]
+                  host: hostsPath[attempts % hostsPath.length] || defaultHost,
                 }
               }
 
-              if (options && options.ports && options.ports.length) {
+              if (portsPath && portsPath.length) {
                 details = {
                   ...details,
-                  port: options.ports[attempts % options.ports.length] || options.port || 5672,
+                  port: portsPath[attempts % portsPath.length] || defaultPort,
                 }
               }
 
@@ -96,7 +102,10 @@ export default class Amqp {
             },
           }
         : {}
-      )
+      ),
+      username: 'ANONYMOUS',
+      initialReconnectDelay: 100,
+      maxReconnectDelay: 10000,
     });
 
     logger.tag(['amqp', 'options']).info(R.omit(['password'], this.options));
