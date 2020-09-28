@@ -65,10 +65,15 @@ export default class Amqp {
       initialReconnectDelay: 100,
       maxReconnectDelay: 10000,
       connection_details: () => {
-        const hosts = R.path<string[]>(['hosts'])(options)
-          || [R.path<string>(['host'])(options) || 'localhost'];
-        const ports = R.path<number[]>(['ports'])(options)
-          || [R.path<number>(['port'])(options) || 5672];
+        const hostsPath = R.path<string[]>(['hosts'])(options);
+        const portsPath = R.path<number[]>(['ports'])(options);
+
+        const hosts = (hostsPath && hostsPath.length)
+          ? hostsPath
+          : [R.path<string>(['host'])(options) || 'localhost'];
+        const ports = (portsPath && portsPath.length)
+          ? portsPath
+          : [R.path<number>(['port'])(options) || 5672];
 
         const details = {
           host: hosts[this.attempts % hosts.length],
