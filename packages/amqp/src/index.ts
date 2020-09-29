@@ -25,8 +25,10 @@ export {
 };
 
 export type AmqpOptions = {
-  host: string;
+  host?: string;
   port?: number;
+  hosts?: string[];
+  ports?: number[];
   username: string;
   password?: string;
   transport?: 'ssl' | 'tcp' | 'tls';
@@ -55,12 +57,33 @@ export default class Amqp {
 
   private _connection?: Connection;
 
+  private attempts = 0;
+
   public constructor(options?: Partial<AmqpOptions>) {
     this.options = R.mergeDeepLeft(R.reject(R.isNil)(options || {}) as any, {
-      host: 'localhost',
       username: 'ANONYMOUS',
       initialReconnectDelay: 100,
       maxReconnectDelay: 10000,
+      connection_details: () => {
+        const hostsPath = R.path<string[]>(['hosts'])(options);
+        const portsPath = R.path<number[]>(['ports'])(options);
+
+        const hosts = (hostsPath && hostsPath.length)
+          ? hostsPath
+          : [R.path<string>(['host'])(options) || 'localhost'];
+        const ports = (portsPath && portsPath.length)
+          ? portsPath
+          : [R.path<number>(['port'])(options) || 5672];
+
+        const details = {
+          host: hosts[this.attempts % hosts.length],
+          port: ports[this.attempts % ports.length],
+        };
+
+        this.attempts++;
+
+        return details;
+      },
     });
 
     logger.tag(['amqp', 'options']).info(R.omit(['password'], this.options));
