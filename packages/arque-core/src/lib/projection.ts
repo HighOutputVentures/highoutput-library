@@ -10,14 +10,17 @@ import {
   EventFilter,
   ProjectionStatus,
   ID,
+  ConnectionSubscriber,
 } from '@arque/types';
 import {
   PROJECTION_STORE_METADATA_KEY,
   PROJECTION_ID_METADATA_KEY,
   EVENT_STORE_METADATA_KEY,
   PROJECTION_EVENT_HANDLERS_METADATA_KEY,
-} from '../util/metadata-keys';
-import canHandleEvent from '../util/can-handle-event';
+} from './util/metadata-keys';
+import canHandleEvent from './util/can-handle-event';
+import getProjectionStore from './util/get-projection-store';
+import getEventStore from './util/get-event-store';
 
 export default class {
   private startPromise: Promise<void> | null = null;
@@ -32,6 +35,8 @@ export default class {
 
   private filters: EventFilter[];
 
+  private subscribers: ConnectionSubscriber[] = [];
+
   private initializing = false;
 
   public constructor(options: {
@@ -44,21 +49,18 @@ export default class {
     this.filters = R.compose<{ filter: EventFilter }[], EventFilter[], EventFilter[]>(
       R.uniq,
       R.pluck('filter'),
-    )(Reflect.getMetadata(PROJECTION_EVENT_HANDLERS_METADATA_KEY, this));
+    )(Reflect.getMetadata(PROJECTION_EVENT_HANDLERS_METADATA_KEY, this) || []);
   }
 
   private async apply(event: Event) {
-    const projectionStore: ProjectionStore = Reflect.getMetadata(PROJECTION_STORE_METADATA_KEY, this);
-    const id: string = Reflect.getMetadata(PROJECTION_ID_METADATA_KEY, this);
-
     for (const { filter, handler } of Reflect.getMetadata(PROJECTION_EVENT_HANDLERS_METADATA_KEY, this)) {
       if (canHandleEvent(filter, event)) {
         await handler.apply(this, [event]);
       }
     }
 
-    await projectionStore.save({
-      id,
+    await this.projectionStore.save({
+      id: this.id,
       lastEvent: event.id,
     });
 
@@ -66,12 +68,10 @@ export default class {
   }
 
   private async digest() {
-    const eventStore: EventStore = Reflect.getMetadata(EVENT_STORE_METADATA_KEY, this);
-
     const first = this.options.batchSize;
 
     while (true) {
-      const events = await eventStore.retrieveEvents({
+      const events = await this.eventStore.retrieveEvents({
         filters: this.filters,
         after: this.lastEvent,
         first,
@@ -87,28 +87,36 @@ export default class {
     }
   }
 
+  private get eventStore(): EventStore {
+    return Reflect.getMetadata(EVENT_STORE_METADATA_KEY, this) || getEventStore();
+  }
+
+  private get projectionStore(): ProjectionStore {
+    return Reflect.getMetadata(PROJECTION_STORE_METADATA_KEY, this) || getProjectionStore();
+  }
+
+  get id(): string {
+    return Reflect.getMetadata(PROJECTION_ID_METADATA_KEY, this) || this.constructor.name;
+  }
+
   public async start() {
     if (!this.startPromise) {
       this.startPromise = (async () => {
         this.initializing = true;
 
-        const projectionStore: ProjectionStore = Reflect.getMetadata(PROJECTION_STORE_METADATA_KEY, this);
-        const eventStore: EventStore = Reflect.getMetadata(EVENT_STORE_METADATA_KEY, this);
-        const id: string = Reflect.getMetadata(PROJECTION_ID_METADATA_KEY, this);
-
-        await projectionStore.save({
-          id,
+        await this.projectionStore.save({
+          id: this.id,
           status: ProjectionStatus.Initializing,
         });
 
-        const state = await projectionStore.find(id);
+        const state = await this.projectionStore.find(this.id);
         if (state) {
           this.lastEvent = state.lastEvent || undefined;
         }
 
         await this.digest();
 
-        await Promise.all(this.filters.map((filter) => eventStore.subscribe(
+        this.subscribers = await Promise.all(this.filters.map((filter) => this.eventStore.subscribe(
           filter,
           async (event: Event) => {
             this.queue.add(async () => {
@@ -126,13 +134,17 @@ export default class {
 
         this.queue.start();
 
-        await projectionStore.save({
-          id,
+        await this.projectionStore.save({
+          id: this.id,
           status: ProjectionStatus.Live,
         });
       })();
     }
 
     await this.startPromise;
+  }
+
+  public async stop() {
+    await Promise.all(this.subscribers.map((subscriber) => subscriber.stop()));
   }
 }

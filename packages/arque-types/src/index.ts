@@ -132,7 +132,7 @@ export interface EventStore {
     },
     handler: (event: Event) => Promise<void>,
     options?: { queue?: string; concurrency?: number }
-  ): Promise<void>;
+  ): Promise<ConnectionSubscriber>;
 }
 
 export enum ProjectionStatus {

@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Event } from '@arque/types';
 import {
-  BaseProjection, ProjectionEventHandler, Projection,
+  Projection,
+  ProjectionEventHandler,
 } from '@arque/core';
 import BalanceModel from './model';
 
-@Projection({ id: 'Balance' })
-export default class BalanceProjection extends BaseProjection {
+export default class BalanceProjection extends Projection {
   @ProjectionEventHandler({ aggregate: { type: 'Balance' }, type: 'Credited' })
   onCredited(event: Event<{ delta: number }>) {
     const id = event.aggregate.id.toString('hex');
@@ -26,7 +26,11 @@ export default class BalanceProjection extends BaseProjection {
   onDebited(event: Event<{ delta: number }>) {
     const id = event.aggregate.id.toString('hex');
 
-    const document = BalanceModel.findOne({ id })!;
+    const document = BalanceModel.findOne({ id });
+
+    if (!document) {
+      return;
+    }
 
     document.value -= event.body.delta;
 

@@ -1,18 +1,16 @@
 import crypto from 'crypto';
 import { Event } from '@arque/types';
 import {
-  Aggregate,
   AggregateEventHandler,
-  BaseAggregate,
+  AggregateClass,
+  Aggregate,
 } from '../../src';
 import { expect, generateFakeEvent } from '../helpers';
-import {
-  EVENT_STORE_METADATA_KEY,
-  SNAPSHOT_STORE_METADATA_KEY,
-} from '../../src/lib/util/metadata-keys';
+import getEventStore from '../../src/lib/util/get-event-store';
+import getSnapshotStore from '../../src/lib/util/get-snapshot-store';
 
-@Aggregate({ type: 'Balance', initialState: 0 })
-class BalanceAggregate extends BaseAggregate<number> {
+@AggregateClass({ initialState: 0 })
+class BalanceAggregate extends Aggregate<number> {
   @AggregateEventHandler({ type: 'Credited' })
   onCredited(state: number, event: Event<{ delta: number }>) {
     return state + event.body.delta;
@@ -32,8 +30,8 @@ class BalanceAggregate extends BaseAggregate<number> {
 
 describe('Aggregate', () => {
   before(function () {
-    this.eventStore = Reflect.getMetadata(EVENT_STORE_METADATA_KEY, BalanceAggregate.prototype);
-    this.snapshotStore = Reflect.getMetadata(SNAPSHOT_STORE_METADATA_KEY, BalanceAggregate.prototype);
+    this.eventStore = getEventStore();
+    this.snapshotStore = getSnapshotStore();
   });
 
   afterEach(function () {
@@ -75,7 +73,7 @@ describe('Aggregate', () => {
       });
 
       const event = this.eventStore.database.collection.findOne({
-        'aggregate.type': 'Balance',
+        'aggregate.type': aggregate.type,
       });
       expect(event).to.has.property('type', 'Credited');
       expect(event).to.has.property('body').that.deep.equals({ delta: 100 });

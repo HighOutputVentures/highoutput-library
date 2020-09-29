@@ -7,13 +7,12 @@ import delay from '@highoutput/delay';
 import { Event } from '@arque/types';
 import {
   Projection,
-  BaseProjection,
   ProjectionEventHandler,
 } from '../src';
-import { EVENT_STORE_METADATA_KEY, PROJECTION_STORE_METADATA_KEY } from '../src/lib/util/metadata-keys';
+import getEventStore from '../src/lib/util/get-event-store';
+import getProjectionStore from '../src/lib/util/get-projection-store';
 
-@Projection({ id: 'Balance' })
-class BalanceProjection extends BaseProjection {
+class BalanceProjection extends Projection {
   private readonly loki = new Loki(
     'BalanceProjection',
     { adapter: new LokiMemoryAdapter() },
@@ -57,8 +56,8 @@ describe('Projection', () => {
       type: 'Balance',
     };
 
-    this.eventStore = Reflect.getMetadata(EVENT_STORE_METADATA_KEY, BalanceProjection.prototype);
-    this.projectionStore = Reflect.getMetadata(PROJECTION_STORE_METADATA_KEY, BalanceProjection.prototype);
+    this.eventStore = getEventStore();
+    this.projectionStore = getProjectionStore();
   });
 
   afterEach(function () {

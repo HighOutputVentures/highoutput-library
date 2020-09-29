@@ -162,5 +162,7 @@ export default class implements EventStore {
     );
 
     this.subscribers.push(subscriber);
+
+    return subscriber;
   }
 }

@@ -106,5 +106,7 @@ export default class MemoryEventStore implements EventStore {
     );
 
     this.subscribers.push(subscriber);
+
+    return subscriber;
   }
 }

@@ -23,7 +23,16 @@ describe('MongoDBEventStoreDatabase', () => {
     it('should save event', async function () {
       await this.database.saveEvent(this.event);
 
-      expect(await this.database.model.findOne({ _id: this.event.id })).to.be.ok;
+      const document = await this.database.model.findOne({ _id: this.event.id });
+      expect(document).to.be.ok;
+      expect(document).to.that.has.property('_id').that.is.instanceOf(Buffer);
+      expect(document).to.that.has.property('type').that.is.a('string');
+      expect(document).to.that.has.property('version').that.is.a('number');
+      expect(document).to.that.has.property('timestamp').that.is.instanceOf(Date);
+      expect(document).to.that.has.property('body');
+      expect(document.aggregate).to.that.has.property('id').that.is.instanceOf(Buffer);
+      expect(document.aggregate).to.that.has.property('type').that.is.a('string');
+      expect(document.aggregate).to.that.has.property('version').that.is.a('number');
     });
 
     it('should not save multiple events with the same aggregate.id and aggregate.version', async function () {

@@ -16,6 +16,5 @@
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "lib": ["esnext"]
-  },
-  "include": ["src/**/*"]
+  }
 }
