@@ -1,7 +1,7 @@
 {
   "name": "@highoutput/amqp",
   "version": "0.9.0",
-  "description": "A simplified abstraction of the AMQP 1.0 protocol",
+  "description": "A simplified client for ActiveMQ",
   "keywords": [
     "AMQP"
   ],
