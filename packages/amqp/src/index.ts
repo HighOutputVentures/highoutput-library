@@ -78,6 +78,7 @@ export default class Amqp {
         const details = {
           host: hosts[this.attempts % hosts.length],
           port: ports[this.attempts % ports.length],
+          transport: this.options.transport,
         };
 
         this.attempts++;
