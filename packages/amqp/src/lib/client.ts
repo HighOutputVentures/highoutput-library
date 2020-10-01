@@ -26,6 +26,7 @@ export type ClientOptions = {
   noResponse: boolean;
   deserialize: boolean;
   serialize: boolean;
+  delay?: number;
 };
 
 export default class Client<
@@ -130,6 +131,11 @@ export default class Client<
         ttl: this.options.timeout as number,
         absolute_expiry_time: now + (this.options.timeout as number),
         body: JSON.stringify(body),
+        ...this.options.delay && {
+          application_properties: {
+            AMQ_SCHEDULED_DELAY: this.options.delay,
+          },
+        },
       });
     } catch (err) {
       logger.tag('client').warn(err);
