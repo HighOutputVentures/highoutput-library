@@ -26,7 +26,7 @@ export type ClientOptions = {
   noResponse: boolean;
   deserialize: boolean;
   serialize: boolean;
-  delay?: number;
+  delay?: number | string;
 };
 
 export default class Client<
@@ -70,8 +70,10 @@ export default class Client<
       serialize: true,
     });
 
-    const { timeout } = this.options;
+    const { timeout, delay: optionDelay } = this.options;
     this.options.timeout = typeof timeout === 'string' ? ms(timeout) : timeout;
+    this.options.delay = optionDelay && (typeof optionDelay === 'string' ? ms(optionDelay) : optionDelay);
+
     logger.tag('client').info(this.options);
 
     this.connection.on('disconnected', () => {
@@ -123,6 +125,7 @@ export default class Client<
         'Client receiver is on invalid state.',
       );
     }
+
 
     try {
       this.sender.send({
