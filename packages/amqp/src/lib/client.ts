@@ -72,7 +72,7 @@ export default class Client<
 
     const { timeout, delay: optionDelay } = this.options;
     this.options.timeout = typeof timeout === 'string' ? ms(timeout) : timeout;
-    this.options.delay = optionDelay && (typeof optionDelay === 'string' ? ms(optionDelay) : optionDelay);
+    this.options.delay = typeof optionDelay === 'string' ? ms(optionDelay) : optionDelay;
 
     logger.tag('client').info(this.options);
 
