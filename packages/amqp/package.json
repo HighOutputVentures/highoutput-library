@@ -18,7 +18,8 @@
     "test:only": "DEBUG=*response*,-*client* TS_NODE_PROJECT=tsconfig.json TS_NODE_FILES=true cucumber-js -p only",
     "clean": "rimraf build/",
     "build": "npm run clean && tsc --project tsconfig.json",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "typecheck": "tsc --noEmit"
   },
   "bugs": {
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"

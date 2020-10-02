@@ -90,3 +90,8 @@ Feature: RPC
       | Map     |
       | Date    |
       | Complex |
+
+   Scenario: Delay Message
+    Given a client with a delay option for 5 seconds
+    When I send message from the client with delay option
+    Then the worker should receive the message after 5 seconds

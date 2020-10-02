@@ -5,6 +5,7 @@ import R from 'ramda';
 import delay from '@highoutput/delay';
 import Chance from 'chance';
 import crypto from 'crypto';
+import ms from 'ms';
 import { Worker } from '../../../src/index';
 
 const chance = new Chance();
@@ -208,6 +209,40 @@ Given(
     );
   },
 );
+
+Given(
+  'a client with a delay option for {int} seconds',
+  async function (seconds) {
+    this.client = await this.amqp.createClient('test', {
+      delay: ms(`${seconds}s`),
+      noResponse: true,
+    });
+
+    this.worker = this.amqp.createWorker(
+      'test',
+      async (message: any) => {
+        this.timeDiffInMilliseconds = Date.now() - message;
+        return message;
+      },
+      { concurrency: 1 },
+    );
+  },
+);
+
+
+When(
+  'I send message from the client with delay option',
+  async function () {
+    await this.client(Date.now());
+  },
+);
+
+Then('the worker should receive the message after {int} seconds', { timeout: ms('10s') }, async function (seconds) {
+  await delay(`${seconds + 1}s`);
+
+  expect(this.timeDiffInMilliseconds).to.greaterThan(ms(`${seconds}s`));
+});
+
 
 When(
   'I send multiple messages from the client asynchronously',
