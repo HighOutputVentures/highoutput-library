@@ -70,10 +70,6 @@ export default class Client<
       serialize: true,
     });
 
-    const { timeout, delay: optionDelay } = this.options;
-    this.options.timeout = typeof timeout === 'string' ? ms(timeout) : timeout;
-    this.options.delay = typeof optionDelay === 'string' ? ms(optionDelay) : optionDelay;
-
     logger.tag('client').info(this.options);
 
     this.connection.on('disconnected', () => {
@@ -128,15 +124,17 @@ export default class Client<
 
 
     try {
+      const timeout = typeof this.options.timeout === 'string' ? ms(this.options.timeout) : this.options.timeout;
+
       this.sender.send({
         reply_to: this.receiverQueueAddress,
         correlation_id: correlationId,
-        ttl: this.options.timeout as number,
-        absolute_expiry_time: now + (this.options.timeout as number),
+        ttl: timeout,
+        absolute_expiry_time: now + timeout,
         body: JSON.stringify(body),
         ...this.options.delay && {
           application_properties: {
-            AMQ_SCHEDULED_DELAY: this.options.delay,
+            AMQ_SCHEDULED_DELAY: typeof this.options.delay === 'string' ? ms(this.options.delay) : this.options.delay,
           },
         },
       });
