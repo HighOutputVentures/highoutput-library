@@ -10,8 +10,7 @@
     "plugin:import/typescript"
   ],
   "env": {
-    "node": true,
-    "mocha": true
+    "node": true
   },
   "rules": {
     "@typescript-eslint/explicit-function-return-type": "off",
@@ -23,6 +22,7 @@
     "prettier/prettier": "off",
     "import/no-extraneous-dependencies": "off",
     "no-unused-expressions": "off",
-    "class-methods-use-this": "off"
+    "class-methods-use-this": "off",
+    "no-shadow": "off"
   }
 }

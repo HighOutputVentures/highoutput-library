@@ -1,14 +1,16 @@
-/* eslint-disable no-shadow */
-/* eslint-disable import/prefer-default-export */
 export type ID = Buffer;
 
-export type Event<T extends any = any> = Readonly<{
+export type Event<
+  TBody extends any = any,
+  TType extends string = string,
+  TAggregateType extends string = string,
+> = Readonly<{
   id: ID;
-  type: string;
-  body: T;
+  type: TType;
+  body: TBody;
   aggregate: {
     id: ID;
-    type: string;
+    type: TAggregateType;
     version: number;
   };
   version: number;
