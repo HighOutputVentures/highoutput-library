@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Event } from '@arque/types';
 import {
   Projection,
   ProjectionEventHandler,
 } from '@arque/core';
 import BalanceModel from './model';
+import { BalanceCreditedEvent, BalanceDebitedEvent } from './aggregate';
 
 export default class BalanceProjection extends Projection {
   @ProjectionEventHandler({ aggregate: { type: 'Balance' }, type: 'Credited' })
-  onCredited(event: Event<{ delta: number }>) {
+  onCredited(event: BalanceCreditedEvent) {
     const id = event.aggregate.id.toString('hex');
 
     let document = BalanceModel.findOne({ id });
@@ -23,7 +23,7 @@ export default class BalanceProjection extends Projection {
   }
 
   @ProjectionEventHandler({ aggregate: { type: 'Balance' }, type: 'Debited' })
-  onDebited(event: Event<{ delta: number }>) {
+  onDebited(event: BalanceDebitedEvent) {
     const id = event.aggregate.id.toString('hex');
 
     const document = BalanceModel.findOne({ id });

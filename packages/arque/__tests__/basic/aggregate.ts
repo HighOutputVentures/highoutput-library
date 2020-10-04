@@ -8,10 +8,13 @@ import {
   AggregateEventHandler,
 } from '@arque/core';
 
+export type BalanceCreditedEvent = Event<{ delta: number }, 'Credited', 'Balance'>;
+export type BalanceDebitedEvent = Event<{ delta: number }, 'Debited', 'Balance'>;
+
 @AggregateClass({ type: 'Balance', initialState: 0 })
 export default class BalanceAggregate extends Aggregate<number> {
   @AggregateEventHandler({ type: 'Credited' })
-  onCredited(state: number, event: Event<{ delta: number }>) {
+  onCredited(state: number, event: BalanceCreditedEvent) {
     return state + event.body.delta;
   }
 
@@ -29,7 +32,7 @@ export default class BalanceAggregate extends Aggregate<number> {
   static async credit(id: ID, delta: number) {
     const aggregate = await this.load(id);
 
-    await aggregate.createEvent({
+    await aggregate.createEvent<BalanceCreditedEvent>({
       type: 'Credited',
       body: { delta },
     });
@@ -38,7 +41,7 @@ export default class BalanceAggregate extends Aggregate<number> {
   static async debit(id: ID, delta: number) {
     const aggregate = await this.load(id);
 
-    await aggregate.createEvent({
+    await aggregate.createEvent<BalanceDebitedEvent>({
       type: 'Debited',
       body: { delta },
     });

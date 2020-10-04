@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Document, Schema } from 'mongoose';
-import { Event } from '@arque/types';
 import {
   Projection,
   ProjectionClass,
@@ -8,6 +7,7 @@ import {
   MongoDBProjectionStore,
 } from '@arque/core';
 import { database, eventStore } from './library';
+import { BalanceCreditedEvent, BalanceDebitedEvent } from '../basic/aggregate';
 
 @ProjectionClass({
   id: 'Balance',
@@ -32,7 +32,7 @@ export default class BalanceProjection extends Projection {
   };
 
   @ProjectionEventHandler({ aggregate: { type: 'Balance' }, type: 'Credited' })
-  async onCredited(event: Event<{ delta: number }>) {
+  async onCredited(event: BalanceCreditedEvent) {
     const document = await BalanceProjection.models.BalanceModel.findOne({ _id: event.aggregate.id });
 
     if (!document) {
@@ -47,7 +47,7 @@ export default class BalanceProjection extends Projection {
   }
 
   @ProjectionEventHandler({ aggregate: { type: 'Balance' }, type: 'Debited' })
-  async onDebited(event: Event<{ delta: number }>) {
+  async onDebited(event: BalanceDebitedEvent) {
     await BalanceProjection.models.BalanceModel
       .updateOne({ _id: event.aggregate.id }, { $inc: { value: -event.body.delta } });
   }

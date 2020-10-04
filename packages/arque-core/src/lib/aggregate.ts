@@ -40,16 +40,17 @@ export default class Aggregate<TState = any> {
   }
 
   public static async load<T>(this: new (id: ID) => T, id: ID) {
-    if (!(this as any).cache) {
-      (this as any).cache = new Cache<string, Promise<Aggregate>>(
+    type TCache = { cache: Cache<string, Promise<Aggregate>> | null };
+    let { cache } = this as unknown as TCache;
+    if (!cache) {
+      cache = new Cache<string, Promise<Aggregate>>(
         Object.freeze(R.mergeDeepLeft({
           max: 1024,
           maxAge: 1440000,
         }, Reflect.getMetadata(AGGREGATE_CACHE_METADATA_KEY, this) || {})),
       );
+      (this as unknown as TCache).cache = cache;
     }
-
-    const { cache } = (this as any) as { cache: Cache<string, Promise<Aggregate>> };
 
     let promise = cache.get(id.toString('hex'));
 
