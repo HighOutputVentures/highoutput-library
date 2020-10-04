@@ -17,14 +17,14 @@ export type Event<
   timestamp: Date;
 }>;
 
-export type Snapshot = Readonly<{
+export type Snapshot<TState = any, TAggregatType extends string = string> = Readonly<{
   id: ID;
   aggregate: {
     id: ID;
-    type: string;
+    type: TAggregatType;
     version: number;
   };
-  state: any;
+  state: TState;
   timestamp: Date;
 }>;
 
