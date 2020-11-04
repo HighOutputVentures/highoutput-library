@@ -16,6 +16,14 @@ describe('logger', () => {
     assert.ok(true);
   });
 
+  it('should accept multiple logs', () => {
+    const logger = new Logger('test');
+
+    logger.info('Hello world!', { one: 1, two: 2 });
+
+    assert.ok(true);
+  });
+
   it('should accept objects', () => {
     const logger = new Logger('test');
 

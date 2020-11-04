@@ -31,7 +31,7 @@ class Logger {
 
     this.loggers[scope] = logger;
 
-    const items = args
+    args
       .map((item: Argument) => {
         if (item instanceof Error) {
           const obj = { message: item.message };
@@ -47,6 +47,10 @@ class Logger {
           return item.replace(/\n/, '\\n');
         }
 
+        if (typeof item === 'number') {
+          return item.toString();
+        }
+
         return item;
       })
       .map(item => {
@@ -55,9 +59,8 @@ class Logger {
         }
 
         return item;
-      }) as string[];
-
-    logger(items[0], ...items.slice(1));
+      })
+      .forEach(item => logger(item));
   }
 
   critical(...args: Argument[]): void {
