@@ -24,7 +24,7 @@ export type WorkerOptions = {
   concurrency: number;
   serialize: boolean;
   deserialize: boolean;
-  maxSenderSize?: number;
+  maxSenders?: number;
 };
 
 export default class Worker<
@@ -57,7 +57,7 @@ export default class Worker<
       concurrency: 1,
       deserialize: true,
       serialize: true,
-      maxSenderSize: 30000,
+      maxSenders: 32768,
     });
 
     this.senders = new LRU({
@@ -69,7 +69,7 @@ export default class Worker<
           logger.tag(['cache', 'dispose']).warn(e);
         }
       },
-      max: this.options.maxSenderSize ,
+      max: this.options.maxSenders,
     });
 
     this.connection.on('disconnected', () => {
