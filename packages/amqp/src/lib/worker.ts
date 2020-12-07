@@ -62,8 +62,12 @@ export default class Worker<
 
     this.senders = new LRU({
       async dispose(_, value) {
-        const sender = await value;
-        sender.close();
+        try {
+          const sender = await value;
+          sender.close();
+        } catch (e) {
+          logger.tag(['cache', 'dispose']).warn(e);
+        }
       },
       max: this.options.maxSenderSize ,
     });
