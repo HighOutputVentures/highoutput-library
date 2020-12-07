@@ -9,6 +9,7 @@ import {
   serialize,
   deserialize,
 } from '@highoutput/serialize';
+import LRU from 'lru-cache';
 import { serializeError } from 'serialize-error';
 import { EventEmitter } from 'events';
 import logger from './logger';
@@ -23,6 +24,7 @@ export type WorkerOptions = {
   concurrency: number;
   serialize: boolean;
   deserialize: boolean;
+  maxSenderSize?: number;
 };
 
 export default class Worker<
@@ -31,7 +33,7 @@ export default class Worker<
 > extends EventEmitter {
   private options: WorkerOptions;
 
-  private senders: Map<string, Promise<Sender>> = new Map();
+  private senders: LRU<string, Promise<Sender>>;
 
   private receiver: Receiver | null = null;
 
@@ -55,6 +57,19 @@ export default class Worker<
       concurrency: 1,
       deserialize: true,
       serialize: true,
+      maxSenderSize: 30000,
+    });
+
+    this.senders = new LRU({
+      async dispose(_, value) {
+        try {
+          const sender = await value;
+          sender.close();
+        } catch (e) {
+          logger.tag(['cache', 'dispose']).warn(e);
+        }
+      },
+      max: this.options.maxSenderSize ,
     });
 
     this.connection.on('disconnected', () => {
@@ -78,7 +93,7 @@ export default class Worker<
     let promise = this.senders.get(address);
 
     if (promise && (await promise).is_closed()) {
-      this.senders.delete(address);
+      this.senders.del(address);
       promise = undefined;
     }
 
@@ -87,6 +102,9 @@ export default class Worker<
         target: {
           address,
         },
+      }).then((sender) => {
+        sender.on('sender_close', () => this.senders.del(address));
+        return sender;
       });
 
       this.senders.set(address, promise);
@@ -235,7 +253,7 @@ export default class Worker<
       }),
     );
 
-    this.senders.clear();
+    this.senders.reset();
 
     this.emit('stop');
   }
