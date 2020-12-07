@@ -122,7 +122,6 @@ export default class Client<
       );
     }
 
-
     try {
       const timeout = typeof this.options.timeout === 'string' ? ms(this.options.timeout) : this.options.timeout;
 
@@ -138,6 +137,7 @@ export default class Client<
           },
         },
       });
+
     } catch (err) {
       logger.tag('client').warn(err);
     }
