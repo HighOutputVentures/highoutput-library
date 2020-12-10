@@ -3,7 +3,9 @@ import LRU from 'lru-cache';
 
 type Argument = number | string | Error | object;
 
-const Loggers: LRU<string, Debugger> = new LRU({ max: 30000 });
+const loggers: LRU<string, Debugger> = new LRU({
+  max: 32768,
+});
 
 class Logger {
   private tags: string[];
@@ -26,10 +28,10 @@ class Logger {
   log(level: string, ...args: Argument[]): void {
     const tags = [...this.tags].join(',');
     const scope = `${level}${tags ? `:${tags}` : ''}`;
-    const logger = Loggers.get(scope) || debug(scope);
+    const logger = loggers.get(scope) || debug(scope);
 
-    if (!Loggers.get(scope)) {
-      Loggers.set(scope, logger);
+    if (!loggers.get(scope)) {
+      loggers.set(scope, logger);
     }
 
     args
