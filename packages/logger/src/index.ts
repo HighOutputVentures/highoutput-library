@@ -1,10 +1,11 @@
 import debug, { Debugger } from 'debug';
+import LRU from 'lru-cache';
 
 type Argument = number | string | Error | object;
 
-class Logger {
-  private loggers: { [key: string]: Debugger };
+const Loggers: LRU<string, Debugger> = new LRU({ max: 30000 });
 
+class Logger {
   private tags: string[];
 
   constructor(tags: string | string[]) {
@@ -13,13 +14,11 @@ class Logger {
     } else {
       this.tags = [tags];
     }
-    
-    this.loggers = {};
   }
 
   tag(tags: string | string[]): Logger {
     return new Logger([
-      ...(this.tags as string[]),
+      ...(this.tags.splice(0) as string[]),
       ...(typeof tags === 'string' ? [tags] : tags),
     ]);
   }
@@ -27,9 +26,11 @@ class Logger {
   log(level: string, ...args: Argument[]): void {
     const tags = [...this.tags].join(',');
     const scope = `${level}${tags ? `:${tags}` : ''}`;
-    const logger = this.loggers[scope] ? this.loggers[scope] : debug(scope);
+    const logger = Loggers.get(scope) || debug(scope);
 
-    this.loggers[scope] = logger;
+    if (!Loggers.get(scope)) {
+      Loggers.set(scope, logger);
+    }
 
     args
       .map((item: Argument) => {
