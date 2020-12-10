@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/amqp",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "description": "A simplified client for ActiveMQ",
   "keywords": [
     "AMQP"
@@ -46,7 +46,7 @@
     "@highoutput/async-group": "~0.3.5",
     "@highoutput/delay": "~0.2.5",
     "@highoutput/error": "^0.1.9",
-    "@highoutput/logger": "^0.3.0",
+    "@highoutput/logger": "^0.4.0",
     "@highoutput/serialize": "^0.1.1",
     "chance": "^1.1.6",
     "lru-cache": "^6.0.0",
