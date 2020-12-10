@@ -1,8 +1,9 @@
 import debug, { Debugger } from 'debug';
+import LRU from 'lru-cache';
 
 type Argument = number | string | Error | object;
 
-const Loggers: { [key: string]: Debugger } = {};
+const Loggers: LRU<string, Debugger> = new LRU({ max: 30000 });
 
 class Logger {
   private tags: string[];
@@ -17,7 +18,7 @@ class Logger {
 
   tag(tags: string | string[]): Logger {
     return new Logger([
-      ...(this.tags as string[]),
+      ...(this.tags.splice(0) as string[]),
       ...(typeof tags === 'string' ? [tags] : tags),
     ]);
   }
@@ -25,9 +26,11 @@ class Logger {
   log(level: string, ...args: Argument[]): void {
     const tags = [...this.tags].join(',');
     const scope = `${level}${tags ? `:${tags}` : ''}`;
-    const logger = Loggers[scope] || debug(scope);
+    const logger = Loggers.get(scope) || debug(scope);
 
-    Loggers[scope] = logger;
+    if (!Loggers.get(scope)) {
+      Loggers.set(scope, logger);
+    }
 
     args
       .map((item: Argument) => {
