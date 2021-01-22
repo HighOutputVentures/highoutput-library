@@ -59,12 +59,14 @@ export default class {
       }
     }
 
-    await this.projectionStore.save({
-      id: this.id,
-      lastEvent: event.id,
-    });
+    if (!this.lastEvent || Buffer.compare(event.id, this.lastEvent)) {
+      await this.projectionStore.save({
+        id: this.id,
+        lastEvent: event.id,
+      });
 
-    this.lastEvent = event.id;
+      this.lastEvent = event.id;
+    }
   }
 
   private async digest() {
