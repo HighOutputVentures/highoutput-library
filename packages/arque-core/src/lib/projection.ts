@@ -59,7 +59,7 @@ export default class {
       }
     }
 
-    if (!this.lastEvent || Buffer.compare(event.id, this.lastEvent)) {
+    if (!this.lastEvent || Buffer.compare(event.id, this.lastEvent) > 0) {
       await this.projectionStore.save({
         id: this.id,
         lastEvent: event.id,
