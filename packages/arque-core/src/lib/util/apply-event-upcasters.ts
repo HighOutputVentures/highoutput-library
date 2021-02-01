@@ -2,9 +2,9 @@ import { Event, EventUpcaster } from '@arque/types';
 
 const checkUpcaster = <TEvent extends Event>(
   filter: EventUpcaster<TEvent>['filter'],
-  event: Pick<TEvent, 'type' | 'aggregate'>,
+  event: Pick<TEvent, 'type' | 'version'>,
 ) => filter.type === event.type
-  && filter.aggregate.version === event.aggregate.version;
+  && filter.version === event.version;
 
 export default <TEvent extends Event>(event: TEvent, eventUpcasters: EventUpcaster<TEvent>[]): TEvent => {
   if (!eventUpcasters.length) return event;
@@ -14,7 +14,7 @@ export default <TEvent extends Event>(event: TEvent, eventUpcasters: EventUpcast
   while (true) {
     const eventUpcaster = eventUpcasters.find(({ filter }) => checkUpcaster({
       type: filter.type,
-      aggregate: { version: filter.aggregate.version },
+      version: filter.version,
     }, upcastedEvent));
 
     if (!eventUpcaster) {
@@ -23,7 +23,7 @@ export default <TEvent extends Event>(event: TEvent, eventUpcasters: EventUpcast
 
     upcastedEvent = {
       ...eventUpcaster.upcaster(upcastedEvent),
-      aggregateClassVersion: eventUpcaster.filter.aggregate.version + 1,
+      version: eventUpcaster.filter.version + 1
     };
   }
 

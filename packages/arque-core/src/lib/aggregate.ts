@@ -6,7 +6,6 @@ import {
   ID,
   Event,
   EventStore,
-  EventUpcaster,
   SnapshotStore,
 } from '@arque/types';
 import {
@@ -14,6 +13,7 @@ import {
   EVENT_STORE_METADATA_KEY,
   SNAPSHOT_STORE_METADATA_KEY,
   AGGREGATE_EVENT_HANDLERS_METADATA_KEY,
+  AGGREGATE_EVENT_UPCASTERS_METADATA_KEY,
   AGGREGATE_INITIAL_STATE_METADATA_KEY,
   AGGREGATE_CACHE_METADATA_KEY,
 } from './util/metadata-keys';
@@ -29,8 +29,6 @@ export default class Aggregate<TState = any> {
   private _state: TState;
 
   private _id: ID;
-
-  protected eventUpcasters?: EventUpcaster<Event>[];
 
   public readonly options = {
     batchSize: 100,
@@ -98,6 +96,13 @@ export default class Aggregate<TState = any> {
     handler: (state: TState, event: Event) => TState;
   }[] {
     return Reflect.getMetadata(AGGREGATE_EVENT_HANDLERS_METADATA_KEY, this) || [];
+  }
+
+  private get eventUpcasters(): {
+    filter: { type: string; version: number };
+    upcaster: (event: Event) => Event
+  }[] {
+    return Reflect.getMetadata(AGGREGATE_EVENT_UPCASTERS_METADATA_KEY, this) || [];
   }
 
   protected get shouldTakeSnapshot() {
