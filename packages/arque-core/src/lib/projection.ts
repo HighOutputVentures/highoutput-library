@@ -8,6 +8,7 @@ import {
   EventStore,
   ProjectionStore,
   EventFilter,
+  EventUpcaster,
   ProjectionStatus,
   ID,
   ConnectionSubscriber,
@@ -21,6 +22,7 @@ import {
 import canHandleEvent from './util/can-handle-event';
 import getProjectionStore from './util/get-projection-store';
 import getEventStore from './util/get-event-store';
+import applyEventUpcasters from './util/apply-event-upcasters';
 
 export default class {
   private startPromise: Promise<void> | null = null;
@@ -39,6 +41,8 @@ export default class {
 
   private initializing = false;
 
+  protected eventUpcasters?: EventUpcaster<Event>[];
+
   public constructor(options: {
     batchSize?: number;
   } = {}) {
@@ -53,6 +57,10 @@ export default class {
   }
 
   private async apply(event: Event) {
+    if (this.eventUpcasters) {
+      event = applyEventUpcasters<Event>(event, this.eventUpcasters);
+    }
+
     for (const { filter, handler } of Reflect.getMetadata(PROJECTION_EVENT_HANDLERS_METADATA_KEY, this)) {
       if (canHandleEvent(filter, event)) {
         await handler.apply(this, [event]);

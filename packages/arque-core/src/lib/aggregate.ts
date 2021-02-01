@@ -6,6 +6,7 @@ import {
   ID,
   Event,
   EventStore,
+  EventUpcaster,
   SnapshotStore,
 } from '@arque/types';
 import {
@@ -18,6 +19,7 @@ import {
 } from './util/metadata-keys';
 import getEventStore from './util/get-event-store';
 import getSnapshotStore from './util/get-snapshot-store';
+import applyEventUpcasters from './util/apply-event-upcasters';
 
 export default class Aggregate<TState = any> {
   private queue: Queue = new Queue({ concurrency: 1 });
@@ -27,6 +29,8 @@ export default class Aggregate<TState = any> {
   private _state: TState;
 
   private _id: ID;
+
+  protected eventUpcasters?: EventUpcaster<Event>[];
 
   public readonly options = {
     batchSize: 100,
@@ -114,6 +118,10 @@ export default class Aggregate<TState = any> {
 
   private apply(state: TState, event: Event): TState {
     let next = state;
+
+    if (this.eventUpcasters) {
+      event = applyEventUpcasters<Event>(event, this.eventUpcasters);
+    }
 
     for (const { filter, handler } of this.eventHandlers) {
       if (R.equals(filter, R.pick(R.keys(filter) as any, event))) {
