@@ -13,7 +13,7 @@ import {
   EVENT_STORE_METADATA_KEY,
   SNAPSHOT_STORE_METADATA_KEY,
   AGGREGATE_EVENT_HANDLERS_METADATA_KEY,
-  AGGREGATE_EVENT_UPCASTERS_METADATA_KEY,
+  EVENT_UPCASTERS_METADATA_KEY,
   AGGREGATE_INITIAL_STATE_METADATA_KEY,
   AGGREGATE_CACHE_METADATA_KEY,
 } from './util/metadata-keys';
@@ -102,7 +102,7 @@ export default class Aggregate<TState = any> {
     filter: { type: string; version: number };
     upcaster: (event: Event) => Event
   }[] {
-    return Reflect.getMetadata(AGGREGATE_EVENT_UPCASTERS_METADATA_KEY, this) || [];
+    return Reflect.getMetadata(EVENT_UPCASTERS_METADATA_KEY, this) || [];
   }
 
   protected get shouldTakeSnapshot() {
