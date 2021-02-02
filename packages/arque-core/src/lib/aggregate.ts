@@ -123,14 +123,15 @@ export default class Aggregate<TState = any> {
 
   private apply(state: TState, event: Event): TState {
     let next = state;
+    let newEvent = event;
 
     if (this.eventUpcasters) {
-      event = applyEventUpcasters<Event>(event, this.eventUpcasters);
+      newEvent = applyEventUpcasters<Event>(newEvent, this.eventUpcasters);
     }
 
     for (const { filter, handler } of this.eventHandlers) {
-      if (R.equals(filter, R.pick(R.keys(filter) as any, event))) {
-        next = handler(state, event);
+      if (R.equals(filter, R.pick(R.keys(filter) as any, newEvent))) {
+        next = handler(state, newEvent);
       }
     }
 

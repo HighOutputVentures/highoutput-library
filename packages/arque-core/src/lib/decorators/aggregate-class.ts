@@ -18,7 +18,7 @@ export default function (params: {
   eventStore?: EventStore;
   snapshotStore?: SnapshotStore;
   eventUpcasters?: {
-    filter: { type: string; aggregate: { version: number } };
+    filter: { type: string; version: number };
     upcaster: (event: Event) => Event
   }[];
   eventHandlers?: {
@@ -37,7 +37,7 @@ export default function (params: {
     Reflect.defineMetadata(SNAPSHOT_STORE_METADATA_KEY, params.snapshotStore, target.prototype);
     Reflect.defineMetadata(AGGREGATE_EVENT_UPCASTERS_METADATA_KEY, [
       ...(Reflect.getMetadata(AGGREGATE_EVENT_UPCASTERS_METADATA_KEY, target.prototype) || []),
-      ...params.eventHandlers || [],
+      ...params.eventUpcasters || [],
     ], target.prototype);
     Reflect.defineMetadata(AGGREGATE_EVENT_HANDLERS_METADATA_KEY, [
       ...(Reflect.getMetadata(AGGREGATE_EVENT_HANDLERS_METADATA_KEY, target.prototype) || []),

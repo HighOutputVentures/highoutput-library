@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition, no-loop-func */
 import { Event, EventUpcaster } from '@arque/types';
 
 const checkUpcaster = <TEvent extends Event>(
@@ -23,7 +24,7 @@ export default <TEvent extends Event>(event: TEvent, eventUpcasters: EventUpcast
 
     upcastedEvent = {
       ...eventUpcaster.upcaster(upcastedEvent),
-      version: eventUpcaster.filter.version + 1
+      version: eventUpcaster.filter.version + 1,
     };
   }
 
