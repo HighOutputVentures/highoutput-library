@@ -13,11 +13,12 @@ import { expect, generateFakeEvent } from '../helpers';
 import getSnapshotStore from '../../src/lib/util/get-snapshot-store';
 
 @AggregateClass({
+  type: 'Balance',
   initialState: 0,
   eventStore: new DistributedEventStore(),
   eventUpcasters: [
     {
-      filter: { type: 'Credited', version: 1, },
+      filter: { type: 'Credited', version: 1, aggregate: { type: 'Balance' } },
       upcaster: (event: any) => ({
         ...event,
         body: {
@@ -39,26 +40,37 @@ import getSnapshotStore from '../../src/lib/util/get-snapshot-store';
   ]
 })
 class BalanceAggregate extends Aggregate<number> {
-  @EventUpcaster({ type: 'Credited', version: 1 })
-  onCreditedV1(event: Event<{ delta: number }>) {
+  @EventUpcaster({ type: 'Credited', version: 2 })
+  onCreditedV2(event: Event<{ figure: number }>) {
     return {
       ...event,
       body: {
         ...R.omit(['figure'])(event.body),
-        figure: event.body.delta,
+        amount: event.body.figure,
+      }
+    }
+  }
+
+  @EventUpcaster({ type: 'Debited', version: 2 })
+  onDebitedV2(event: Event<{ figure: number }>) {
+    return {
+      ...event,
+      body: {
+        ...R.omit(['figure'])(event.body),
+        amount: event.body.figure,
       }
     }
   }
 
   @AggregateEventHandler({ type: 'Credited' })
-  onCredited(state: number, event: Event<{ delta: number; figure: number }>) {
-    return state + event.body.figure;
+  onCredited(state: number, event: Event<{ delta: number; figure: number; amount: number }>) {
+    return state + event.body.amount;
   }
 
   
   @AggregateEventHandler({ type: 'Debited' })
-  onDebited(state: number, event: Event<{ delta: number; figure: number }>) {
-    const result = state - event.body.figure;
+  onDebited(state: number, event: Event<{ delta: number; figure: number; amount: number }>) {
+    const result = state - event.body.amount;
 
     if (result < 0) {
       throw new Error('Cannot be negative.');
@@ -86,7 +98,7 @@ describe('Aggregate Event Upcasting', () => {
   describe('load', () => {
     it('should load an aggregate correctly', async function () {
       let event = generateFakeEvent();
-
+    
       event = {
         ...event,
         type: 'Credited',
