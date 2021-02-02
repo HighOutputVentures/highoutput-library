@@ -18,7 +18,7 @@ export default function (params: {
   eventStore?: EventStore;
   snapshotStore?: SnapshotStore;
   eventUpcasters?: {
-    filter: { type: string; version: number };
+    filter: { type: string; version: number; aggregate?: { type: string; } };
     upcaster: (event: Event) => Event
   }[];
   eventHandlers?: {

@@ -99,7 +99,7 @@ export default class Aggregate<TState = any> {
   }
 
   private get eventUpcasters(): {
-    filter: { type: string; version: number };
+    filter: { type: string; version: number; aggregate?: { type: string; } };
     upcaster: (event: Event) => Event
   }[] {
     return Reflect.getMetadata(EVENT_UPCASTERS_METADATA_KEY, this) || [];

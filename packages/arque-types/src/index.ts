@@ -18,7 +18,7 @@ export type Event<
 }>;
 
 export type EventUpcaster<TEvent extends Event> = {
-  filter: { type: TEvent['type']; version: number },
+  filter: { type: TEvent['type']; version: number; aggregate?: { type: Event['aggregate']['type'] } },
   upcaster: (event: Event) => TEvent;
 };
 

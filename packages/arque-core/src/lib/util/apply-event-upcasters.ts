@@ -1,11 +1,22 @@
 /* eslint-disable no-constant-condition, no-loop-func */
 import { Event, EventUpcaster } from '@arque/types';
 
+import R from 'ramda';
+
 const checkUpcaster = <TEvent extends Event>(
   filter: EventUpcaster<TEvent>['filter'],
-  event: Pick<TEvent, 'type' | 'version'>,
-) => filter.type === event.type
-  && filter.version === event.version;
+  event: Pick<TEvent, 'type' | 'version' | 'aggregate'>,
+) => {
+  const partial = filter.type === event.type && filter.version === event.version;
+
+  const aggregateType = R.path(['aggregate', 'type'])(filter);
+
+  if (aggregateType) {
+    return partial && aggregateType === event.aggregate.type;
+  }
+
+  return partial;
+};
 
 export default <TEvent extends Event>(event: TEvent, eventUpcasters: EventUpcaster<TEvent>[]): TEvent => {
   if (!eventUpcasters.length) return event;
@@ -14,6 +25,7 @@ export default <TEvent extends Event>(event: TEvent, eventUpcasters: EventUpcast
 
   while (true) {
     const eventUpcaster = eventUpcasters.find(({ filter }) => checkUpcaster({
+      ...(filter.aggregate ? { aggregate: { type: filter.aggregate.type } } : {}),
       type: filter.type,
       version: filter.version,
     }, upcastedEvent));
