@@ -22,11 +22,11 @@ export type EventUpcaster<TEvent extends Event> = {
   upcaster: (event: Event) => TEvent;
 };
 
-export type Snapshot<TState = any, TAggregatType extends string = string> = Readonly<{
+export type Snapshot<TState = any, TAggregateType extends string = string> = Readonly<{
   id: ID;
   aggregate: {
     id: ID;
-    type: TAggregatType;
+    type: TAggregateType;
     version: number;
   };
   state: TState;
