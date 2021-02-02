@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import { Event } from '@arque/types';
 import {
   AggregateEventHandler,
-  AggregateEventUpcaster,
+  EventUpcaster,
   AggregateClass,
   Aggregate,
   DistributedEventStore,
@@ -15,25 +15,36 @@ import getSnapshotStore from '../../src/lib/util/get-snapshot-store';
 @AggregateClass({
   initialState: 0,
   eventStore: new DistributedEventStore(),
+  eventUpcasters: [
+    {
+      filter: { type: 'Credited', version: 1, },
+      upcaster: (event: any) => ({
+        ...event,
+        body: {
+          ...R.omit(['delta'])(event.body),
+          figure: event.body.delta,
+        },
+      }),
+    },
+    {
+      filter: { type: 'Debited', version: 1, },
+      upcaster: (event: any) => ({
+        ...event,
+        body: {
+          ...R.omit(['delta'])(event.body),
+          figure: event.body.delta,
+        },
+      }),
+    }
+  ]
 })
 class BalanceAggregate extends Aggregate<number> {
-  @AggregateEventUpcaster({ type: 'Credited', version: 1 })
+  @EventUpcaster({ type: 'Credited', version: 1 })
   onCreditedV1(event: Event<{ delta: number }>) {
     return {
       ...event,
       body: {
-        ...R.omit(['delta'])(event.body),
-        figure: event.body.delta,
-      }
-    }
-  }
-
-  @AggregateEventUpcaster({ type: 'Debited', version: 1 })
-  onDebitedV1(event: Event<{ delta: number }>) {
-    return {
-      ...event,
-      body: {
-        ...R.omit(['delta'])(event.body),
+        ...R.omit(['figure'])(event.body),
         figure: event.body.delta,
       }
     }
