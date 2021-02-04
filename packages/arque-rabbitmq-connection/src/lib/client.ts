@@ -82,7 +82,7 @@ export default class<TInput extends any[] = any[], TOutput = any> {
 
       logger.tag(['request']).verbose(body);
 
-      this.sender.send(
+      this.sender(
         {
           absolute_expiry_time: now + timeout,
           body,
@@ -159,7 +159,7 @@ export default class<TInput extends any[] = any[], TOutput = any> {
       this.sender = sender;
       this.receiver = receiver;
 
-      this.receiver.consume(async (msg) => {
+      this.receiver(async (msg) => {
         if (!msg) {
           logger.warn('Null message recieved.');
           return;

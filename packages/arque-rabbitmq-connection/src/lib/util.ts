@@ -10,14 +10,12 @@ export const createSender = async (
   },
 ): Promise<Sender> => {
   await channel.assertQueue(params.queue, params.options);
-  return {
-    send: async (message, options) => {
-      channel.sendToQueue(
-        params.queue,
-        Buffer.from(JSON.stringify(message)),
-        options,
-      );
-    },
+  return async (message, options) => {
+    channel.sendToQueue(
+      params.queue,
+      Buffer.from(JSON.stringify(message)),
+      options,
+    );
   };
 };
 
@@ -29,15 +27,13 @@ export const createPublisher = async (
   },
 ): Promise<Sender> => {
   await channel.assertExchange(params.exchange, 'topic', { durable: false });
-  return {
-    send: async (message, options) => {
-      channel.publish(
-        params.exchange,
-        params.topic,
-        Buffer.from(JSON.stringify(message)),
-        options,
-      );
-    },
+  return async (message, options) => {
+    channel.publish(
+      params.exchange,
+      params.topic,
+      Buffer.from(JSON.stringify(message)),
+      options,
+    );
   };
 };
 
@@ -57,10 +53,8 @@ export const createSubscriber = async (
 
   await channel.bindQueue(q.queue, params.exchange, params.topic);
 
-  return {
-    consume: (callback) => {
-      channel.consume(q.queue, callback, { noAck: true });
-    },
+  return (callback) => {
+    channel.consume(q.queue, callback, { noAck: true });
   };
 };
 
@@ -68,16 +62,12 @@ export const createReceiver = async (
   channel: Channel,
   options: { queue: string; concurrency?: number },
 ): Promise<Receiver> => {
-  if (options.concurrency) {
-    await channel.prefetch(options.concurrency);
-  }
+  await channel.prefetch(options.concurrency);
 
   await channel.assertQueue(options.queue, { durable: true });
 
-  return {
-    consume: (callback) => {
-      channel.consume(options.queue, callback, { noAck: true });
-    },
+  return (callback) => {
+    channel.consume(options.queue, callback, { noAck: true });
   };
 };
 
