@@ -1,0 +1,60 @@
+{
+  "name": "@arque/rabbitmq-connection",
+  "version": "0.0.1",
+  "description": "RabbitMQ connection for `arque`",
+  "keywords": [
+    "event-sourcing",
+    "cqrs",
+    "microservice"
+  ],
+  "author": "High Output Ventures",
+  "homepage": "https://github.com/Proto-Garage/highoutput-library/tree/master/packages/arque-rabbitmq-connection#readme",
+  "license": "ISC",
+  "main": "build/index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
+  },
+  "dependencies": {
+    "@arque/types": "^1.0.0-alpha.12",
+    "@highoutput/logger": "^0.4.0",
+    "@types/node": "^14.14.25",
+    "amqplib": "^0.6.0"
+  },
+  "devDependencies": {
+    "@highoutput/delay": "^0.2.5",
+    "@types/chai": "^4.2.14",
+    "@types/chance": "^1.1.1",
+    "@types/mocha": "^8.2.0",
+    "@types/ramda": "^0.27.36",
+    "@types/sinon": "^9.0.10",
+    "@typescript-eslint/eslint-plugin": "^4.14.2",
+    "@typescript-eslint/parser": "^4.14.2",
+    "chai": "^4.3.0",
+    "chai-as-promised": "^7.1.1",
+    "chance": "^1.1.7",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.19.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "mocha": "^8.2.1",
+    "ramda": "^0.27.1",
+    "rimraf": "^3.0.2",
+    "sinon": "^9.2.4",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3"
+  }
+}
