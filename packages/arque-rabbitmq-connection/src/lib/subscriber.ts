@@ -29,7 +29,7 @@ export default class Subscriber<TInput extends any[] = any[]> {
   public readonly id: string = nanoid();
 
   public constructor(
-    private channel: Channel,
+    public channel: Channel,
     private readonly exchange: string,
     private readonly topic: string,
     private readonly handler: (...args: TInput) => Promise<void>,

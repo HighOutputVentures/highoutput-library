@@ -11,7 +11,7 @@ import { createReceiver, createSender, msSerializer } from './util';
 
 const logger = baseLogger.tag(['client']);
 
-export default class<TInput extends any[] = any[], TOutput = any> {
+export default class Client<TInput extends any[] = any[], TOutput = any> {
   private options: ClientOptions;
 
   private shutdown = false;
@@ -209,5 +209,13 @@ export default class<TInput extends any[] = any[], TOutput = any> {
     })();
 
     return this.initialize;
+  }
+
+  public async stop(): Promise<void> {
+    this.shutdown = true;
+
+    await this.asyncGroup.wait();
+
+    await this.channel.close();
   }
 }

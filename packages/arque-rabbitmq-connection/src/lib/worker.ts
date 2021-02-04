@@ -10,7 +10,7 @@ import { createReceiver, createSender } from './util';
 
 const logger = baseLogger.tag(['worker']);
 
-export default class<TInput extends any[] = any[], TOutput = any> {
+export default class Worker<TInput extends any[] = any[], TOutput = any> {
   private options: WorkerOptions;
 
   private receiver: Receiver | undefined;
