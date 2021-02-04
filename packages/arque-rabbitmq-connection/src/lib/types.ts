@@ -18,3 +18,7 @@ export type WorkerOptions = {
   serialize: boolean;
   deserialize: boolean;
 };
+
+export type PublisherOptions = {
+  serialize: boolean;
+};
