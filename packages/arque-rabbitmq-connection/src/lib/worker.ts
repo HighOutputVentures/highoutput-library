@@ -26,7 +26,7 @@ export default class<TInput extends any[] = any[], TOutput = any> {
   private senders: Map<string, Sender> = new Map();
 
   public constructor(
-    private channel: Channel,
+    public channel: Channel,
     private readonly queue: string,
     private readonly handler: (...args: TInput) => Promise<TOutput>,
     options?: Partial<WorkerOptions>,
