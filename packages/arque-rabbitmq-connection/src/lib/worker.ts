@@ -106,12 +106,13 @@ export default class<TInput extends any[] = any[], TOutput = any> {
 
     this.initialize = (async () => {
       this.channel.on('close', () => {
-        logger.tag(['worker', 'channel', 'close']).info('Connection is close');
+        logger.tag(['channel', 'close']).info('Connection is close');
         this.initialize = null;
         this.senders.clear();
       });
+
       this.channel.on('error', (err) => {
-        logger.tag(['worker', 'channel', 'error']).error(err);
+        logger.tag(['channel', 'error']).error(err);
         this.initialize = null;
         this.senders.clear();
       });
@@ -122,6 +123,10 @@ export default class<TInput extends any[] = any[], TOutput = any> {
       });
 
       this.receiver(async (msg) => {
+        if (!msg) {
+          logger.warn('No message received.');
+          return;
+        }
         if (this.shutdown) {
           logger.warn('worker shutdown');
           return;
