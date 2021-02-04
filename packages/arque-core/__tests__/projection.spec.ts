@@ -1,17 +1,43 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable no-undef */
 import crypto from 'crypto';
+import R from 'ramda';
 import Loki, { LokiMemoryAdapter } from 'lokijs';
 import { expect } from 'chai';
 import delay from '@highoutput/delay';
 import { Event } from '@arque/types';
 import {
   Projection,
+  ProjectionClass,
   ProjectionEventHandler,
 } from '../src';
 import getEventStore from '../src/lib/util/get-event-store';
 import getProjectionStore from '../src/lib/util/get-projection-store';
 
+@ProjectionClass({
+  eventUpcasters: [
+    {
+      filter: { type: 'Credited', version: 1, },
+      upcaster: (event: any) => ({
+        ...event,
+        body: {
+          ...R.omit(['amount'])(event.body),
+          figure: event.body.amount,
+        },
+      }),
+    },
+    {
+      filter: { type: 'Debited', version: 1, },
+      upcaster: (event: any) => ({
+        ...event,
+        body: {
+          ...R.omit(['amount'])(event.body),
+          figure: event.body.amount,
+        },
+      }),
+    }
+  ]
+})
 class BalanceProjection extends Projection {
   private readonly loki = new Loki(
     'BalanceProjection',
@@ -23,7 +49,7 @@ class BalanceProjection extends Projection {
     .addCollection<{ id: string; value: number }>('documents');
 
   @ProjectionEventHandler({ aggregate: { type: 'Balance' }, type: 'Credited' })
-  onCredited(event: Event<{ amount: number }>) {
+  onCredited(event: Event<{ amount: number; figure: number; }>) {
     const id = event.aggregate.id.toString('hex');
 
     let document = this.model.findOne({ id });
@@ -32,18 +58,18 @@ class BalanceProjection extends Projection {
       document = this.model.insertOne({ id, value: 0 })!;
     }
 
-    document.value += event.body.amount;
+    document.value += event.body.figure;
 
     this.model.update(document);
   }
 
   @ProjectionEventHandler({ aggregate: { type: 'Balance' }, type: 'Debited' })
-  onDebited(event: Event<{ amount: number }>) {
+  onDebited(event: Event<{ amount: number; figure: number; }>) {
     const id = event.aggregate.id.toString('hex');
 
     const document = this.model.findOne({ id })!;
 
-    document.value -= event.body.amount;
+    document.value -= event.body.figure;
 
     this.model.update(document);
   }

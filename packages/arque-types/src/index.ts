@@ -17,11 +17,16 @@ export type Event<
   timestamp: Date;
 }>;
 
-export type Snapshot<TState = any, TAggregatType extends string = string> = Readonly<{
+export type EventUpcaster<TEvent extends Event> = {
+  filter: { type: TEvent['type']; version: number; aggregate?: { type: Event['aggregate']['type'] } },
+  upcaster: (event: Event) => TEvent;
+};
+
+export type Snapshot<TState = any, TAggregateType extends string = string> = Readonly<{
   id: ID;
   aggregate: {
     id: ID;
-    type: TAggregatType;
+    type: TAggregateType;
     version: number;
   };
   state: TState;

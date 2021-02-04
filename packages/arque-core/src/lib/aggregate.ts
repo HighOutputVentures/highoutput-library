@@ -13,11 +13,13 @@ import {
   EVENT_STORE_METADATA_KEY,
   SNAPSHOT_STORE_METADATA_KEY,
   AGGREGATE_EVENT_HANDLERS_METADATA_KEY,
+  EVENT_UPCASTERS_METADATA_KEY,
   AGGREGATE_INITIAL_STATE_METADATA_KEY,
   AGGREGATE_CACHE_METADATA_KEY,
 } from './util/metadata-keys';
 import getEventStore from './util/get-event-store';
 import getSnapshotStore from './util/get-snapshot-store';
+import applyEventUpcasters from './util/apply-event-upcasters';
 
 export default class Aggregate<TState = any> {
   private queue: Queue = new Queue({ concurrency: 1 });
@@ -96,6 +98,13 @@ export default class Aggregate<TState = any> {
     return Reflect.getMetadata(AGGREGATE_EVENT_HANDLERS_METADATA_KEY, this) || [];
   }
 
+  private get eventUpcasters(): {
+    filter: { type: string; version: number; aggregate?: { type: string; } };
+    upcaster: (event: Event) => Event
+  }[] {
+    return Reflect.getMetadata(EVENT_UPCASTERS_METADATA_KEY, this) || [];
+  }
+
   protected get shouldTakeSnapshot() {
     return false;
   }
@@ -114,10 +123,15 @@ export default class Aggregate<TState = any> {
 
   private apply(state: TState, event: Event): TState {
     let next = state;
+    let newEvent = event;
+
+    if (this.eventUpcasters) {
+      newEvent = applyEventUpcasters<Event>(newEvent, this.eventUpcasters);
+    }
 
     for (const { filter, handler } of this.eventHandlers) {
-      if (R.equals(filter, R.pick(R.keys(filter) as any, event))) {
-        next = handler(state, event);
+      if (R.equals(filter, R.pick(R.keys(filter) as any, newEvent))) {
+        next = handler(state, newEvent);
       }
     }
 

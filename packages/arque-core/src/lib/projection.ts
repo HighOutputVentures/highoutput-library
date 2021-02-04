@@ -16,11 +16,13 @@ import {
   PROJECTION_STORE_METADATA_KEY,
   PROJECTION_ID_METADATA_KEY,
   EVENT_STORE_METADATA_KEY,
+  EVENT_UPCASTERS_METADATA_KEY,
   PROJECTION_EVENT_HANDLERS_METADATA_KEY,
 } from './util/metadata-keys';
 import canHandleEvent from './util/can-handle-event';
 import getProjectionStore from './util/get-projection-store';
 import getEventStore from './util/get-event-store';
+import applyEventUpcasters from './util/apply-event-upcasters';
 
 export default class {
   private startPromise: Promise<void> | null = null;
@@ -53,19 +55,25 @@ export default class {
   }
 
   private async apply(event: Event) {
+    let newEvent = event;
+
+    if (this.eventUpcasters) {
+      newEvent = applyEventUpcasters<Event>(newEvent, this.eventUpcasters);
+    }
+
     for (const { filter, handler } of Reflect.getMetadata(PROJECTION_EVENT_HANDLERS_METADATA_KEY, this)) {
-      if (canHandleEvent(filter, event)) {
-        await handler.apply(this, [event]);
+      if (canHandleEvent(filter, newEvent)) {
+        await handler.apply(this, [newEvent]);
       }
     }
 
-    if (!this.lastEvent || Buffer.compare(event.id, this.lastEvent) > 0) {
+    if (!this.lastEvent || Buffer.compare(newEvent.id, this.lastEvent) > 0) {
       await this.projectionStore.save({
         id: this.id,
-        lastEvent: event.id,
+        lastEvent: newEvent.id,
       });
 
-      this.lastEvent = event.id;
+      this.lastEvent = newEvent.id;
     }
   }
 
@@ -91,6 +99,13 @@ export default class {
 
   private get eventStore(): EventStore {
     return Reflect.getMetadata(EVENT_STORE_METADATA_KEY, this) || getEventStore();
+  }
+
+  private get eventUpcasters(): {
+    filter: { type: string; version: number; aggregate?: { type: string; } };
+    upcaster: (event: Event) => Event
+  }[] {
+    return Reflect.getMetadata(EVENT_UPCASTERS_METADATA_KEY, this) || [];
   }
 
   private get projectionStore(): ProjectionStore {
