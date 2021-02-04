@@ -3,7 +3,7 @@ import { ConsumeMessage, Options } from 'amqplib';
 export type Sender = (message: any, options?: Options.Publish) => Promise<void>;
 
 export type Receiver = (
-  callback: (msg: ConsumeMessage) => Promise<void>,
+  callback: (msg: ConsumeMessage | null) => Promise<void>,
 ) => void;
 
 export type ClientOptions = {

@@ -62,7 +62,9 @@ export const createReceiver = async (
   channel: Channel,
   options: { queue: string; concurrency?: number },
 ): Promise<Receiver> => {
-  await channel.prefetch(options.concurrency);
+  if (options.concurrency) {
+    await channel.prefetch(options.concurrency);
+  }
 
   await channel.assertQueue(options.queue, { durable: true });
 
