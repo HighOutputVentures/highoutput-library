@@ -36,6 +36,7 @@
     "@highoutput/serialize": "^0.1.1",
     "@types/node": "^14.14.25",
     "amqplib": "^0.6.0",
+    "async-retry": "^1.3.1",
     "ms": "^2.1.3",
     "nanoid": "^3.1.20",
     "serialize-error": "^8.0.1"
@@ -43,6 +44,7 @@
   "devDependencies": {
     "@highoutput/delay": "^0.2.5",
     "@types/amqplib": "^0.5.17",
+    "@types/async-retry": "^1.4.2",
     "@types/chai": "^4.2.14",
     "@types/chance": "^1.1.1",
     "@types/mocha": "^8.2.0",
