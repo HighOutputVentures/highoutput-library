@@ -90,4 +90,21 @@ describe('LocalConnection', () => {
 
     handlers.forEach((handler) => expect(handler.callCount).to.equal(5));
   });
+
+  it('should not timeout when worker resolves into false', async function () {
+    const client = await this.connection.createClient('Boolean');
+
+    const handler = sinon.spy(async () => {
+      await delay(50 + Math.random() * 100);
+
+      return false;
+    });
+
+    await this.connection.createWorker('Boolean', handler);
+
+    const response = await client();
+
+    expect(handler.calledOnce).to.be.true;
+    expect(response).to.equal(false);
+  });
 });
