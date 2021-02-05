@@ -146,6 +146,7 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
           now > message.absolute_expiry_time
         ) {
           logger.tag(['message']).verbose('received an expired message.');
+          return;
         }
 
         await this.asyncGroup.add(
