@@ -7,7 +7,7 @@ describe('PubSub', () => {
   let amqp: AMQP;
 
   before(function () {
-    amqp = new AMQP({ port: 5671 });
+    amqp = new AMQP({ hostname: 'rabbitmq' });
   });
 
   after(function () {
