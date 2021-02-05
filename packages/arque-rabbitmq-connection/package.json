@@ -11,13 +11,6 @@
   "homepage": "https://github.com/Proto-Garage/highoutput-library/tree/master/packages/arque-rabbitmq-connection#readme",
   "license": "ISC",
   "main": "build/index.js",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
-  },
-  "files": [
-    "lib"
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
@@ -27,7 +20,8 @@
     "typecheck": "tsc --noEmit",
     "clean": "rimraf build/",
     "build": "npm run clean && tsc --project tsconfig.json",
-    "test": "cross-env TS_NODE_PROJECT=__tests__/tsconfig.json TS_NODE_FILES=true mocha \"__tests__/**/*.spec.ts\""
+    "test": "cross-env TS_NODE_PROJECT=__tests__/tsconfig.json TS_NODE_FILES=true mocha \"__tests__/**/*.spec.ts\"",
+    "prepublish": "npm run build"
   },
   "bugs": {
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
