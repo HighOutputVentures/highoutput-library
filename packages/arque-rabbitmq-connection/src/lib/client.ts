@@ -161,7 +161,7 @@ export default class Client<TInput extends any[] = any[], TOutput = any> {
 
       this.receiver(async (msg) => {
         if (!msg) {
-          logger.warn('Null message recieved.');
+          logger.warn('Null message received.');
           return;
         }
         const message = JSON.parse(msg.content.toString());
