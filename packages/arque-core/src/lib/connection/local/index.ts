@@ -83,7 +83,7 @@ export default class {
           return;
         }
 
-        if (message.result) {
+        if (typeof message.result !== 'undefined') {
           callback.resolve(message.result);
         }
 
