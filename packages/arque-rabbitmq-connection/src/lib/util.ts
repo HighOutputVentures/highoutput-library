@@ -69,7 +69,16 @@ export const createReceiver = async (
   await channel.assertQueue(options.queue, { durable: true });
 
   return (callback) => {
-    channel.consume(options.queue, callback, { noAck: true });
+    channel.consume(
+      options.queue,
+      async (msg) => {
+        await callback(msg);
+        if (msg) {
+          channel.ack(msg);
+        }
+      },
+      { noAck: false },
+    );
   };
 };
 

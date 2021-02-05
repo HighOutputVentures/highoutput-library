@@ -4,6 +4,6 @@
   "inline-diffs": true,
   "recursive": true,
   "require": ["ts-node/register/transpile-only"],
-  "spec": "__tests__/**/*.test.ts",
+  "spec": "__tests__/**/*.spec.ts",
   "timeout": 10000
 }

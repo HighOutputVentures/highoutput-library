@@ -127,6 +127,7 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
           logger.warn('No message received.');
           return;
         }
+
         if (this.shutdown) {
           logger.warn('worker shutdown');
           return;
@@ -159,6 +160,8 @@ export default class Worker<TInput extends any[] = any[], TOutput = any> {
   }
 
   public async stop(): Promise<void> {
+    if (this.shutdown) return;
+
     this.shutdown = true;
 
     await this.asyncGroup.wait();

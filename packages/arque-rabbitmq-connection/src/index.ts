@@ -17,7 +17,7 @@ import Worker from './lib/worker';
 import Publisher from './lib/publisher';
 import Subscriber, { SubscriberOptions } from './lib/subscriber';
 
-export * from './lib/types';
+export { Client, Worker, Publisher, Subscriber };
 
 export default class implements Connection {
   private options: Options;
