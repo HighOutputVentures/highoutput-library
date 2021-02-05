@@ -23,3 +23,7 @@ services:
     image: mongo:latest
     ports:
       - 27017:27017
+  rabbitmq:
+    image: rabbitmq:3.8-rc-alpine
+    ports:
+      - 5671:5672
