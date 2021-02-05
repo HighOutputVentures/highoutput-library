@@ -26,4 +26,4 @@ services:
   rabbitmq:
     image: rabbitmq:3.8-rc-alpine
     ports:
-      - 5671:5672
+      - 5670:5672

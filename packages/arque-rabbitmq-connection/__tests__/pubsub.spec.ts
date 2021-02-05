@@ -7,7 +7,10 @@ describe('PubSub', () => {
   let amqp: AMQP;
 
   before(function () {
-    amqp = new AMQP({ hostname: 'rabbitmq' });
+    amqp = new AMQP({
+      hostname: process.env.CI ? 'rabbitmq' : 'localhost',
+      port: process.env.CI ? 5672 : 5670,
+    });
   });
 
   after(function () {
