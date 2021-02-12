@@ -1,6 +1,6 @@
 {
   "name": "@arque/activemq-connection",
-  "version": "1.0.0-alpha.26",
+  "version": "1.0.0-alpha.27",
   "description": "ActiveMQ Connection for `arque`",
   "keywords": [
     "event-sourcing",

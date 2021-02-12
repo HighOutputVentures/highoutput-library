@@ -1,6 +1,6 @@
 {
   "name": "@arque/rabbitmq-connection",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "description": "RabbitMQ connection for `arque`",
   "keywords": [
     "event-sourcing",
