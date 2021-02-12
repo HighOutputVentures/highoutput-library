@@ -1,0 +1,6 @@
+version: '3.2'
+services:
+  rabbitmq:
+    image: rabbitmq:3.8-rc-alpine
+    ports:
+      - 5670:5672
