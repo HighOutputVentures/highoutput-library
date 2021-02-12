@@ -1,6 +1,6 @@
 {
   "name": "arque",
-  "version": "1.0.0-alpha.57",
+  "version": "1.0.0-alpha.58",
   "description": "A library for Event Sourcing",
   "keywords": [
     "microservice",
@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@arque/activemq-connection": "0.0.1-alpha.26",
-    "@arque/core": "^1.0.0-alpha.37",
+    "@arque/core": "^1.0.0-alpha.38",
     "@arque/rabbitmq-connection": "^1.0.0-alpha.4",
     "@arque/types": "^1.0.0-alpha.13"
   },
