@@ -2,6 +2,9 @@ import crypto from 'crypto';
 import R from 'ramda';
 import { expect } from 'chai';
 import delay from '@highoutput/delay';
+import { fork } from 'child_process';
+import path from 'path';
+import { database } from './library';
 import {
   start,
   stop,
@@ -10,7 +13,16 @@ import {
 } from '.';
 
 describe('Distributed', () => {
-  before(async () => {
+  before(async function () {
+    this.server = fork(
+      path.resolve(__dirname, './event-store.ts'),
+      {
+        execArgv: ['--require', 'ts-node/register'],
+      },
+    );
+
+    await delay(250);
+
     await start();
   });
 
@@ -39,7 +51,16 @@ describe('Distributed', () => {
     expect(balances).to.deep.equal([35, 1025, 15, 0]);
   });
 
-  after(async () => {
+  after(async function () {
+    await Promise.all([
+      database.dropCollection('events'),
+      database.dropCollection('projections'),
+      database.dropCollection('balances'),
+      database.dropCollection('snapshots'),
+    ]);
+
     await stop();
+
+    this.server.kill('SIGTERM');
   });
 });

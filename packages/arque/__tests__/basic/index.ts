@@ -1,6 +1,5 @@
 import BalanceProjection from './projection';
 import BalanceAggregate from './aggregate';
-import BalanceModel from './model';
 
 const projection = new BalanceProjection();
 
@@ -23,7 +22,7 @@ export const command = {
 
 export const query = {
   async balance(id: Buffer) {
-    const document = BalanceModel.findOne({ id: id.toString('hex') });
+    const document = BalanceProjection.models.Balance.findOne({ id: id.toString('hex') });
 
     return document?.value || 0;
   },

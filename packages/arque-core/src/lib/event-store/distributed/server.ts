@@ -65,6 +65,7 @@ export default class {
       this.options.address,
       async ({ type, data }: { type: RequestType; data?: any }) => {
         logger.verbose({ type, data });
+
         if (type === RequestType.Ping) {
           return 'Pong';
         }

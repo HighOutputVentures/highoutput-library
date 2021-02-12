@@ -3,30 +3,38 @@ import {
   Projection,
   ProjectionEventHandler,
 } from '@arque/core';
-import BalanceModel from './model';
+import { loki } from './library';
 import { BalanceCreditedEvent, BalanceDebitedEvent } from './aggregate';
 
 export default class BalanceProjection extends Projection {
+  static models = {
+    Balance: loki
+      .addCollection<{
+        id: string;
+        value: number;
+      }>('balances'),
+  }
+
   @ProjectionEventHandler({ aggregate: { type: 'Balance' }, type: 'Credited' })
   onCredited(event: BalanceCreditedEvent) {
     const id = event.aggregate.id.toString('hex');
 
-    let document = BalanceModel.findOne({ id });
+    let document = BalanceProjection.models.Balance.findOne({ id });
 
     if (!document) {
-      document = BalanceModel.insertOne({ id, value: 0 })!;
+      document = BalanceProjection.models.Balance.insertOne({ id, value: 0 })!;
     }
 
     document.value += event.body.delta;
 
-    BalanceModel.update(document);
+    BalanceProjection.models.Balance.update(document);
   }
 
   @ProjectionEventHandler({ aggregate: { type: 'Balance' }, type: 'Debited' })
   onDebited(event: BalanceDebitedEvent) {
     const id = event.aggregate.id.toString('hex');
 
-    const document = BalanceModel.findOne({ id });
+    const document = BalanceProjection.models.Balance.findOne({ id });
 
     if (!document) {
       return;
@@ -34,6 +42,6 @@ export default class BalanceProjection extends Projection {
 
     document.value -= event.body.delta;
 
-    BalanceModel.update(document);
+    BalanceProjection.models.Balance.update(document);
   }
 }

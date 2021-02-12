@@ -10,6 +10,7 @@ const server = new DistributedEventStoreServer({
 });
 
 async function start() {
+  await database;
   await server.start();
 }
 

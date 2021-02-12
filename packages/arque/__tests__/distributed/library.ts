@@ -8,4 +8,8 @@ export const eventStore = new DistributedEventStore({
   connection,
 });
 
-export const database = mongoose.createConnection('mongodb://localhost/arque');
+export const database = mongoose.createConnection('mongodb://localhost/arque', {
+  maxPoolSize: 1,
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});

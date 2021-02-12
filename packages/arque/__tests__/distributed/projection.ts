@@ -16,7 +16,7 @@ import { BalanceCreditedEvent, BalanceDebitedEvent } from '../basic/aggregate';
 })
 export default class BalanceProjection extends Projection {
   static models = {
-    BalanceModel: database.model<{
+    Balance: database.model<{
       id: Buffer;
       value: number;
     } & Document>('Balance', new Schema({
@@ -33,14 +33,14 @@ export default class BalanceProjection extends Projection {
 
   @ProjectionEventHandler({ aggregate: { type: 'Balance' }, type: 'Credited' })
   async onCredited(event: BalanceCreditedEvent) {
-    const document = await BalanceProjection.models.BalanceModel.findOne({ _id: event.aggregate.id });
+    const document = await BalanceProjection.models.Balance.findOne({ _id: event.aggregate.id });
 
     if (!document) {
-      await BalanceProjection.models.BalanceModel.create({ _id: event.aggregate.id, value: event.body.delta });
+      await BalanceProjection.models.Balance.create({ _id: event.aggregate.id, value: event.body.delta });
       return;
     }
 
-    await BalanceProjection.models.BalanceModel.updateOne(
+    await BalanceProjection.models.Balance.updateOne(
       { _id: event.aggregate.id },
       { $inc: { value: event.body.delta } },
     );
@@ -48,7 +48,7 @@ export default class BalanceProjection extends Projection {
 
   @ProjectionEventHandler({ aggregate: { type: 'Balance' }, type: 'Debited' })
   async onDebited(event: BalanceDebitedEvent) {
-    await BalanceProjection.models.BalanceModel
+    await BalanceProjection.models.Balance
       .updateOne({ _id: event.aggregate.id }, { $inc: { value: -event.body.delta } });
   }
 }
