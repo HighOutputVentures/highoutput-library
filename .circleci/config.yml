@@ -32,6 +32,8 @@ jobs:
       - image: circleci/node:12.18.4-stretch
       - image: highoutputdev/activemq:latest
       - image: mongo:latest
+      - image: rabbitmq:3.8-rc-alpine
+        name: 'rabbitmq'
     steps:
       - restore_point
       - run:
