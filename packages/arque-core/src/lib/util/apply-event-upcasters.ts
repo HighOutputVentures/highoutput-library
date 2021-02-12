@@ -1,10 +1,15 @@
 /* eslint-disable no-constant-condition, no-loop-func */
-import { Event, EventUpcaster } from '@arque/types';
+import { Event } from '@arque/types';
 
 import R from 'ramda';
 
+type EventUpcaster<TEvent extends Event> = {
+  filter: { type: TEvent['type']; version: number; aggregate?: { type?: Event['aggregate']['type'] } },
+  upcaster: (event: Event) => TEvent;
+};
+
 const checkUpcaster = <TEvent extends Event>(
-  filter: EventUpcaster<TEvent>['filter'],
+  filter: { type: string; version: number; aggregate?: { type?: string; } },
   event: Pick<TEvent, 'type' | 'version' | 'aggregate'>,
 ) => {
   const partial = filter.type === event.type && filter.version === event.version;

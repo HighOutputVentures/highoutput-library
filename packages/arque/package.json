@@ -26,11 +26,12 @@
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
   },
   "dependencies": {
+    "@arque/activemq-connection": "0.0.1-alpha.26",
     "@arque/core": "^1.0.0-alpha.36",
+    "@arque/rabbitmq-connection": "^1.0.0-alpha.3",
     "@arque/types": "^1.0.0-alpha.12"
   },
   "devDependencies": {
-    "@arque/activemq-connection": "0.0.1-alpha.15",
     "@highoutput/delay": "^0.2.5",
     "@types/chai": "^4.2.12",
     "@types/lokijs": "^1.5.3",

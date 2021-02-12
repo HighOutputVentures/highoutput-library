@@ -17,7 +17,7 @@ export default function (params: {
   eventStore?: EventStore;
   projectionStore?: ProjectionStore;
   eventUpcasters?: {
-    filter: { type: string; version: number; aggregate?: { type: string; } };
+    filter: { type: string; version: number; aggregate?: { type?: string; } };
     upcaster: (event: Event) => Event
   }[];
   eventHandlers?: {

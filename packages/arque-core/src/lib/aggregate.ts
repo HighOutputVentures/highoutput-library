@@ -126,7 +126,7 @@ export default class Aggregate<TState = any> {
     let newEvent = event;
 
     if (this.eventUpcasters) {
-      newEvent = applyEventUpcasters<Event>(newEvent, this.eventUpcasters);
+      newEvent = applyEventUpcasters(newEvent, this.eventUpcasters);
     }
 
     for (const { filter, handler } of this.eventHandlers) {
