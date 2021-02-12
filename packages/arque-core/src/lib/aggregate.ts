@@ -54,7 +54,9 @@ export default class Aggregate<TState = any> {
       (this as unknown as TCache).cache = cache;
     }
 
-    let promise = cache.get(id.toString('hex'));
+    const key = id.toString('hex');
+
+    let promise = cache.get(key);
 
     if (!promise) {
       promise = (async () => {
@@ -64,7 +66,7 @@ export default class Aggregate<TState = any> {
 
         return aggregate;
       })();
-      cache.set(id.toString('hex'), promise);
+      cache.set(key, promise);
     }
 
     const aggregate = await promise;
@@ -99,7 +101,7 @@ export default class Aggregate<TState = any> {
   }
 
   private get eventUpcasters(): {
-    filter: { type: string; version: number; aggregate?: { type: string; } };
+    filter: { type: string; version: number; aggregate?: { type?: string; } };
     upcaster: (event: Event) => Event
   }[] {
     return Reflect.getMetadata(EVENT_UPCASTERS_METADATA_KEY, this) || [];
@@ -152,31 +154,33 @@ export default class Aggregate<TState = any> {
     });
   }
 
+  private async _fold() {
+    let state = R.clone(this.state);
+
+    let { version } = this;
+
+    let events: Event[];
+
+    do {
+      events = (await this.eventStore.retrieveAggregateEvents({
+        aggregate: this.id,
+        first: this.options.batchSize,
+        after: version,
+      })) as Event[];
+
+      for (const event of events) {
+        state = this.apply(state, event);
+
+        version = event.aggregate.version;
+      }
+    } while (events.length === this.options.batchSize);
+
+    this._version = version;
+    this._state = Object.freeze(state);
+  }
+
   public async fold() {
-    await this.queue.add(async () => {
-      let state = R.clone(this.state);
-
-      let { version } = this;
-
-      let events: Event[];
-
-      do {
-        events = (await this.eventStore.retrieveAggregateEvents({
-          aggregate: this.id,
-          first: this.options.batchSize,
-          after: version,
-        })) as Event[];
-
-        for (const event of events) {
-          state = this.apply(state, event);
-
-          version = event.aggregate.version;
-        }
-      } while (events.length === this.options.batchSize);
-
-      this._version = version;
-      this._state = Object.freeze(state);
-    });
+    await this.queue.add(async () => this._fold());
   }
 
   public async createEvent<T extends Event = Event>(params: {
@@ -184,9 +188,9 @@ export default class Aggregate<TState = any> {
     body: T['body'];
     version?: number;
   }) {
-    await this.fold();
-
     await this.queue.add(async () => {
+      await this._fold();
+
       const event = await this.eventStore.createEvent({
         ...params,
         version: params.version || 1,
@@ -197,7 +201,7 @@ export default class Aggregate<TState = any> {
         },
       });
 
-      const state = this.apply(R.clone(this.state), event);
+      const state = this.apply(this.state, event);
 
       await event.save();
 
