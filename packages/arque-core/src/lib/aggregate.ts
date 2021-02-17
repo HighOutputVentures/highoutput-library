@@ -42,6 +42,14 @@ export default class Aggregate<TState = any> {
   }
 
   public static async load<T>(this: new (id: ID) => T, id: ID) {
+    const aggregate = await (this as any).init(id);
+
+    await aggregate.fold();
+
+    return aggregate as unknown as T;
+  }
+
+  public static async init<T>(this: new (id: ID) => T, id: ID) {
     type TCache = { cache: Cache<string, Promise<Aggregate>> | null };
     let { cache } = this as unknown as TCache;
     if (!cache) {
@@ -71,9 +79,7 @@ export default class Aggregate<TState = any> {
 
     const aggregate = await promise;
 
-    await aggregate.fold();
-
-    return aggregate as never as T;
+    return aggregate as unknown as T;
   }
 
   get type(): string {

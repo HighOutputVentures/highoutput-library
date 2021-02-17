@@ -30,7 +30,7 @@ export default class BalanceAggregate extends Aggregate<number> {
   }
 
   static async credit(id: ID, delta: number) {
-    const aggregate = await this.load(id);
+    const aggregate = await this.init(id);
 
     await aggregate.createEvent<BalanceCreditedEvent>({
       type: 'Credited',
@@ -39,7 +39,7 @@ export default class BalanceAggregate extends Aggregate<number> {
   }
 
   static async debit(id: ID, delta: number) {
-    const aggregate = await this.load(id);
+    const aggregate = await this.init(id);
 
     await aggregate.createEvent<BalanceDebitedEvent>({
       type: 'Debited',
