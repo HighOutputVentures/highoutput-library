@@ -10,7 +10,7 @@ import {
 export default class implements Connection {
   private amqp: Amqp;
 
-  public constructor(options?: AmqpOptions) {
+  public constructor(options?: Partial<AmqpOptions>) {
     this.amqp = new Amqp(options);
   }
 
