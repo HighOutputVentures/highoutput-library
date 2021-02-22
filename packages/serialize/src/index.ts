@@ -4,6 +4,10 @@ export function serialize(object: any): any {
   const type = typeof object;
 
   if (type === 'object') {
+    if (object instanceof Array) {
+      return object.map(serialize);
+    }
+
     if (object instanceof Date) {
       return {
         __classObject: true,
@@ -16,7 +20,7 @@ export function serialize(object: any): any {
       return {
         __classObject: true,
         type: 'Set',
-        data: Array.from(object),
+        data: serialize(Array.from(object)),
       };
     }
 
@@ -24,7 +28,7 @@ export function serialize(object: any): any {
       return {
         __classObject: true,
         type: 'Map',
-        data: Array.from(object),
+        data: serialize(Array.from(object)),
       };
     }
 
@@ -55,17 +59,21 @@ export function deserialize(object: any): any {
       return null;
     }
 
+    if (object instanceof Array) {
+      return object.map(deserialize);
+    }
+
     if (object.__classObject) {
       if (object.type === 'Date') {
         return new Date(object.data);
       }
 
       if (object.type === 'Set') {
-        return new Set(object.data);
+        return new Set(object.data.map(deserialize));
       }
 
       if (object.type === 'Map') {
-        return new Map(object.data);
+        return new Map(object.data.map(deserialize));
       }
 
       if (object.type === 'Buffer') {

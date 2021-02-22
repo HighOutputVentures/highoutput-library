@@ -1,6 +1,5 @@
 import 'mocha';
 import { expect } from 'chai';
-import assert from 'assert';
 import { serialize, deserialize } from '../src';
 
 const data: { deserialized: any, serialized: any }[] = [
@@ -83,7 +82,24 @@ const data: { deserialized: any, serialized: any }[] = [
         data: 'mOfRn5t7rFI='
       }
     }
-  }
+  },
+  {
+    deserialized: new Map([['one', new Date('2020-09-20T04:00:00.000Z')]]),
+    serialized: {
+      __classObject: true,
+      type: 'Map',
+      data: [
+        [
+          'one',
+          {
+            __classObject: true,
+            type: 'Date',
+            data: '2020-09-20T04:00:00.000Z'
+          },
+        ]
+      ]
+    },
+  },
 ];
 
 describe('serialize', () => {
