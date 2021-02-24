@@ -1,6 +1,6 @@
 {
   "name": "@arque/activemq-connection",
-  "version": "1.0.0-alpha.31",
+  "version": "1.0.0-alpha.32",
   "description": "ActiveMQ Connection for `arque`",
   "keywords": [
     "event-sourcing",
@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@arque/types": "^1.0.0-alpha.13",
-    "@highoutput/amqp": "^0.11.2",
+    "@highoutput/amqp": "^0.11.3",
     "@types/node": "^14.11.1"
   },
   "devDependencies": {
