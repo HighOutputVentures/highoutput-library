@@ -20,7 +20,7 @@ class Logger {
 
   tag(tags: string | string[]): Logger {
     return new Logger([
-      ...(this.tags.splice(0) as string[]),
+      ...(this.tags.slice(0) as string[]),
       ...(typeof tags === 'string' ? [tags] : tags),
     ]);
   }
