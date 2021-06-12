@@ -78,7 +78,7 @@ export default class implements EventStoreDatabase {
     schema.index({ 'aggregate.id': 1 });
     schema.index({ 'aggregate.version': -1 });
 
-    this.model = this.connection.model('Event', schema);
+    this.model = this.connection.model<Event & Document>('Event', schema);
   }
 
   public async saveEvent(event: Event): Promise<void> {

@@ -32,7 +32,7 @@ export default class implements ProjectionStore {
       },
     }, { _id: false });
 
-    this.model = this.connection.model('Projection', schema);
+    this.model = this.connection.model<ProjectionState & Document>('Projection', schema);
   }
 
   async find(id: string): Promise<ProjectionState | null> {

@@ -45,7 +45,7 @@ export default class implements SnapshotStore {
     }, { _id: false });
     schema.index({ 'aggregate.id': 1, 'aggregate.version': -1 }, { unique: true });
 
-    this.model = this.connection.model('Snapshot', schema);
+    this.model = this.connection.model<Snapshot & Document>('Snapshot', schema);
   }
 
   public createSnapshot(params: {

@@ -62,7 +62,7 @@ export default class implements EventStore {
           randomisationFactor: 0,
         });
 
-        await new Promise((resolve) => {
+        await new Promise<void>((resolve) => {
           const checkServer = async () => {
             const available = await Promise.race([
               client({ type: RequestType.Ping }).then(() => true),
