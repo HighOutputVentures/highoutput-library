@@ -8,26 +8,25 @@ const loggers: LRU<string, Debugger> = new LRU({
 });
 
 class Logger {
-  private tags: string[];
+  private service: string;
+  private tags: string[] | undefined;
 
-  constructor(tags: string | string[]) {
-    if (tags instanceof Array) {
-      this.tags = tags;
-    } else {
-      this.tags = [tags];
-    }
+  constructor(service: string, tags?: string | string[]) {
+      this.service = service;
+      if (tags) {
+        this.tags = (tags instanceof Array)? tags: [tags];
+      }
   }
 
   tag(tags: string | string[]): Logger {
-    return new Logger([
-      ...(this.tags.slice(0) as string[]),
-      ...(typeof tags === 'string' ? [tags] : tags),
+    return new Logger(this.service, [
+      ...((this.tags || []).slice(0) as string[]),
+      ...((tags instanceof Array)? tags: [tags]),
     ]);
   }
 
   log(level: string, ...args: Argument[]): void {
-    const tags = [...this.tags].join(',');
-    const scope = `${level}${tags ? `:${tags}` : ''}`;
+    const scope = `${level}${this.service ? `:${this.service}` : ''}`;
     const logger = loggers.get(scope) || debug(scope);
 
     if (!loggers.get(scope)) {
@@ -56,13 +55,7 @@ class Logger {
 
         return item;
       })
-      .map(item => {
-        if (typeof item === 'object') {
-          return JSON.stringify(item);
-        }
-
-        return item;
-      })
+      .map(item => JSON.stringify({ tags: this.tags, log: item }))
       .forEach(item => logger(item));
   }
 
