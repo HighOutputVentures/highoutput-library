@@ -55,7 +55,12 @@ class Logger {
 
         return item;
       })
-      .map(item => JSON.stringify({ tags: this.tags, log: item }))
+      .map(item => {
+        return JSON.stringify({ 
+          tags: this.tags, 
+          ...(typeof item === 'object')? item : { message: item } 
+        });
+      })
       .forEach(item => logger(item));
   }
 
