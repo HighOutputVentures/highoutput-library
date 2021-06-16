@@ -56,7 +56,7 @@ class Logger {
         return JSON.stringify({ 
           tags: this.tags, 
           ...(process.env.SERVICE_NAME)? { service: process.env.SERVICE_NAME } : {},
-          ...(typeof item === 'object')? item : { message: item } 
+          message: item, 
         });
       })
       .forEach(item => logger(item));
