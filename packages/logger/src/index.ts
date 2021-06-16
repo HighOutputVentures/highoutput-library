@@ -8,29 +8,26 @@ const loggers: LRU<string, Debugger> = new LRU({
 });
 
 class Logger {
-  private service: string;
   private tags: string[] | undefined;
 
-  constructor(service: string, tags?: string | string[]) {
-      this.service = service;
+  constructor(tags?: string | string[]) {
       if (tags) {
         this.tags = (tags instanceof Array)? tags: [tags];
       }
   }
 
   tag(tags: string | string[]): Logger {
-    return new Logger(this.service, [
+    return new Logger([
       ...((this.tags || []).slice(0) as string[]),
       ...((tags instanceof Array)? tags: [tags]),
     ]);
   }
 
   log(level: string, ...args: Argument[]): void {
-    const scope = `${level}${this.service ? `:${this.service}` : ''}`;
-    const logger = loggers.get(scope) || debug(scope);
+    const logger = loggers.get(level) || debug(level);
 
-    if (!loggers.get(scope)) {
-      loggers.set(scope, logger);
+    if (!loggers.get(level)) {
+      loggers.set(level, logger);
     }
 
     args
@@ -58,6 +55,7 @@ class Logger {
       .map(item => {
         return JSON.stringify({ 
           tags: this.tags, 
+          ...(process.env.SERVICE_NAME)? { service: process.env.SERVICE_NAME } : {},
           ...(typeof item === 'object')? item : { message: item } 
         });
       })
