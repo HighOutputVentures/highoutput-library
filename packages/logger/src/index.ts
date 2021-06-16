@@ -36,14 +36,17 @@ class Logger {
           const obj = { message: item.message };
 
           Object.getOwnPropertyNames(item).forEach(property => {
-            (obj as any)[property] = (item as any)[property];
+            (obj as any)[property] = 
+              (typeof (item as any)[property] === 'string')? 
+              (item as any)[property].replace(/\n/g, '\\n'):
+                  (item as any)[property];
           });
 
           return obj;
         }
 
         if (typeof item === 'string') {
-          return item.replace(/\n/, '\\n');
+          return item.replace(/\n/g, '\\n');
         }
 
         if (typeof item === 'number') {
