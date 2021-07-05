@@ -13,6 +13,13 @@ describe('logger', () => {
     logger.silly('Hello world!');
     logger.verbose('Hello world!');
 
+    logger.tag('tag1').tag('tag2').log('info', 'Hello world!');
+    logger.tag('tag1').tag('tag2').info('Hello world!');
+    logger.tag('tag1').tag('tag2').error('Hello world!');
+    logger.tag('tag1').tag('tag2').warn('Hello world!');
+    logger.tag('tag1').tag('tag2').silly('Hello world!');
+    logger.tag('tag1').tag('tag2').verbose('Hello world!');
+
     assert.ok(true);
   });
 
@@ -33,6 +40,13 @@ describe('logger', () => {
     logger.warn({ message: 'Hello world!' });
     logger.silly({ message: 'Hello world!' });
     logger.verbose({ message: 'Hello world!' });
+
+    logger.log('info', { message: { another: 'Hello world!', one: { two: 'Hello world!' } } });
+    logger.info({ message: { another: 'Hello world!', one: { two: 'Hello world!' } } });
+    logger.error({ message: { another: 'Hello world!', one: { two: 'Hello world!' } } });
+    logger.warn({ message: { another: 'Hello world!', one: { two: 'Hello world!' } } });
+    logger.silly({ message: { another: 'Hello world!', one: { two: 'Hello world!' } } });
+    logger.verbose({ message: { another: 'Hello world!', one: { two: 'Hello world!' } } });
 
     assert.ok(true);
   });

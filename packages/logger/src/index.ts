@@ -11,9 +11,9 @@ class Logger {
   private tags: string[] | undefined;
 
   constructor(tags?: string | string[]) {
-      if (tags) {
-        this.tags = (tags instanceof Array)? tags: [tags];
-      }
+    if (tags) {
+      this.tags = (tags instanceof Array)? tags: [tags];
+    }
   }
 
   tag(tags: string | string[]): Logger {
@@ -37,9 +37,9 @@ class Logger {
 
           Object.getOwnPropertyNames(item).forEach(property => {
             (obj as any)[property] = 
-              (typeof (item as any)[property] === 'string')? 
-              (item as any)[property].replace(/\n/g, '\\n'):
-                  (item as any)[property];
+              (typeof (item as any)[property] === 'string') ?
+                (item as any)[property].replace(/\n/g, '\\n') :
+                (item as any)[property];
           });
 
           return obj;
