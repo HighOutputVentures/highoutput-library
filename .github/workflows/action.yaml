@@ -126,4 +126,5 @@ jobs:
             packages/logger/node_modules
             packages/serialize/node_modules
           key: npm-${{ hashFiles('**/package-lock.json') }}
+      - run: docker-compose up -d
       - run: npx lerna run test
