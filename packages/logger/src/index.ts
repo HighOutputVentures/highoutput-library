@@ -8,30 +8,26 @@ const loggers: LRU<string, Debugger> = new LRU({
 });
 
 class Logger {
-  private tags: string[];
+  private tags: string[] | undefined;
 
-  constructor(tags: string | string[]) {
-    if (tags instanceof Array) {
-      this.tags = tags;
-    } else {
-      this.tags = [tags];
+  constructor(tags?: string | string[]) {
+    if (tags) {
+      this.tags = (tags instanceof Array)? tags: [tags];
     }
   }
 
   tag(tags: string | string[]): Logger {
     return new Logger([
-      ...(this.tags.slice(0) as string[]),
-      ...(typeof tags === 'string' ? [tags] : tags),
+      ...((this.tags || []).slice(0) as string[]),
+      ...((tags instanceof Array)? tags: [tags]),
     ]);
   }
 
   log(level: string, ...args: Argument[]): void {
-    const tags = [...this.tags].join(',');
-    const scope = `${level}${tags ? `:${tags}` : ''}`;
-    const logger = loggers.get(scope) || debug(scope);
+    const logger = loggers.get(level) || debug(level);
 
-    if (!loggers.get(scope)) {
-      loggers.set(scope, logger);
+    if (!loggers.get(level)) {
+      loggers.set(level, logger);
     }
 
     args
@@ -40,14 +36,17 @@ class Logger {
           const obj = { message: item.message };
 
           Object.getOwnPropertyNames(item).forEach(property => {
-            (obj as any)[property] = (item as any)[property];
+            (obj as any)[property] = 
+              (typeof (item as any)[property] === 'string') ?
+                (item as any)[property].replace(/\n/g, '\\n') :
+                (item as any)[property];
           });
 
           return obj;
         }
 
         if (typeof item === 'string') {
-          return item.replace(/\n/, '\\n');
+          return item.replace(/\n/g, '\\n');
         }
 
         if (typeof item === 'number') {
@@ -57,11 +56,11 @@ class Logger {
         return item;
       })
       .map(item => {
-        if (typeof item === 'object') {
-          return JSON.stringify(item);
-        }
-
-        return item;
+        return JSON.stringify({ 
+          tags: this.tags, 
+          ...(process.env.SERVICE_NAME)? { service: process.env.SERVICE_NAME } : {},
+          message: item, 
+        });
       })
       .forEach(item => logger(item));
   }
