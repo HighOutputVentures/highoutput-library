@@ -1,0 +1,121 @@
+---
+name: deployment-pipeline
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - uses: actions/cache@v2.1.4
+        with:
+          path: |
+            node_modules
+            amqp/node_modules
+            arque/node_modules
+            arque-activemq-connection/node_modules
+            arque-core/node_modules
+            arque-kafka-connection/node_modules
+            arque-rabbitmq-connection/node_modules
+            arque-types/node_modules
+            async-group/node_modules
+            delay/node_modules
+            error/node_modules
+            hash/node_modules
+            hmac/node_modules
+            logger/node_modules
+            serialize/node_modules
+          key: npm-${{ hashFiles('**/package-lock.json') }}
+      - run: npm install
+      - run: npx lerna bootstrap
+  lint:
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - uses: actions/cache@v2.1.4
+        with:
+          path: |
+            node_modules
+            amqp/node_modules
+            arque/node_modules
+            arque-activemq-connection/node_modules
+            arque-core/node_modules
+            arque-kafka-connection/node_modules
+            arque-rabbitmq-connection/node_modules
+            arque-types/node_modules
+            async-group/node_modules
+            delay/node_modules
+            error/node_modules
+            hash/node_modules
+            hmac/node_modules
+            logger/node_modules
+            serialize/node_modules
+          key: npm-${{ hashFiles('**/package-lock.json') }}
+      - run: npx lerna run lint
+  build:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - uses: actions/cache@v2.1.4
+        with:
+          path: |
+            node_modules
+            amqp/node_modules
+            arque/node_modules
+            arque-activemq-connection/node_modules
+            arque-core/node_modules
+            arque-kafka-connection/node_modules
+            arque-rabbitmq-connection/node_modules
+            arque-types/node_modules
+            async-group/node_modules
+            delay/node_modules
+            error/node_modules
+            hash/node_modules
+            hmac/node_modules
+            logger/node_modules
+            serialize/node_modules
+          key: npm-${{ hashFiles('**/package-lock.json') }}
+      - run: npx lerna run build
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - uses: actions/cache@v2.1.4
+        with:
+          path: |
+            node_modules
+            amqp/node_modules
+            arque/node_modules
+            arque-activemq-connection/node_modules
+            arque-core/node_modules
+            arque-kafka-connection/node_modules
+            arque-rabbitmq-connection/node_modules
+            arque-types/node_modules
+            async-group/node_modules
+            delay/node_modules
+            error/node_modules
+            hash/node_modules
+            hmac/node_modules
+            logger/node_modules
+            serialize/node_modules
+          key: npm-${{ hashFiles('**/package-lock.json') }}
+      - run: npx lerna run test
