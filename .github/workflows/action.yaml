@@ -22,20 +22,20 @@ jobs:
         with:
           path: |
             node_modules
-            amqp/node_modules
-            arque/node_modules
-            arque-activemq-connection/node_modules
-            arque-core/node_modules
-            arque-kafka-connection/node_modules
-            arque-rabbitmq-connection/node_modules
-            arque-types/node_modules
-            async-group/node_modules
-            delay/node_modules
-            error/node_modules
-            hash/node_modules
-            hmac/node_modules
-            logger/node_modules
-            serialize/node_modules
+            packages/amqp/node_modules
+            packages/arque/node_modules
+            packages/arque-activemq-connection/node_modules
+            packages/arque-core/node_modules
+            packages/arque-kafka-connection/node_modules
+            packages/arque-rabbitmq-connection/node_modules
+            packages/arque-types/node_modules
+            packages/async-group/node_modules
+            packages/delay/node_modules
+            packages/error/node_modules
+            packages/hash/node_modules
+            packages/hmac/node_modules
+            packages/logger/node_modules
+            packages/serialize/node_modules
           key: npm-${{ hashFiles('**/package-lock.json') }}
       - run: npm install
       - run: npx lerna bootstrap
@@ -51,20 +51,20 @@ jobs:
         with:
           path: |
             node_modules
-            amqp/node_modules
-            arque/node_modules
-            arque-activemq-connection/node_modules
-            arque-core/node_modules
-            arque-kafka-connection/node_modules
-            arque-rabbitmq-connection/node_modules
-            arque-types/node_modules
-            async-group/node_modules
-            delay/node_modules
-            error/node_modules
-            hash/node_modules
-            hmac/node_modules
-            logger/node_modules
-            serialize/node_modules
+            packages/amqp/node_modules
+            packages/arque/node_modules
+            packages/arque-activemq-connection/node_modules
+            packages/arque-core/node_modules
+            packages/arque-kafka-connection/node_modules
+            packages/arque-rabbitmq-connection/node_modules
+            packages/arque-types/node_modules
+            packages/async-group/node_modules
+            packages/delay/node_modules
+            packages/error/node_modules
+            packages/hash/node_modules
+            packages/hmac/node_modules
+            packages/logger/node_modules
+            packages/serialize/node_modules
           key: npm-${{ hashFiles('**/package-lock.json') }}
       - run: npx lerna run lint
   build:
@@ -79,20 +79,20 @@ jobs:
         with:
           path: |
             node_modules
-            amqp/node_modules
-            arque/node_modules
-            arque-activemq-connection/node_modules
-            arque-core/node_modules
-            arque-kafka-connection/node_modules
-            arque-rabbitmq-connection/node_modules
-            arque-types/node_modules
-            async-group/node_modules
-            delay/node_modules
-            error/node_modules
-            hash/node_modules
-            hmac/node_modules
-            logger/node_modules
-            serialize/node_modules
+            packages/amqp/node_modules
+            packages/arque/node_modules
+            packages/arque-activemq-connection/node_modules
+            packages/arque-core/node_modules
+            packages/arque-kafka-connection/node_modules
+            packages/arque-rabbitmq-connection/node_modules
+            packages/arque-types/node_modules
+            packages/async-group/node_modules
+            packages/delay/node_modules
+            packages/error/node_modules
+            packages/hash/node_modules
+            packages/hmac/node_modules
+            packages/logger/node_modules
+            packages/serialize/node_modules
           key: npm-${{ hashFiles('**/package-lock.json') }}
       - run: npx lerna run build
   test:
@@ -107,19 +107,19 @@ jobs:
         with:
           path: |
             node_modules
-            amqp/node_modules
-            arque/node_modules
-            arque-activemq-connection/node_modules
-            arque-core/node_modules
-            arque-kafka-connection/node_modules
-            arque-rabbitmq-connection/node_modules
-            arque-types/node_modules
-            async-group/node_modules
-            delay/node_modules
-            error/node_modules
-            hash/node_modules
-            hmac/node_modules
-            logger/node_modules
-            serialize/node_modules
+            packages/amqp/node_modules
+            packages/arque/node_modules
+            packages/arque-activemq-connection/node_modules
+            packages/arque-core/node_modules
+            packages/arque-kafka-connection/node_modules
+            packages/arque-rabbitmq-connection/node_modules
+            packages/arque-types/node_modules
+            packages/async-group/node_modules
+            packages/delay/node_modules
+            packages/error/node_modules
+            packages/hash/node_modules
+            packages/hmac/node_modules
+            packages/logger/node_modules
+            packages/serialize/node_modules
           key: npm-${{ hashFiles('**/package-lock.json') }}
       - run: npx lerna run test
