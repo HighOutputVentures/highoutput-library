@@ -1,5 +1,5 @@
 ---
-name: deployment-pipeline
+name: ci-pipeline
 
 on:
   push:
@@ -124,4 +124,5 @@ jobs:
             packages/serialize/node_modules
           key: npm-${{ hashFiles('**/package-lock.json') }}
       - run: docker-compose up -d
+      - run: npx lerna run build
       - run: npx lerna run test
