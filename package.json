@@ -3,12 +3,7 @@
   "description": "Reusable libraries by High Output Ventures",
   "author": "High Output Ventures",
   "license": "MIT",
-  "homepage": "https://github.com/Proto-Garage/highoutput-library#README.md",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Proto-Garage/highoutput-library.git"
-  },
   "dependencies": {
-    "lerna": "^3.22.1"
+    "lerna": "^4.0.0"
   }
 }
