@@ -1,6 +1,6 @@
 {
   "name": "@arque/core",
-  "version": "1.0.0-alpha.43",
+  "version": "1.0.0-alpha.44",
   "description": "Core for `arque`",
   "keywords": [
     "microservice",
@@ -27,14 +27,14 @@
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
   },
   "dependencies": {
-    "@arque/types": "^1.0.0-alpha.13",
-    "@highoutput/amqp": "^0.11.5",
-    "@highoutput/async-group": "^0.3.5",
-    "@highoutput/delay": "^0.2.5",
-    "@highoutput/error": "^0.1.9",
-    "@highoutput/hash": "^0.1.8",
-    "@highoutput/logger": "^0.5.0",
-    "@highoutput/serialize": "^0.1.2",
+    "@arque/types": "^1.0.0-alpha.14",
+    "@highoutput/amqp": "^0.11.6",
+    "@highoutput/async-group": "^0.3.6",
+    "@highoutput/delay": "^0.2.6",
+    "@highoutput/error": "^0.1.10",
+    "@highoutput/hash": "^0.1.9",
+    "@highoutput/logger": "^0.5.1",
+    "@highoutput/serialize": "^0.1.3",
     "@types/backoff": "^2.5.1",
     "@types/lokijs": "^1.5.3",
     "@types/lru-cache": "^5.1.0",

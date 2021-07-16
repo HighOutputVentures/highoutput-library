@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/delay",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "main": "build/index.js",
   "scripts": {
     "clean": "rimraf build/",

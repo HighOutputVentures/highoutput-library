@@ -1,6 +1,6 @@
 {
   "name": "@arque/activemq-connection",
-  "version": "1.0.0-alpha.34",
+  "version": "1.0.0-alpha.35",
   "description": "ActiveMQ Connection for `arque`",
   "keywords": [
     "event-sourcing",
@@ -31,13 +31,13 @@
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
   },
   "dependencies": {
-    "@arque/types": "^1.0.0-alpha.13",
-    "@highoutput/amqp": "^0.11.5",
+    "@arque/types": "^1.0.0-alpha.14",
+    "@highoutput/amqp": "^0.11.6",
     "@types/node": "^14.11.1",
     "ckeditor5": "^29.0.0"
   },
   "devDependencies": {
-    "@highoutput/delay": "^0.2.5",
+    "@highoutput/delay": "^0.2.6",
     "@types/chai": "^4.2.12",
     "@types/chance": "^1.1.0",
     "@types/mocha": "^8.0.3",
