@@ -45,6 +45,7 @@
     "@types/serialize-error": "^4.0.1",
     "@types/uuid": "^8.3.0",
     "backoff": "^2.5.0",
+    "ckeditor5": "^29.0.0",
     "clean-deep": "^3.3.0",
     "lokijs": "^1.5.9",
     "lru-cache": "^6.0.0",

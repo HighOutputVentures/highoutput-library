@@ -33,7 +33,8 @@
   "dependencies": {
     "@arque/types": "^1.0.0-alpha.13",
     "@highoutput/amqp": "^0.11.5",
-    "@types/node": "^14.11.1"
+    "@types/node": "^14.11.1",
+    "ckeditor5": "^29.0.0"
   },
   "devDependencies": {
     "@highoutput/delay": "^0.2.5",
