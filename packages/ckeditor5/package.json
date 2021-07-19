@@ -1,0 +1,74 @@
+{
+  "version": "1.3.7",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test --passWithNoTests",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build",
+    "size": "size-limit",
+    "analyze": "size-limit --why"
+  },
+  "peerDependencies": {
+    "react": ">=16",
+    "react-dom": ">=16"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "name": "hov-ckeditor5",
+  "author": "vmc08",
+  "module": "dist/hov-ckeditor5.esm.js",
+  "size-limit": [
+    {
+      "path": "dist/hov-ckeditor5.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/hov-ckeditor5.esm.js",
+      "limit": "10 KB"
+    }
+  ],
+  "devDependencies": {
+    "@babel/core": "^7.14.6",
+    "@size-limit/preset-small-lib": "^5.0.1",
+    "@types/lodash": "^4.14.171",
+    "@types/node-emoji": "^1.8.1",
+    "@types/react": "^17.0.14",
+    "@types/react-dom": "^17.0.9",
+    "babel-loader": "^8.2.2",
+    "babel-plugin-module-resolver": "^4.1.0",
+    "husky": "^7.0.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-is": "^17.0.2",
+    "size-limit": "^5.0.1",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.3.0",
+    "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "@ckeditor/ckeditor5-react": "^3.0.2",
+    "ckeditor5-custom-build": "git+https://github.com/HighOutputVentures/custom-ckeditor-build.git#v0.7.5",
+    "lodash": "^4.17.21",
+    "node-emoji": "^1.10.0"
+  }
+}
