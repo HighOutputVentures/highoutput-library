@@ -7,25 +7,32 @@ import {
   Box,
   Flex,
   Button,
-  Divider,
   Select,
+  Tooltip,
 } from '@chakra-ui/react';
-import { FaImage } from 'react-icons/fa';
 
 import ModalContainer from './components/ModalContainer';
 import ImagePreview from './components/ImagePreview';
 import FileInput from './components/FileInput';
 import { ModernEditorProps } from '../types/modern-editor';
+import { ImageIcon } from '../icons/ImageIcon';
 import { PostFormSchemaValues, postFormSchema } from './validation';
 
 const ModernEditor: FC<ModernEditorProps> = ({
   categories,
   defaultCategory,
   defaultContent,
-  editorTrigger,
   mentionables,
-  placeholder = 'What would you like to highlight?',
+  editorConfig,
 }) => {
+  const {
+    editorTrigger,
+    title = 'Create a post',
+    placeholder = 'What would you like to highlight?',
+    btnColor = '#FFC53D',
+    btnText = 'Share post',
+  } = editorConfig;
+
   const [files, setFiles] = useState<File[]>([]);
 
   const { register, getValues, setValue, handleSubmit, formState } = useForm<
@@ -47,23 +54,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
   const values = getValues();
 
   return (
-    <ModalContainer
-      modalTrigger={editorTrigger}
-      headerComponent={
-        <Select
-          mx="auto"
-          maxW="50%"
-          placeholder="Select category"
-          {...register('category')}
-        >
-          {categories.map(c => (
-            <option value={c.value} key={c.value}>
-              {c.label}
-            </option>
-          ))}
-        </Select>
-      }
-    >
+    <ModalContainer modalTrigger={editorTrigger} title={title}>
       <form
         style={{ width: '100%' }}
         onSubmitCapture={e => {
@@ -71,7 +62,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
           handleSubmit(v => console.log(v));
         }}
       >
-        <Box maxH="470px" overflowY="scroll">
+        <Box maxH="470px" overflowY="auto">
           <HOVEditor
             value={values.content || ''}
             onChange={v => setValue('content', v)}
@@ -94,23 +85,58 @@ const ModernEditor: FC<ModernEditorProps> = ({
             </SimpleGrid>
           )}
         </Box>
-        <Divider colorScheme="blue" pt="4" mb="4" />
-        <Flex justifyContent="space-between">
+        <Flex
+          justifyContent="space-between"
+          px="8"
+          py="4"
+          bgColor="#FAFAF9"
+          borderEndStartRadius="md"
+          borderEndEndRadius="md"
+        >
           <Box>
-            <FileInput
-              acceptedFileTypes="image/*"
-              label="Image upload"
-              icon={<FaImage />}
-              setFiles={setFiles}
-            />
+            <Tooltip
+              hasArrow
+              label="Add image"
+              aria-label="add image tooltip"
+              placement="top"
+              p="2"
+              mb="2"
+              borderRadius="md"
+            >
+              <span>
+                <FileInput
+                  acceptedFileTypes="image/*"
+                  label="Image upload"
+                  icon={<ImageIcon />}
+                  setFiles={setFiles}
+                />
+              </span>
+            </Tooltip>
           </Box>
-          <Button
-            type="submit"
-            variant="solid"
-            isDisabled={isSubmitting || isValid}
-          >
-            Post
-          </Button>
+          <Flex>
+            <Select
+              bg="white"
+              minW="186px"
+              mr="4"
+              placeholder="Select category"
+              {...register('category')}
+            >
+              {categories.map(c => (
+                <option value={c.value} key={c.value}>
+                  {c.label}
+                </option>
+              ))}
+            </Select>
+            <Button
+              flexShrink={0}
+              type="submit"
+              variant="solid"
+              bgColor={btnColor}
+              isDisabled={isSubmitting || isValid}
+            >
+              {btnText}
+            </Button>
+          </Flex>
         </Flex>
       </form>
     </ModalContainer>
