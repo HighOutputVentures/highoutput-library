@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { HOVEditor, EditorTypes } from 'hov-ckeditor5';
+import { HOVEditor, EditorTypes } from '@highoutput/ckeditor5';
 import {
   SimpleGrid,
   Box,
