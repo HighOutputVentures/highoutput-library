@@ -1,5 +1,6 @@
 {
   "version": "1.0.0",
+  "name": "@highoutput/ckeditor5",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -34,7 +35,6 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "hov-ckeditor5",
   "author": "vmc08",
   "module": "dist/hov-ckeditor5.esm.js",
   "size-limit": [

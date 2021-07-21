@@ -1,5 +1,6 @@
 {
   "version": "1.0.0",
+  "name": "@highoutput/ckeditor5-modern",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -40,7 +41,6 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "hov-modern-editor",
   "author": "vmc08",
   "module": "dist/hov-modern-editor.esm.js",
   "size-limit": [
@@ -75,6 +75,6 @@
     "yup": "^0.32.9"
   },
   "dependencies": {
-    "hov-ckeditor5": "^1.3.7"
+    "@highoutput/ckeditor5": "^1.0.0"
   }
 }
