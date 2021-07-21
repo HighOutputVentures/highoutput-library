@@ -26,7 +26,9 @@ const App = () => {
           mentionables={[]}
           defaultCategory=""
           defaultContent=""
-          editorTrigger={<Button>Largs x Jac</Button>}
+          editorConfig={{
+            editorTrigger: <Button>Largs x Jac</Button>,
+          }}
         />
       </Flex>
     </ChakraProvider>
