@@ -1,11 +1,18 @@
 import { ReactNode } from 'react';
-import { Mentionable } from 'hov-ckeditor5';
+import { Mentionable } from '@highoutput/ckeditor5';
+
+interface EditorConfig {
+  editorTrigger: ReactNode;
+  title?: string;
+  placeholder?: string;
+  btnColor?: string;
+  btnText?: string;
+}
 
 export interface ModernEditorProps {
-  editorTrigger: ReactNode;
   categories: Array<{ label: string; value: string }>;
   defaultCategory: string;
   defaultContent: string;
   mentionables: Mentionable[];
-  placeholder?: string;
+  editorConfig: EditorConfig;
 }
