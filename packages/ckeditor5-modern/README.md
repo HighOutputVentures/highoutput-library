@@ -1,6 +1,6 @@
 # HOV Modern Editor
 
-Reusable facebook-like editor component built based on hov-ckeditor5 library
+Reusable facebook-like editor component built based on @highoutput/ckeditor5 library
 
 ## Peer dependencies
 
