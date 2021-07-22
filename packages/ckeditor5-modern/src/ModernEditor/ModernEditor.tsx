@@ -59,7 +59,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
     <ModalContainer modalTrigger={editorTrigger} title={title}>
       <form
         style={{ width: '100%' }}
-        onSubmitCapture={handleSubmit(v => onSubmit?.({ ...v, files }))}
+        onSubmit={handleSubmit(v => onSubmit?.({ ...v, files }))}
       >
         <Box
           maxH="470px"

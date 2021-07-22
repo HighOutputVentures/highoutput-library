@@ -27,7 +27,7 @@
     "framer-motion": "^4.1.17",
     "react": ">=16",
     "react-dom": ">=16",
-    "react-hook-form": "^7.11.0",
+    "react-hook-form": ">=6.14.1",
     "react-icons": "^4.2.0"
   },
   "husky": {
