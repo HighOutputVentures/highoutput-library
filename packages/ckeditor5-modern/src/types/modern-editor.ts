@@ -10,7 +10,8 @@ interface EditorConfig {
 }
 
 export interface ModernEditorProps {
-  disable?: boolean;
+  disabled?: boolean;
+  loading?: boolean;
   categories: Array<{ label: string; value: string }>;
   defaultCategory: string;
   defaultContent: string;

@@ -18,6 +18,8 @@ const ModernEditor: FC<ModernEditorProps> = ({
   defaultContent,
   mentionables,
   editorConfig,
+  disabled = false,
+  loading = false,
 }) => {
   const {
     editorTrigger,
@@ -69,6 +71,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
           sx={MODERN_EDITOR_STYLE}
         >
           <HOVEditor
+            disabled={disabled || loading}
             value={values.content || ''}
             onChange={v => setValue('content', v)}
             placeholder={placeholder}
@@ -101,6 +104,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
             >
               <span>
                 <FileInput
+                  disabled={disabled || loading}
                   acceptedFileTypes="image/*"
                   label="Image upload"
                   icon={<ImageIcon />}
@@ -111,6 +115,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
           </Box>
           <Flex>
             <Select
+              disabled={disabled || loading}
               bg="white"
               minW="186px"
               mr="4"
@@ -124,6 +129,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
               ))}
             </Select>
             <Button
+              disabled={disabled || loading}
               flexShrink={0}
               type="submit"
               variant="solid"
