@@ -49,7 +49,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const { isSubmitting, isValid } = formState;
+  const { isSubmitting } = formState;
   const values = getValues();
   const images = useMemo(() => files.map(file => URL.createObjectURL(file)), [
     files,
@@ -59,12 +59,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
     <ModalContainer modalTrigger={editorTrigger} title={title}>
       <form
         style={{ width: '100%' }}
-        onSubmitCapture={e => {
-          e.preventDefault();
-          console.log(onSubmit);
-          onSubmit?.({ category: 'qwe', content: 'qweqweqweqwe', files: [] });
-          handleSubmit(v => onSubmit?.({ ...v, files }))();
-        }}
+        onSubmitCapture={handleSubmit(v => onSubmit?.({ ...v, files }))}
       >
         <Box
           maxH="470px"
@@ -139,7 +134,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
               type="submit"
               variant="solid"
               bgColor={btnColor}
-              isDisabled={isSubmitting || isValid}
+              isDisabled={isSubmitting}
             >
               {btnText}
             </Button>
