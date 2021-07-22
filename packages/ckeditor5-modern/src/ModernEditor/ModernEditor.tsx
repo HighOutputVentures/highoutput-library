@@ -20,6 +20,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
   editorConfig,
   disabled = false,
   loading = false,
+  onSubmit,
 }) => {
   const {
     editorTrigger,
@@ -58,7 +59,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
         style={{ width: '100%' }}
         onSubmitCapture={e => {
           e.preventDefault();
-          handleSubmit(v => console.log(v));
+          handleSubmit(v => onSubmit?.({ ...v, files }))();
         }}
       >
         <Box

@@ -26,6 +26,7 @@ const App = () => {
           mentionables={[]}
           defaultCategory=""
           defaultContent=""
+          onSubmit={v => console.log(v)}
           editorConfig={{
             editorTrigger: <Button>Largs x Jac</Button>,
           }}
