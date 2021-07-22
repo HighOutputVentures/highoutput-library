@@ -1,5 +1,5 @@
 {
-  "version": "2.0.8",
+  "version": "2.0.9",
   "name": "@highoutput/ckeditor5-modern",
   "license": "MIT",
   "main": "dist/index.js",
