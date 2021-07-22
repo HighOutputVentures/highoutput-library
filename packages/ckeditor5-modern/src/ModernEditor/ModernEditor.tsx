@@ -61,6 +61,8 @@ const ModernEditor: FC<ModernEditorProps> = ({
         style={{ width: '100%' }}
         onSubmitCapture={e => {
           e.preventDefault();
+          console.log(onSubmit);
+          onSubmit?.({ category: 'qwe', content: 'qweqweqweqwe', files: [] });
           handleSubmit(v => onSubmit?.({ ...v, files }))();
         }}
       >
