@@ -48,7 +48,7 @@ const ImagePreview: FC<ImagePreviewProps> = ({ count, src, onClick }) => (
   </Box>
 );
 
-const ImageGrid: FC<ImageGridProps> = ({
+export const ImageGrid: FC<ImageGridProps> = ({
   maxDisplay = MAXIMUM_DISPLAY,
   images,
   onImageClick,
