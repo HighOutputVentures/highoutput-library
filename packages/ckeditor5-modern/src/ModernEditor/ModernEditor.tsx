@@ -35,6 +35,8 @@ const ModernEditor: FC<ModernEditorProps> = ({
   const { register, getValues, setValue, handleSubmit, formState } = useForm<
     PostFormSchemaValues
   >({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
     resolver: yupResolver(postFormSchema),
     defaultValues: {
       content: defaultContent,
