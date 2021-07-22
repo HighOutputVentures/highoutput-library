@@ -26,7 +26,7 @@ const ModalContainer: FC<ModalContainerProps> = ({
       <Box w="100%" onClick={() => onOpen()}>
         {modalTrigger}
       </Box>
-      <Modal isOpen={isOpen} onClose={onClose} size="2xl">
+      <Modal isOpen={isOpen} onClose={onClose} size="xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader
