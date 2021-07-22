@@ -10,10 +10,14 @@ interface EditorConfig {
   btnText?: string;
 }
 
+export interface OnSubmitArgs extends PostFormSchemaValues {
+  files: File[];
+}
+
 export interface ModernEditorProps {
   disabled?: boolean;
   loading?: boolean;
-  onSubmit?: (values: PostFormSchemaValues & { files: File[] }) => void;
+  onSubmit?: (values: OnSubmitArgs) => void;
   categories: Array<{ label: string; value: string }>;
   defaultCategory: string;
   defaultContent: string;

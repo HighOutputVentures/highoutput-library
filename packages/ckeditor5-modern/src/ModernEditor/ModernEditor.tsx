@@ -147,4 +147,4 @@ const ModernEditor: FC<ModernEditorProps> = ({
 };
 
 export default ModernEditor;
-export { ModernEditorProps } from '../types/modern-editor';
+export { ModernEditorProps, OnSubmitArgs } from '../types/modern-editor';
