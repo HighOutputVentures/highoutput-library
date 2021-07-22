@@ -15,8 +15,15 @@ import {
   mentionItemRenderer,
 } from '../../utils/editorUtils';
 
-const HOVEditor: FC<HOVEditorProps> = (props) => {
-  const { editorType, value, onChange, placeholder, mentionables = [] } = props;
+const HOVEditor: FC<HOVEditorProps> = props => {
+  const {
+    editorType,
+    value,
+    onChange,
+    placeholder,
+    mentionables = [],
+    disabled = false,
+  } = props;
 
   const editorToobars = useMemo(() => getToolbars(editorType), [editorType]);
   const editorPlugins = useMemo(() => getPlugins(mentionables, editorType), [
@@ -27,6 +34,7 @@ const HOVEditor: FC<HOVEditorProps> = (props) => {
   return (
     <CKEditor
       editor={ClassicEditor}
+      disabled={disabled}
       config={{
         extraPlugins: editorPlugins,
         ...(editorToobars.length && {
@@ -38,7 +46,7 @@ const HOVEditor: FC<HOVEditorProps> = (props) => {
           feeds: [
             {
               marker: '@',
-              feed: mentionables.map((m) => `@${getDisplayName(m)}`),
+              feed: mentionables.map(m => `@${getDisplayName(m)}`),
               itemRenderer: (item: any) =>
                 mentionItemRenderer(item, mentionables),
             },
