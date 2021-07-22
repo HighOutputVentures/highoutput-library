@@ -2,7 +2,14 @@ import React, { FC, useEffect, useState, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { HOVEditor, EditorTypes } from '@highoutput/ckeditor5';
-import { Box, Flex, Button, Select, Tooltip } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Button,
+  Select,
+  Tooltip,
+  useDisclosure,
+} from '@chakra-ui/react';
 
 import ModalContainer from './components/ModalContainer';
 import ImageGrid from './components/ImageGrid';
@@ -31,8 +38,9 @@ const ModernEditor: FC<ModernEditorProps> = ({
   } = editorConfig;
 
   const [files, setFiles] = useState<File[]>([]);
+  const modalDisclosure = useDisclosure();
 
-  const { register, getValues, setValue, handleSubmit, formState } = useForm<
+  const { register, getValues, setValue, formState, handleSubmit } = useForm<
     PostFormSchemaValues
   >({
     mode: 'onChange',
@@ -56,10 +64,16 @@ const ModernEditor: FC<ModernEditorProps> = ({
   ]);
 
   return (
-    <ModalContainer modalTrigger={editorTrigger} title={title}>
+    <ModalContainer
+      disclosure={modalDisclosure}
+      modalTrigger={editorTrigger}
+      title={title}
+    >
       <form
         style={{ width: '100%' }}
-        onSubmit={handleSubmit(v => onSubmit?.({ ...v, files }))}
+        onSubmit={handleSubmit(v =>
+          onSubmit?.({ ...v, files }, modalDisclosure.onClose)
+        )}
       >
         <Box
           maxH="470px"

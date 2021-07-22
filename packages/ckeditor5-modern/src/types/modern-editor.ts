@@ -17,7 +17,7 @@ export interface OnSubmitArgs extends PostFormSchemaValues {
 export interface ModernEditorProps {
   disabled?: boolean;
   loading?: boolean;
-  onSubmit?: (values: OnSubmitArgs) => void;
+  onSubmit?: (values: OnSubmitArgs, onClose: () => void) => void;
   categories: Array<{ label: string; value: string }>;
   defaultCategory: string;
   defaultContent: string;

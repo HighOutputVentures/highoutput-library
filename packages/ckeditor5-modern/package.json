@@ -24,10 +24,12 @@
     "@chakra-ui/react": "^1.6.5",
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
+    "@hookform/resolvers": "^2.6.1",
     "framer-motion": "^4.1.17",
     "react": ">=16",
     "react-dom": ">=16",
-    "react-icons": "^4.2.0"
+    "react-hook-form": "^7.11.1",
+    "yup": "^0.32.9"
   },
   "husky": {
     "hooks": {
@@ -65,16 +67,15 @@
     "husky": "^7.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-icons": "^4.2.0",
+    "react-hook-form": "^7.11.1",
     "size-limit": "^5.0.1",
     "tsdx": "^0.14.1",
     "tslib": "^2.3.0",
-    "typescript": "^4.3.5"
+    "typescript": "^4.3.5",
+    "yup": "^0.32.9"
   },
   "dependencies": {
-    "@highoutput/ckeditor5": "^1.0.3",
-    "react-hook-form": "^6.14.1",
-    "yup": "^0.32.9"
+    "@highoutput/ckeditor5": "^1.0.3"
   },
   "publishConfig": {
     "access": "public"

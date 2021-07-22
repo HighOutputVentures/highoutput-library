@@ -6,21 +6,23 @@ import {
   ModalCloseButton,
   ModalContent,
   ModalBody,
-  useDisclosure,
   Box,
+  UseDisclosureReturn,
 } from '@chakra-ui/react';
 
 interface ModalContainerProps {
   modalTrigger: ReactNode;
   title: string;
+  disclosure: UseDisclosureReturn;
 }
 
 const ModalContainer: FC<ModalContainerProps> = ({
   children,
   modalTrigger,
   title,
+  disclosure,
 }) => {
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const { isOpen, onClose, onOpen } = disclosure;
   return (
     <>
       <Box w="100%" onClick={() => onOpen()}>
