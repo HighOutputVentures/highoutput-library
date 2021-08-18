@@ -1,12 +1,12 @@
 import { string, object, SchemaOf, InferType } from 'yup';
 
 type PostVariables = {
-  content?: string;
+  content: string;
   category: string;
 };
 
 export const postFormSchema: SchemaOf<PostVariables> = object().shape({
-  content: string(),
+  content: string().required('Content is required'),
   category: string().required('Post category is required.'),
 });
 

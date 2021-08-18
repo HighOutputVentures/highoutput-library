@@ -24,6 +24,7 @@ interface EditorProps {
   onChange: (content: string) => void;
   placeholder?: string;
   mentionables?: Mentionable[];
+  disabled?: boolean;
 }
 
 interface FullEditor {

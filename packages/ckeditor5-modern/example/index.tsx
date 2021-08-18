@@ -22,11 +22,14 @@ const App = () => {
     <ChakraProvider theme={theme}>
       <Flex maxW="550px" mx="auto" p="4">
         <ModernEditor
-          categories={[]}
+          categories={[{ label: 'test', value: 'value' }]}
           mentionables={[]}
           defaultCategory=""
           defaultContent=""
-          editorTrigger={<Button>Largs x Jac</Button>}
+          onSubmit={async v => console.log(v)}
+          editorConfig={{
+            editorTrigger: <Button>Largs x Jac</Button>,
+          }}
         />
       </Flex>
     </ChakraProvider>

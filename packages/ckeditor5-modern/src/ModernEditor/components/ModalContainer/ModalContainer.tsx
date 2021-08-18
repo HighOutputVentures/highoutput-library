@@ -2,25 +2,27 @@ import React, { FC, ReactNode } from 'react';
 import {
   Modal,
   ModalOverlay,
+  ModalHeader,
+  ModalCloseButton,
   ModalContent,
   ModalBody,
-  ModalCloseButton,
-  useDisclosure,
   Box,
-  Divider,
+  UseDisclosureReturn,
 } from '@chakra-ui/react';
 
 interface ModalContainerProps {
   modalTrigger: ReactNode;
-  headerComponent: ReactNode;
+  title: string;
+  disclosure: UseDisclosureReturn;
 }
 
 const ModalContainer: FC<ModalContainerProps> = ({
   children,
   modalTrigger,
-  headerComponent,
+  title,
+  disclosure,
 }) => {
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const { isOpen, onClose, onOpen } = disclosure;
   return (
     <>
       <Box w="100%" onClick={() => onOpen()}>
@@ -28,12 +30,18 @@ const ModalContainer: FC<ModalContainerProps> = ({
       </Box>
       <Modal isOpen={isOpen} onClose={onClose} size="xl">
         <ModalOverlay />
-        <ModalContent p="4">
-          <Box>
-            {headerComponent}
-            <ModalCloseButton top="5" right="4" />
-          </Box>
-          <Divider colorScheme="blue" pt="4" mb="4" />
+        <ModalContent>
+          <ModalHeader
+            px="8"
+            py="6"
+            fontSize="2xl"
+            color="#A8A29E"
+            fontWeight="normal"
+            borderBottom="1px solid #E7E5E4"
+          >
+            {title}
+          </ModalHeader>
+          <ModalCloseButton right="22px" top="6" color="#A8A29E" />
           <ModalBody p="0">{children}</ModalBody>
         </ModalContent>
       </Modal>

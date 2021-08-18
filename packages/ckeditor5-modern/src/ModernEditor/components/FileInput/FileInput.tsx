@@ -2,6 +2,7 @@ import React, { FC, useRef, Dispatch } from 'react';
 import { IconButton, Input } from '@chakra-ui/react';
 
 interface FileInputProps {
+  disabled: boolean;
   acceptedFileTypes?: string;
   icon: JSX.Element;
   label: string;
@@ -13,6 +14,7 @@ const FileInput: FC<FileInputProps> = ({
   icon,
   label,
   setFiles,
+  disabled,
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   return (
@@ -30,6 +32,7 @@ const FileInput: FC<FileInputProps> = ({
         ref={inputRef}
       />
       <IconButton
+        disabled={disabled}
         variant="ghost"
         icon={icon}
         fontSize="2xl"

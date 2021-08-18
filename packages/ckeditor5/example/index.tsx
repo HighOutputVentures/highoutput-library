@@ -9,7 +9,8 @@ const App = () => {
     <div>
       <HOVEditor
         value=""
-        onChange={(v) => console.log(v)}
+        disabled
+        onChange={v => console.log(v)}
         placeholder="Editor library"
         editorType={EditorTypes.CHECK_IN}
       />
