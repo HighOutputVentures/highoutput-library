@@ -10,6 +10,10 @@ interface EditorConfig {
   btnText?: string;
 }
 
+interface UploadConfig {
+  apiUrl: string;
+  bearerToken?: string;
+}
 export interface OnSubmitArgs extends PostFormSchemaValues {
   files: File[];
 }
@@ -23,4 +27,5 @@ export interface ModernEditorProps {
   defaultContent: string;
   mentionables: Mentionable[];
   editorConfig: EditorConfig;
+  uploadConfig?: UploadConfig;
 }

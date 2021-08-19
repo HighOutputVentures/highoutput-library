@@ -18,6 +18,8 @@ import { ModernEditorProps } from '../types/modern-editor';
 import { ImageIcon } from '../icons/ImageIcon';
 import { MODERN_EDITOR_STYLE } from '../utils/styleUtils';
 import { PostFormSchemaValues, postFormSchema } from './validation';
+import _ from 'lodash';
+import { uploadEmailFiles } from '../services/uploadService';
 
 const ModernEditor: FC<ModernEditorProps> = ({
   categories,
@@ -25,6 +27,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
   defaultContent,
   mentionables,
   editorConfig,
+  uploadConfig,
   disabled = false,
   loading = false,
   onSubmit,
@@ -59,9 +62,30 @@ const ModernEditor: FC<ModernEditorProps> = ({
 
   const { isSubmitting } = formState;
   const values = getValues();
+
   const images = useMemo(() => files.map(file => URL.createObjectURL(file)), [
     files,
   ]);
+
+  const uploadFiles = (files: File[]) => {
+    files.forEach(async (file: File) => {
+      try {
+        const formData = new FormData();
+        formData.append('Content-Type', file.type);
+        formData.append('file', file);
+
+        await uploadEmailFiles({
+          apiUrl: uploadConfig?.apiUrl || '',
+          token: uploadConfig?.bearerToken,
+          data: formData,
+        });
+      } catch (error) {}
+    });
+  };
+
+  useEffect(() => {
+    if (!_.isEmpty(uploadConfig)) uploadFiles(files);
+  }, [files]);
 
   return (
     <ModalContainer

@@ -75,7 +75,8 @@
     "yup": "^0.32.9"
   },
   "dependencies": {
-    "@highoutput/ckeditor5": "^1.0.4"
+    "@highoutput/ckeditor5": "^1.0.4",
+    "axios": "^0.21.1"
   },
   "publishConfig": {
     "access": "public"
