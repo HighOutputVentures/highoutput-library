@@ -28,7 +28,12 @@ const App = () => {
           defaultContent=""
           onSubmit={async v => console.log(v)}
           editorConfig={{
-            editorTrigger: <Button>Largs x Jac</Button>,
+            editorTrigger: <Button>Post</Button>,
+          }}
+          uploadConfig={{
+            apiUrl: 'https://dev-api.identifi.com/upload/policy',
+            bearerToken:
+              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidHlwZSI6IkJ1ZmZlciIsImRhdGEiOlswLDE3OSw5OCw4NCwxOCwxMjcsMTA4LDI0OSw1MCwyNDcsOSw0NiwxMDksMjA0LDIzNCw3NV19LCJpYXQiOjE2Mjk0MzY1ODR9.ru0xRz2dN9SEgobwC1YdjCUHKRfBJlvNao7xu3yNdVw',
           }}
         />
       </Flex>

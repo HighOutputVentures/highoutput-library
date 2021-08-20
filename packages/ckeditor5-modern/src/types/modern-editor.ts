@@ -13,6 +13,7 @@ interface EditorConfig {
 interface UploadConfig {
   apiUrl: string;
   bearerToken?: string;
+  uploadCredentials?: any;
 }
 export interface OnSubmitArgs extends PostFormSchemaValues {
   files: File[];

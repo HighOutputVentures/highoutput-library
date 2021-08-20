@@ -19,7 +19,7 @@ import { ImageIcon } from '../icons/ImageIcon';
 import { MODERN_EDITOR_STYLE } from '../utils/styleUtils';
 import { PostFormSchemaValues, postFormSchema } from './validation';
 import _ from 'lodash';
-import { uploadEmailFiles } from '../services/uploadService';
+import { uploadFile, uploadGetCrendentials } from '../services/uploadService';
 
 const ModernEditor: FC<ModernEditorProps> = ({
   categories,
@@ -71,12 +71,22 @@ const ModernEditor: FC<ModernEditorProps> = ({
     files.forEach(async (file: File) => {
       try {
         const formData = new FormData();
+        const data = await uploadGetCrendentials({
+          type: 'image',
+          filename: file.name,
+          apiUrl: uploadConfig?.apiUrl || '',
+          token: uploadConfig?.bearerToken,
+        });
+
+        Object.keys(data.params).forEach(key => {
+          formData.append(key, data.params[key]);
+        });
+
         formData.append('Content-Type', file.type);
         formData.append('file', file);
 
-        await uploadEmailFiles({
-          apiUrl: uploadConfig?.apiUrl || '',
-          token: uploadConfig?.bearerToken,
+        await uploadFile({
+          apiUrl: data.origin || '',
           data: formData,
         });
       } catch (error) {}
