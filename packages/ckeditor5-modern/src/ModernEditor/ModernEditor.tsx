@@ -31,6 +31,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
   disabled = false,
   loading = false,
   onSubmit,
+  onUploadSuccess,
 }) => {
   const {
     editorTrigger,
@@ -68,14 +69,13 @@ const ModernEditor: FC<ModernEditorProps> = ({
   ]);
 
   const uploadFiles = (files: File[]) => {
-    files.forEach(async (file: File) => {
-      try {
+    try {
+      const url: Promise<string>[] = files.map(async (file: File) => {
         const formData = new FormData();
         const data = await uploadGetCrendentials({
           type: 'image',
           filename: file.name,
           apiUrl: uploadConfig?.apiUrl || '',
-          token: uploadConfig?.bearerToken,
         });
 
         Object.keys(data.params).forEach(key => {
@@ -89,8 +89,14 @@ const ModernEditor: FC<ModernEditorProps> = ({
           apiUrl: data.origin || '',
           data: formData,
         });
-      } catch (error) {}
-    });
+
+        return Promise.resolve(data.url);
+      });
+
+      Promise.all(url).then(dataUrl => {
+        if (onUploadSuccess) onUploadSuccess(dataUrl);
+      });
+    } catch (error) {}
   };
 
   useEffect(() => {

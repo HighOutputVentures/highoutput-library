@@ -12,8 +12,6 @@ interface EditorConfig {
 
 interface UploadConfig {
   apiUrl: string;
-  bearerToken?: string;
-  uploadCredentials?: any;
 }
 export interface OnSubmitArgs extends PostFormSchemaValues {
   files: File[];
@@ -29,4 +27,5 @@ export interface ModernEditorProps {
   mentionables: Mentionable[];
   editorConfig: EditorConfig;
   uploadConfig?: UploadConfig;
+  onUploadSuccess?(url: string[]): void;
 }

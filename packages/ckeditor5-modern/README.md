@@ -28,5 +28,13 @@ you need to add this style on the global scope to make sure mention and emojis w
 you also need to add this property in ChakraProvider if you will use this on top of your existing UI framework
 
 ```jsx
-cssVarsRoot=".chakra-portal"
+cssVarsRoot = '.chakra-portal';
+```
+
+## Uploading with token note
+
+For uploading files with bearer token please set your values in your localStorage using the name 'access_token'.
+
+```jsx
+localStorage.setItem('access_token', 'key is here');
 ```

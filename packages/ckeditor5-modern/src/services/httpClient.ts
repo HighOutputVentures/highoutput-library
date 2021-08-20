@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getAccessToken } from '../utils/tokenStorage';
 
 const commonHeaders = {
   Accept: 'application/json, application/xml, text/play, text/html, *.*',
@@ -7,12 +8,12 @@ const commonHeaders = {
 };
 axios.defaults.headers.common = commonHeaders;
 
-export const HOVHttpClient = (token?: string) => {
+export const HOVHttpClient = (allowToken: boolean = true) => {
   const hovHttpClient = axios.create();
   hovHttpClient.interceptors.request.use(
     config => {
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+      if (getAccessToken() && allowToken) {
+        config.headers.Authorization = `Bearer ${getAccessToken()}`;
       }
       return config;
     },
