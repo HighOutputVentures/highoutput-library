@@ -3,6 +3,7 @@ import { HOVHttpClient } from './httpClient';
 
 interface UploadParams {
   apiUrl: string;
+  file?: File;
   data?: any;
   onLoadProgress?(loadingTotal: number): void;
 }
@@ -15,12 +16,12 @@ interface UploadPolicy extends UploadParams {
 export const uploadGetCrendentials = async (
   uploadParams: UploadPolicy
 ): Promise<any> => {
-  const { apiUrl, type, filename } = uploadParams;
+  const { apiUrl, type, filename, file } = uploadParams;
 
   const httpClient = HOVHttpClient();
   return await httpClient
     .post(apiUrl, { type: type, filename: filename })
-    .then(({ data }) => data)
+    .then(res => ({ ...res, file }))
     .catch((e: { response: Response }) => {
       return e.response;
     });

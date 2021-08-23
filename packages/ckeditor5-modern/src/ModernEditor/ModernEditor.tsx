@@ -71,31 +71,41 @@ const ModernEditor: FC<ModernEditorProps> = ({
     files,
   ]);
 
-  // upload to api here
-  const uploadFiles = (files: File[]) => {
+  const uploadFiles = async (files: File[]) => {
     try {
       setUploadLoading(true);
       setUploadCurrentLoading(0);
       setUploadTotalLoading(files.length * 100);
       let currentTotal: number[] = [];
 
-      const url: Promise<string>[] = files.map(
-        async (file: File, index: number) => {
-          const formData = new FormData();
-          const data = await uploadGetCrendentials({
+      // get upload credentials
+      const resultUploadCredentials: Promise<string>[] = files.map(
+        async (file: File) => {
+          return await uploadGetCrendentials({
             type: file.type.split('/')[0],
             filename: file.name,
             apiUrl: uploadConfig?.apiUrl || '',
+            file: file,
           });
+        }
+      );
+
+      const dataUploadCredentials = await Promise.all(resultUploadCredentials);
+      const url = dataUploadCredentials.map((upload: any) => upload.data.url);
+
+      // upload the file with credentials
+      const resultUpload = dataUploadCredentials.map(
+        async (upload: any, index: number) => {
+          const { data } = upload;
+          const formData = new FormData();
 
           Object.keys(data.params).forEach(key => {
             formData.append(key, data.params[key]);
           });
+          formData.append('Content-Type', upload.file.type);
+          formData.append('file', upload.file);
 
-          formData.append('Content-Type', file.type);
-          formData.append('file', file);
-
-          await uploadFile({
+          return await uploadFile({
             apiUrl: data.origin || '',
             data: formData,
             onLoadProgress: (total: number) => {
@@ -103,22 +113,19 @@ const ModernEditor: FC<ModernEditorProps> = ({
               setUploadCurrentLoading(currentTotal.reduce((a, b) => a + b, 0));
             },
           });
-
-          return Promise.resolve(data.url);
         }
       );
 
-      Promise.all(url).then(dataUrl => {
-        if (onUploadSuccess) onUploadSuccess(dataUrl);
-        setUploadLoading(false);
-      });
+      await Promise.all(resultUpload);
+      if (onUploadSuccess) onUploadSuccess(url);
+      setUploadLoading(false);
     } catch (error) {
       setUploadLoading(false);
     }
   };
 
   useEffect(() => {
-    if (!_.isEmpty(uploadConfig)) uploadFiles(files);
+    if (!_.isEmpty(uploadConfig) && !_.isEmpty(files)) uploadFiles(files);
   }, [files]);
 
   return (
