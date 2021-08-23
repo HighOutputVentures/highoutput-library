@@ -42,6 +42,9 @@ const ModernEditor: FC<ModernEditorProps> = ({
   } = editorConfig;
 
   const [files, setFiles] = useState<File[]>([]);
+  const [currentLoading, setUploadCurrentLoading] = useState<number>(0);
+  const [totaLoading, setUploadTotalLoading] = useState<number>(0);
+  const [isUploadLoading, setUploadLoading] = useState<boolean>(false);
   const modalDisclosure = useDisclosure();
 
   const { register, getValues, setValue, formState, handleSubmit } = useForm<
@@ -68,35 +71,50 @@ const ModernEditor: FC<ModernEditorProps> = ({
     files,
   ]);
 
+  // upload to api here
   const uploadFiles = (files: File[]) => {
     try {
-      const url: Promise<string>[] = files.map(async (file: File) => {
-        const formData = new FormData();
-        const data = await uploadGetCrendentials({
-          type: 'image',
-          filename: file.name,
-          apiUrl: uploadConfig?.apiUrl || '',
-        });
+      setUploadLoading(true);
+      setUploadCurrentLoading(0);
+      setUploadTotalLoading(files.length * 100);
+      let currentTotal: number[] = [];
 
-        Object.keys(data.params).forEach(key => {
-          formData.append(key, data.params[key]);
-        });
+      const url: Promise<string>[] = files.map(
+        async (file: File, index: number) => {
+          const formData = new FormData();
+          const data = await uploadGetCrendentials({
+            type: file.type.split('/')[0],
+            filename: file.name,
+            apiUrl: uploadConfig?.apiUrl || '',
+          });
 
-        formData.append('Content-Type', file.type);
-        formData.append('file', file);
+          Object.keys(data.params).forEach(key => {
+            formData.append(key, data.params[key]);
+          });
 
-        await uploadFile({
-          apiUrl: data.origin || '',
-          data: formData,
-        });
+          formData.append('Content-Type', file.type);
+          formData.append('file', file);
 
-        return Promise.resolve(data.url);
-      });
+          await uploadFile({
+            apiUrl: data.origin || '',
+            data: formData,
+            onLoadProgress: (total: number) => {
+              currentTotal[index] = total;
+              setUploadCurrentLoading(currentTotal.reduce((a, b) => a + b, 0));
+            },
+          });
+
+          return Promise.resolve(data.url);
+        }
+      );
 
       Promise.all(url).then(dataUrl => {
         if (onUploadSuccess) onUploadSuccess(dataUrl);
+        setUploadLoading(false);
       });
-    } catch (error) {}
+    } catch (error) {
+      setUploadLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -134,7 +152,13 @@ const ModernEditor: FC<ModernEditorProps> = ({
           />
           {Boolean(images.length) && (
             <Box pl="8" pr="4" py="4">
-              <ImageGrid images={images} onRemove={() => setFiles([])} />
+              <ImageGrid
+                images={images}
+                onRemove={() => setFiles([])}
+                isLoading={isUploadLoading}
+                totalLoading={totaLoading}
+                currentLoading={currentLoading}
+              />
             </Box>
           )}
         </Box>
@@ -158,7 +182,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
             >
               <span>
                 <FileInput
-                  disabled={disabled || loading}
+                  disabled={disabled || loading || isUploadLoading}
                   acceptedFileTypes="image/*"
                   label="Image upload"
                   icon={<ImageIcon />}
@@ -169,7 +193,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
           </Box>
           <Flex>
             <Select
-              disabled={disabled || loading}
+              disabled={disabled || loading || isUploadLoading}
               bg="white"
               minW="186px"
               mr="4"
@@ -183,7 +207,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
               ))}
             </Select>
             <Button
-              disabled={disabled || loading}
+              disabled={disabled || loading || isUploadLoading}
               flexShrink={0}
               type="submit"
               variant="solid"
