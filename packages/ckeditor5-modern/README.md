@@ -14,6 +14,8 @@ in order to use this editor component, you must install or meet the following li
 - "react-dom": ">=16",
 - "react-hook-form": "^7.11.0",
 - "react-icons": "^4.2.0"
+- "yup": ">=0.32.9",
+- "axios": ">=0.21.1"
 
 ## Important note
 
