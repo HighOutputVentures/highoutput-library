@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import { HOVHttpClient } from './httpClient';
+import { hovHttpClient } from './httpClient';
 
-interface UploadParams {
+export interface UploadParams {
   apiUrl: string;
   file?: File;
   data?: any;
@@ -18,7 +18,7 @@ export const uploadGetCrendentials = async (
 ): Promise<any> => {
   const { apiUrl, type, filename, file } = uploadParams;
 
-  const httpClient = HOVHttpClient();
+  const httpClient = hovHttpClient();
   return await httpClient
     .post(apiUrl, { type: type, filename: filename })
     .then(res => ({ ...res, file }))
@@ -30,7 +30,7 @@ export const uploadGetCrendentials = async (
 export const uploadFile = (uploadParams: UploadParams): Promise<any> => {
   const { apiUrl, data, onLoadProgress } = uploadParams;
 
-  const httpClient = HOVHttpClient(false);
+  const httpClient = hovHttpClient(false);
   return httpClient
     .post(apiUrl, data, {
       onUploadProgress: (progress: ProgressEvent) => {

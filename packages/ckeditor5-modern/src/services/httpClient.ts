@@ -8,7 +8,7 @@ const commonHeaders = {
 };
 axios.defaults.headers.common = commonHeaders;
 
-export const HOVHttpClient = (allowToken: boolean = true) => {
+export const hovHttpClient = (allowToken: boolean = true) => {
   const hovHttpClient = axios.create();
   hovHttpClient.interceptors.request.use(
     config => {
@@ -23,7 +23,7 @@ export const HOVHttpClient = (allowToken: boolean = true) => {
 };
 
 export const handleUnauthorizedError = () => {
-  HOVHttpClient().interceptors.response.use(
+  hovHttpClient().interceptors.response.use(
     response => response,
     error => {
       return Promise.reject(error);

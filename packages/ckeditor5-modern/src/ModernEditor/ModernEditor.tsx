@@ -18,8 +18,9 @@ import { ModernEditorProps } from '../types/modern-editor';
 import { ImageIcon } from '../icons/ImageIcon';
 import { MODERN_EDITOR_STYLE } from '../utils/styleUtils';
 import { PostFormSchemaValues, postFormSchema } from './validation';
-import _ from 'lodash';
+import { isEmpty } from 'lodash';
 import { uploadFile, uploadGetCrendentials } from '../services/uploadService';
+import { IUploadMapResult, TParams } from '../types/upload';
 
 const ModernEditor: FC<ModernEditorProps> = ({
   categories,
@@ -42,8 +43,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
   } = editorConfig;
 
   const [files, setFiles] = useState<File[]>([]);
-  const [currentLoading, setUploadCurrentLoading] = useState<number>(0);
-  const [totaLoading, setUploadTotalLoading] = useState<number>(0);
+  const [uploadCurrentProgress, setUploadCurrentProgress] = useState<number>(0);
   const [isUploadLoading, setUploadLoading] = useState<boolean>(false);
   const modalDisclosure = useDisclosure();
 
@@ -74,43 +74,41 @@ const ModernEditor: FC<ModernEditorProps> = ({
   const uploadFiles = async (files: File[]) => {
     try {
       setUploadLoading(true);
-      setUploadCurrentLoading(0);
-      setUploadTotalLoading(files.length * 100);
+      setUploadCurrentProgress(0);
       let currentTotal: number[] = [];
 
       // get upload credentials
-      const resultUploadCredentials: Promise<string>[] = files.map(
-        async (file: File) => {
-          return await uploadGetCrendentials({
-            type: file.type.split('/')[0],
-            filename: file.name,
-            apiUrl: uploadConfig?.apiUrl || '',
-            file: file,
-          });
-        }
-      );
+      const resultUploadCredentials = files.map(file => {
+        return uploadGetCrendentials({
+          type: file.type.split('/')[0],
+          filename: file.name,
+          apiUrl: uploadConfig?.apiUrl || '',
+          file: file,
+        });
+      });
 
       const dataUploadCredentials = await Promise.all(resultUploadCredentials);
-      const url = dataUploadCredentials.map((upload: any) => upload.data.url);
+      const url = dataUploadCredentials.map(
+        ({ data }: IUploadMapResult) => data.url
+      );
 
       // upload the file with credentials
       const resultUpload = dataUploadCredentials.map(
-        async (upload: any, index: number) => {
-          const { data } = upload;
+        ({ data, file }: IUploadMapResult, index: number) => {
           const formData = new FormData();
 
           Object.keys(data.params).forEach(key => {
-            formData.append(key, data.params[key]);
+            formData.append(key, data.params[key as keyof TParams]);
           });
-          formData.append('Content-Type', upload.file.type);
-          formData.append('file', upload.file);
+          formData.append('Content-Type', file.type);
+          formData.append('file', file);
 
-          return await uploadFile({
+          return uploadFile({
             apiUrl: data.origin || '',
             data: formData,
             onLoadProgress: (total: number) => {
               currentTotal[index] = total;
-              setUploadCurrentLoading(currentTotal.reduce((a, b) => a + b, 0));
+              setUploadCurrentProgress(currentTotal.reduce((a, b) => a + b, 0));
             },
           });
         }
@@ -125,7 +123,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
   };
 
   useEffect(() => {
-    if (!_.isEmpty(uploadConfig) && !_.isEmpty(files)) uploadFiles(files);
+    if (!isEmpty(uploadConfig) && !isEmpty(files)) uploadFiles(files);
   }, [files]);
 
   return (
@@ -163,8 +161,8 @@ const ModernEditor: FC<ModernEditorProps> = ({
                 images={images}
                 onRemove={() => setFiles([])}
                 isLoading={isUploadLoading}
-                totalLoading={totaLoading}
-                currentLoading={currentLoading}
+                totalProgress={files.length * 100 || 0}
+                currentProgress={uploadCurrentProgress}
               />
             </Box>
           )}

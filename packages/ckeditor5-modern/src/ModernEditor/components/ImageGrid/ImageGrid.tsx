@@ -7,8 +7,8 @@ interface ImageGridProps {
   onImageClick?: (_: { index: number; src: string }) => void;
   onRemove?: () => void;
   isLoading: boolean;
-  totalLoading: number;
-  currentLoading: number;
+  totalProgress: number;
+  currentProgress: number;
 }
 
 interface ImagePreviewProps {
@@ -57,8 +57,8 @@ export const ImageGrid: FC<ImageGridProps> = ({
   onImageClick,
   onRemove,
   isLoading,
-  totalLoading,
-  currentLoading,
+  totalProgress,
+  currentProgress,
 }) => {
   const numOfImgs = images.length;
   const derivedMaxDisplay =
@@ -169,7 +169,7 @@ export const ImageGrid: FC<ImageGridProps> = ({
       cursor="pointer"
     >
       {isLoading && (
-        <Progress zIndex="2" value={currentLoading} max={totalLoading} />
+        <Progress zIndex="2" value={currentProgress} max={totalProgress} />
       )}
 
       {!isLoading && (

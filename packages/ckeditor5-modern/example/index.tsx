@@ -5,6 +5,7 @@ import { ChakraProvider, extendTheme, Flex, Button } from '@chakra-ui/react';
 
 import { ModernEditor } from './dist';
 
+// note this is for testing purposes only
 localStorage.setItem(
   'access_token',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidHlwZSI6IkJ1ZmZlciIsImRhdGEiOlswLDE3OSw5OCw4NCwxOCwxMjcsMTA4LDI0OSw1MCwyNDcsOSw0NiwxMDksMjA0LDIzNCw3NV19LCJpYXQiOjE2Mjk0MzY1ODR9.ru0xRz2dN9SEgobwC1YdjCUHKRfBJlvNao7xu3yNdVw'
