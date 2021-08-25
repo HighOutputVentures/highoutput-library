@@ -18,6 +18,9 @@ import { ModernEditorProps } from '../types/modern-editor';
 import { ImageIcon } from '../icons/ImageIcon';
 import { MODERN_EDITOR_STYLE } from '../utils/styleUtils';
 import { PostFormSchemaValues, postFormSchema } from './validation';
+import { isEmpty } from 'lodash';
+import { uploadFile, uploadGetCrendentials } from '../services/uploadService';
+import { IUploadMapResult, TParams } from '../types/upload';
 
 const ModernEditor: FC<ModernEditorProps> = ({
   categories,
@@ -25,9 +28,11 @@ const ModernEditor: FC<ModernEditorProps> = ({
   defaultContent,
   mentionables,
   editorConfig,
+  uploadConfig,
   disabled = false,
   loading = false,
   onSubmit,
+  onUploadSuccess,
 }) => {
   const {
     editorTrigger,
@@ -38,6 +43,8 @@ const ModernEditor: FC<ModernEditorProps> = ({
   } = editorConfig;
 
   const [files, setFiles] = useState<File[]>([]);
+  const [uploadCurrentProgress, setUploadCurrentProgress] = useState<number>(0);
+  const [isUploadLoading, setUploadLoading] = useState<boolean>(false);
   const modalDisclosure = useDisclosure();
 
   const { register, getValues, setValue, formState, handleSubmit } = useForm<
@@ -59,9 +66,65 @@ const ModernEditor: FC<ModernEditorProps> = ({
 
   const { isSubmitting } = formState;
   const values = getValues();
+
   const images = useMemo(() => files.map(file => URL.createObjectURL(file)), [
     files,
   ]);
+
+  const uploadFiles = async (files: File[]) => {
+    try {
+      setUploadLoading(true);
+      setUploadCurrentProgress(0);
+      let currentTotal: number[] = [];
+
+      // get upload credentials
+      const resultUploadCredentials = files.map(file => {
+        return uploadGetCrendentials({
+          type: file.type.split('/')[0],
+          filename: file.name,
+          apiUrl: uploadConfig?.apiUrl || '',
+          file: file,
+        });
+      });
+
+      const dataUploadCredentials = await Promise.all(resultUploadCredentials);
+      const url = dataUploadCredentials.map(
+        ({ data }: IUploadMapResult) => data.url
+      );
+
+      // upload the file with credentials
+      const resultUpload = dataUploadCredentials.map(
+        ({ data, file }: IUploadMapResult, index: number) => {
+          const formData = new FormData();
+
+          Object.keys(data.params).forEach(key => {
+            formData.append(key, data.params[key as keyof TParams]);
+          });
+          formData.append('Content-Type', file.type);
+          formData.append('file', file);
+
+          return uploadFile({
+            apiUrl: data.origin || '',
+            data: formData,
+            onLoadProgress: (total: number) => {
+              currentTotal[index] = total;
+              setUploadCurrentProgress(currentTotal.reduce((a, b) => a + b, 0));
+            },
+          });
+        }
+      );
+
+      await Promise.all(resultUpload);
+      if (onUploadSuccess) onUploadSuccess(url);
+      setUploadLoading(false);
+    } catch (error) {
+      setUploadLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!isEmpty(uploadConfig) && !isEmpty(files)) uploadFiles(files);
+  }, [files]);
 
   return (
     <ModalContainer
@@ -94,7 +157,13 @@ const ModernEditor: FC<ModernEditorProps> = ({
           />
           {Boolean(images.length) && (
             <Box pl="8" pr="4" py="4">
-              <ImageGrid images={images} onRemove={() => setFiles([])} />
+              <ImageGrid
+                images={images}
+                onRemove={() => setFiles([])}
+                isLoading={isUploadLoading}
+                totalProgress={files.length * 100 || 0}
+                currentProgress={uploadCurrentProgress}
+              />
             </Box>
           )}
         </Box>
@@ -118,7 +187,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
             >
               <span>
                 <FileInput
-                  disabled={disabled || loading}
+                  disabled={disabled || loading || isUploadLoading}
                   acceptedFileTypes="image/*"
                   label="Image upload"
                   icon={<ImageIcon />}
@@ -129,7 +198,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
           </Box>
           <Flex>
             <Select
-              disabled={disabled || loading}
+              disabled={disabled || loading || isUploadLoading}
               bg="white"
               minW="186px"
               mr="4"
@@ -143,7 +212,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
               ))}
             </Select>
             <Button
-              disabled={disabled || loading}
+              disabled={disabled || loading || isUploadLoading}
               flexShrink={0}
               type="submit"
               variant="solid"

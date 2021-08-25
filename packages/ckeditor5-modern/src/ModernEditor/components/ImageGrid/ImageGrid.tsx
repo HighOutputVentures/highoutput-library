@@ -1,11 +1,14 @@
 import React, { FC } from 'react';
-import { Box, SimpleGrid, CloseButton } from '@chakra-ui/react';
+import { Box, SimpleGrid, CloseButton, Progress } from '@chakra-ui/react';
 
 interface ImageGridProps {
   maxDisplay?: number;
   images: string[];
   onImageClick?: (_: { index: number; src: string }) => void;
   onRemove?: () => void;
+  isLoading: boolean;
+  totalProgress: number;
+  currentProgress: number;
 }
 
 interface ImagePreviewProps {
@@ -53,6 +56,9 @@ export const ImageGrid: FC<ImageGridProps> = ({
   images,
   onImageClick,
   onRemove,
+  isLoading,
+  totalProgress,
+  currentProgress,
 }) => {
   const numOfImgs = images.length;
   const derivedMaxDisplay =
@@ -70,6 +76,7 @@ export const ImageGrid: FC<ImageGridProps> = ({
         h={
           numOfImgs === 1 || maxDisplay === 1 ? 'full' : `${FIRST_ROW_HEIGHT}%`
         }
+        opacity={isLoading ? 0.5 : 1}
       >
         <ImagePreview
           src={images[0]}
@@ -95,7 +102,12 @@ export const ImageGrid: FC<ImageGridProps> = ({
     const imgSrc2 = conditionalRender ? images[2] : images[1];
 
     return (
-      <SimpleGrid w="full" h={`${height}%`} columns={2}>
+      <SimpleGrid
+        w="full"
+        h={`${height}%`}
+        columns={2}
+        opacity={isLoading ? 0.5 : 1}
+      >
         <ImagePreview
           src={imgSrc1}
           onClick={() => onImageClick?.({ index: 1, src: imgSrc1 })}
@@ -121,7 +133,12 @@ export const ImageGrid: FC<ImageGridProps> = ({
     const imgSrc3 = conditionalRender ? images[3] : images[4];
 
     return (
-      <SimpleGrid w="full" h={`${SECOND_ROW_HEIGHT}%`} columns={3}>
+      <SimpleGrid
+        w="full"
+        h={`${SECOND_ROW_HEIGHT}%`}
+        columns={3}
+        opacity={isLoading ? 0.5 : 1}
+      >
         <ImagePreview
           src={imgSrc1}
           onClick={() => onImageClick?.({ index: 3, src: imgSrc1 })}
@@ -151,19 +168,26 @@ export const ImageGrid: FC<ImageGridProps> = ({
       position="relative"
       cursor="pointer"
     >
-      <CloseButton
-        color="white"
-        bg="#3e4042"
-        _hover={{
-          bg: '#3e4042bf',
-        }}
-        rounded="full"
-        position="absolute"
-        right="2"
-        top="2"
-        zIndex="1"
-        onClick={() => onRemove?.()}
-      />
+      {isLoading && (
+        <Progress zIndex="2" value={currentProgress} max={totalProgress} />
+      )}
+
+      {!isLoading && (
+        <CloseButton
+          color="white"
+          bg="#3e4042"
+          _hover={{
+            bg: '#3e4042bf',
+          }}
+          rounded="full"
+          position="absolute"
+          right="2"
+          top="2"
+          zIndex="1"
+          onClick={() => onRemove?.()}
+        />
+      )}
+
       {[1, 3, 4].includes(imagesToShow) && renderOne()}
       {imagesToShow >= 2 && imagesToShow !== 4 && renderTwo()}
       {imagesToShow >= 4 && renderThree()}
