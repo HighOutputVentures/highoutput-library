@@ -29,8 +29,7 @@
     "@arque/activemq-connection": "^1.0.0-alpha.35",
     "@arque/core": "^1.0.0-alpha.44",
     "@arque/rabbitmq-connection": "^1.0.0-alpha.9",
-    "@arque/types": "^1.0.0-alpha.14",
-    "ckeditor5": "^29.0.0"
+    "@arque/types": "^1.0.0-alpha.14"
   },
   "devDependencies": {
     "@highoutput/delay": "^0.2.6",
