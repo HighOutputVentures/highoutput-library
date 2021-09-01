@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/amqp",
-  "version": "0.11.7",
+  "version": "0.11.8",
   "description": "A simplified client for ActiveMQ",
   "keywords": [
     "AMQP"
@@ -37,11 +37,11 @@
     "typescript": "4.3.2"
   },
   "dependencies": {
-    "@highoutput/async-group": "^0.3.6",
-    "@highoutput/delay": "^0.2.6",
-    "@highoutput/error": "^0.1.10",
-    "@highoutput/logger": "^0.5.1",
-    "@highoutput/serialize": "^0.1.3",
+    "@highoutput/async-group": "^0.3.8",
+    "@highoutput/delay": "^0.2.8",
+    "@highoutput/error": "^0.1.12",
+    "@highoutput/logger": "^0.5.3",
+    "@highoutput/serialize": "^0.1.5",
     "@types/chance": "^1.1.0",
     "@types/lru-cache": "^5.1.0",
     "@types/ms": "^0.7.31",

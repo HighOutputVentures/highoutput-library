@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/error",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "Wrapper for Error",
   "keywords": [
     "error"

@@ -1,6 +1,6 @@
 {
   "name": "arque",
-  "version": "1.0.0-alpha.68",
+  "version": "1.0.0-alpha.69",
   "description": "A library for Event Sourcing",
   "keywords": [
     "microservice",
@@ -26,13 +26,13 @@
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
   },
   "dependencies": {
-    "@arque/activemq-connection": "^1.0.0-alpha.36",
-    "@arque/core": "^1.0.0-alpha.45",
-    "@arque/rabbitmq-connection": "^1.0.0-alpha.10",
+    "@arque/activemq-connection": "^1.0.0-alpha.37",
+    "@arque/core": "^1.0.0-alpha.46",
+    "@arque/rabbitmq-connection": "^1.0.0-alpha.11",
     "@arque/types": "^1.0.0-alpha.15"
   },
   "devDependencies": {
-    "@highoutput/delay": "^0.2.7",
+    "@highoutput/delay": "^0.2.8",
     "@types/chai": "^4.2.12",
     "@types/lokijs": "^1.5.3",
     "@types/mocha": "^8.0.3",

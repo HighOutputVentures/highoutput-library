@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/hmac",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "main": "build/index.js",
   "scripts": {
     "clean": "rimraf build/",
