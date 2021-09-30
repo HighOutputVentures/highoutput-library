@@ -1,6 +1,4 @@
-import React, { FC, useMemo } from 'react';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import { ClassicEditor } from 'ckeditor5-custom-build';
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 
 import { EditorTypes, HOVEditorProps } from '../../types/hov-editor';
 import {
@@ -31,7 +29,32 @@ const HOVEditor: FC<HOVEditorProps> = props => {
     editorType,
   ]);
 
-  return (
+  const editorRef = useRef<any>();
+  const [editorLoaded, setEditorLoaded] = useState(false);
+  const [classicLoaded, setClassicLoaded] = useState(false);
+  const { CKEditor, ClassicEditor } = editorRef.current || {};
+
+  useEffect(() => {
+    import('@ckeditor/ckeditor5-react').then(ck => {
+      editorRef.current = {
+        ...editorRef.current,
+        CKEditor: ck.CKEditor,
+      };
+
+      setEditorLoaded(true);
+    });
+
+    import('ckeditor5-custom-build').then(ck => {
+      editorRef.current = {
+        ...editorRef.current,
+        ClassicEditor: ck.ClassicEditor,
+      };
+
+      setClassicLoaded(true);
+    });
+  }, []);
+
+  return editorLoaded && classicLoaded ? (
     <CKEditor
       editor={ClassicEditor}
       disabled={disabled}
@@ -96,7 +119,7 @@ const HOVEditor: FC<HOVEditorProps> = props => {
       data={value}
       onChange={(_: any, editor: any) => onChange(editor.getData())}
     />
-  );
+  ) : null;
 };
 
 export default HOVEditor;
