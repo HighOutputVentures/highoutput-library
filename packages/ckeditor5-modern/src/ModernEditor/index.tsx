@@ -1,5 +1,1 @@
-export {
-  default as ModernEditor,
-  ModernEditorProps,
-  OnSubmitArgs,
-} from './ModernEditor';
+export { default } from './ModernEditor';

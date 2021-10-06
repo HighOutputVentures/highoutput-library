@@ -1,51 +1,49 @@
-import React, { FC, useEffect, useState, useMemo } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { HOVEditor, EditorTypes } from '@highoutput/ckeditor5';
-import {
-  Box,
-  Flex,
-  Button,
-  Select,
-  Tooltip,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Box, Flex, HStack, Button, SimpleGrid } from '@chakra-ui/react';
+import { v4 as uuid } from 'uuid';
 
-import ModalContainer from './components/ModalContainer';
-import ImageGrid from './components/ImageGrid';
-import FileInput from './components/FileInput';
+import FileInput, { FileAsset } from './components/FileInput';
+import ImageBlock from './components/ImageBlock';
 import { ModernEditorProps } from '../types/modern-editor';
-import { ImageIcon } from '../icons/ImageIcon';
-import { MODERN_EDITOR_STYLE } from '../utils/styleUtils';
 import { PostFormSchemaValues, postFormSchema } from './validation';
-import { isEmpty } from 'lodash';
-import { uploadFile, uploadGetCrendentials } from '../services/uploadService';
-import { IUploadMapResult, TParams } from '../types/upload';
+import { MODERN_EDITOR_STYLE } from '../utils/styleUtils';
+import { notEmpty } from '../utils/typescriptUtils';
 
 const ModernEditor: FC<ModernEditorProps> = ({
-  categories,
-  defaultCategory,
   defaultContent,
+  defaultImages,
   mentionables,
   editorConfig,
   uploadConfig,
   disabled = false,
   loading = false,
   onSubmit,
-  onUploadSuccess,
 }) => {
   const {
-    editorTrigger,
-    title = 'Create a post',
     placeholder = 'What would you like to highlight?',
-    btnColor = '#FFC53D',
-    btnText = 'Share post',
+    okBtn = {
+      bg: '#FFC53D',
+      text: 'Share post',
+    },
+    cancelBtn,
   } = editorConfig;
 
-  const [files, setFiles] = useState<File[]>([]);
-  const [uploadCurrentProgress, setUploadCurrentProgress] = useState<number>(0);
-  const [isUploadLoading, setUploadLoading] = useState<boolean>(false);
-  const modalDisclosure = useDisclosure();
+  // reformat default images
+  const formattedDefaultImages = useMemo(
+    () =>
+      defaultImages.map(defaultImage => ({
+        id: uuid(),
+        linkSrc: defaultImage,
+      })),
+    [defaultImages]
+  );
+
+  const [fileAssets, setFileAssets] = useState<FileAsset[]>(
+    formattedDefaultImages
+  );
 
   const { register, getValues, setValue, formState, handleSubmit } = useForm<
     PostFormSchemaValues
@@ -55,7 +53,6 @@ const ModernEditor: FC<ModernEditorProps> = ({
     resolver: yupResolver(postFormSchema),
     defaultValues: {
       content: defaultContent,
-      category: defaultCategory,
     },
   });
 
@@ -64,169 +61,98 @@ const ModernEditor: FC<ModernEditorProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const { isSubmitting } = formState;
-  const values = getValues();
-
-  const images = useMemo(() => files.map(file => URL.createObjectURL(file)), [
-    files,
-  ]);
-
-  const uploadFiles = async (files: File[]) => {
-    try {
-      setUploadLoading(true);
-      setUploadCurrentProgress(0);
-      let currentTotal: number[] = [];
-
-      // get upload credentials
-      const resultUploadCredentials = files.map(file => {
-        return uploadGetCrendentials({
-          type: file.type.split('/')[0],
-          filename: file.name,
-          apiUrl: uploadConfig?.apiUrl || '',
-          file: file,
-        });
-      });
-
-      const dataUploadCredentials = await Promise.all(resultUploadCredentials);
-      const url = dataUploadCredentials.map(
-        ({ data }: IUploadMapResult) => data.url
-      );
-
-      // upload the file with credentials
-      const resultUpload = dataUploadCredentials.map(
-        ({ data, file }: IUploadMapResult, index: number) => {
-          const formData = new FormData();
-
-          Object.keys(data.params).forEach(key => {
-            formData.append(key, data.params[key as keyof TParams]);
-          });
-          formData.append('Content-Type', file.type);
-          formData.append('file', file);
-
-          return uploadFile({
-            apiUrl: data.origin || '',
-            data: formData,
-            onLoadProgress: (total: number) => {
-              currentTotal[index] = total;
-              setUploadCurrentProgress(currentTotal.reduce((a, b) => a + b, 0));
-            },
-          });
-        }
-      );
-
-      await Promise.all(resultUpload);
-      if (onUploadSuccess) onUploadSuccess(url);
-      setUploadLoading(false);
-    } catch (error) {
-      setUploadLoading(false);
+  const onUploadSuccess = (uploadedUrl: string, assetId: string) => {
+    const uploadedFileAsset = fileAssets.find(f => f.id === assetId);
+    if (uploadedFileAsset) {
+      uploadedFileAsset.linkSrc = uploadedUrl;
+      setFileAssets(fileAssets);
     }
   };
 
-  useEffect(() => {
-    if (!isEmpty(uploadConfig) && !isEmpty(files)) uploadFiles(files);
-  }, [files]);
+  const { isSubmitting } = formState;
+  const values = getValues();
 
   return (
-    <ModalContainer
-      disclosure={modalDisclosure}
-      modalTrigger={editorTrigger}
-      title={title}
+    <form
+      style={{ width: '100%' }}
+      onSubmit={handleSubmit(v =>
+        onSubmit?.({
+          ...v,
+          uploadedFiles: fileAssets.map(f => f.linkSrc).filter(notEmpty),
+        })
+      )}
     >
-      <form
-        style={{ width: '100%' }}
-        onSubmit={handleSubmit(v =>
-          onSubmit?.({ ...v, files }, modalDisclosure.onClose)
-        )}
+      <Box
+        bg="#FAFAFA"
+        borderRadius="lg"
+        mb={4}
+        p={4}
+        maxH="470px"
+        minH="175px"
+        overflowY="auto"
+        sx={MODERN_EDITOR_STYLE}
       >
-        <Box
-          maxH="470px"
-          minH="175px"
-          overflowY="auto"
-          mr="1"
-          my="1"
-          pr="1"
-          sx={MODERN_EDITOR_STYLE}
-        >
-          <HOVEditor
-            disabled={disabled || loading}
-            value={values.content || ''}
-            onChange={v => setValue('content', v)}
-            placeholder={placeholder}
-            editorType={EditorTypes.MODERN}
-            mentionables={mentionables}
-          />
-          {Boolean(images.length) && (
-            <Box pl="8" pr="4" py="4">
-              <ImageGrid
-                images={images}
-                onRemove={() => setFiles([])}
-                isLoading={isUploadLoading}
-                totalProgress={files.length * 100 || 0}
-                currentProgress={uploadCurrentProgress}
-              />
-            </Box>
-          )}
-        </Box>
-        <Flex
-          justifyContent="space-between"
-          px="8"
-          py="4"
-          bgColor="#FAFAF9"
-          borderEndStartRadius="md"
-          borderEndEndRadius="md"
-        >
-          <Box>
-            <Tooltip
-              hasArrow
-              label="Add image"
-              aria-label="add image tooltip"
-              placement="top"
-              p="2"
-              mb="2"
-              borderRadius="md"
-            >
-              <span>
-                <FileInput
-                  disabled={disabled || loading || isUploadLoading}
-                  acceptedFileTypes="image/*"
-                  label="Image upload"
-                  icon={<ImageIcon />}
-                  setFiles={setFiles}
+        <HOVEditor
+          disabled={disabled || loading}
+          value={values.content || ''}
+          onChange={v => setValue('content', v)}
+          placeholder={placeholder}
+          editorType={EditorTypes.MODERN}
+          mentionables={mentionables}
+        />
+        {Boolean(fileAssets.length) && (
+          <Box mt={4}>
+            <SimpleGrid columns={7} spacing={4} mt={4}>
+              {fileAssets.map(fileAsset => (
+                <ImageBlock
+                  fileAsset={fileAsset}
+                  key={fileAsset.id}
+                  uploadUrl={uploadConfig?.apiUrl}
+                  onUploadSuccess={v => onUploadSuccess(v, fileAsset.id)}
+                  onRemove={() =>
+                    setFileAssets(f => f.filter(f => f.id !== fileAsset.id))
+                  }
                 />
-              </span>
-            </Tooltip>
-          </Box>
-          <Flex>
-            <Select
-              disabled={disabled || loading || isUploadLoading}
-              bg="white"
-              minW="186px"
-              mr="4"
-              placeholder="Select category"
-              {...register('category')}
-            >
-              {categories.map(c => (
-                <option value={c.value} key={c.value}>
-                  {c.label}
-                </option>
               ))}
-            </Select>
+            </SimpleGrid>
+          </Box>
+        )}
+      </Box>
+      <Flex justifyContent="space-between">
+        <Box>
+          <FileInput
+            disabled={disabled || loading}
+            acceptedFileTypes="image/*"
+            setFileAssets={setFileAssets}
+          />
+        </Box>
+        <HStack spacing={4}>
+          {cancelBtn && (
             <Button
-              disabled={disabled || loading || isUploadLoading}
+              disabled={disabled || loading}
               flexShrink={0}
-              type="submit"
-              variant="solid"
-              bgColor={btnColor}
+              variant="outline"
+              bgColor={cancelBtn.bg}
               isDisabled={isSubmitting}
+              onClick={cancelBtn.onClick}
             >
-              {btnText}
+              {cancelBtn.text}
             </Button>
-          </Flex>
-        </Flex>
-      </form>
-    </ModalContainer>
+          )}
+          <Button
+            disabled={disabled || loading}
+            flexShrink={0}
+            type="submit"
+            variant="solid"
+            bgColor={okBtn.bg}
+            isDisabled={isSubmitting}
+          >
+            {okBtn.text}
+          </Button>
+        </HStack>
+      </Flex>
+    </form>
   );
 };
 
 export default ModernEditor;
-export { ModernEditorProps, OnSubmitArgs } from '../types/modern-editor';

@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { ChakraProvider, extendTheme, Flex, Button } from '@chakra-ui/react';
 
-import { ModernEditor } from './dist';
+import { ModernEditor } from '../dist';
 
 // note this is for testing purposes only
 localStorage.setItem(
@@ -26,20 +26,21 @@ const theme = extendTheme({
 const App = () => {
   return (
     <ChakraProvider theme={theme}>
-      <Flex maxW="550px" mx="auto" p="4">
+      <Flex maxW="645px" mx="auto" p="4">
         <ModernEditor
-          categories={[{ label: 'test', value: 'value' }]}
           mentionables={[]}
-          defaultCategory=""
           defaultContent=""
+          defaultImages={[]}
           onSubmit={async v => console.log(v)}
           editorConfig={{
-            editorTrigger: <Button>Post</Button>,
+            placeholder: 'Write something here...',
+            cancelBtn: {
+              text: 'Cancel',
+            },
           }}
           uploadConfig={{
             apiUrl: 'https://dev-api.identifi.com/upload/policy',
           }}
-          onUploadSuccess={(url: string[]) => console.log(url)}
         />
       </Flex>
     </ChakraProvider>

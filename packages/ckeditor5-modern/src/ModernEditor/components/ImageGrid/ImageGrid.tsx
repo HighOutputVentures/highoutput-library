@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Box, SimpleGrid, CloseButton, Progress } from '@chakra-ui/react';
+import { Box, SimpleGrid, CloseButton } from '@chakra-ui/react';
 
 interface ImageGridProps {
   maxDisplay?: number;
@@ -7,8 +7,6 @@ interface ImageGridProps {
   onImageClick?: (_: { index: number; src: string }) => void;
   onRemove?: () => void;
   isLoading: boolean;
-  totalProgress: number;
-  currentProgress: number;
 }
 
 interface ImagePreviewProps {
@@ -57,8 +55,6 @@ export const ImageGrid: FC<ImageGridProps> = ({
   onImageClick,
   onRemove,
   isLoading,
-  totalProgress,
-  currentProgress,
 }) => {
   const numOfImgs = images.length;
   const derivedMaxDisplay =
@@ -168,10 +164,6 @@ export const ImageGrid: FC<ImageGridProps> = ({
       position="relative"
       cursor="pointer"
     >
-      {isLoading && (
-        <Progress zIndex="2" value={currentProgress} max={totalProgress} />
-      )}
-
       {!isLoading && (
         <CloseButton
           color="white"
