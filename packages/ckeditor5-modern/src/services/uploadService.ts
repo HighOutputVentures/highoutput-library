@@ -13,7 +13,7 @@ interface UploadPolicy extends UploadParams {
   filename: string;
 }
 
-export const uploadGetCrendentials = async (
+export const getUploadCrendentials = async (
   uploadParams: UploadPolicy
 ): Promise<any> => {
   const { apiUrl, type, filename, file } = uploadParams;

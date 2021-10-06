@@ -1,19 +1,23 @@
 import React, { FC, useRef, Dispatch } from 'react';
-import { IconButton, Input } from '@chakra-ui/react';
+import { Button, Input, Icon } from '@chakra-ui/react';
+import { UploadIcon } from '@heroicons/react/solid';
+import { v4 as uuid } from 'uuid';
+
+export type FileAsset = {
+  id: string;
+  actualFile?: File;
+  linkSrc: string;
+};
 
 interface FileInputProps {
   disabled: boolean;
   acceptedFileTypes?: string;
-  icon: JSX.Element;
-  label: string;
-  setFiles: Dispatch<React.SetStateAction<File[]>>;
+  setFileAssets: Dispatch<React.SetStateAction<FileAsset[]>>;
 }
 
 const FileInput: FC<FileInputProps> = ({
   acceptedFileTypes,
-  icon,
-  label,
-  setFiles,
+  setFileAssets,
   disabled,
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -26,19 +30,25 @@ const FileInput: FC<FileInputProps> = ({
         accept={acceptedFileTypes}
         onChange={e => {
           const filesArray = e.target.files ? Array.from(e.target.files) : [];
+          // reformat selected files here
+          const formattedFileAssets = filesArray.map(f => ({
+            id: uuid(),
+            actualFile: f,
+            linkSrc: URL.createObjectURL(f),
+          }));
           e.target.value = '';
-          setFiles(filesArray);
+          setFileAssets(v => [...v, ...formattedFileAssets]);
         }}
         ref={inputRef}
       />
-      <IconButton
+      <Button
         disabled={disabled}
-        variant="ghost"
-        icon={icon}
-        fontSize="2xl"
-        aria-label={label}
+        variant="outline"
+        leftIcon={<Icon as={UploadIcon} />}
         onClick={() => inputRef?.current?.click()}
-      />
+      >
+        Upload photo
+      </Button>
     </>
   );
 };

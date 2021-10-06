@@ -4,7 +4,11 @@ export const MODERN_EDITOR_STYLE = {
   },
   '.ck-content': {
     border: 0,
-    padding: '0 16px 0 32px',
+    padding: 0,
+    bg: 'transparent !important',
+    '>:first-child': {
+      marginTop: '0 !important',
+    },
   },
   '.ck-focused': {
     border: '0 !important',
