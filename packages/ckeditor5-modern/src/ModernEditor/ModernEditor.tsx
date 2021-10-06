@@ -69,7 +69,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
     }
   };
 
-  const { isSubmitting } = formState;
+  const { isSubmitting, errors } = formState;
   const values = getValues();
 
   return (
@@ -91,11 +91,21 @@ const ModernEditor: FC<ModernEditorProps> = ({
         minH="175px"
         overflowY="auto"
         sx={MODERN_EDITOR_STYLE}
+        {...(errors.content && {
+          borderWidth: 1,
+          borderColor: 'red.500',
+        })}
       >
         <HOVEditor
           disabled={disabled || loading}
           value={values.content || ''}
-          onChange={v => setValue('content', v)}
+          onChange={v =>
+            setValue('content', v, {
+              shouldDirty: true,
+              shouldTouch: true,
+              shouldValidate: Boolean(v),
+            })
+          }
           placeholder={placeholder}
           editorType={EditorTypes.MODERN}
           mentionables={mentionables}
