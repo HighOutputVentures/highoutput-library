@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { ChakraProvider, extendTheme, Flex, Button } from '@chakra-ui/react';
 
-import { ModernEditor } from '../dist';
+import { ModernEditor, ImageGrid } from './dist';
 
 // note this is for testing purposes only
 localStorage.setItem(
@@ -43,6 +43,19 @@ const App = () => {
           }}
         />
       </Flex>
+
+      <ImageGrid
+        images={[
+          'https://cdn.pixabay.com/photo/2019/10/19/12/22/hot-air-balloon-4561273_1280.jpg',
+          'https://cdn.pixabay.com/photo/2019/10/19/12/22/hot-air-balloon-4561273_1280.jpg',
+          'https://cdn.pixabay.com/photo/2019/10/19/12/22/hot-air-balloon-4561273_1280.jpg',
+          'https://cdn.pixabay.com/photo/2019/10/19/12/22/hot-air-balloon-4561273_1280.jpg',
+          'https://cdn.pixabay.com/photo/2019/10/19/12/22/hot-air-balloon-4561273_1280.jpg',
+          'https://cdn.pixabay.com/photo/2019/10/19/12/22/hot-air-balloon-4561273_1280.jpg',
+        ]}
+        withoutBorderRadius
+        noCloseButton
+      />
     </ChakraProvider>
   );
 };
