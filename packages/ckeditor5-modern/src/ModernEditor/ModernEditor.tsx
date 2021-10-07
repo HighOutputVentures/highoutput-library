@@ -18,6 +18,7 @@ import { ModernEditorProps } from '../types/modern-editor';
 import { PostFormSchemaValues, postFormSchema } from './validation';
 import { MODERN_EDITOR_STYLE } from '../utils/styleUtils';
 import { notEmpty } from '../utils/typescriptUtils';
+import { isBrowser } from '../utils/envUtils';
 
 const HOVEditor = React.lazy(() =>
   import('@highoutput/ckeditor5').then(mod => ({ default: mod.HOVEditor }))
@@ -110,28 +111,35 @@ const ModernEditor: FC<ModernEditorProps> = ({
           borderColor: 'red.500',
         })}
       >
-        <React.Suspense
-          fallback={
-            <Flex alignItems="center" justifyContent="center" w="full" minH={minH}>
-              <Spinner />
-            </Flex>
-          }
-        >
-          <HOVEditor
-            disabled={disabled || loading}
-            value={values.content || ''}
-            onChange={v =>
-              setValue('content', v, {
-                shouldDirty: true,
-                shouldTouch: true,
-                shouldValidate: Boolean(v),
-              })
+        {isBrowser && (
+          <React.Suspense
+            fallback={
+              <Flex
+                alignItems="center"
+                justifyContent="center"
+                w="full"
+                minH={minH}
+              >
+                <Spinner />
+              </Flex>
             }
-            placeholder={placeholder}
-            editorType={EditorTypes.MODERN}
-            mentionables={mentionables}
-          />
-        </React.Suspense>
+          >
+            <HOVEditor
+              disabled={disabled || loading}
+              value={values.content || ''}
+              onChange={v =>
+                setValue('content', v, {
+                  shouldDirty: true,
+                  shouldTouch: true,
+                  shouldValidate: Boolean(v),
+                })
+              }
+              placeholder={placeholder}
+              editorType={EditorTypes.MODERN}
+              mentionables={mentionables}
+            />
+          </React.Suspense>
+        )}
         {Boolean(fileAssets.length) && (
           <Box mt={4}>
             <SimpleGrid columns={7} spacing={4} mt={4}>
