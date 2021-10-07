@@ -1,8 +1,15 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { HOVEditor, EditorTypes } from '@highoutput/ckeditor5';
-import { Box, Flex, HStack, Button, SimpleGrid } from '@chakra-ui/react';
+import { EditorTypes } from '@highoutput/ckeditor5';
+import {
+  Box,
+  Flex,
+  HStack,
+  Button,
+  SimpleGrid,
+  Spinner,
+} from '@chakra-ui/react';
 import { v4 as uuid } from 'uuid';
 
 import FileInput, { FileAsset } from './components/FileInput';
@@ -11,6 +18,10 @@ import { ModernEditorProps } from '../types/modern-editor';
 import { PostFormSchemaValues, postFormSchema } from './validation';
 import { MODERN_EDITOR_STYLE } from '../utils/styleUtils';
 import { notEmpty } from '../utils/typescriptUtils';
+
+const HOVEditor = React.lazy(() =>
+  import('@highoutput/ckeditor5').then(mod => ({ default: mod.HOVEditor }))
+);
 
 const ModernEditor: FC<ModernEditorProps> = ({
   defaultContent,
@@ -99,20 +110,28 @@ const ModernEditor: FC<ModernEditorProps> = ({
           borderColor: 'red.500',
         })}
       >
-        <HOVEditor
-          disabled={disabled || loading}
-          value={values.content || ''}
-          onChange={v =>
-            setValue('content', v, {
-              shouldDirty: true,
-              shouldTouch: true,
-              shouldValidate: Boolean(v),
-            })
+        <React.Suspense
+          fallback={
+            <Flex alignItems="center" justifyContent="center" w="full" minH={minH}>
+              <Spinner />
+            </Flex>
           }
-          placeholder={placeholder}
-          editorType={EditorTypes.MODERN}
-          mentionables={mentionables}
-        />
+        >
+          <HOVEditor
+            disabled={disabled || loading}
+            value={values.content || ''}
+            onChange={v =>
+              setValue('content', v, {
+                shouldDirty: true,
+                shouldTouch: true,
+                shouldValidate: Boolean(v),
+              })
+            }
+            placeholder={placeholder}
+            editorType={EditorTypes.MODERN}
+            mentionables={mentionables}
+          />
+        </React.Suspense>
         {Boolean(fileAssets.length) && (
           <Box mt={4}>
             <SimpleGrid columns={7} spacing={4} mt={4}>

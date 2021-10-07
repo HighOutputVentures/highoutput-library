@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { ChakraProvider, extendTheme, Flex, Button } from '@chakra-ui/react';
 
-import { ModernEditor, ImageGrid } from './dist';
+import { ModernEditor, ImageGrid } from '../dist';
 
 // note this is for testing purposes only
 localStorage.setItem(
