@@ -29,6 +29,8 @@ const ModernEditor: FC<ModernEditorProps> = ({
       text: 'Share post',
     },
     cancelBtn,
+    maxH = '470px',
+    minH = '175px',
   } = editorConfig;
 
   // reformat default images
@@ -87,8 +89,8 @@ const ModernEditor: FC<ModernEditorProps> = ({
         borderRadius="lg"
         mb={4}
         p={4}
-        maxH="470px"
-        minH="175px"
+        maxH={maxH}
+        minH={minH}
         overflowY="auto"
         sx={MODERN_EDITOR_STYLE}
         {...(errors.content && {

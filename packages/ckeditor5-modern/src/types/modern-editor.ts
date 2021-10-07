@@ -1,5 +1,5 @@
 import { Mentionable } from '@highoutput/ckeditor5';
-import { ColorProps } from '@chakra-ui/react'
+import { ColorProps, LayoutProps } from '@chakra-ui/react'
 import { PostFormSchemaValues } from '../ModernEditor/validation';
 
 type BtnType = {
@@ -11,6 +11,8 @@ interface EditorConfig {
   placeholder?: string;
   okBtn?: BtnType;
   cancelBtn?: BtnType & { onClick?: () => void };
+  maxH?: LayoutProps['maxH'];
+  minH?: LayoutProps['minH'];
 }
 
 interface UploadConfig {
