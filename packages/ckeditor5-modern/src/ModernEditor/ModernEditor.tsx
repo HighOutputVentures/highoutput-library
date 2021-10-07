@@ -155,7 +155,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
           )}
           <Button
             isLoading={loading}
-            disabled={disabled}
+            disabled={disabled || loading}
             flexShrink={0}
             type="submit"
             variant="solid"
