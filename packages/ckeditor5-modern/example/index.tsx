@@ -55,6 +55,7 @@ const App = () => {
         ]}
         withoutBorderRadius
         noCloseButton
+        maxHeight={300}
       />
     </ChakraProvider>
   );

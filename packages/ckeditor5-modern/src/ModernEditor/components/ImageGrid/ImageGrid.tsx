@@ -11,6 +11,7 @@ interface ImageGridProps {
   currentProgress?: number;
   noCloseButton?: boolean;
   withoutBorderRadius?: boolean;
+  maxHeight?: number;
 }
 
 interface ImagePreviewProps {
@@ -63,6 +64,7 @@ export const ImageGrid: FC<ImageGridProps> = ({
   currentProgress,
   noCloseButton,
   withoutBorderRadius,
+  maxHeight,
 }) => {
   const numOfImgs = images.length;
   const derivedMaxDisplay =
@@ -165,7 +167,7 @@ export const ImageGrid: FC<ImageGridProps> = ({
 
   return (
     <Box
-      height={`${MAX_HEIGHT}px`}
+      height={`${maxHeight ? maxHeight : MAX_HEIGHT}px`}
       border="1px solid #E7E5E4"
       borderRadius={!withoutBorderRadius ? '2xl' : 0}
       overflow="hidden"
