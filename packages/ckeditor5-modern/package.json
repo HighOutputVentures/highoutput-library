@@ -1,5 +1,5 @@
 {
-  "version": "3.0.2",
+  "version": "3.0.3",
   "name": "@highoutput/ckeditor5-modern",
   "license": "MIT",
   "main": "dist/index.js",
@@ -27,8 +27,8 @@
     "@heroicons/react": "^1.0.4",
     "@hookform/resolvers": "^2.6.1",
     "axios": ">=0.21.1",
-    "js-cookie": "^3.0.1",
     "framer-motion": "^4.1.17",
+    "js-cookie": "^3.0.1",
     "react": ">=16",
     "react-dom": ">=16",
     "react-hook-form": "^7.11.1",
