@@ -19,6 +19,7 @@ interface ImageBlockProps {
   uploadUrl?: string;
   onRemove: () => void;
   onUploadSuccess: (assetUrl: string) => void;
+  loading?: boolean;
 }
 
 const ImageBlock: FC<ImageBlockProps> = ({
@@ -26,6 +27,7 @@ const ImageBlock: FC<ImageBlockProps> = ({
   uploadUrl,
   onRemove,
   onUploadSuccess,
+  loading = false,
 }) => {
   const { actualFile, linkSrc } = fileAsset;
 
@@ -75,7 +77,7 @@ const ImageBlock: FC<ImageBlockProps> = ({
 
   return (
     <Box position="relative">
-      {!uploading && (
+      {!uploading && !loading && (
         <CloseButton
           zIndex={1}
           onClick={onRemove}

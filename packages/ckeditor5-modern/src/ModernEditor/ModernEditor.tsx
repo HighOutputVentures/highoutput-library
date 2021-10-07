@@ -118,6 +118,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
             <SimpleGrid columns={7} spacing={4} mt={4}>
               {fileAssets.map(fileAsset => (
                 <ImageBlock
+                  loading={loading}
                   fileAsset={fileAsset}
                   key={fileAsset.id}
                   uploadUrl={uploadConfig?.apiUrl}
@@ -153,7 +154,8 @@ const ModernEditor: FC<ModernEditorProps> = ({
             </Button>
           )}
           <Button
-            disabled={disabled || loading}
+            isLoading={loading}
+            disabled={disabled}
             flexShrink={0}
             type="submit"
             variant="solid"
