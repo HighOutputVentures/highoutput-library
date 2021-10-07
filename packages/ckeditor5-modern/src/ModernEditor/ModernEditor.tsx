@@ -31,6 +31,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
     cancelBtn,
     maxH = '470px',
     minH = '175px',
+    editorStyle = MODERN_EDITOR_STYLE,
   } = editorConfig;
 
   // reformat default images
@@ -92,7 +93,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
         maxH={maxH}
         minH={minH}
         overflowY="auto"
-        sx={MODERN_EDITOR_STYLE}
+        sx={editorStyle}
         {...(errors.content && {
           borderWidth: 1,
           borderColor: 'red.500',
