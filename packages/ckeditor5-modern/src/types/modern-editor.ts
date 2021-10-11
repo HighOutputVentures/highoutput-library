@@ -1,6 +1,6 @@
 import { Mentionable } from '@highoutput/ckeditor5';
 import { ColorProps, LayoutProps, SystemStyleObject } from '@chakra-ui/react'
-import { PostFormSchemaValues } from '../ModernEditor/validation';
+import { PostVariables } from '../ModernEditor/validation';
 
 type BtnType = {
   text?: string;
@@ -19,7 +19,7 @@ interface EditorConfig {
 interface UploadConfig {
   apiUrl: string;
 }
-export interface OnSubmitArgs extends PostFormSchemaValues {
+export interface OnSubmitArgs extends PostVariables {
   uploadedFiles: string[];
 }
 
