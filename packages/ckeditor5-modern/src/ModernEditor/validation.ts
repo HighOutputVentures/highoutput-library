@@ -1,11 +1,13 @@
-import { string, object, SchemaOf, InferType } from 'yup';
+import { string, object } from 'yup';
 
-type PostVariables = {
-  content: string;
+export type PostVariables = {
+  content?: string;
 };
 
-export const postFormSchema: SchemaOf<PostVariables> = object().shape({
-  content: string().required('Content is required'),
-});
-
-export type PostFormSchemaValues = InferType<typeof postFormSchema>;
+export const postFormSchema = (hasFiles: boolean) => {
+  return hasFiles ? object().shape({
+    content: string(),
+  }) : object().shape({
+    content: string().required('Content is required'),
+  });
+}

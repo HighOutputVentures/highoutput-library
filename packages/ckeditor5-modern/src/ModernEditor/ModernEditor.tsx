@@ -15,7 +15,7 @@ import { v4 as uuid } from 'uuid';
 import FileInput, { FileAsset } from './components/FileInput';
 import ImageBlock from './components/ImageBlock';
 import { ModernEditorProps } from '../types/modern-editor';
-import { PostFormSchemaValues, postFormSchema } from './validation';
+import { PostVariables, postFormSchema } from './validation';
 import { MODERN_EDITOR_STYLE } from '../utils/styleUtils';
 import { notEmpty } from '../utils/typescriptUtils';
 import { isBrowser } from '../utils/envUtils';
@@ -61,15 +61,20 @@ const ModernEditor: FC<ModernEditorProps> = ({
   );
 
   const { register, getValues, setValue, formState, handleSubmit } = useForm<
-    PostFormSchemaValues
-  >({
-    mode: 'onChange',
-    reValidateMode: 'onChange',
-    resolver: yupResolver(postFormSchema),
-    defaultValues: {
-      content: defaultContent,
-    },
-  });
+    PostVariables
+  >(
+    useMemo(
+      () => ({
+        mode: 'onChange',
+        reValidateMode: 'onChange',
+        resolver: yupResolver(postFormSchema(Boolean(fileAssets.length))),
+        defaultValues: {
+          content: defaultContent,
+        },
+      }),
+      [fileAssets]
+    )
+  );
 
   useEffect(() => {
     register('content');
