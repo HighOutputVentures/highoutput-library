@@ -164,7 +164,7 @@ const ModernEditor: FC<ModernEditorProps> = ({
           </Box>
         )}
       </Box>
-      <Flex justifyContent="space-between">
+      <Flex justifyContent="space-between" sx={editorStyle}>
         <Box>
           <FileInput
             disabled={disabled || loading}
