@@ -1,5 +1,5 @@
 {
-  "version": "3.1.4",
+  "version": "3.1.5",
   "name": "@highoutput/ckeditor5-modern",
   "license": "MIT",
   "main": "dist/index.js",
@@ -85,7 +85,7 @@
     "yup": "^0.32.9"
   },
   "dependencies": {
-    "@highoutput/ckeditor5": "^1.0.5"
+    "@highoutput/ckeditor5": "^1.0.6"
   },
   "publishConfig": {
     "access": "public"
