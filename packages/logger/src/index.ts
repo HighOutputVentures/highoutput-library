@@ -1,7 +1,7 @@
 import debug, { Debugger } from 'debug';
 import LRU from 'lru-cache';
 
-type Argument = number | string | Error | object;
+type Argument = number | string | Error | object | unknown;
 
 const loggers: LRU<string, Debugger> = new LRU({
   max: 32768,
