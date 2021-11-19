@@ -1,19 +1,26 @@
-import React, { createContext, ReactNode, useContext, useRef } from 'react';
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useRef,
+  useState,
+} from 'react';
+import { DeSoIdentityButton } from '../components';
 import useDeso from '../hooks/useDeso';
 import { BitcloutDataProps } from '../types';
-import { DeSoIdentityButton } from '../components';
 
 const DesoContext = createContext<{
   getSingleProfile: (input: string) => Promise<any>;
   getIdentity: (cbFx: (data: BitcloutDataProps) => void) => void;
   DeSoIdentityButton: ReactNode;
 }>({
-  getSingleProfile: (input: string) => new Promise((resolve) => resolve(input)),
-  getIdentity: (cbFx) => new Promise((resolve) => resolve(cbFx)),
+  getSingleProfile: (input: string) => new Promise(resolve => resolve(input)),
+  getIdentity: cbFx => new Promise(resolve => resolve(cbFx)),
   DeSoIdentityButton,
 });
 
 const DesoProvider: React.FC = ({ children }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const desoWindow = useRef<Window | null>(null);
 
   const { getSingleProfile, getIdentity } = useDeso();
@@ -22,7 +29,7 @@ const DesoProvider: React.FC = ({ children }) => {
     <DesoContext.Provider
       value={{
         getSingleProfile,
-        getIdentity: (cbFx) => getIdentity(cbFx, desoWindow),
+        getIdentity: cbFx => getIdentity(cbFx, desoWindow),
         DeSoIdentityButton,
       }}
     >
