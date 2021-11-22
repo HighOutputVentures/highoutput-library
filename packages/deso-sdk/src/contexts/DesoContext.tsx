@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  ReactNode,
-  useContext,
-  useRef,
-  useState,
-} from 'react';
+import React, { createContext, ReactNode, useContext, useRef } from 'react';
 import { DeSoIdentityButton } from '../components';
 import useDeso from '../hooks/useDeso';
 import { BitcloutDataProps } from '../types';
@@ -20,7 +14,6 @@ const DesoContext = createContext<{
 });
 
 const DesoProvider: React.FC = ({ children }) => {
-  const [isLoading, setIsLoading] = useState(false);
   const desoWindow = useRef<Window | null>(null);
 
   const { getSingleProfile, getIdentity } = useDeso();

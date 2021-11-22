@@ -1,5 +1,5 @@
 {
-  "version": "0.1.33",
+  "version": "0.1.34",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -33,19 +33,19 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "@glevinzon/deso-react-sdk",
+  "name": "@glevinzon/deso-sdk",
   "repository": {
-    "url": "git://github.com/glevinzon/deso-react-sdk.git"
+    "url": "git://github.com/glevinzon/deso-sdk.git"
   },
   "author": "Glevinzon Dapal",
-  "module": "dist/deso-react-sdk.esm.js",
+  "module": "dist/deso-sdk.esm.js",
   "size-limit": [
     {
-      "path": "dist/deso-react-sdk.cjs.production.min.js",
+      "path": "dist/deso-sdk.cjs.production.min.js",
       "limit": "10 KB"
     },
     {
-      "path": "dist/deso-react-sdk.esm.js",
+      "path": "dist/deso-sdk.esm.js",
       "limit": "10 KB"
     }
   ],

@@ -1,13 +1,12 @@
-import { useEffect } from 'react';
+import {
+    Thing,
+    useDesoContextValues
+} from '@glevinzon/deso-sdk';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
+import { useEffect } from 'react';
 import styles from '../styles/Home.module.css';
-import {
-  Thing,
-  useDesoContextValues,
-  // DeSoIdentityButton,
-} from '@glevinzon/deso-react-sdk';
 
 const Home: NextPage = () => {
   const { getSingleProfile, getIdentity, DeSoIdentityButton } =

@@ -1,6 +1,6 @@
-import '../styles/globals.css';
+import { DesoProvider } from '@glevinzon/deso-sdk';
 import type { AppProps } from 'next/app';
-import { DesoProvider } from '@glevinzon/deso-react-sdk';
+import '../styles/globals.css';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

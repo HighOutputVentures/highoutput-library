@@ -7,13 +7,13 @@ A wrapper to DeSo Identity and API endpoints. This expirement aims to make the D
 Install the package with npm
 
 ```bash
-  npm install @glevinzon/deso-react-sdk --save
+  npm install @glevinzon/deso-sdk --save
 ```
 
 or if you are using yarn
 
 ```bash
-  yarn add @glevinzon/deso-react-sdk --save
+  yarn add @glevinzon/deso-sdk --save
 ```
 
 ## Usage/Examples
@@ -21,7 +21,7 @@ or if you are using yarn
 Wrap the components to the Context provider
 
 ```javascript
-import { DesoProvider } from '@glevinzon/deso-react-sdk';
+import { DesoProvider } from '@glevinzon/deso-sdk';
 
 function App() {
   return (
@@ -35,7 +35,7 @@ function App() {
 import and use the exposed hook `useDesoContextValues` to get methods you can use
 
 ```javascript
-import { useDesoContextValues } from '@glevinzon/deso-react-sdk';
+import { useDesoContextValues } from '@glevinzon/deso-sdk';
 
 const LoginForm: React.FC = () => {
   const { getIdentity } = useDesoContextValues();
@@ -43,7 +43,7 @@ const LoginForm: React.FC = () => {
   return (
     <Button
       onClick={async () => {
-        await getIdentity((data) => {
+        await getIdentity(data => {
           const { pubKey, token } = data; // pubkey and token are returned
           void connectBitclout({
             variables: {
