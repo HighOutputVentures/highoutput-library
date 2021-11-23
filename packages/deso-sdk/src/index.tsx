@@ -1,6 +1,7 @@
 import * as React from 'react';
-export * from './contexts/DesoContext';
 export * from './components';
+export * from './contexts/DesoContext';
+export * from './core';
 
 // Delete me
 export const Thing = () => {
