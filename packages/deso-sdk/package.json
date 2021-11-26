@@ -1,5 +1,6 @@
 {
-  "version": "0.1.35",
+  "name": "@highoutput/deso-sdk",
+  "version": "0.1",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -33,11 +34,11 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "@glevinzon/deso-sdk",
   "repository": {
-    "url": "git://github.com/glevinzon/deso-sdk.git"
+    "type": "git",
+    "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
   },
-  "author": "Glevinzon Dapal",
+  "author": "High Output Ventures",
   "module": "dist/deso-sdk.esm.js",
   "size-limit": [
     {
@@ -72,5 +73,8 @@
   "dependencies": {
     "axios": "^0.24.0",
     "uuid": "^8.3.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
