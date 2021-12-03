@@ -1,6 +1,11 @@
 import flattenDeep from 'lodash/flattenDeep';
 import nodeEmoji from 'node-emoji';
-import { Mention, S3Upload, Video, VideoUpload } from 'ckeditor5-custom-build';
+import {
+  Mention,
+  S3Upload,
+  Video,
+  VideoUpload,
+} from '@highoutput/custom-ckeditor-build';
 
 import { EditorTypes, Mentionable } from '../types/hov-editor';
 import { categories as emojiCategories } from '../constants/emoji.json';
