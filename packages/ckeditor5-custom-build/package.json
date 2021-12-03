@@ -45,5 +45,8 @@
     "ckeditor5-sss-upload": "git+https://github.com/ccpacillos/ckeditor5-sss-upload.git#v27.1.11",
     "install": "^0.13.0",
     "npm": "^7.12.1"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
