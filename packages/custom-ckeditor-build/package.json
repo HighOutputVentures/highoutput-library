@@ -59,5 +59,8 @@
   },
   "bugs": {
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
