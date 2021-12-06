@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/custom-ckeditor-build",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A custom CKEditor 5 build made by the CKEditor 5 online builder.",
   "author": "Niel Berongoy",
   "license": "ISC",
