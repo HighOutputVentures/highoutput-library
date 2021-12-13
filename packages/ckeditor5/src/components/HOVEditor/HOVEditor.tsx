@@ -1,6 +1,6 @@
 import React, { FC, useMemo } from 'react';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
-import { ClassicEditor } from '@highoutput/custom-ckeditor-build';
+import { ClassicEditor } from 'ckeditor5-custom-build';
 
 import { EditorTypes, HOVEditorProps } from '../../types/hov-editor';
 import {
@@ -26,7 +26,7 @@ const HOVEditor: FC<HOVEditorProps> = props => {
   } = props;
 
   const editorToobars = useMemo(() => getToolbars(editorType), [editorType]);
-  const editorPlugins = useMemo(() => getPlugins(mentionables), [
+  const editorPlugins = useMemo(() => getPlugins(mentionables, editorType), [
     mentionables,
     editorType,
   ]);
