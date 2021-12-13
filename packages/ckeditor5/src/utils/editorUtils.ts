@@ -1,11 +1,6 @@
 import flattenDeep from 'lodash/flattenDeep';
 import nodeEmoji from 'node-emoji';
-import {
-  Mention,
-  S3Upload,
-  Video,
-  VideoUpload,
-} from '@highoutput/custom-ckeditor-build';
+import { Mention } from '@highoutput/custom-ckeditor-build';
 
 import { EditorTypes, Mentionable } from '../types/hov-editor';
 import { categories as emojiCategories } from '../constants/emoji.json';
@@ -28,7 +23,6 @@ const EXTRA_TOOLBARS = [
   'codeBlock',
   '|',
   'imageUpload',
-  'videoUpload',
   'link',
   '|',
   'horizontalLine',
@@ -49,12 +43,8 @@ export const getToolbars = (type: EditorTypes) => {
   }
 };
 
-export const getPlugins = (mentionables: Mentionable[], type: EditorTypes) => {
-  return [
-    Mention,
-    MentionToLink(mentionables),
-    ...(type === EditorTypes.CLASSIC ? [S3Upload, Video, VideoUpload] : []),
-  ];
+export const getPlugins = (mentionables: Mentionable[]) => {
+  return [Mention, MentionToLink(mentionables), []];
 };
 
 export const getDisplayName = (mentionable: Mentionable) => {

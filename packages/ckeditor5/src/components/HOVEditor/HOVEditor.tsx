@@ -26,7 +26,7 @@ const HOVEditor: FC<HOVEditorProps> = props => {
   } = props;
 
   const editorToobars = useMemo(() => getToolbars(editorType), [editorType]);
-  const editorPlugins = useMemo(() => getPlugins(mentionables, editorType), [
+  const editorPlugins = useMemo(() => getPlugins(mentionables), [
     mentionables,
     editorType,
   ]);
