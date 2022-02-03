@@ -1,24 +1,14 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-non-null-assertion, @typescript-eslint/camelcase */
-import {
-  Connection, EventContext, Receiver, Sender,
-} from 'rhea';
-import R from 'ramda';
-import AsyncGroup from '@highoutput/async-group';
-import {
-  serialize,
-  deserialize,
-} from '@highoutput/serialize';
-import LRU from 'lru-cache';
-import { serializeError } from 'serialize-error';
-import { EventEmitter } from 'events';
-import logger from './logger';
-import {
-  closeReceiver,
-  closeSender,
-  openSender,
-  openReceiver,
-} from './util';
+import { Connection, EventContext, Receiver, Sender } from "rhea";
+import R from "ramda";
+import AsyncGroup from "@highoutput/async-group";
+import { serialize, deserialize } from "@highoutput/serialize";
+import LRU from "lru-cache";
+import { serializeError } from "serialize-error";
+import { EventEmitter } from "events";
+import logger from "./logger";
+import { closeReceiver, closeSender, openSender, openReceiver } from "./util";
 
 export type WorkerOptions = {
   concurrency: number;
@@ -49,7 +39,7 @@ export default class Worker<
     private readonly connection: Connection,
     private readonly queue: string,
     private readonly handler: (...args: TInput) => Promise<TOutput>,
-    options?: Partial<WorkerOptions>,
+    options?: Partial<WorkerOptions>
   ) {
     super();
 
@@ -66,27 +56,27 @@ export default class Worker<
           const sender = await value;
           sender.close();
         } catch (e) {
-          logger.tag(['cache', 'dispose']).warn(e);
+          logger.tag(["cache", "dispose"]).warn(e);
         }
       },
       max: this.options.maxSenders,
     });
 
-    this.connection.on('disconnected', () => {
+    this.connection.on("disconnected", () => {
       logger
-        .tag(['worker', 'connection', 'disconnected'])
-        .tag('Connection is disconnected.');
+        .tag(["worker", "connection", "disconnected"])
+        .tag("Connection is disconnected.");
       this.disconnected = true;
     });
 
-    this.connection.on('connection_close', () => {
+    this.connection.on("connection_close", () => {
       logger
-        .tag(['worker', 'connection', 'connection_close'])
-        .tag('Connection is closed.');
+        .tag(["worker", "connection", "connection_close"])
+        .tag("Connection is closed.");
       this.disconnected = true;
     });
 
-    logger.tag('worker').info(this.options);
+    logger.tag("worker").info(this.options);
   }
 
   private async getSender(address: string) {
@@ -103,7 +93,7 @@ export default class Worker<
           address,
         },
       }).then((sender) => {
-        sender.on('sender_close', () => this.senders.del(address));
+        sender.on("sender_close", () => this.senders.del(address));
         return sender;
       });
 
@@ -120,16 +110,19 @@ export default class Worker<
       return;
     }
 
-    const body = typeof message.body === 'string'
-      ? JSON.parse(message.body)
-      : message.body;
+    const body =
+      typeof message.body === "string"
+        ? JSON.parse(message.body)
+        : message.body;
 
     const request = {
       ...body,
-      arguments: this.options.deserialize ? deserialize(body.arguments) : body.arguments,
+      arguments: this.options.deserialize
+        ? deserialize(body.arguments)
+        : body.arguments,
     };
 
-    logger.tag(['worker', 'request']).verbose(request);
+    logger.tag(["worker", "request"]).verbose(request);
 
     let result: TOutput | null = null;
     let error: Record<string, any> | null = null;
@@ -148,7 +141,11 @@ export default class Worker<
         timestamp: Date.now(),
       };
 
-      logger.tag(['worker', 'response']).verbose(response);
+      if (error) {
+        logger.tag(["worker", "response"]).error(error);
+      }
+
+      logger.tag(["worker", "response"]).verbose(response);
 
       const sender = await this.getSender(message.reply_to!);
 
@@ -158,7 +155,7 @@ export default class Worker<
           body: JSON.stringify(response),
         });
       } catch (err) {
-        logger.tag('worker').warn(err);
+        logger.tag("worker").warn(err);
       }
     }
   }
@@ -173,13 +170,13 @@ export default class Worker<
         source: {
           address: `queue://${this.queue}`,
           durable: 2,
-          expiry_policy: 'never',
+          expiry_policy: "never",
         },
         credit_window: 0,
         autoaccept: true,
       });
 
-      this.receiver.on('message', async (context: EventContext) => {
+      this.receiver.on("message", async (context: EventContext) => {
         if (this.shutdown) {
           context.delivery?.release({ delivery_failed: false });
           return;
@@ -192,12 +189,12 @@ export default class Worker<
         const now = Date.now();
         // message already expired, no need to process this
         if (
-          message.absolute_expiry_time
-          && now > message.absolute_expiry_time
+          message.absolute_expiry_time &&
+          now > message.absolute_expiry_time
         ) {
           logger
-            .tag(['worker', 'message'])
-            .verbose('received an expired message.');
+            .tag(["worker", "message"])
+            .warn("received an expired message.");
           if (!this.shutdown) {
             context.receiver!.add_credit(1);
           }
@@ -205,7 +202,9 @@ export default class Worker<
         }
 
         await this.asyncGroup.add(
-          this.handleMessage(context).catch((err) => logger.tag('worker').warn(err)),
+          this.handleMessage(context).catch((err) =>
+            logger.tag("worker").warn(err)
+          )
         );
 
         if (!this.shutdown) {
@@ -215,13 +214,13 @@ export default class Worker<
 
       this.receiver.add_credit(this.options.concurrency);
 
-      this.emit('start');
+      this.emit("start");
     };
 
     this.initialize = (async () => {
       await connect();
 
-      this.connection.on('connection_open', async () => {
+      this.connection.on("connection_open", async () => {
         if (!this.disconnected || this.shutdown) {
           return;
         }
@@ -250,11 +249,11 @@ export default class Worker<
         if (sender.is_open()) {
           await closeSender(sender);
         }
-      }),
+      })
     );
 
     this.senders.reset();
 
-    this.emit('stop');
+    this.emit("stop");
   }
 }
