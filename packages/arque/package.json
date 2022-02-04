@@ -29,7 +29,8 @@
     "@arque/activemq-connection": "^1.0.0-alpha.38",
     "@arque/core": "^1.0.0-alpha.47",
     "@arque/rabbitmq-connection": "^1.0.0-alpha.12",
-    "@arque/types": "^1.0.0-alpha.15"
+    "@arque/types": "^1.0.0-alpha.15",
+    "circuit-breaker": "^0.0.4"
   },
   "devDependencies": {
     "@highoutput/delay": "^0.2.8",

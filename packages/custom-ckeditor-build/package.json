@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "@ckeditor/ckeditor5-typing": "^27.1.0",
+    "circuit-breaker": "^0.0.4",
     "install": "^0.13.0",
     "npm": "^7.12.1"
   },

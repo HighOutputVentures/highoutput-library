@@ -3,6 +3,7 @@
   "version": "0.5.4",
   "main": "build/index.js",
   "dependencies": {
+    "circuit-breaker": "^0.0.4",
     "debug": "^3.1.0",
     "lru-cache": "^6.0.0"
   },
