@@ -1,24 +1,14 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-non-null-assertion, @typescript-eslint/camelcase */
-import {
-  Connection, EventContext, Receiver, Sender,
-} from 'rhea';
+import { Connection, EventContext, Receiver, Sender } from 'rhea';
 import R from 'ramda';
 import AsyncGroup from '@highoutput/async-group';
-import {
-  serialize,
-  deserialize,
-} from '@highoutput/serialize';
+import { serialize, deserialize } from '@highoutput/serialize';
 import LRU from 'lru-cache';
 import { serializeError } from 'serialize-error';
 import { EventEmitter } from 'events';
 import logger from './logger';
-import {
-  closeReceiver,
-  closeSender,
-  openSender,
-  openReceiver,
-} from './util';
+import { closeReceiver, closeSender, openSender, openReceiver } from './util';
 
 export type WorkerOptions = {
   concurrency: number;
@@ -49,7 +39,7 @@ export default class Worker<
     private readonly connection: Connection,
     private readonly queue: string,
     private readonly handler: (...args: TInput) => Promise<TOutput>,
-    options?: Partial<WorkerOptions>,
+    options?: Partial<WorkerOptions>
   ) {
     super();
 
@@ -120,13 +110,16 @@ export default class Worker<
       return;
     }
 
-    const body = typeof message.body === 'string'
-      ? JSON.parse(message.body)
-      : message.body;
+    const body =
+      typeof message.body === 'string'
+        ? JSON.parse(message.body)
+        : message.body;
 
     const request = {
       ...body,
-      arguments: this.options.deserialize ? deserialize(body.arguments) : body.arguments,
+      arguments: this.options.deserialize
+        ? deserialize(body.arguments)
+        : body.arguments,
     };
 
     logger.tag(['worker', 'request']).verbose(request);
@@ -147,6 +140,10 @@ export default class Worker<
         error,
         timestamp: Date.now(),
       };
+
+      if (error) {
+        logger.tag(['worker', 'response']).error(error);
+      }
 
       logger.tag(['worker', 'response']).verbose(response);
 
@@ -192,12 +189,12 @@ export default class Worker<
         const now = Date.now();
         // message already expired, no need to process this
         if (
-          message.absolute_expiry_time
-          && now > message.absolute_expiry_time
+          message.absolute_expiry_time &&
+          now > message.absolute_expiry_time
         ) {
           logger
             .tag(['worker', 'message'])
-            .verbose('received an expired message.');
+            .warn('received an expired message.');
           if (!this.shutdown) {
             context.receiver!.add_credit(1);
           }
@@ -205,7 +202,9 @@ export default class Worker<
         }
 
         await this.asyncGroup.add(
-          this.handleMessage(context).catch((err) => logger.tag('worker').warn(err)),
+          this.handleMessage(context).catch((err) =>
+            logger.tag('worker').warn(err)
+          )
         );
 
         if (!this.shutdown) {
@@ -250,7 +249,7 @@ export default class Worker<
         if (sender.is_open()) {
           await closeSender(sender);
         }
-      }),
+      })
     );
 
     this.senders.reset();
