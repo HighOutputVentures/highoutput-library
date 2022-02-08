@@ -56,7 +56,7 @@ const data: { deserialized: any; serialized: any }[] = [
   },
 ];
 
-describe('serrialize', () => {
+describe('serialize', () => {
   for (const { deserialized, serialized } of data) {
     it('should return correct output', () => {
       expect(serialize(deserialized)).to.deep.equal(serialized);

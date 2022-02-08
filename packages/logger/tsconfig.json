@@ -17,5 +17,5 @@
     "experimentalDecorators": true,
     "lib": ["esnext"],
   },
-  "include": ["src/**/*", "test/lib/serialize.spec.ts"]
+  "include": ["src/**/*"]
 }
