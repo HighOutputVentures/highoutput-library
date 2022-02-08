@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/circuit-breaker",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "> TODO: description",
   "author": "High Output Ventures",
   "homepage": "https://github.com/HighOutputVentures/highoutput-library#readme",
@@ -49,7 +49,7 @@
     "wtfnode": "^0.9.1"
   },
   "dependencies": {
-    "@highoutput/async-group": "^0.3.8",
+    "@highoutput/async-group": "^0.4.0",
     "@highoutput/delay": "^0.2.8",
     "@types/ramda": "^0.27.64",
     "ramda": "^0.28.0"

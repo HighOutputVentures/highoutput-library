@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/logger",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "main": "build/index.js",
   "dependencies": {
     "@highoutput/serialize": "^0.1.5",
