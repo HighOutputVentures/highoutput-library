@@ -1,6 +1,6 @@
 {
   "name": "@arque/core",
-  "version": "1.0.0-alpha.50",
+  "version": "1.0.0",
   "description": "Core for `arque`",
   "keywords": [
     "microservice",
@@ -28,12 +28,12 @@
   },
   "dependencies": {
     "@arque/types": "^1.0.0-alpha.15",
-    "@highoutput/amqp": "^0.11.12",
+    "@highoutput/amqp": "^0.11.13",
     "@highoutput/async-group": "^0.3.8",
     "@highoutput/delay": "^0.2.8",
     "@highoutput/error": "^0.1.12",
     "@highoutput/hash": "^0.1.11",
-    "@highoutput/logger": "^0.5.4",
+    "@highoutput/logger": "^0.5.5",
     "@highoutput/serialize": "^0.1.5",
     "@types/backoff": "^2.5.1",
     "@types/lokijs": "^1.5.3",
