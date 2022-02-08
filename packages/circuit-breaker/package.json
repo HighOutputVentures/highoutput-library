@@ -18,7 +18,8 @@
     "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
   },
   "scripts": {
-    "test": "jest"
+    "build": "tsc",
+    "test": "npx -n --async-stack-traces jest"
   },
   "bugs": {
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
@@ -32,20 +33,23 @@
     "@types/lodash.sample": "^4.2.6",
     "@types/lodash.samplesize": "^4.2.6",
     "@types/lodash.shuffle": "^4.2.6",
+    "@types/wtfnode": "^0.7.0",
     "chance": "^1.1.8",
     "eslint": "^8.8.0",
     "eslint-config-airbnb-typescript": "^16.1.0",
     "eslint-import-resolver-typescript": "^2.5.0",
     "eslint-plugin-import": "^2.25.4",
-    "jest": "^27.4.7",
+    "jest": "^27.5.0",
     "lodash.sample": "^4.2.1",
     "lodash.samplesize": "^4.2.0",
     "lodash.shuffle": "^4.2.0",
     "ts-jest": "^27.1.3",
     "ts-node": "^10.4.0",
-    "typescript": "^4.5.5"
+    "typescript": "^4.5.5",
+    "wtfnode": "^0.9.1"
   },
   "dependencies": {
+    "@highoutput/async-group": "^0.3.8",
     "@highoutput/delay": "^0.2.8",
     "@types/ramda": "^0.27.64",
     "ramda": "^0.28.0"

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es2017",
-    "module": "commonjs",
+    "target": "ES2017",
+    "module": "CommonJS",
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
@@ -17,5 +17,6 @@
     "experimentalDecorators": true,
     "lib": ["esnext"]
   },
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts"],
+  "exclude": ["__tests__/**/*", "dist/**/*"]
 }
