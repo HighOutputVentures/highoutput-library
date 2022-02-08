@@ -1,5 +1,7 @@
 import debug, { Debugger } from 'debug';
 import LRU from 'lru-cache';
+import { deserialize } from '@highoutput/serialize';
+import { serialize } from './lib/serialize';
 
 type Argument = number | string | Error | object | unknown;
 
@@ -12,14 +14,14 @@ class Logger {
 
   constructor(tags?: string | string[]) {
     if (tags) {
-      this.tags = (tags instanceof Array)? tags: [tags];
+      this.tags = tags instanceof Array ? tags : [tags];
     }
   }
 
   tag(tags: string | string[]): Logger {
     return new Logger([
       ...((this.tags || []).slice(0) as string[]),
-      ...((tags instanceof Array)? tags: [tags]),
+      ...(tags instanceof Array ? tags : [tags]),
     ]);
   }
 
@@ -35,34 +37,28 @@ class Logger {
         if (item instanceof Error) {
           const obj = { message: item.message };
 
-          Object.getOwnPropertyNames(item).forEach(property => {
-            (obj as any)[property] = 
-              (typeof (item as any)[property] === 'string') ?
-                (item as any)[property].replace(/\n/g, '\\n') :
-                (item as any)[property];
+          Object.getOwnPropertyNames(item).forEach((property) => {
+            (obj as any)[property] =
+              typeof (item as any)[property] === 'string'
+                ? (item as any)[property].replace(/\n/g, '\\n')
+                : (item as any)[property];
           });
 
           return obj;
         }
 
-        if (typeof item === 'string') {
-          return item.replace(/\n/g, '\\n');
-        }
-
-        if (typeof item === 'number') {
-          return item.toString();
-        }
-
-        return item;
+        return serialize(deserialize);
       })
-      .map(item => {
-        return JSON.stringify({ 
-          tags: this.tags, 
-          ...(process.env.SERVICE_NAME)? { service: process.env.SERVICE_NAME } : {},
-          message: item, 
+      .map((item) => {
+        return JSON.stringify({
+          tags: this.tags,
+          ...(process.env.SERVICE_NAME
+            ? { service: process.env.SERVICE_NAME }
+            : {}),
+          message: item,
         });
       })
-      .forEach(item => logger(item));
+      .forEach((item) => logger(item));
   }
 
   critical(...args: Argument[]): void {
