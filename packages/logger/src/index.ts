@@ -47,7 +47,7 @@ class Logger {
           return obj;
         }
 
-        return serialize(deserialize);
+        return serialize(deserialize(item));
       })
       .map((item) => {
         return JSON.stringify({
