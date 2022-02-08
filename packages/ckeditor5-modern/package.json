@@ -85,8 +85,7 @@
     "yup": "^0.32.9"
   },
   "dependencies": {
-    "@highoutput/ckeditor5": "^1.2.0",
-    "circuit-breaker": "^0.0.4"
+    "@highoutput/ckeditor5": "^1.2.0"
   },
   "publishConfig": {
     "access": "public"

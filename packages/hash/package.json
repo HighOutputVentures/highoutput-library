@@ -21,7 +21,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@types/node": "^14.11.1",
-    "circuit-breaker": "^0.0.4"
+    "@types/node": "^14.11.1"
   }
 }

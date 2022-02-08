@@ -73,7 +73,6 @@
   },
   "dependencies": {
     "axios": "^0.24.0",
-    "circuit-breaker": "^0.0.4",
     "uuid": "^8.3.2"
   },
   "publishConfig": {
