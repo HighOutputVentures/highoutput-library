@@ -1,11 +1,24 @@
 # `circuit-breaker`
 
-> TODO: description
+> Executes and monitors the status of async functions. When the async function starts failing, `@highoutput/circuit-breaker` triggers an internal switch and prevents further executions.
 
 ## Usage
 
 ```
-const circuitBreaker = require('circuit-breaker');
+import CircuitBreaker from '@highoutput/circuit-breaker';
 
-// TODO: DEMONSTRATE API
+const circuitBreaker = new CircuitBreaker({
+  threshold: 0.35,
+  timeout: 60000,
+  rollingCountBuckets: 6,
+  rollingCountInterval: 30000,
+  resetTimeout: 300000,
+  recoveryCountThreshold: 3,
+  handler: async (params: { message: string }) => {
+    return params.message;
+  },
+});
+
+console.log(await circuitBreaker.exec({ message: 'Hello World' }));
+// Hello World
 ```

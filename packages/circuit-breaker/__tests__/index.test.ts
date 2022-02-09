@@ -1,7 +1,7 @@
 import delay from '@highoutput/delay';
 import R from 'ramda';
 import sampleSize from 'lodash.samplesize';
-import CircuitBreaker, { Status, TimeoutError } from '..';
+import CircuitBreaker, { Status, TimeoutError } from '../index';
 import { chance } from './helpers';
 
 describe('CircuitBreaker', () => {

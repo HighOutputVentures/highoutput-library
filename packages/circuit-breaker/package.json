@@ -21,7 +21,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "npx -n --async-stack-traces jest"
+    "test": "npx -n --async-stack-traces jest",
+    "prepublish": "npm run build"
   },
   "bugs": {
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
