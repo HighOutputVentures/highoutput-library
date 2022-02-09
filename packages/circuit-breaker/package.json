@@ -5,13 +5,15 @@
   "author": "High Output Ventures",
   "homepage": "https://github.com/HighOutputVentures/highoutput-library#readme",
   "license": "MIT",
-  "main": "lib/circuit-breaker.js",
+  "main": "dist/index.js",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
   },
   "files": [
-    "lib"
+    "index.ts",
+    "error.ts",
+    "lib.ts"
   ],
   "repository": {
     "type": "git",

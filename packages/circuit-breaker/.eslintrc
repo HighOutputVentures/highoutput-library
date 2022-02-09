@@ -19,5 +19,4 @@
     "max-len": ["error", 128],
     "import/extensions": "off"
   }
-
 }
