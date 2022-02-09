@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/logger",
-  "version": "0.5.7",
+  "version": "0.5.8",
   "main": "build/index.js",
   "dependencies": {
     "debug": "^3.1.0",
