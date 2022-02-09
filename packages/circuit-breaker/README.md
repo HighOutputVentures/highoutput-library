@@ -1,6 +1,6 @@
 # `circuit-breaker`
 
-> Executes and monitors the status of async functions. When the async function starts failing, `@highoutput/circuit-breaker` triggers an internal switch and prevents further executions.
+> Executes and monitors the status of async functions. When the async function starts failing, `@highoutput/circuit-breaker` triggers an internal switch and prevents further executions. The internal switch is triggered when the failure rate (number of failures divided by the number of executions measured over a period) goes beyond the threshold.
 
 ## Usage
 
