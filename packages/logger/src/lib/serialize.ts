@@ -59,7 +59,7 @@ export const serialize = (object: any) => {
         return null;
       }
 
-      return Object.keys(object).reduce((arr, key) => {
+      return Object.getOwnPropertyNames(object).reduce((arr, key) => {
         return {
           ...arr,
           [key]: serialize(object[key]),
