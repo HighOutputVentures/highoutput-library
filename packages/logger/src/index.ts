@@ -1,6 +1,6 @@
 import debug, { Debugger } from 'debug';
 import LRU from 'lru-cache';
-import { serialize, deserialize } from './lib/serialize';
+import { serialize } from './lib/serialize';
 
 type Argument = number | string | Error | object | unknown;
 
@@ -46,7 +46,7 @@ class Logger {
           return obj;
         }
 
-        return serialize(deserialize(item));
+        return serialize(item);
       })
       .map((item) => {
         return JSON.stringify({
