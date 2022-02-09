@@ -1,7 +1,6 @@
 import debug, { Debugger } from 'debug';
 import LRU from 'lru-cache';
-import { deserialize } from '@highoutput/serialize';
-import { serialize } from './lib/serialize';
+import { serialize, deserialize } from './lib/serialize';
 
 type Argument = number | string | Error | object | unknown;
 
