@@ -2,34 +2,34 @@ export const serialize = (object: any) => {
   try {
     const type = typeof object;
 
-    if (type === "string") {
-      return object.replace(/\n/g, "\\n");
+    if (type === 'string') {
+      return object.replace(/\n/g, '\\n');
     }
 
-    if (type === "number") {
+    if (type === 'number') {
       return object.toString();
     }
 
-    if (type === "object") {
+    if (type === 'object') {
       if (object?.__classObject) {
-        if (object.type === "Date") {
+        if (object.type === 'Date') {
           return serialize(new Date(object.data));
         }
 
-        if (object.type === "Set") {
+        if (object.type === 'Set') {
           return serialize(object.data);
         }
 
-        if (object.type === "Map") {
+        if (object.type === 'Map') {
           return serialize(object.data);
         }
 
-        if (object.type === "Buffer") {
-          return serialize(Buffer.from(object.data, "base64"));
+        if (object.type === 'Buffer') {
+          return serialize(Buffer.from(object.data, 'base64'));
         }
       }
 
-      if (object?._bsontype === "Binary") {
+      if (object?._bsontype === 'Binary') {
         return serialize(object.buffer);
       }
 
@@ -52,14 +52,14 @@ export const serialize = (object: any) => {
       }
 
       if (object instanceof Buffer) {
-        return object.toString("base64");
+        return object.toString('base64');
       }
 
       if (object === null) {
         return null;
       }
 
-      if (object.hasOwnProperty("toJSON")) {
+      if (object.hasOwnProperty('toJSON')) {
         return serialize(object.toJSON());
       }
 
