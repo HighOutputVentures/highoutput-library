@@ -59,6 +59,10 @@ export const serialize = (object: any) => {
         return null;
       }
 
+      if (object.hasOwnProperty('toJSON')) {
+        return serialize(object.toJSON());
+      }
+
       return Object.getOwnPropertyNames(object).reduce((arr, key) => {
         return {
           ...arr,

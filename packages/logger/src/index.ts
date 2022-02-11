@@ -46,6 +46,10 @@ class Logger {
           return obj;
         }
 
+        if (['silly', 'verbose'].includes(level)) {
+          return item;
+        }
+
         return serialize(item);
       })
       .map((item) => {
