@@ -22,6 +22,7 @@ const HOVEditor: FC<HOVEditorProps> = props => {
     onChange,
     placeholder,
     mentionables = [],
+    disableYoutubeEmbed = false,
     disabled = false,
   } = props;
 
@@ -37,6 +38,9 @@ const HOVEditor: FC<HOVEditorProps> = props => {
         editor={ClassicEditor}
         disabled={disabled}
         config={{
+          ...(disableYoutubeEmbed && {mediaEmbed: {
+            removeProviders: ['youtube' ]
+          }}),
           extraPlugins: editorPlugins,
           ...(editorToobars.length && {
             toolbar: {
