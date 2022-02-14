@@ -8,6 +8,7 @@
     "build": "parcel build index.html"
   },
   "dependencies": {
+    "node-gyp": "^8.4.1",
     "react-app-polyfill": "^1.0.0"
   },
   "alias": {

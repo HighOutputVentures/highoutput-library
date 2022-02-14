@@ -25,6 +25,7 @@ interface EditorProps {
   placeholder?: string;
   mentionables?: Mentionable[];
   disabled?: boolean;
+  disableYoutubeEmbed?: boolean;
 }
 
 interface FullEditor {
