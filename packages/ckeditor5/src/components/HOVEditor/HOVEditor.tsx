@@ -14,6 +14,7 @@ import {
   emojiItemRenderer,
   mentionItemRenderer,
 } from '../../utils/editorUtils';
+import { PROVIDER_WITH_PREVIEW } from '../../constants/providers';
 
 const HOVEditor: FC<HOVEditorProps> = props => {
   const {
@@ -22,7 +23,7 @@ const HOVEditor: FC<HOVEditorProps> = props => {
     onChange,
     placeholder,
     mentionables = [],
-    disableYoutubeEmbed = false,
+    disablePreview = true,
     disabled = false,
   } = props;
 
@@ -38,9 +39,11 @@ const HOVEditor: FC<HOVEditorProps> = props => {
         editor={ClassicEditor}
         disabled={disabled}
         config={{
-          ...(disableYoutubeEmbed && {mediaEmbed: {
-            removeProviders: ['youtube' ]
-          }}),
+          ...(disablePreview && {
+            mediaEmbed: {
+              removeProviders: PROVIDER_WITH_PREVIEW,
+            },
+          }),
           extraPlugins: editorPlugins,
           ...(editorToobars.length && {
             toolbar: {
