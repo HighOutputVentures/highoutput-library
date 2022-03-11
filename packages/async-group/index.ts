@@ -50,4 +50,12 @@ export default class AsyncGroup {
 
     await this.instance.wait();
   }
+
+  public static get size() {
+    if (this.instance) {
+      return this.instance.size;
+    }
+
+    return 0;
+  }
 }
