@@ -1,6 +1,6 @@
 {
   "name": "@arque/rabbitmq-connection",
-  "version": "1.0.0-alpha.18",
+  "version": "1.0.0-alpha.19",
   "description": "RabbitMQ connection for `arque`",
   "keywords": [
     "event-sourcing",
@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@arque/types": "^1.0.0-alpha.15",
-    "@highoutput/async-group": "^0.4.1",
+    "@highoutput/async-group": "^0.5.0",
     "@highoutput/error": "^0.1.12",
     "@highoutput/logger": "^0.5.10",
     "@highoutput/serialize": "^0.1.5",
