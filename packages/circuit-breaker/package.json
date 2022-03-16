@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/circuit-breaker",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "A fail-fast circuit breaker for async functions",
   "author": "High Output Ventures",
   "homepage": "https://github.com/HighOutputVentures/highoutput-library/tree/master/packages/circuit-breaker#readme",
