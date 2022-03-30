@@ -39,6 +39,7 @@ const HOVEditor: FC<HOVEditorProps> = props => {
         editor={ClassicEditor}
         disabled={disabled}
         config={{
+          removePlugins: ['List'],
           ...(disablePreview && {
             mediaEmbed: {
               removeProviders: PROVIDER_WITH_PREVIEW,
