@@ -52,6 +52,7 @@ const HOVEditor: FC<HOVEditorProps> = props => {
             },
           }),
           mention: {
+            dropdownLimit: Infinity,
             feeds: [
               {
                 marker: '@',
