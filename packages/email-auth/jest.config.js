@@ -15,16 +15,15 @@ module.exports = {
   watchman: false,
 
   collectCoverageFrom: [
-    '__test__/*.spec.ts',
-    'src/*.ts',
+    'src/!(server).ts',
   ],
   coverageReporters: ['text', 'text-summary'],
   coverageThreshold: {
     global: {
-      branches: 50,
-      functions: 70,
-      lines: 70,
-      statements: 80,
+      branches: 70,
+      functions: 90,
+      lines: 90,
+      statements: 90,
     },
   },
 };
