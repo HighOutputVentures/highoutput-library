@@ -72,20 +72,12 @@ route.post('/users/login', async (ctx: Context) => {
 
 // user login verify otp and acquire token
 route.post('/users/login/otp', async (ctx: Context) => {
-  const { otp } = ctx.request.body;
-  if (!otp) {
-    ctx.response.status = 400;
-    ctx.body = {
-      message: 'Error OTP Required',
-    };
-  } else {
-    ctx.response.status = 200;
-    await ctx.state.emailAuthentication.authenticate();
-    ctx.body = {
-      text: `Login Successful: ${ctx.header.authorization} \n\n <a href="/"> back to home </a>`,
-      message: 'Email OTP Verify',
-    };
-  }
+  ctx.response.status = 200;
+  await ctx.state.emailAuthentication.authenticate();
+  ctx.body = {
+    text: `Login Successful: ${ctx.header.authorization} \n\n <a href="/"> back to home </a>`,
+    message: 'Email OTP Verify',
+  };
 });
 
 export default app;

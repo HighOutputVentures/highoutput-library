@@ -82,7 +82,7 @@ export class EmailAuthentication {
 
             const otp = await this.storageAdapter.find({
               filter: { email: body.email, otp: body.otp },
-              sort: { createdAt: -1 },
+              options: { sort: { createdAt: -1 } },
             });
 
             if (!otp || !(otp.length !== 0)) {

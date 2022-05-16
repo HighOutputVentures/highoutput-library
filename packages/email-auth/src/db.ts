@@ -9,8 +9,7 @@ export function main(host: string) {
       .then((value) => {
         logger.info('successfully connected');
         resolve(value);
-      })
-      .catch((e) => e);
+      });
   });
 }
 
