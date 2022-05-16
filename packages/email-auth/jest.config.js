@@ -15,9 +15,8 @@ module.exports = {
   watchman: false,
 
   collectCoverageFrom: [
-    'libraries/**/!(error).ts',
-    'services/**/!(container).ts',
-    '!(services/api/modules/directives/**/*.ts)',
+    '__test__/*.spec.ts',
+    'src/*.ts',
   ],
   coverageReporters: ['text', 'text-summary'],
   coverageThreshold: {
