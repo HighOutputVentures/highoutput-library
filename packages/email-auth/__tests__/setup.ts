@@ -1,7 +1,6 @@
 import getPort from 'get-port';
 import request, { SuperTest, Test } from 'supertest';
 import temp from 'temp';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import { Server } from 'http';
 
 import logger from '../logger';
@@ -11,14 +10,14 @@ import app from '../src/app';
 temp.track();
 
 export type SetupContext = {
-  mongod: MongoMemoryServer;
+  mongoUri: string;
   port: number;
   request: SuperTest<Test>;
   server: Server;
 };
 
 export async function setup(this: SetupContext) {
-  this.mongod = await MongoMemoryServer.create();
+  this.mongoUri = 'mongodb://localhost:2717/test';
 
   const port = await getPort();
 
@@ -27,7 +26,7 @@ export async function setup(this: SetupContext) {
   this.request = request(`http://localhost:${port}`);
 
   try {
-    await main(this.mongod.getUri()).then(() => {
+    await main(this.mongoUri).then(() => {
       this.server = app.listen(this.port, () => logger.info(`Server is listening on port ${this.port}...`));
     });
   } catch (error) {
@@ -39,5 +38,4 @@ export async function setup(this: SetupContext) {
 export async function teardown(this: SetupContext) {
   await close();
   this.server.close();
-  await this.mongod.stop();
 }
