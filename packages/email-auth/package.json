@@ -1,0 +1,22 @@
+{
+  "name": "email-auth",
+  "version": "1.0.0",
+  "description": "server middleware for email authentication",
+  "keywords": [
+    "middleware"
+  ],
+  "author": "Ralph Kevin Y. Casipe <ralphcasipe1@gmail.com>",
+  "homepage": "https://github.com/HighOutputVentures/highoutput-library#readme",
+  "license": "ISC",
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
+  }
+}
