@@ -1,10 +1,7 @@
 import { sign } from 'jsonwebtoken';
 import R from 'ramda';
 import { Context, Next } from 'koa';
-import mongoose, { Connection } from 'mongoose';
 
-import { MongooseAdapter } from './mongoose-adapter';
-import { SendGridAdapter } from './send-grid-adapter';
 import {
   FrameworkType,
   OtpType,
@@ -23,8 +20,6 @@ type MessageType = {
 export class EmailAuthentication {
   private static readonly THIRTY_SECONDS = 30 * 1000;
 
-  private readonly mongooose: Connection = mongoose.connection;
-
   private storageAdapter!: StorageProvider;
 
   private providerAdapter!: EmailableProvider;
@@ -36,20 +31,11 @@ export class EmailAuthentication {
   constructor(options: {
     framework: FrameworkType;
     otp: OtpType;
-    storageAdapter?: StorageProvider;
-    providerAdapter: {
-      apiKey: string;
-      from: {
-        name: string;
-        email: Email;
-      };
-    };
+    storageAdapter: StorageProvider;
+    providerAdapter: EmailableProvider;
   }) {
-    this.providerAdapter = new SendGridAdapter({
-      from: options.providerAdapter.from,
-      sendGridApiKey: options.providerAdapter.apiKey,
-    });
-    this.storageAdapter = new MongooseAdapter(this.mongooose);
+    this.providerAdapter = options.providerAdapter;
+    this.storageAdapter = options.storageAdapter;
     this.framework = options.framework;
     this.otp = options.otp;
   }
