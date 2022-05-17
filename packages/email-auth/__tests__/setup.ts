@@ -17,7 +17,7 @@ export type SetupContext = {
 };
 
 export async function setup(this: SetupContext) {
-  this.mongoUri = 'mongodb://localhost:2717/test';
+  this.mongoUri = 'mongodb://localhost:27017/test';
 
   const port = await getPort();
 
