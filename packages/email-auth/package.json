@@ -47,7 +47,6 @@
     "ts-node": "^10.7.0"
   },
   "dependencies": {
-    "@highoutput/logger": "^0.5.10",
     "@sendgrid/mail": "^7.6.2",
     "@types/koa-bodyparser": "^4.3.7",
     "@types/koa-router": "^7.4.4",
