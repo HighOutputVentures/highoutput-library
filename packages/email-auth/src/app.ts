@@ -1,30 +1,32 @@
-/// import modules
 import Koa, { Context } from 'koa';
 import Router from 'koa-router';
 import bodyParser from 'koa-bodyparser';
 import { config } from 'dotenv';
+import mongoose from 'mongoose';
 
 import { EmailAuthentication } from '.';
 import { Email } from './types';
+import { SendGridAdapter } from './adapters/send-grid-adapter';
+import { MongooseAdapter } from './adapters/mongoose-adapter';
 
-/// declare const
 config();
+
 const {
   SEND_GRID_API, SENDER_EMAIL, SENDER_NAME, EXPIRY_DURATION, JWT_SECRET,
 } = process.env;
 
-///
 const app = new Koa();
 const route = new Router();
 export const emailAuthentication = new EmailAuthentication({
   framework: 'koa',
-  providerAdapter: {
-    apiKey: SEND_GRID_API || 'null',
+  providerAdapter: new SendGridAdapter({
+    sendGridApiKey: SEND_GRID_API || 'null',
     from: {
       email: SENDER_EMAIL as Email,
       name: SENDER_NAME || 'no-name',
     },
-  },
+  }),
+  storageAdapter: new MongooseAdapter(mongoose.connection),
   otp: {
     expiryDuration: EXPIRY_DURATION || '30000',
     payload: {
@@ -35,20 +37,16 @@ export const emailAuthentication = new EmailAuthentication({
   },
 });
 
-/// add middleware
 app.use(bodyParser());
 app.use(emailAuthentication.middleware());
 
-// routes
 app.use(route.routes()).use(route.allowedMethods());
 
-// login homepage
 route.get('/', async (ctx: Context) => {
   ctx.response.status = 200;
   ctx.body = '<h1> Home Page </h1>';
 });
 
-// user login send OTP
 route.post('/users/login', async (ctx: Context) => {
   const { email } = ctx.request.body;
   if (!email) {
@@ -70,7 +68,6 @@ route.post('/users/login', async (ctx: Context) => {
   }
 });
 
-// user login verify otp and acquire token
 route.post('/users/login/otp', async (ctx: Context) => {
   ctx.response.status = 200;
   await ctx.state.emailAuthentication.authenticate();
