@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import logger from '../logger';
 
 // main
 export function main(host: string) {
@@ -7,7 +6,6 @@ export function main(host: string) {
     mongoose
       .connect(host)
       .then((value) => {
-        logger.info('successfully connected');
         resolve(value);
       });
   });
