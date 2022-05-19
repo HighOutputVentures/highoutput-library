@@ -15,6 +15,7 @@ const persistenceAdapter = new MongooseAdapter({
 })
 
 const emailProviderAdapter = new SendGridAdapter({
+  apiKey: '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',
   from: {
     email: 'chris@identifi.com.com',
     name: 'no-reply',
@@ -39,7 +40,7 @@ const emailAuthentication = new EmailAuthentication({
 
   emailProviderAdapter,
 
-  emailProviderApiKey: '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',
+  jwtSecret: 'SECRET',
 });
 
 emailAuthentication.use();
