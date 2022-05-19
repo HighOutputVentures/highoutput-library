@@ -14,7 +14,7 @@
     "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
   },
   "scripts": {
-    "start": "nodemon src/server.ts",
+    "start": "nodemon ./__tests__/app.ts",
     "test": "jest --config=./jest.config.js --coverage"
   },
   "bugs": {
@@ -24,8 +24,6 @@
     "@types/chance": "^1.1.3",
     "@types/jest": "^27.5.1",
     "@types/jsonwebtoken": "^8.5.8",
-    "@types/koa": "^2.13.4",
-    "@types/ramda": "^0.28.12",
     "@types/supertest": "^2.0.12",
     "@types/temp": "^0.9.1",
     "@typescript-eslint/eslint-plugin": "^5.23.0",
@@ -48,16 +46,10 @@
   },
   "dependencies": {
     "@sendgrid/mail": "^7.6.2",
-    "@types/koa-bodyparser": "^4.3.7",
-    "@types/koa-router": "^7.4.4",
     "@types/node": "^17.0.32",
     "crypto-random-string": "^3.3.1",
     "dotenv": "^16.0.1",
-    "koa": "^2.13.4",
-    "koa-bodyparser": "^4.3.0",
-    "koa-router": "^10.1.1",
     "mongoose": "^6.3.3",
-    "ramda": "^0.28.0",
     "typescript": "^4.6.4"
   }
 }
