@@ -4,6 +4,7 @@ import { sign } from 'jsonwebtoken';
 import { OTPOptions } from './types';
 import { PersistenceAdapter } from './interfaces/persistence-adapter';
 import { EmailableProviderAdapter } from './interfaces/emailable-provider-adapter';
+
 export type MessageDetails = {
   to: string;
   from: {
@@ -91,8 +92,19 @@ export class EmailAuthentication {
               return;
             } 
 
-            const otpDocument = await this.persistenceAdapter.create({
-              data: { email: body.message.to },
+            const user = await this.persistenceAdapter.findOneUserByEmail({ email: body.message.to });
+
+            if (!user) {
+              response.writeHead(400, { 'Content-Type': 'application/json' });
+              response.end(JSON.stringify({
+                message: '`email` is invalid',
+              }));
+
+              return;
+            }
+
+            const otpDocument = await this.persistenceAdapter.createEmailOtp({
+              data: { user: user.id },
             });
 
             const message = {
@@ -133,7 +145,16 @@ export class EmailAuthentication {
               return;
             }
 
-            const otp = await this.persistenceAdapter.findOne({ email: body.email, otp: body.otp });
+            const user = await this.persistenceAdapter.findOneUserByEmail({ email: body.email });
+
+            if (!user) {
+              response.writeHead(400, { 'Content-Type': 'application/json' });
+              response.end(JSON.stringify({
+                message: '`email` is invalid',
+              }));
+            }
+
+            const otp = await this.persistenceAdapter.findOneEmailOtp({ user: user.id, otp: body.otp });
             
             if (!otp) {
               response.writeHead(404, { 'Content-Type': 'application/json' });
