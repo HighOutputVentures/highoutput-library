@@ -1,12 +1,9 @@
 import http from 'http';
 import { sign } from 'jsonwebtoken';
 
-import {
-  OTPOptions,
-  EmailableProviderAdapter,
-  PersistenceAdapter,
-} from './types';
-
+import { OTPOptions } from './types';
+import { PersistenceAdapter } from './interfaces/persistence-adapter';
+import { EmailableProviderAdapter } from './interfaces/emailable-provider-adapter';
 export type MessageDetails = {
   to: string;
   from: {
