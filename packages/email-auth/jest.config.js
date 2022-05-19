@@ -7,7 +7,7 @@ module.exports = {
 
   testEnvironment: 'node',
   maxWorkers: '50%',
-  testTimeout: 10_0000,
+  testTimeout: 5_000,
   testMatch: ['**/**/*.spec.ts'],
 
   bail: 1,
