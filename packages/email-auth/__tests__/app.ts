@@ -12,7 +12,7 @@ const dbURI = 'mongodb://localhost:27017/test-middleware';
 const persistenceAdapter = new MongooseAdapter(mongoose.connection)
 
 const emailProviderAdapter = new SendGridAdapter({
-  sendGridApiKey: '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',
+  apiKey: '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',
   from: {
     email: 'chris@identifi.com.com',
     name: 'no-reply',
