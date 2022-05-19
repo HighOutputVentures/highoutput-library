@@ -104,7 +104,7 @@ export class EmailAuthentication {
             }
 
             const otpDocument = await this.persistenceAdapter.createEmailOtp({
-              data: { user: user.id },
+              data: { user: user._id },
             });
 
             const message = {
@@ -154,7 +154,7 @@ export class EmailAuthentication {
               }));
             }
 
-            const otp = await this.persistenceAdapter.findOneEmailOtp({ user: user.id, otp: body.otp });
+            const otp = await this.persistenceAdapter.findOneEmailOtp({ user: user._id, otp: body.otp });
             
             if (!otp) {
               response.writeHead(404, { 'Content-Type': 'application/json' });
@@ -177,6 +177,8 @@ export class EmailAuthentication {
               })}`,
             }));
             
+            await this.persistenceAdapter.deleteRelatedOtps({ user: user._id });
+
             return;
           }
         }
