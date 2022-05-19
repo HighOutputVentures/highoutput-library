@@ -1,5 +1,6 @@
 import {
   Connection, Model, Document, Schema, Collection,
+  Types
 } from 'mongoose';
 import cryptoRandomString from 'crypto-random-string';
 
@@ -8,7 +9,7 @@ import { PersistenceAdapter } from '../interfaces/persistence-adapter';
 
 type EmailDocument = Document<ID> & {
   id: ID;
-  user: Buffer;
+  user: any;
   otp: string;
   createdAt: Date;
 };
@@ -34,7 +35,7 @@ export class MongooseAdapter implements PersistenceAdapter<
   }) {
     const emailOtpSchema = new Schema<EmailDocument>({
       user: {
-        type: Buffer,
+        type: Types.ObjectId,
         required: true,
       },
       otp: {
@@ -69,6 +70,14 @@ export class MongooseAdapter implements PersistenceAdapter<
       .exec();
 
     return document;
+  }
+
+  async deleteRelatedOtps(params: { user: any }): Promise<void> {
+    await this.emailOTPModel
+      .deleteMany({ user: params.user })
+      .exec();
+
+    return;
   }
 
   async findOneUserByEmail(params: { email: string }): Promise<UserDocument | null> {

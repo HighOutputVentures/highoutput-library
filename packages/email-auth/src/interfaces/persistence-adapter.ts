@@ -13,4 +13,5 @@ export interface PersistenceAdapter<
   createEmailOtp(input: { data: TCreate }): Promise<TEntity>;
   findOneEmailOtp(params: TFind): Promise<TEntity | null>;
   findOneUserByEmail(params: { email: string }): Promise<any>;
+  deleteRelatedOtps(params: { user: any }): Promise<void>;
 }
