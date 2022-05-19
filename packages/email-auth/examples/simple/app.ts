@@ -9,10 +9,13 @@ const dbURI = 'mongodb://localhost:27017/test-middleware';
 
 (async () => await mongoose.connect(dbURI).catch((e) => console.error(e)))();
 
-const persistenceAdapter = new MongooseAdapter(mongoose.connection)
+const persistenceAdapter = new MongooseAdapter({
+  db: mongoose.connection,
+  userCollectionString: 'users',
+})
 
 const emailProviderAdapter = new SendGridAdapter({
-  sendGridApiKey: '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',
+  apiKey: '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',
   from: {
     email: 'chris@identifi.com.com',
     name: 'no-reply',
