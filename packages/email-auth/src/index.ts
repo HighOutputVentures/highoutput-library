@@ -31,7 +31,7 @@ export function generateToken(params: {
   });
 }
 
-function getReqData(request: any): any {
+function getReqData(request: http.IncomingMessage): any {
   return new Promise((resolve, reject) => {
       try {
           let body = '';
