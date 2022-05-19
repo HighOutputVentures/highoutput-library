@@ -3,9 +3,8 @@ import {
 } from 'mongoose';
 import cryptoRandomString from 'crypto-random-string';
 
-import {
-  ID, InputData, PersistenceAdapter,
-} from '../types';
+import { ID } from '../types';
+import { PersistenceAdapter } from '../interfaces/persistence-adapter';
 
 type EmailDocument = Document<ID> & {
   id: ID;
@@ -14,13 +13,11 @@ type EmailDocument = Document<ID> & {
   createdAt: Date | undefined;
 };
 
-export class MongooseAdapter
-implements
-    PersistenceAdapter<
-      EmailDocument,
-      Pick<EmailDocument, 'email'>,
-      Pick<EmailDocument, 'email' | 'otp'>
-    > {
+export class MongooseAdapter implements PersistenceAdapter<
+  EmailDocument,
+  Pick<EmailDocument, 'email'>,
+  Pick<EmailDocument, 'email' | 'otp'>
+> {
   private model: Model<EmailDocument>;
 
   constructor(db: Connection) {
@@ -45,7 +42,7 @@ implements
   }
 
   async create(
-    params: InputData<Pick<EmailDocument, 'email'>>,
+    params: { data: Pick<EmailDocument, 'email'> },
   ): Promise<EmailDocument> {
     const document = await this.model.create(params.data);
 
