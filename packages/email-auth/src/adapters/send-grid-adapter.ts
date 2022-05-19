@@ -1,12 +1,13 @@
 import sgMail from '@sendgrid/mail';
-import { EmailableProvider } from '../types';
+
+import { EmailableProviderAdapter } from '../types';
 
 type SenderInfoType = {
   name: string;
   email: string;
 };
 
-export class SendGridAdapter implements EmailableProvider {
+export class SendGridAdapter implements EmailableProviderAdapter {
   private readonly sgMail: typeof sgMail = sgMail;
 
   private readonly senderInfo!: SenderInfoType;
@@ -28,8 +29,16 @@ export class SendGridAdapter implements EmailableProvider {
       from: this.senderInfo,
       ...message,
     };
-    const [result] = await this.sgMail.send(msg as never);
+    const result = await this.sgMail.send(msg as never).catch((e) => console.error(e.response.body.errors));
 
     return result as never;
+  }
+
+  get senderEmail() {
+    return this.senderInfo.email;
+  }
+
+  get senderName() {
+    return this.senderInfo.name;
   }
 }

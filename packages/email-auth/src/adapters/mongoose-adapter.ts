@@ -4,30 +4,26 @@ import {
 import cryptoRandomString from 'crypto-random-string';
 
 import {
-  Email, ID, InputData, QueryOptions, StorageProvider,
+  ID, InputData, PersistenceAdapter,
 } from '../types';
 
 type EmailDocument = Document<ID> & {
   id: ID;
-  email: Email;
+  email: string;
   otp: string;
   createdAt: Date | undefined;
 };
 
 export class MongooseAdapter
 implements
-    StorageProvider<
+    PersistenceAdapter<
       EmailDocument,
       Pick<EmailDocument, 'email'>,
       Pick<EmailDocument, 'email' | 'otp'>
     > {
-  private _model: Promise<Model<EmailDocument>>;
+  private model: Model<EmailDocument>;
 
   constructor(db: Connection) {
-    this._model = (async () => this.getModel(db))();
-  }
-
-  async getModel(db: Connection): Promise<Model<EmailDocument>> {
     const schema = new Schema<EmailDocument>({
       email: {
         type: String,
@@ -45,35 +41,23 @@ implements
       },
     });
 
-    return db.model<EmailDocument>('EmailOTP', schema);
+    this.model = db.model<EmailDocument>('EmailOTP', schema);
   }
 
   async create(
     params: InputData<Pick<EmailDocument, 'email'>>,
   ): Promise<EmailDocument> {
-    const model = await this._model;
-
-    const document = await model.create(params.data);
+    const document = await this.model.create(params.data);
 
     return document;
   }
 
-  async find(params: {
-    filter: Pick<EmailDocument, 'email' | 'otp'>;
-    options?: QueryOptions;
-  }): Promise<EmailDocument[]> {
-    const model = await this._model;
-
-    const documents = await model
-      .find(
-        {
-          ...params.filter,
-        },
-        null,
-        params.options ? params.options : {},
-      )
+  async findOne(params: any): Promise<EmailDocument | null> {
+    const document = await this.model
+      .findOne(params)
+      .sort({ createdAt: -1 })
       .exec();
 
-    return documents;
+    return document;
   }
 }
