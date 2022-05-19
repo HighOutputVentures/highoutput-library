@@ -18,7 +18,6 @@ export type MessageDetails = {
 const THIRY_SECONDS = 30_000;
 
 export function generateToken(params: {
-  expiryDuration: number;
   payload: {
     id: Buffer;
     subject: Buffer;
@@ -56,7 +55,7 @@ export class EmailAuthentication {
 
   private readonly emailProviderAdapter: EmailableProviderAdapter;
 
-  private readonly emailProviderApiKey: string;
+  private readonly jwtSecret: string;
 
   private readonly otpExpiryDuration: number;
 
@@ -67,7 +66,7 @@ export class EmailAuthentication {
 
     emailProviderAdapter: EmailableProviderAdapter;
 
-    emailProviderApiKey: string;
+    jwtSecret: string;
 
     otpExpiryDuration?: number;
 
@@ -79,11 +78,9 @@ export class EmailAuthentication {
 
     this.emailProviderAdapter = options.emailProviderAdapter;
 
-    this.emailProviderApiKey = options.emailProviderApiKey;
+    this.jwtSecret = options.jwtSecret;
 
     this.otpExpiryDuration = options.otpExpiryDuration || THIRY_SECONDS;
-
-    this.emailProviderAdapter.setApiKey(this.emailProviderApiKey);
   }
 
   use() {
@@ -119,7 +116,7 @@ export class EmailAuthentication {
               const previousTime = previousOtp.createdAt.getTime()
               const currentTime = new Date().getTime();
 
-              if (currentTime - (previousTime || 0) < this.otpExpiryDuration) {
+              if ((currentTime - previousTime) < this.otpExpiryDuration) {
                 response.writeHead(400, { 'Content-Type': 'application/json' });
                 response.end(JSON.stringify({
                   message: `cannot generate another otp within ${this.otpExpiryDuration}ms`,
@@ -128,12 +125,11 @@ export class EmailAuthentication {
                 return;
               }
             }
-            
+
             const otpDocument = await this.persistenceAdapter.createEmailOtp({
-              data: { user: user._id },
+              data: { user: user._id, createdAt: new Date() },
             });
 
-            
             const message = {
               to: body.message.to,
               from: {
@@ -192,15 +188,26 @@ export class EmailAuthentication {
               return;
             }
 
+            const previousTime = otp.createdAt.getTime()
+            const currentTime = new Date().getTime();
+
+            if ((currentTime - previousTime) > this.otpExpiryDuration) {
+              response.writeHead(400, { 'Content-Type': 'application/json' });
+              response.end(JSON.stringify({
+                message: `otp already past ${this.otpExpiryDuration}ms`,
+              }));
+
+              return;
+            }
+
             response.writeHead(200, { 'Content-Type': 'application/json' });
             response.end(JSON.stringify({
               token: `Bearer ${generateToken({
-                expiryDuration: 30_000,
                 payload: {
-                  subject: Buffer.from('1', 'base64'),
-                  id: Buffer.from('1', 'base64'),
+                  subject: user._id,
+                  id: user._id,
                 },
-                secret: 'SECRET',
+                secret: this.jwtSecret,
               })}`,
             }));
             

@@ -22,7 +22,7 @@ type UserDocument = {
 
 export class MongooseAdapter implements PersistenceAdapter<
   EmailDocument,
-  Pick<EmailDocument, 'user'>,
+  Pick<EmailDocument, 'user' | 'createdAt'>,
   Pick<EmailDocument, 'user' | 'otp'>
 > {
   private readonly emailOTPModel: Model<EmailDocument>;
@@ -46,8 +46,8 @@ export class MongooseAdapter implements PersistenceAdapter<
       createdAt: {
         type: Date,
         required: true,
-        default: new Date(),
-      },
+        default: Date.now(),
+      } as never,
     });
 
     this.emailOTPModel = options.db.model<EmailDocument>('EmailOTP', emailOtpSchema, 'emailauth:emailotp');

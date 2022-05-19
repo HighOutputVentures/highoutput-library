@@ -8,7 +8,7 @@ export type DefaultOtpEntity = {
 
 export interface PersistenceAdapter<
   TEntity extends DefaultOtpEntity = DefaultOtpEntity,
-  TCreate extends Pick<DefaultOtpEntity, 'user'> = Pick<DefaultOtpEntity, 'user'>,
+  TCreate extends Pick<DefaultOtpEntity, 'user' | 'createdAt'> = Pick<DefaultOtpEntity, 'user' | 'createdAt'>,
   TFind extends Partial<Pick<DefaultOtpEntity, 'user' | 'otp'>> = Partial<Pick<DefaultOtpEntity, 'user' | 'otp'>>,
 > {
   createEmailOtp(input: { data: TCreate }): Promise<TEntity>;
