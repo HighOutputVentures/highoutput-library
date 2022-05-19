@@ -1,13 +1,16 @@
+import { ID } from '../types';
+
 export type DefaultOtpEntity = {
   otp: string;
-  email: string;
+  user: ID;
 };
 
 export interface PersistenceAdapter<
   TEntity extends DefaultOtpEntity = DefaultOtpEntity,
-  TCreate extends Pick<DefaultOtpEntity, 'email'> = Pick<DefaultOtpEntity, 'email'>,
-  TFind extends Pick<DefaultOtpEntity, 'email' | 'otp'> = Pick<DefaultOtpEntity, 'email' | 'otp'>,
+  TCreate extends Pick<DefaultOtpEntity, 'user'> = Pick<DefaultOtpEntity, 'user'>,
+  TFind extends Pick<DefaultOtpEntity, 'user' | 'otp'> = Pick<DefaultOtpEntity, 'user' | 'otp'>,
 > {
-  create(input: { data: TCreate }): Promise<TEntity>;
-  findOne(params: TFind): Promise<TEntity | null>;
+  createEmailOtp(input: { data: TCreate }): Promise<TEntity>;
+  findOneEmailOtp(params: TFind): Promise<TEntity | null>;
+  findOneUserByEmail(params: { email: string }): Promise<any>;
 }

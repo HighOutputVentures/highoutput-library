@@ -1,5 +1,5 @@
 import {
-  Connection, Model, Document, Schema,
+  Connection, Model, Document, Schema, Collection,
 } from 'mongoose';
 import cryptoRandomString from 'crypto-random-string';
 
@@ -8,22 +8,33 @@ import { PersistenceAdapter } from '../interfaces/persistence-adapter';
 
 type EmailDocument = Document<ID> & {
   id: ID;
-  email: string;
+  user: Buffer;
   otp: string;
-  createdAt: Date | undefined;
+  createdAt: Date;
 };
+
+type UserDocument = {
+  id: ID;
+  email: string;
+}
+
 
 export class MongooseAdapter implements PersistenceAdapter<
   EmailDocument,
-  Pick<EmailDocument, 'email'>,
-  Pick<EmailDocument, 'email' | 'otp'>
+  Pick<EmailDocument, 'user'>,
+  Pick<EmailDocument, 'user' | 'otp'>
 > {
-  private model: Model<EmailDocument>;
+  private readonly emailOTPModel: Model<EmailDocument>;
 
-  constructor(db: Connection) {
-    const schema = new Schema<EmailDocument>({
-      email: {
-        type: String,
+  private readonly userCollection: Collection<UserDocument>;
+
+  constructor(options: {
+    db: Connection,
+    userCollectionString: string;
+  }) {
+    const emailOtpSchema = new Schema<EmailDocument>({
+      user: {
+        type: Buffer,
         required: true,
       },
       otp: {
@@ -34,27 +45,35 @@ export class MongooseAdapter implements PersistenceAdapter<
       createdAt: {
         type: Date,
         required: true,
-        default: Date.now(),
+        default: new Date(),
       },
     });
 
-    this.model = db.model<EmailDocument>('EmailOTP', schema);
+    this.emailOTPModel = options.db.model<EmailDocument>('EmailOTP', emailOtpSchema, 'emailauth:emailotp');
+
+    this.userCollection = options.db.collection(options.userCollectionString);
   }
 
-  async create(
-    params: { data: Pick<EmailDocument, 'email'> },
+  async createEmailOtp(
+    params: { data: Pick<EmailDocument, 'user'> },
   ): Promise<EmailDocument> {
-    const document = await this.model.create(params.data);
+    const document = await this.emailOTPModel.create(params.data);
 
     return document;
   }
 
-  async findOne(params: any): Promise<EmailDocument | null> {
-    const document = await this.model
+  async findOneEmailOtp(params: any): Promise<EmailDocument | null> {
+    const document = await this.emailOTPModel
       .findOne(params)
       .sort({ createdAt: -1 })
       .exec();
 
     return document;
+  }
+
+  async findOneUserByEmail(params: { email: string }): Promise<UserDocument | null> {
+    const user = await this.userCollection.findOne({ email: params.email });
+
+    return user;
   }
 }
