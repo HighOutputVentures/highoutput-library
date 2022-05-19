@@ -1,5 +1,4 @@
 export type ID = Buffer;
-export type Email = `${string}@${string}.${string}`;
 
 export type QueryOptions = {
   sort?: Record<string, 1 | -1> | undefined;
@@ -9,16 +8,14 @@ export type QueryOptions = {
 };
 
 export type Node = {
-  email: Email;
+  email: string;
   otp: string;
 };
 
 export type InputData<TInput> = { data: TInput };
 
-export type FrameworkType = 'koa' | 'express';
-
-export type OtpType = {
-  expiryDuration: string;
+export type OTPOptions = {
+  expiryDuration: number;
   payload: {
     id: ID;
     subject: Buffer;
@@ -26,16 +23,22 @@ export type OtpType = {
   secret: string;
 };
 
-export interface EmailableProvider {
-  setApiKey(key: string): void;
-  sendEmail<TMessage, TResponse>(message: TMessage): Promise<TResponse>;
+export interface FrameworkAdapter {
+  use(request: any, response: any, next: any): any;
 }
 
-export interface StorageProvider <
+export interface EmailableProviderAdapter {
+  setApiKey(key: string): void;
+  sendEmail<TMessage, TResponse>(message: TMessage): Promise<TResponse>;
+  senderEmail: string;
+  senderName?: string;
+}
+
+export interface PersistenceAdapter <
 TEntity extends Node = Node,
 TCreate extends Pick<TEntity, 'email'> = Pick<TEntity, 'email'>,
 TFind extends Pick<TEntity, 'email' | 'otp'> = Pick<TEntity, 'email' | 'otp'>,
 > {
-  create (params: InputData<TCreate>): Promise<TEntity>;
-  find (params: { filter: TFind, options?: QueryOptions } & Partial<QueryOptions>): Promise<TEntity[]>;
+  create(params: InputData<TCreate>): Promise<TEntity>;
+  findOne(params: TFind): Promise<TEntity | null>;
 }

@@ -1,103 +1,172 @@
+import http from 'http';
 import { sign } from 'jsonwebtoken';
-import R from 'ramda';
-import { Context, Next } from 'koa';
 
 import {
-  FrameworkType,
-  OtpType,
-  EmailableProvider,
-  StorageProvider,
-  Email,
+  OTPOptions,
+  EmailableProviderAdapter,
+  PersistenceAdapter,
 } from './types';
 
-type MessageType = {
-  to: Email;
+export type MessageDetails = {
+  to: string;
+  from: {
+    name: string;
+    email: string;
+  },
   subject: string;
-  body: string;
-  html?: string;
+  text: string;
 };
 
+const THIRY_SECONDS = 30_000;
+
+export function generateToken(params: {
+  expiryDuration: number;
+  payload: {
+    id: Buffer;
+    subject: Buffer;
+  };
+  secret: string;
+}) {
+  return sign(params.payload, params.secret, {
+    subject: params.payload.subject.toString('base64'),
+    expiresIn: '60d',
+  });
+}
+
+function getReqData(request: any): any {
+  return new Promise((resolve, reject) => {
+      try {
+          let body = '';
+          
+          request.on('data', (chunk: any) => {
+              body += chunk.toString();
+          });
+          
+          request.on('end', () => {
+              resolve(body);
+          });
+      } catch (error) {
+          reject(error);
+      }
+  });
+}
+
 export class EmailAuthentication {
-  private static readonly THIRTY_SECONDS = 30 * 1000;
+  private readonly server: http.Server;
 
-  private storageAdapter!: StorageProvider;
+  private readonly persistenceAdapter: PersistenceAdapter;
 
-  private providerAdapter!: EmailableProvider;
-
-  private readonly framework: FrameworkType;
-
-  private readonly otp: OtpType;
+  private readonly emailProviderAdapter: EmailableProviderAdapter;
+  
+  private readonly otpOptions: OTPOptions;
 
   constructor(options: {
-    framework: FrameworkType;
-    otp: OtpType;
-    storageAdapter: StorageProvider;
-    providerAdapter: EmailableProvider;
+    server: http.Server;
+
+    persistenceAdapter: PersistenceAdapter;
+
+    emailProviderAdapter: EmailableProviderAdapter;
+
+    otpOptions: OTPOptions;
   }) {
-    this.providerAdapter = options.providerAdapter;
-    this.storageAdapter = options.storageAdapter;
-    this.framework = options.framework;
-    this.otp = options.otp;
+    this.server = options.server;
+
+    this.persistenceAdapter = options.persistenceAdapter;
+
+    this.emailProviderAdapter = options.emailProviderAdapter;
+
+    this.otpOptions = options.otpOptions;
   }
 
-  middleware() {
-    if (this.framework === 'koa') {
-      return async (ctx: Context, next: Next) => {
-        const { state, request, header } = ctx;
+  use() {
+    this.server
+      .on('request', async (request, response) => {
+        if (request.method === 'POST') {
+          if (request.url === '/generateOtp') {
+            const body = JSON.parse(await getReqData(request));
+            
+            if (!body.message.to) {
+              response.writeHead(400, { 'Content-Type': 'application/json' });
+              response.end(JSON.stringify({
+                message: '`to` should be supplied',
+              }));
 
-        state.emailAuthentication = {
-          sendEmail: async (message: MessageType) => {
-            const otp = await this.storageAdapter.create({
-              data: { email: message.to },
+              return;
+            } 
+
+            const otpDocument = await this.persistenceAdapter.create({
+              data: { email: body.message.to },
             });
 
-            const msg = {
-              text: `${otp.otp}`.concat(`\n ${message.body}`),
-              ...R.omit(['body'])(message),
+            const message = {
+              to: body.message.to,
+              from: {
+                email: this.emailProviderAdapter.senderEmail,
+                name: this.emailProviderAdapter.senderName || 'no-reply',
+              },
+              subject: 'otp authorization',
+              text: `${otpDocument.otp}`,
             };
+            
+            await this.emailProviderAdapter.sendEmail(message);
 
-            return this.providerAdapter.sendEmail(msg);
-          },
+            response.writeHead(200, { 'Content-Type': 'application/json' });
+            response.end(JSON.stringify({
+              message: 'email sent',
+              data: {},
+            }));
 
-          authenticate: async () => {
-            const { body } = request;
+            return;
+          } else if (request.url === '/validateOtp') {
+            const body = JSON.parse(await getReqData(request));
 
-            if (!body.email && !body.otp) {
-              ctx.throw(401, 'Authentication Error');
+            if (!body.email) {
+              response.writeHead(404, { 'Content-Type': 'application/json' });
+              response.end(JSON.stringify({
+                message: '`email` should be provided',
+              }));
+
+              return;
+            } else if (!body.otp) {
+              response.writeHead(404, { 'Content-Type': 'application/json' });
+              response.end(JSON.stringify({
+                message: '`otp` should be provided',
+              }));
+
+              return;
             }
 
-            const otp = await this.storageAdapter.find({
-              filter: { email: body.email, otp: body.otp },
-              options: { sort: { createdAt: -1 } },
-            });
+            const otp = await this.persistenceAdapter.findOne({ email: body.email, otp: body.otp });
+            
+            if (!otp) {
+              response.writeHead(404, { 'Content-Type': 'application/json' });
+              response.end(JSON.stringify({
+                message: 'invalid `otp` or `email`',
+              }));
 
-            if (!otp || !(otp.length !== 0)) {
-              ctx.throw(401, 'Authentication Error');
+              return;
             }
 
-            header.authorization = 'Bearer '.concat(
-              this.#generateToken(this.otp),
-            );
-          },
-        };
+            response.writeHead(200, { 'Content-Type': 'application/json' });
+            response.end(JSON.stringify({
+              token: `Bearer ${generateToken({
+                expiryDuration: 30_000,
+                payload: {
+                  subject: Buffer.from('1', 'base64'),
+                  id: Buffer.from('1', 'base64'),
+                },
+                secret: 'SECRET',
+              })}`,
+            }));
+            
+            return;
+          }
+        }
 
-        return next();
-      };
-    }
-    return async (ctx: Context, next: Next) => next();
-  }
+        response.writeHead(404, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ message: 'not found' }));
 
-  #generateToken(params: {
-    expiryDuration: string;
-    payload: {
-      id: Buffer;
-      subject: Buffer;
-    };
-    secret: string;
-  }) {
-    return sign(params.payload, params.secret, {
-      subject: params.payload.subject.toString('base64'),
-      expiresIn: params.expiryDuration || EmailAuthentication.THIRTY_SECONDS,
-    });
+        return;
+      });
   }
 }
