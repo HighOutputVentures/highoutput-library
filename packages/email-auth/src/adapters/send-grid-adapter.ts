@@ -13,11 +13,8 @@ export class SendGridAdapter implements EmailableProviderAdapter<MailDataRequire
   private readonly senderInfo: SenderInfo;
 
   constructor(params: {
-    apiKey: string;
     from: SenderInfo;
   }) {
-    this.setApiKey(params.apiKey);
-
     this.senderInfo = params.from;
   }
 

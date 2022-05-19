@@ -55,8 +55,10 @@ export class EmailAuthentication {
   private readonly persistenceAdapter: PersistenceAdapter;
 
   private readonly emailProviderAdapter: EmailableProviderAdapter;
-  
-  private readonly otpOptions: OTPOptions;
+
+  private readonly emailProviderApiKey: string;
+
+  private readonly otpExpiryDuration: number;
 
   constructor(options: {
     server: http.Server;
@@ -65,7 +67,11 @@ export class EmailAuthentication {
 
     emailProviderAdapter: EmailableProviderAdapter;
 
-    otpOptions: OTPOptions;
+    emailProviderApiKey: string;
+
+    otpExpiryDuration?: number;
+
+    emailTemplate?: any;
   }) {
     this.server = options.server;
 
@@ -73,7 +79,11 @@ export class EmailAuthentication {
 
     this.emailProviderAdapter = options.emailProviderAdapter;
 
-    this.otpOptions = options.otpOptions;
+    this.emailProviderApiKey = options.emailProviderApiKey;
+
+    this.otpExpiryDuration = options.otpExpiryDuration || THIRY_SECONDS;
+
+    this.emailProviderAdapter.setApiKey(this.emailProviderApiKey);
   }
 
   use() {
@@ -103,10 +113,27 @@ export class EmailAuthentication {
               return;
             }
 
+            const previousOtp = await this.persistenceAdapter.findOneEmailOtp({ user: user._id });
+
+            if (previousOtp) {
+              const previousTime = previousOtp.createdAt.getTime()
+              const currentTime = new Date().getTime();
+
+              if (currentTime - (previousTime || 0) < this.otpExpiryDuration) {
+                response.writeHead(400, { 'Content-Type': 'application/json' });
+                response.end(JSON.stringify({
+                  message: `cannot generate another otp within ${this.otpExpiryDuration}ms`,
+                }));
+
+                return;
+              }
+            }
+            
             const otpDocument = await this.persistenceAdapter.createEmailOtp({
               data: { user: user._id },
             });
 
+            
             const message = {
               to: body.message.to,
               from: {
