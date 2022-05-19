@@ -1,37 +1,39 @@
-import sgMail from '@sendgrid/mail';
+import sgMail, { MailDataRequired } from '@sendgrid/mail';
 
-import { EmailableProviderAdapter } from '../types';
+import { EmailableProviderAdapter } from '../interfaces/emailable-provider-adapter';
 
-type SenderInfoType = {
+type SenderInfo = {
   name: string;
   email: string;
 };
 
-export class SendGridAdapter implements EmailableProviderAdapter {
-  private readonly sgMail: typeof sgMail = sgMail;
+export class SendGridAdapter implements EmailableProviderAdapter<MailDataRequired, sgMail.ClientResponse> {
+  public readonly emailProvider = sgMail;
 
-  private readonly senderInfo!: SenderInfoType;
+  private readonly senderInfo: SenderInfo;
 
   constructor(params: {
-    sendGridApiKey: string;
-    from: SenderInfoType;
+    apiKey: string;
+    from: SenderInfo;
   }) {
-    this.setApiKey(params.sendGridApiKey);
+    this.setApiKey(params.apiKey);
+
     this.senderInfo = params.from;
   }
 
   setApiKey(key: string): void {
-    this.sgMail.setApiKey(key);
+    this.emailProvider.setApiKey(key);
   }
 
-  async sendEmail<MailDataRequired, ClientResponse>(message: MailDataRequired): Promise<ClientResponse> {
+  async sendEmail(message: MailDataRequired) {
     const msg = {
-      from: this.senderInfo,
       ...message,
+      from: this.senderInfo,
     };
-    const result = await this.sgMail.send(msg as never).catch((e) => console.error(e.response.body.errors));
 
-    return result as never;
+    const [result] = await this.emailProvider.send(message);
+
+    return result;
   }
 
   get senderEmail() {
@@ -39,6 +41,6 @@ export class SendGridAdapter implements EmailableProviderAdapter {
   }
 
   get senderName() {
-    return this.senderInfo.name;
+    return this.senderInfo.name || 'no-reply';
   }
 }
