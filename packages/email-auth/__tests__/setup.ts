@@ -2,23 +2,22 @@ import getPort from 'get-port';
 import request, { SuperTest, Test } from 'supertest';
 import temp from 'temp';
 import { Server } from 'http';
-import { config } from 'dotenv';
+import { promisify } from 'util';
+import mongoose from 'mongoose';
 
-import { main, close } from '../src/db';
-import app from '../src/app';
+import app from './app';
 
 temp.track();
-config();
 
 export type SetupContext = {
-  mongoUri: string;
   port: number;
   request: SuperTest<Test>;
   server: Server;
+  mongo: typeof mongoose | void;
 };
 
 export async function setup(this: SetupContext) {
-  this.mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/test';
+  const dbURI = 'mongodb://localhost:27017/test-middleware';
 
   const port = await getPort();
 
@@ -27,9 +26,9 @@ export async function setup(this: SetupContext) {
   this.request = request(`http://localhost:${port}`);
 
   try {
-    await main(this.mongoUri).then(() => {
-      this.server = app.listen(this.port);
-    });
+    this.mongo = await mongoose.connect(dbURI).catch((e) => console.error(e));
+    this.server = app.listen(this.port);  
+    
   } catch (error) {
     console.log(error);
     throw error;
@@ -37,6 +36,11 @@ export async function setup(this: SetupContext) {
 }
 
 export async function teardown(this: SetupContext) {
-  await close();
-  this.server.close();
+  if (this.mongo) {
+    this.mongo.connection.close();
+  }
+
+  if (this.server) {
+    await promisify(this.server.close).call(this.server);
+  }
 }

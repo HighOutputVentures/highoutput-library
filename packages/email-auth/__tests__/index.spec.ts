@@ -15,67 +15,82 @@ afterEach(async function (this: Context) {
   await teardown.apply(this);
 });
 
-describe('#sendEmail', () => {
-  it('should fail to send email', async function (this: Context) {
-    const response = await this.request.post('/users/login').send({});
-
-    expect(response.status).toBe(400);
-    expect(response.body.message).toBe('Error Email Required');
+describe('EmailAuthentication', () => {
+  describe('#sendEmail', () => {
+    it('should throw an error when `to` is not supplied', async function (this: Context) {
+      const response = await this.request.post('/generateOtp').send({
+        message: {}
+      });
+  
+      expect(response.body).toStrictEqual({
+        message: '`to` should be supplied',
+      });
+    });
+  
+    it('should have a status of 200', async function (this: Context) {
+      const response = await this.request.post('/generateOtp').send({
+        message: {
+          to: 'recipient@gmail.com',
+        }
+      });
+  
+      expect(response.status).toBe(200);
+    });
+  
+    it('should have the correct body', async function (this: Context) {
+      const response = await this.request.post('/generateOtp').send({
+        message: {
+          to: 'recipient@gmail.com',
+        }
+      });
+  
+      expect(response.body).toStrictEqual({
+        message: 'email sent',
+        data: {},
+      });
+    });
   });
 
-  it('should send email', async function (this: Context) {
-    const emailAdress = chance.email();
-
-    const response = await this.request.post('/users/login').send({ email: emailAdress });
-
-    expect(response.status).toBe(200);
-    expect(response.body).toStrictEqual({
-      text: `Email sent to ${emailAdress} \n\n <a href="/users/login/otp"> login </a>`,
-      message: 'Email OTP',
+  describe('#validateOtp', () => {
+    it('should throw an error when `email` is empty', async function (this: Context) {
+      const response = await this.request
+        .post('/validateOtp')
+        .send({
+          otp: '123456',
+        });
+  
+      expect(response.status).toBe(404);
+      expect(response.body).toStrictEqual({
+        message: '`email` should be provided',
+      });
+    });
+  
+    it('should throw an error when `otp is empty', async function (this: Context) {
+      const emailAdress = chance.email();
+      const OTP = cryptoRandomString({ length: 6, type: 'numeric' });
+  
+      const response = await this.request
+        .post('/validateOtp')
+        .send({ email: emailAdress });
+  
+      expect(response.status).toBe(404);
+      expect(response.body).toStrictEqual({
+        message: '`otp` should be provided',
+      });
+    });
+  
+    it('should throw an error when no otp found', async function (this: Context) {
+      const response = await this.request
+        .post('/validateOtp')
+        .send({ email: chance.email(), otp: '241929' });
+  
+      expect(response.status).toBe(404);
+      expect(response.body).toStrictEqual({
+        message: 'invalid `otp` or `email`'
+      });
     });
   });
 });
 
-describe('#get', () => {
-  test('initial get', async function (this: Context) {
-    const response = await this.request.get('/');
 
-    expect(response.status).toBe(200);
-    expect(response.body).toBeEmpty();
-  });
-});
 
-describe('#authenticate', () => {
-  it('should fail to authenticate: email and otp not provided', async function (this: Context) {
-    const response = await this.request
-      .post('/users/login/otp')
-      .send({});
-
-    expect(response.status).toBe(401);
-    expect(response.body).not.toHaveProperty('text');
-    expect(response.body.message).toBeUndefined();
-  });
-
-  it('should fail to authenticate: email and otp not found', async function (this: Context) {
-    const emailAdress = chance.email();
-    const OTP = cryptoRandomString({ length: 6, type: 'numeric' });
-
-    const response = await this.request
-      .post('/users/login/otp')
-      .send({ email: emailAdress, otp: OTP });
-
-    expect(response.status).toBe(401);
-    expect(response.body).not.toHaveProperty('text');
-    expect(response.body.message).toBeUndefined();
-  });
-
-  it('should authenticate given email and otp', async function (this: Context) {
-    const response = await this.request
-      .post('/users/login/otp')
-      .send({ email: 'tisbelord@gmail.com', otp: 241929 });
-
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('text');
-    expect(response.body.message).toBe('Email OTP Verify');
-  });
-});
