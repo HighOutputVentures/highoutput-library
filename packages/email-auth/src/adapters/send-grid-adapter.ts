@@ -1,11 +1,7 @@
 import sgMail, { MailDataRequired } from '@sendgrid/mail';
 
 import { EmailableProviderAdapter } from '../interfaces/emailable-provider-adapter';
-
-type SenderInfo = {
-  name: string;
-  email: string;
-};
+import { SenderInfo } from '../types';
 
 export class SendGridAdapter implements EmailableProviderAdapter<MailDataRequired, sgMail.ClientResponse> {
   public readonly emailProvider = sgMail;
