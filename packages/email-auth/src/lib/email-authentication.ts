@@ -73,6 +73,7 @@ export class EmailAuthentication {
             validateOtp(
               request,
               response,
+              getRequestData,
               this.persistenceAdapter,
               this.otpExpiryDuration,
               this.jwtSecretKey,

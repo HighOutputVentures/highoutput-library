@@ -2,27 +2,29 @@ import http from 'http';
 
 import { PersistenceAdapter } from '../interfaces';
 import { getRequestData } from './get-request-data';
-import { generateToken } from './generate-token';
+import { generateToken as generateTokenLib } from './generate-token';
 
 
 export const validateOtp = async (
   request: http.IncomingMessage,
   response: http.ServerResponse,
+  serializeRequest: typeof getRequestData,
   persistenceAdapter: PersistenceAdapter,
   otpExpiryDuration: number,
   jwtSecretKey: string,
+  generateToken: typeof generateTokenLib,
 ) => {
-  const body = JSON.parse(await getRequestData(request));
+  const body = JSON.parse(await serializeRequest(request));
 
   if (!body.email) {
-    response.writeHead(404, { 'Content-Type': 'application/json' });
+    response.writeHead(400, { 'Content-Type': 'application/json' });
     response.end(JSON.stringify({
       message: '`email` should be provided',
     }));
 
     return;
   } else if (!body.otp) {
-    response.writeHead(404, { 'Content-Type': 'application/json' });
+    response.writeHead(400, { 'Content-Type': 'application/json' });
     response.end(JSON.stringify({
       message: '`otp` should be provided',
     }));
@@ -37,12 +39,14 @@ export const validateOtp = async (
     response.end(JSON.stringify({
       message: '`email` is invalid',
     }));
+
+    return;
   }
 
   const otp = await persistenceAdapter.findOneEmailOtp({ user: user._id, otp: body.otp });
   
   if (!otp) {
-    response.writeHead(404, { 'Content-Type': 'application/json' });
+    response.writeHead(400, { 'Content-Type': 'application/json' });
     response.end(JSON.stringify({
       message: 'invalid `otp` or `email`',
     }));
