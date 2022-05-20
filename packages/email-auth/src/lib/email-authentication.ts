@@ -18,7 +18,6 @@ export type MessageDetails = {
 const THIRY_SECONDS = 30_000;
 
 
-
 export class EmailAuthentication {
   private readonly server: http.Server;
 
