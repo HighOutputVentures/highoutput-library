@@ -1,3 +1,5 @@
+import { Types } from 'mongoose';
+
 import { ID } from '../types';
 
 export type DefaultOtpEntity = {
@@ -14,5 +16,5 @@ export interface PersistenceAdapter<
   createEmailOtp(input: { data: TCreate }): Promise<TEntity>;
   findOneEmailOtp(params: TFind): Promise<TEntity | null>;
   findOneUserByEmail(params: { email: string }): Promise<any>;
-  deleteRelatedOtps(params: { user: any }): Promise<void>;
+  deleteRelatedOtps(params: { user: Types.ObjectId | Buffer }): Promise<void>;
 }

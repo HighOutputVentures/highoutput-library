@@ -1,6 +1,10 @@
 import {
-  Connection, Model, Document, Schema, Collection,
-  Types
+  Collection,
+  Connection,
+  Document,
+  Model,
+  Schema,
+  Types,
 } from 'mongoose';
 import cryptoRandomString from 'crypto-random-string';
 
