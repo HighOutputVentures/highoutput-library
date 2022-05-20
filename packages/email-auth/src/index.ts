@@ -54,7 +54,7 @@ export class EmailAuthentication {
 
   private readonly emailProviderAdapter: EmailableProviderAdapter;
 
-  private readonly jwtSecret: string;
+  private readonly jwtSecretKey: string;
 
   private readonly otpExpiryDuration: number;
 
@@ -65,7 +65,7 @@ export class EmailAuthentication {
 
     emailProviderAdapter: EmailableProviderAdapter;
 
-    jwtSecret: string;
+    jwtSecretKey: string;
 
     otpExpiryDuration?: number;
 
@@ -77,7 +77,7 @@ export class EmailAuthentication {
 
     this.emailProviderAdapter = options.emailProviderAdapter;
 
-    this.jwtSecret = options.jwtSecret;
+    this.jwtSecretKey = options.jwtSecretKey;
 
     this.otpExpiryDuration = options.otpExpiryDuration || THIRY_SECONDS;
   }
@@ -206,7 +206,7 @@ export class EmailAuthentication {
                   subject: user._id,
                   id: user._id,
                 },
-                secret: this.jwtSecret,
+                secret: this.jwtSecretKey,
               })}`,
             }));
             
