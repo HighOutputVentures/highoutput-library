@@ -52,7 +52,9 @@ export const generateOtp = async (
     data: { user: user._id, createdAt: new Date() },
   });
 
-  const message = {
+  const message = ;
+  
+  await emailProviderAdapter.sendEmail{
     to: body.message.to,
     from: {
       email: emailProviderAdapter.senderEmail,
@@ -60,9 +62,7 @@ export const generateOtp = async (
     },
     subject: 'otp authorization',
     text: `${otpDocument.otp}`,
-  };
-  
-  await emailProviderAdapter.sendEmail(message);
+  });
 
   response.writeHead(200, { 'Content-Type': 'application/json' });
   response.end(JSON.stringify({
