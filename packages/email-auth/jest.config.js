@@ -2,8 +2,6 @@ module.exports = {
   preset: 'ts-jest',
 
   testEnvironment: 'node',
-  maxWorkers: '50%',
-  testTimeout: 5_000,
   testMatch: ['**/*.spec.ts'],
 
   bail: 1,
@@ -11,7 +9,7 @@ module.exports = {
   watchman: false,
 
   collectCoverageFrom: [
-    'src/!(server).ts',
+    'src/lib/*.ts',
   ],
   coverageReporters: ['text', 'text-summary'],
   coverageThreshold: {
