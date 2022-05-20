@@ -1,5 +1,6 @@
 import http from 'http';
 import mongoose from 'mongoose';
+import 'dotenv/config';
 
 import { EmailAuthentication } from '../../src';
 import { SendGridAdapter } from '../../src/adapters/send-grid-adapter';
