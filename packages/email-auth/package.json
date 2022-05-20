@@ -15,7 +15,9 @@
   },
   "scripts": {
     "start:example-simple": "tsnd --respawn --transpile-only ./examples/simple/index.ts",
-    "test": "jest --config=./jest.config.js --coverage"
+    "test": "jest --config=./jest.config.js --coverage",
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
   },
   "bugs": {
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
