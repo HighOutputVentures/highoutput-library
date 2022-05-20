@@ -22,18 +22,16 @@ export class SendGridAdapter implements EmailableProviderAdapter<MailDataRequire
   }
 
   async sendEmail(message: MailDataRequired) {
-    const msg = {
+    const [result] = await this.emailProvider.send({
       ...message,
       from: this.senderInfo,
-    };
-
-    const [result] = await this.emailProvider.send(message);
+    });
 
     return result;
   }
 
   get senderEmail() {
-    return this.senderInfo.email;
+    return this.senderInfo.email || 'emailauth@hov.co';
   }
 
   get senderName() {

@@ -4,7 +4,6 @@ import {
   Document,
   Model,
   Schema,
-  Types,
 } from 'mongoose';
 import cryptoRandomString from 'crypto-random-string';
 
@@ -12,14 +11,12 @@ import { ID } from '../types';
 import { PersistenceAdapter } from '../interfaces/persistence-adapter';
 
 type EmailDocument = Document<ID> & {
-  id: ID;
-  user: any;
+  user: Buffer;
   otp: string;
   createdAt: Date;
 };
 
 type UserDocument = {
-  id: ID;
   email: string;
 }
 
@@ -39,7 +36,7 @@ export class MongooseAdapter implements PersistenceAdapter<
   }) {
     const emailOtpSchema = new Schema<EmailDocument>({
       user: {
-        type: Types.ObjectId,
+        type: Buffer,
         required: true,
       },
       otp: {

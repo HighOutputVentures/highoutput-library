@@ -14,21 +14,16 @@ const persistenceAdapter = new MongooseAdapter({
   userCollectionString: 'users',
 })
 
-const emailProviderAdapter = new SendGridAdapter({
-  apiKey: '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',
+const EMAIL_PROVIDER_CONFIG = {
+  apiKey: process.env.SENDGRID_API_KEY as string,
   from: {
-    email: 'chris@identifi.com.com',
-    name: 'no-reply',
-  },
-});
+    email: process.env.SENDER_EMAIL as string || 'emailauth@hov.co',
+    name: process.env.SENDER_NAME as string || 'no-reply',
+  }
+}
 
-const otpOptions = {
-  expiryDuration: 30_000,
-  payload: {
-    id: Buffer.from('Hello'),
-    subject: Buffer.from('Hello'),
-  },
-};
+
+const emailProviderAdapter = new SendGridAdapter(EMAIL_PROVIDER_CONFIG);
 
 const server = http.createServer();
 
@@ -39,7 +34,7 @@ const emailAuthentication = new EmailAuthentication({
 
   emailProviderAdapter,
 
-  jwtSecret: 'SECRET',
+  jwtSecretKey: 'SECRET',
 });
 
 emailAuthentication.use();
