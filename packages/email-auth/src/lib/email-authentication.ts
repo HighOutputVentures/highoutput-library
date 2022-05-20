@@ -5,6 +5,7 @@ import { EmailableProviderAdapter } from '../interfaces/emailable-provider-adapt
 import { generateOtp } from './generate-otp';
 import { validateOtp } from './validate-otp';
 import { getRequestData } from './get-request-data';
+import { generateToken } from './generate-token';
 
 export type MessageDetails = {
   to: string;
@@ -77,6 +78,7 @@ export class EmailAuthentication {
               this.persistenceAdapter,
               this.otpExpiryDuration,
               this.jwtSecretKey,
+              generateToken,
             );
 
             return;
