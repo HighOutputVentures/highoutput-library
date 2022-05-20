@@ -36,7 +36,7 @@ export class MongooseAdapter implements PersistenceAdapter<
   }) {
     const emailOtpSchema = new Schema<EmailDocument>({
       user: {
-        type: Buffer,
+        type: Schema.Types.Mixed,
         required: true,
       },
       otp: {
