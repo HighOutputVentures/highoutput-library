@@ -52,9 +52,7 @@ export const generateOtp = async (
     data: { user: user._id, createdAt: new Date() },
   });
 
-  const message = ;
-  
-  await emailProviderAdapter.sendEmail{
+  await emailProviderAdapter.sendEmail({
     to: body.message.to,
     from: {
       email: emailProviderAdapter.senderEmail,
