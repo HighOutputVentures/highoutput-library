@@ -1,13 +1,10 @@
 import getPort from 'get-port';
+import mongoose from 'mongoose';
 import request, { SuperTest, Test } from 'supertest';
-import temp from 'temp';
 import { Server } from 'http';
 import { promisify } from 'util';
-import mongoose from 'mongoose';
 
 import app from './app';
-
-temp.track();
 
 export type SetupContext = {
   port: number;

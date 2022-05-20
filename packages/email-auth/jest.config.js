@@ -4,7 +4,7 @@ module.exports = {
   testEnvironment: 'node',
   maxWorkers: '50%',
   testTimeout: 5_000,
-  testMatch: ['**/**/*.spec.ts'],
+  testMatch: ['**/*.spec.ts'],
 
   bail: 1,
   verbose: true,

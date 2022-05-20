@@ -11,7 +11,7 @@ const dbURI = 'mongodb://localhost:27017/test-middleware';
 
 const persistenceAdapter = new MongooseAdapter({
   db: mongoose.connection,
-  userCollectionString: 'users',
+  userCollectionString: 'userstests',
 })
 
 const emailProviderAdapter = new SendGridAdapter({
@@ -22,15 +22,6 @@ const emailProviderAdapter = new SendGridAdapter({
   },
 });
 
-const otpOptions = {
-  expiryDuration: 30_000,
-  payload: {
-    id: Buffer.from('Hello'),
-    subject: Buffer.from('Hello'),
-  },
-  secret: 'SECRET',
-};
-
 const server = http.createServer();
 
 const emailAuthentication = new EmailAuthentication({
@@ -40,7 +31,7 @@ const emailAuthentication = new EmailAuthentication({
 
   emailProviderAdapter,
 
-  jwtSecret: 'SECRET',
+  jwtSecretKey: 'SECRET',
 });
 
 emailAuthentication.use();
