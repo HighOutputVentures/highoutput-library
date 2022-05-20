@@ -3,29 +3,19 @@
   "exclude": ["__tests__/**/*", "dist/**/*", "src/**/*.spec.ts"],
   "compilerOptions": {
     "outDir": "dist",
-    "target": "ESNext",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    "target": "ESNext",
+    "module": "commonjs",
 
-    /* Modules */
-    "module": "commonjs",                                /* Specify what module code is generated. */
-
-    "allowSyntheticDefaultImports": true,             /* Allow 'import x from y' when a module doesn't have a default export. */
-    "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables `allowSyntheticDefaultImports` for type compatibility. */
-    "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
-
-    
-    "strict": true,                                      /* Enable all strict type-checking options. */
-    
-    "strictNullChecks": true,                         /* When type checking, take into account `null` and `undefined`. */
-    
-    "noUnusedLocals": true,                           /* Enable error reporting when a local variables aren't read. */
-    "noUnusedParameters": true,                       /* Raise an error when a function parameter isn't read */
-    
-    "noFallthroughCasesInSwitch": true,               /* Enable error reporting for fallthrough cases in switch statements. */
-    
-    "allowUnusedLabels": false,                        /* Disable error reporting for unused labels. */
-    "allowUnreachableCode": false,                     /* Disable error reporting for unreachable code. */
-
-    
-    "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
-  }
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "skipLibCheck": true
+  }                             
 }
