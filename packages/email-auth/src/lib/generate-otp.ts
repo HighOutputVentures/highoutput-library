@@ -6,11 +6,12 @@ import { getRequestData } from './get-request-data';
 export const generateOtp = async (
   request: http.IncomingMessage,
   response: http.ServerResponse,
+  seralizeRequest: typeof getRequestData,
   persistenceAdapter: PersistenceAdapter,
   emailProviderAdapter: EmailableProviderAdapter,
   otpExpiryDuration: number,
 ) => {
-  const body = JSON.parse(await getRequestData(request));
+  const body = JSON.parse(await seralizeRequest(request));
             
   if (!body.message.to) {
     response.writeHead(400, { 'Content-Type': 'application/json' });
@@ -64,8 +65,7 @@ export const generateOtp = async (
 
   response.writeHead(200, { 'Content-Type': 'application/json' });
   response.end(JSON.stringify({
-    message: 'email sent',
-    data: {},
+    message: '`otp` sent through email'
   }));
 
   return;

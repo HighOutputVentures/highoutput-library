@@ -8,5 +8,6 @@ describe('EmailAuthentcation', () => {
   });
 
   it.todo('should throw an error when the method is not POST');
+
   it.todo('should throw an error when the url is neither generateOtp/ or validateOtp/');
 })

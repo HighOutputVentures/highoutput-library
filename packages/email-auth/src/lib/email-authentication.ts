@@ -4,6 +4,7 @@ import { PersistenceAdapter } from '../interfaces/persistence-adapter';
 import { EmailableProviderAdapter } from '../interfaces/emailable-provider-adapter';
 import { generateOtp } from './generate-otp';
 import { validateOtp } from './validate-otp';
+import { getRequestData } from './get-request-data';
 
 export type MessageDetails = {
   to: string;
@@ -61,6 +62,7 @@ export class EmailAuthentication {
             generateOtp(
               request,
               response,
+              getRequestData,
               this.persistenceAdapter,
               this.emailProviderAdapter,
               this.otpExpiryDuration
