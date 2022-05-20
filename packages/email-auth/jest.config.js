@@ -1,9 +1,5 @@
 module.exports = {
   preset: 'ts-jest',
-  setupFilesAfterEnv: ['jest-extended/all'],
-  moduleNameMapper: {
-    '^@libraries/(.*)$': '<rootDir>/libraries/$1',
-  },
 
   testEnvironment: 'node',
   maxWorkers: '50%',
