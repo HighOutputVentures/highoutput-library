@@ -36,7 +36,6 @@
     "eslint-plugin-jest": "^26.2.2",
     "get-port": "^5.1.1",
     "jest": "^28.1.0",
-    "jest-extended": "^2.0.0",
     "jsonwebtoken": "^8.5.1",
     "nodemon": "^2.0.16",
     "supertest": "^6.2.3",
