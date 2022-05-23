@@ -1,0 +1,65 @@
+{
+  "version": "0.1.0",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build",
+    "size": "size-limit",
+    "analyze": "size-limit --why"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "name": "@highoutput/neyar",
+  "author": "Niel Berongoy",
+  "module": "dist/editor.esm.js",
+  "size-limit": [
+    {
+      "path": "dist/editor.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/editor.esm.js",
+      "limit": "10 KB"
+    }
+  ],
+  "devDependencies": {
+    "@editorjs/checklist": "^1.3.0",
+    "@editorjs/code": "^2.7.0",
+    "@size-limit/preset-small-lib": "^7.0.8",
+    "@swc/cli": "^0.1.57",
+    "@swc/core": "^1.2.186",
+    "husky": "^8.0.1",
+    "size-limit": "^7.0.8",
+    "swcify": "^1.0.1",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.4.0",
+    "typescript": "^3.9.10"
+  },
+  "dependencies": {
+    "@editorjs/editorjs": "^2.24.3",
+    "@editorjs/header": "^2.6.2",
+    "@editorjs/paragraph": "^2.8.0",
+    "rollup-plugin-image-files": "^1.4.2"
+  }
+}

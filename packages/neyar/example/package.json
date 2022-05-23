@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "bundle": "browserify dist/index.js -t swcify > dist/bundle.js",
+    "compile": "swc src/ -d dist/",
+    "build": "npm run compile && npm run bundle"
+  },
+  "dependencies": {
+    "@highoutput/neyar": "file:../dist"
+  }
+}
