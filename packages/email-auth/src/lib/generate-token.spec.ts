@@ -1,10 +1,6 @@
 import { generateToken } from './generate-token';
 
 describe('generateToken', () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   it('should return a token', async () => {
     const INPUT_STRING = 'Hello';
     const SECRET_STRING = 'JSON_SECRET';
