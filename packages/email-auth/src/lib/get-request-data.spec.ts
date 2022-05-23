@@ -3,7 +3,6 @@ import { getRequestData } from './get-request-data';
 describe('getRequestData', () => {
   afterEach(() => {
     jest.clearAllMocks();
-    jest.clearAllTimers();
   });
 
   it('should resolve', async () => {
