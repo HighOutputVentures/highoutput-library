@@ -22,7 +22,7 @@ export {
   EditorJS,
   Header,
   Code,
-  Paragraph,
+  Paragraph, // default text block
   Qoute,
   Delimiter,
   ToggleBlock,
@@ -39,7 +39,7 @@ export {
 };
 
 /** HOV Custom Plugin */
-import NeyarText from './plugins/NeyarText';
+import NeyarText from './class/blockTool/NeyarText';
 
 export { NeyarText };
 

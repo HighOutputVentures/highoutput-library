@@ -1,7 +1,8 @@
 import {
   EditorJS,
+
+  /** EditorJS block tools */
   Header,
-  NeyarText,
   Code,
   CheckList,
   Qoute,
@@ -15,37 +16,34 @@ import {
   Table,
   Attaches,
   Raw,
+  NestedList,
+
+  /** Hov block tools */
+  NeyarText,
+
+  /** Plugins */
+  Undo,
   DragDrop,
+
+  /** Inline tool */
+  Marker,
+  InlineCode,
+  LinkAutocomplete,
+  Underline,
+
+  /** Block tune tool */
+  AlignmentTuneTool,
 } from '../../dist';
 
 window.addEventListener('DOMContentLoaded', () => {
   const editor = new EditorJS({
-    /**
-     * Id of Element that should contain the Editor
-     */
     holder: 'editor',
+    inlineToolbar: true,
     tools: {
-      neyarText: {
-        class: NeyarText,
-        config: {
-          placeholder: `Type '/' for commands`,
-          mentions: [
-            {
-              value: 'ea7e30bf-6c59-4c97-a9b6-618007c3c7d7',
-              label: 'John Doe',
-              avatar:
-                'https://gravatar.com/avatar/a4fa946654baf3309ecf651219c9a247?s=400&d=robohash&r=x',
-            },
-          ],
-        },
-      },
       code: Code,
       checklist: CheckList,
-      header: {
-        class: Header,
-        inlineToolbar: true,
-      },
-      list: List,
+      header: { class: Header, inlineToolbar: true },
+      list: { class: List, inlineToolbar: true },
       toggleBlock: ToggleBlock,
       delimiter: Delimiter,
       qoute: Qoute,
@@ -56,19 +54,21 @@ window.addEventListener('DOMContentLoaded', () => {
       table: Table,
       attaches: Attaches,
       raw: Raw,
-    },
-    defaultBlock: 'neyarText',
+      nestedList: NestedList,
 
-    /**
-     * onReady callback
-     */
+      /**HOV Tool */
+      neyarText: NeyarText,
+
+      /** Inline tools */
+      marker: Marker,
+      inlineCode: InlineCode,
+      linkAutocomplete: LinkAutocomplete,
+      underline: Underline,
+    },
     onReady: () => {
       new DragDrop(editor);
+      new Undo(editor);
     },
-
-    /**
-     * onChange callback
-     */
     onChange: (api, event) => {
       editor.save().then(outputData => {
         console.log(outputData);

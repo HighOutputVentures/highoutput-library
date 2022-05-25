@@ -1,4 +1,4 @@
-import NeyarTextSVG from '../icons/NeyarTextSvg';
+import NeyarTextSVG from '../../icons/NeyarTextSvg';
 
 class NeyarText {
   _element: HTMLElement;
