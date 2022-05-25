@@ -1,4 +1,4 @@
-import NeyarTextSVG from '../../svg/NeyarTextSvg';
+import NeyarTextSVG from '../icons/NeyarTextSvg';
 
 class NeyarText {
   _element: HTMLElement;
@@ -55,20 +55,6 @@ class NeyarText {
 
   render() {
     return this._element;
-  }
-
-  /**
-   * Method that specified how to merge two Text blocks.
-   * Called by Editor.js by backspace at the beginning of the Block
-   * @param {ParagraphData} data
-   * @public
-   */
-  merge(data: any) {
-    let newData = {
-      neyarText: this.data.neyarText + data.neyarText,
-    };
-
-    this.data = newData;
   }
 
   save(blockContent: any) {

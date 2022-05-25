@@ -1,11 +1,28 @@
-import { EditorJS, Header, NeyarText, Code, CheckList } from '../../dist';
+import {
+  EditorJS,
+  Header,
+  NeyarText,
+  Code,
+  CheckList,
+  Qoute,
+  Delimiter,
+  ToggleBlock,
+  List,
+  ImageTool,
+  SimpleImage,
+  Link,
+  Embed,
+  Table,
+  Attaches,
+  Raw,
+  DragDrop,
+} from '../../dist';
 
 window.addEventListener('DOMContentLoaded', () => {
   const editor = new EditorJS({
     /**
      * Id of Element that should contain the Editor
      */
-
     holder: 'editor',
     tools: {
       neyarText: {
@@ -28,13 +45,26 @@ window.addEventListener('DOMContentLoaded', () => {
         class: Header,
         inlineToolbar: true,
       },
+      list: List,
+      toggleBlock: ToggleBlock,
+      delimiter: Delimiter,
+      qoute: Qoute,
+      image: ImageTool,
+      simpleImage: SimpleImage,
+      link: Link,
+      embed: Embed,
+      table: Table,
+      attaches: Attaches,
+      raw: Raw,
     },
     defaultBlock: 'neyarText',
 
     /**
      * onReady callback
      */
-    onReady: () => {},
+    onReady: () => {
+      new DragDrop(editor);
+    },
 
     /**
      * onChange callback
