@@ -59,6 +59,7 @@
     "@size-limit/preset-small-lib": "^7.0.8",
     "@swc/cli": "^0.1.57",
     "@swc/core": "^1.2.186",
+    "@types/react-dom": "^18.0.5",
     "editorjs-drag-drop": "^1.1.1",
     "editorjs-toggle-block": "^0.1.2",
     "editorjs-undo": "^2.0.1",
@@ -70,6 +71,8 @@
     "typescript": "^3.9.10"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.1.2",
+    "@chakra-ui/theme": "^2.0.3",
     "@editorjs/editorjs": "^2.24.3",
     "@editorjs/embed": "^2.5.1",
     "@editorjs/header": "^2.6.2",
@@ -79,6 +82,8 @@
     "@editorjs/table": "^2.0.2",
     "@editorjs/underline": "^1.0.0",
     "editorjs-text-alignment-blocktune": "^1.0.3",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
     "rollup-plugin-image-files": "^1.4.2"
   }
 }

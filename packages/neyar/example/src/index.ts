@@ -57,7 +57,7 @@ window.addEventListener('DOMContentLoaded', () => {
       nestedList: NestedList,
 
       /**HOV Tool */
-      neyarText: NeyarText,
+      neyarText: { class: NeyarText, inlineToolbar: true },
 
       /** Inline tools */
       marker: Marker,
@@ -70,9 +70,9 @@ window.addEventListener('DOMContentLoaded', () => {
       new Undo(editor);
     },
     onChange: (api, event) => {
-      editor.save().then(outputData => {
-        console.log(outputData);
-      });
+      // editor.save().then(outputData => {
+      //   console.log(outputData);
+      // });
     },
   });
 });

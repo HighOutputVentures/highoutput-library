@@ -39,7 +39,7 @@ export {
 };
 
 /** HOV Custom Plugin */
-import NeyarText from './class/blockTool/NeyarText';
+import NeyarText from './class/NeyarText';
 
 export { NeyarText };
 
