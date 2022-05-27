@@ -40,6 +40,10 @@ window.addEventListener('DOMContentLoaded', () => {
     holder: 'editor',
     inlineToolbar: true,
     tools: {
+      /**HOV Tool */
+      neyarText: { class: NeyarText, inlineToolbar: true },
+
+      paragraph: false as any,
       code: Code,
       checklist: CheckList,
       header: { class: Header, inlineToolbar: true },
@@ -56,15 +60,13 @@ window.addEventListener('DOMContentLoaded', () => {
       raw: Raw,
       nestedList: NestedList,
 
-      /**HOV Tool */
-      neyarText: { class: NeyarText, inlineToolbar: true },
-
       /** Inline tools */
       marker: Marker,
       inlineCode: InlineCode,
       linkAutocomplete: LinkAutocomplete,
       underline: Underline,
     },
+    defaultBlock: 'neyarText',
     onReady: () => {
       new DragDrop(editor);
       new Undo(editor);

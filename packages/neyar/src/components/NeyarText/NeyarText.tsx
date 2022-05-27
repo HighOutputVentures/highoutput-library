@@ -3,24 +3,23 @@ import React, { FC } from 'react';
 interface NeyarTextProps {
   data: string;
   readOnly?: boolean;
+  onKeyUp?(): void;
 }
 
-const NeyarText: FC<NeyarTextProps> = ({ data, readOnly }) => {
-  const onKeyUpNeyarText = () => {
-    // e: React.KeyboardEvent<HTMLDivElement>
-    // console.log(e);
-  };
+const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, onKeyUp }) => {
+  const onKeyUpNeyarText = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    let text = event.currentTarget.textContent;
+    console.log(event, text);
 
-  const onChangeNeyarText = (e: React.FormEvent<HTMLDivElement>) => {
-    console.log('onchange', e);
+    if (onKeyUp) onKeyUp();
   };
 
   return (
     <div
       contentEditable={!readOnly}
       onKeyUp={onKeyUpNeyarText}
-      onChange={onChangeNeyarText}
       dangerouslySetInnerHTML={{ __html: data }}
+      style={{ lineHeight: 1.5, outline: 'none' }}
     />
   );
 };

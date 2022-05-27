@@ -36,9 +36,17 @@ export default class NeyarText {
     this.nodes.holder = rootNode;
 
     const root = createRoot(rootNode);
-    root.render(<NeyarTextComponent data={this.data.neyarText} />);
 
-    return this.nodes.holder;
+    root.render(
+      <NeyarTextComponent
+        data={this.data.neyarText}
+        onKeyUp={() => {
+          this.api.toolbar.open();
+        }}
+      />
+    );
+
+    return this.nodes.holder || '';
   }
 
   validate(savedData: any) {
