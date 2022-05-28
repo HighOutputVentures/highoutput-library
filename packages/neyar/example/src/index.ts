@@ -43,7 +43,7 @@ window.addEventListener('DOMContentLoaded', () => {
       /**HOV Tool */
       neyarText: { class: NeyarText, inlineToolbar: true },
 
-      paragraph: false as any,
+      // paragraph: false as any,
       code: Code,
       checklist: CheckList,
       header: { class: Header, inlineToolbar: true },
