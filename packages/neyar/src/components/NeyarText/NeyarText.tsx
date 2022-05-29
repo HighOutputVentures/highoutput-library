@@ -8,6 +8,7 @@ interface NeyarTextProps {
 
 const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, onKeyUp }) => {
   const [isMentionPressed, setMentionPressed] = useState<boolean>(false);
+  const [currentSelection, setCurrentSelection] = useState<Selection | null>();
 
   const checkPressed = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === '@') {
@@ -16,10 +17,8 @@ const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, onKeyUp }) => {
   };
 
   const getContent = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    let content = event.currentTarget.innerHTML;
-    console.log(content);
-
     if (isMentionPressed) {
+      setCurrentSelection(event.view.document.getSelection());
       const editorMention = document.getElementById('hov-editor-mention');
       if (editorMention) editorMention.focus();
     }
@@ -27,10 +26,13 @@ const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, onKeyUp }) => {
     if (onKeyUp) onKeyUp();
   };
 
+  console.log(currentSelection);
+
   return (
     <>
       <div
         tabIndex={0}
+        id="hov-editor"
         contentEditable={!readOnly}
         onKeyDown={checkPressed}
         onKeyUp={getContent}
@@ -41,7 +43,12 @@ const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, onKeyUp }) => {
       <div
         tabIndex={1}
         id="hov-editor-mention"
-        style={{ display: !isMentionPressed ? 'none' : 'block' }}
+        style={{
+          display: !isMentionPressed ? 'none' : 'block',
+          width: 300,
+          border: 'solid 1px',
+          outline: 'none',
+        }}
         onBlur={() => setMentionPressed(false)}
       >
         mention here
