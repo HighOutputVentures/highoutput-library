@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 
 interface NeyarTextProps {
   data: string;
@@ -6,27 +6,36 @@ interface NeyarTextProps {
   onKeyUp?(): void;
 }
 
-const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, onKeyUp }) => {
+const NeyarText: FC<NeyarTextProps> = ({ data, readOnly }) => {
   const [isMentionPressed, setMentionPressed] = useState<boolean>(false);
-  const [currentSelection, setCurrentSelection] = useState<Selection | null>();
+  const [currentSelection, setCurrentSelection] = useState<number>(0);
+  const [textData, setTextData] = useState<string>(useMemo(() => data, [data]));
+  const [content, setContent] = useState<string>('');
 
   const checkPressed = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const selection = event.view.document.getSelection();
+
     if (event.key === '@') {
-      setMentionPressed(true);
+      if (selection) {
+        const { focusOffset } = selection;
+        setMentionPressed(true);
+        setCurrentSelection(focusOffset + 1);
+      }
     }
   };
 
   const getContent = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (isMentionPressed) {
-      setCurrentSelection(event.view.document.getSelection());
-      const editorMention = document.getElementById('hov-editor-mention');
-      if (editorMention) editorMention.focus();
-    }
-
-    if (onKeyUp) onKeyUp();
+    const innerContent = event.currentTarget.innerHTML;
+    setContent(innerContent || '');
   };
 
-  console.log(currentSelection);
+  const onInsertMention = () => {
+    const startContent = content.substring(0, currentSelection);
+    const endContent = content.substring(currentSelection, content.length);
+    setTextData(`${startContent}mention${endContent}`);
+    setCurrentSelection(0);
+    setMentionPressed(false);
+  };
 
   return (
     <>
@@ -36,7 +45,7 @@ const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, onKeyUp }) => {
         contentEditable={!readOnly}
         onKeyDown={checkPressed}
         onKeyUp={getContent}
-        dangerouslySetInnerHTML={{ __html: data }}
+        dangerouslySetInnerHTML={{ __html: textData }}
         style={{ lineHeight: 1.5, outline: 'none' }}
       />
 
@@ -48,8 +57,10 @@ const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, onKeyUp }) => {
           width: 300,
           border: 'solid 1px',
           outline: 'none',
+          cursor: 'pointer',
         }}
         onBlur={() => setMentionPressed(false)}
+        onClick={onInsertMention}
       >
         mention here
       </div>
