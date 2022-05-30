@@ -40,13 +40,7 @@ export default class NeyarText {
     root.render(
       <NeyarTextComponent
         data={this.data.neyarText}
-        onKeyUp={() => {
-          // // codex-editor--toolbox-opened
-          // const element = document.getElementsByClassName('codex-editor');
-          // element[0].classList.add('codex-editor--toolbox-opened');
-          // console.log(element[0]);
-          // this.api.toolbar.open();
-        }}
+        blockIndex={this.api.blocks.getCurrentBlockIndex() + 1}
       />
     );
 
