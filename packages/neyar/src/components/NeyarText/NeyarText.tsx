@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 
 interface NeyarTextProps {
   data: string;
@@ -8,11 +8,21 @@ interface NeyarTextProps {
 }
 
 const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, blockIndex }) => {
+  const wrapperRef = useRef<any>(null);
   const [isMentionPressed, setMentionPressed] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleClickOutside = (event?: any) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setMentionPressed(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const checkPressed = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === '@') {
-      // const selection = event.view.document.getSelection();
       setMentionPressed(true);
     }
   };
@@ -28,8 +38,6 @@ const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, blockIndex }) => {
         range = sel.getRangeAt(0);
         range.deleteContents();
 
-        // Range.createContextualFragment() would be useful here but is
-        // non-standard and not supported in all browsers (IE9, for one)
         let el = document.createElement('div');
         el.innerHTML = '<b>INSERTED</b>';
         let frag = document.createDocumentFragment(),
@@ -67,14 +75,19 @@ const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, blockIndex }) => {
       />
 
       <div
+        ref={wrapperRef}
         style={{
           display: !isMentionPressed ? 'none' : 'block',
-          border: 'solid 1px',
-          outline: 'none',
-          cursor: 'pointer',
         }}
+        onClick={() => setMentionPressed(false)}
       >
         <button
+          style={{
+            width: 300,
+            height: 30,
+            cursor: 'pointer',
+            backgroundColor: 'white',
+          }}
           onClick={() => {
             onInsertMention();
           }}
