@@ -27,6 +27,7 @@ const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, blockIndex }) => {
 
   const checkPressed = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === '@') {
+      // const editor = document.getElementById(`hov-editor-${blockIndex}`);
       const selection = window.getSelection();
       if (selection) {
         let range = selection.getRangeAt(0);
@@ -39,9 +40,7 @@ const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, blockIndex }) => {
 
         setPositionOffset({
           x: span.offsetLeft,
-          y:
-            span.offsetTop +
-            (wrapperRef.current ? wrapperRef.current.offsetHeight : 0),
+          y: span.offsetTop + 25,
         });
         setMentionPressed(true);
 
@@ -104,7 +103,7 @@ const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, blockIndex }) => {
           display: !isMentionPressed ? 'none' : 'block',
           position: 'absolute',
           left: postionOffset.x,
-          right: postionOffset.y,
+          top: postionOffset.y,
           width: 300,
           zIndex: 3,
         }}
