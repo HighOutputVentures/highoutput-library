@@ -8,13 +8,17 @@ interface NeyarTextProps {
 }
 
 const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, blockIndex }) => {
-  const wrapperRef = useRef<any>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const [isMentionPressed, setMentionPressed] = useState<boolean>(false);
+  const [postionOffset, setPositionOffset] = useState<{ x: number; y: number }>(
+    { x: 0, y: 0 }
+  );
 
   useEffect(() => {
     const handleClickOutside = (event?: any) => {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
         setMentionPressed(false);
+        setPositionOffset({ x: 0, y: 0 });
       }
     };
 
@@ -23,7 +27,26 @@ const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, blockIndex }) => {
 
   const checkPressed = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === '@') {
-      setMentionPressed(true);
+      const selection = window.getSelection();
+      if (selection) {
+        let range = selection.getRangeAt(0);
+        let span = document.createElement('span');
+
+        let newRange = document.createRange();
+        newRange.setStart(selection.focusNode as Node, range.endOffset);
+
+        range.insertNode(span);
+
+        setPositionOffset({
+          x: span.offsetLeft,
+          y:
+            span.offsetTop +
+            (wrapperRef.current ? wrapperRef.current.offsetHeight : 0),
+        });
+        setMentionPressed(true);
+
+        span.remove();
+      }
     }
   };
 
@@ -62,10 +85,11 @@ const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, blockIndex }) => {
     }
 
     setMentionPressed(false);
+    setPositionOffset({ x: 0, y: 0 });
   };
 
   return (
-    <>
+    <div style={{ position: 'relative' }}>
       <div
         id={`hov-editor-${blockIndex}`}
         contentEditable={!readOnly}
@@ -78,8 +102,16 @@ const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, blockIndex }) => {
         ref={wrapperRef}
         style={{
           display: !isMentionPressed ? 'none' : 'block',
+          position: 'absolute',
+          left: postionOffset.x,
+          right: postionOffset.y,
+          width: 300,
+          zIndex: 3,
         }}
-        onClick={() => setMentionPressed(false)}
+        onClick={() => {
+          setMentionPressed(false);
+          setPositionOffset({ x: 0, y: 0 });
+        }}
       >
         <button
           style={{
@@ -95,7 +127,7 @@ const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, blockIndex }) => {
           Mention
         </button>
       </div>
-    </>
+    </div>
   );
 };
 
