@@ -119,16 +119,18 @@ const NeyarText: FC<NeyarTextProps> = ({
             setPositionOffset({ x: 0, y: 0 });
           }}
         >
-          {mentions?.map(mention => (
+          {mentions?.map((mention, index) => (
             <button
               key={mention.value}
               style={{
-                width: 300,
+                width: 250,
                 height: 55,
                 cursor: 'pointer',
                 backgroundColor: 'white',
                 display: 'flex',
                 alignItems: 'center',
+                border: '1px solid',
+                borderTop: index === 0 ? '1px solid' : '0px',
               }}
               onClick={() => onInsertMention(mention)}
             >
@@ -136,10 +138,10 @@ const NeyarText: FC<NeyarTextProps> = ({
                 <img
                   src={mention.avatar}
                   style={{
-                    width: 50,
-                    height: 50,
+                    width: 45,
+                    height: 45,
                     borderRadius: 180,
-                    marginRight: 50,
+                    marginRight: 20,
                   }}
                 />
               )}{' '}
