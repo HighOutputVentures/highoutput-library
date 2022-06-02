@@ -24,3 +24,9 @@ declare module '@editorjs/underline';
 declare module '@editorjs/link-autocomplete';
 
 declare module 'editorjs-text-alignment-blocktune';
+
+export interface Mention {
+  value: string;
+  label: string;
+  avatar?: string;
+}

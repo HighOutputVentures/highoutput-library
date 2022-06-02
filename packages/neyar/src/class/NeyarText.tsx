@@ -41,6 +41,14 @@ export default class NeyarText {
       <NeyarTextComponent
         data={this.data.neyarText}
         blockIndex={this.api.blocks.getCurrentBlockIndex() + 1}
+        mentions={[
+          {
+            value: '29856d46-50c5-4a0b-b1e2-b965d7c67b8d',
+            label: 'Edward Kenway',
+            avatar:
+              'https://thumbs.dreamstime.com/b/url-type-icon-simple-illustration-129166668.jpg',
+          },
+        ]}
       />
     );
 

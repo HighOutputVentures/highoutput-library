@@ -1,13 +1,21 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
 
+import { Mention } from '../../../types/types';
+
 interface NeyarTextProps {
   data: string;
   readOnly?: boolean;
   onKeyUp?(): void;
   blockIndex: number;
+  mentions?: Mention[];
 }
 
-const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, blockIndex }) => {
+const NeyarText: FC<NeyarTextProps> = ({
+  data,
+  readOnly,
+  blockIndex,
+  mentions,
+}) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [isMentionPressed, setMentionPressed] = useState<boolean>(false);
   const [postionOffset, setPositionOffset] = useState<{ x: number; y: number }>(
@@ -27,7 +35,6 @@ const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, blockIndex }) => {
 
   const checkPressed = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === '@') {
-      // const editor = document.getElementById(`hov-editor-${blockIndex}`);
       const selection = window.getSelection();
       if (selection) {
         let range = selection.getRangeAt(0);
@@ -49,7 +56,7 @@ const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, blockIndex }) => {
     }
   };
 
-  const onInsertMention = () => {
+  const onInsertMention = (mention: Mention) => {
     document.getElementById(`hov-editor-${blockIndex}`)?.focus();
 
     let sel, range;
@@ -61,7 +68,7 @@ const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, blockIndex }) => {
         range.deleteContents();
 
         let el = document.createElement('div');
-        el.innerHTML = '<b>INSERTED</b>';
+        el.innerHTML = `<a href="#" data-mention="${mention.label}">${mention.label}</a>`;
         let frag = document.createDocumentFragment(),
           node,
           lastNode;
@@ -72,7 +79,6 @@ const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, blockIndex }) => {
 
         range.insertNode(frag);
 
-        // Preserve the selection
         if (lastNode) {
           range = range.cloneRange();
           range.setStartAfter(lastNode);
@@ -97,35 +103,51 @@ const NeyarText: FC<NeyarTextProps> = ({ data, readOnly, blockIndex }) => {
         style={{ lineHeight: 1.5, outline: 'none' }}
       />
 
-      <div
-        ref={wrapperRef}
-        style={{
-          display: !isMentionPressed ? 'none' : 'block',
-          position: 'absolute',
-          left: postionOffset.x,
-          top: postionOffset.y,
-          width: 300,
-          zIndex: 3,
-        }}
-        onClick={() => {
-          setMentionPressed(false);
-          setPositionOffset({ x: 0, y: 0 });
-        }}
-      >
-        <button
+      {Boolean(mentions?.length) && (
+        <div
+          ref={wrapperRef}
           style={{
+            display: !isMentionPressed ? 'none' : 'block',
+            position: 'absolute',
+            left: postionOffset.x,
+            top: postionOffset.y,
             width: 300,
-            height: 30,
-            cursor: 'pointer',
-            backgroundColor: 'white',
+            zIndex: 3,
           }}
           onClick={() => {
-            onInsertMention();
+            setMentionPressed(false);
+            setPositionOffset({ x: 0, y: 0 });
           }}
         >
-          Mention
-        </button>
-      </div>
+          {mentions?.map(mention => (
+            <button
+              key={mention.value}
+              style={{
+                width: 300,
+                height: 55,
+                cursor: 'pointer',
+                backgroundColor: 'white',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+              onClick={() => onInsertMention(mention)}
+            >
+              {mention.avatar && (
+                <img
+                  src={mention.avatar}
+                  style={{
+                    width: 50,
+                    height: 50,
+                    borderRadius: 180,
+                    marginRight: 50,
+                  }}
+                />
+              )}{' '}
+              {mention.label}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
