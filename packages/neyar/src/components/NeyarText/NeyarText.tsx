@@ -38,6 +38,12 @@ const NeyarText: FC<NeyarTextProps> = ({
     document.addEventListener('mousedown', handleClickOutside); // close mention div when user click's outside of it
   }, []);
 
+  /**
+   * @checkPressed  event handler for pressing mention keyword
+   * @getTextContent get the current text content value after typing
+   * @onInsertMention insert mention inside html tags
+   */
+
   const checkPressed = (event: React.KeyboardEvent<HTMLDivElement>) => {
     const keySelectionOffset =
       event.view.document.getSelection()?.focusOffset || 0; // get current focus offset position

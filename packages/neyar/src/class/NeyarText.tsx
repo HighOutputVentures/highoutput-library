@@ -15,10 +15,12 @@ export default class NeyarText {
   readOnly: boolean;
   data: NeyarTextData;
   nodes: any;
+  config: any;
 
   constructor({ data, config, api, readOnly }: any) {
     this.api = api;
     this.readOnly = readOnly;
+    this.config = config;
 
     this.placeholder = config.placeholder || '';
 
@@ -31,34 +33,24 @@ export default class NeyarText {
     };
   }
 
+  /**
+   * neyar text block is rendered here
+   */
   render() {
     const rootNode = document.createElement('div');
     this.nodes.holder = rootNode;
 
-    const root = createRoot(rootNode);
+    const root = createRoot(rootNode); // create a react dom with the created div element
 
     root.render(
       <NeyarTextComponent
         data={this.data.neyarText}
         blockIndex={this.api.blocks.getCurrentBlockIndex() + 1}
-        mentions={[
-          {
-            value: '29856d46-50c5-4a0b-b1e2-b965d7c67b8d',
-            label: 'Edward Kenway',
-            avatar:
-              'https://thumbs.dreamstime.com/b/url-type-icon-simple-illustration-129166668.jpg',
-          },
-          {
-            value: '29856d46-50c5-4a0b-b1e2-b965d7c67b8a',
-            label: 'John Connor Kenway',
-            avatar:
-              'https://play-lh.googleusercontent.com/ZvMvaLTdYMrD6U1B3wPKL6siMYG8nSTEnzhLiMsH7QHwQXs3ZzSZuYh3_PTxoU5nKqU',
-          },
-        ]}
+        mentions={this.config.mentions || []}
       />
-    );
+    ); // render react component in from the create react dom
 
-    return this.nodes.holder || '';
+    return this.nodes.holder || ''; // return component rendered
   }
 
   validate(savedData: any) {
