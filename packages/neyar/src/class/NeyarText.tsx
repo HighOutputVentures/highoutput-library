@@ -53,6 +53,9 @@ export default class NeyarText {
     return this.nodes.holder || ''; // return component rendered
   }
 
+  /**
+   * validate if text is not empty
+   */
   validate(savedData: any) {
     if (savedData.neyarText.trim() === '') {
       return false;
@@ -61,6 +64,9 @@ export default class NeyarText {
     return true;
   }
 
+  /**
+   * saves data after editing
+   */
   save(blockContent: any) {
     let content = blockContent.querySelector('[contenteditable]');
 
@@ -87,6 +93,9 @@ export default class NeyarText {
     };
   }
 
+  /**
+   * set title of the block and icon of the block in the toolbox menu
+   */
   static get toolbox() {
     return {
       title: 'Neyar Text',
