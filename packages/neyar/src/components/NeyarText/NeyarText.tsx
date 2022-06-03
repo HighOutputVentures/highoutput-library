@@ -20,19 +20,14 @@ const NeyarText: FC<NeyarTextProps> = ({
   const [isMentionPressed, setMentionPressed] = useState<boolean>(false);
   const [searchMention, setSearchMention] = useState<string>('');
 
-  console.log(searchMention);
+  const [startOffset, setStartOffset] = useState<number>(0); // search range start offset
+  const [endOffset, setEndOffset] = useState<number>(0); // search range end offset
 
-  /** search offset */
-  const [startOffset, setStartOffset] = useState<number>(0);
-  const [endOffset, setEndOffset] = useState<number>(0);
-
-  /** mention div position */
   const [postionOffset, setPositionOffset] = useState<{ x: number; y: number }>(
     { x: 0, y: 0 }
-  );
+  ); // position of the div of mention
 
   useEffect(() => {
-    /** close mention div if click outside of it */
     const handleClickOutside = (event?: any) => {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
         setMentionPressed(false);
@@ -40,20 +35,22 @@ const NeyarText: FC<NeyarTextProps> = ({
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside); // close mention div when user click's outside of it
   }, []);
 
   const checkPressed = (event: React.KeyboardEvent<HTMLDivElement>) => {
     const keySelectionOffset =
-      event.view.document.getSelection()?.focusOffset || 0;
+      event.view.document.getSelection()?.focusOffset || 0; // get current focus offset position
 
     setEndOffset(keySelectionOffset);
 
     if (event.key === '@') {
-      const selection = window.getSelection();
+      const selection = window.getSelection(); // get window focus offset position when '@' is pressed
 
       if (selection) {
         setStartOffset(keySelectionOffset);
+
+        // create a span to determine the x and y position of the current window selection
         let range = selection.getRangeAt(0);
         let span = document.createElement('span');
 
@@ -67,6 +64,7 @@ const NeyarText: FC<NeyarTextProps> = ({
           y: span.offsetTop + 25,
         });
 
+        // remove the span after getting the x and y position
         span.remove();
 
         setMentionPressed(true);
@@ -75,12 +73,12 @@ const NeyarText: FC<NeyarTextProps> = ({
   };
 
   const getTextContent = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    const start = startOffset + 1;
-    const end = endOffset + 1;
+    const start = startOffset + 1; // get start offset of '@'
+    const end = endOffset + 1; // get end offset after typing '@'
     const textContent = event.view.document.getSelection()?.focusNode
-      ?.textContent;
+      ?.textContent; // get the text of the child node where the current focus selection
 
-    const searchText = textContent?.substring(start, end) || '';
+    const searchText = textContent?.substring(start, end) || ''; // get only the text string of the after '@'
 
     if (isMentionPressed && !textContent) {
       setMentionPressed(false);
@@ -97,18 +95,21 @@ const NeyarText: FC<NeyarTextProps> = ({
 
   const onInsertMention = (mention: Mention) => {
     const editor = document.getElementById(`hov-editor-${blockIndex}`);
-    editor?.focus();
+    editor?.focus(); // set the focus in the current block
 
     let sel, range;
-    sel = window.getSelection();
+    sel = window.getSelection(); // get current block range selection
 
     if (sel) {
       if (sel.getRangeAt && sel.rangeCount) {
         range = sel.getRangeAt(0);
         range.deleteContents();
 
+        // create a div element and insert a tag link mention
         let el = document.createElement('div');
         el.innerHTML = `<a href="#" data-mention="${mention.label}">${mention.label}</a>`;
+
+        // create a frag document and insert the div as last node
         let frag = document.createDocumentFragment(),
           node,
           lastNode;
@@ -117,8 +118,9 @@ const NeyarText: FC<NeyarTextProps> = ({
           lastNode = frag.appendChild(node);
         }
 
-        range.insertNode(frag);
+        range.insertNode(frag); // insert frag document in the current selection
 
+        // set the current selection after the inserted frag document
         if (lastNode) {
           range = range.cloneRange();
           range.setStartAfter(lastNode);
@@ -127,7 +129,7 @@ const NeyarText: FC<NeyarTextProps> = ({
           sel.addRange(range);
         }
 
-        // not final
+        //  replace current focus node search text with the empty string
         editor?.childNodes.forEach(node => {
           if (
             node &&
@@ -163,8 +165,8 @@ const NeyarText: FC<NeyarTextProps> = ({
           style={{
             display: !isMentionPressed ? 'none' : 'block',
             position: 'absolute',
-            left: postionOffset.x,
-            top: postionOffset.y,
+            left: postionOffset.x, // div mention position x is set here
+            top: postionOffset.y, // div mention position y is set here
             width: 300,
             zIndex: 3,
           }}
@@ -173,7 +175,7 @@ const NeyarText: FC<NeyarTextProps> = ({
             setPositionOffset({ x: 0, y: 0 });
           }}
         >
-          {mentions
+          {mentions // map mention data with search filter
             ?.filter(mention =>
               isMentionPressed && searchMention
                 ? mention.label
