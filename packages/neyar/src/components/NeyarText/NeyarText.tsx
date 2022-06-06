@@ -155,7 +155,7 @@ const NeyarText: FC<NeyarTextProps> = ({
   };
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative' }} data-test="neyar-text-container">
       <div
         id={`hov-editor-${blockIndex}`}
         contentEditable={!readOnly}
@@ -163,10 +163,12 @@ const NeyarText: FC<NeyarTextProps> = ({
         onKeyUp={getTextContent}
         dangerouslySetInnerHTML={{ __html: data }}
         style={{ lineHeight: 1.5, outline: 'none' }}
+        data-test="neyar-text-editor"
       />
 
       {Boolean(mentions?.length) && (
         <div
+          data-test="neyar-text-mention-container"
           ref={wrapperRef}
           style={{
             display: !isMentionPressed ? 'none' : 'block',
@@ -191,6 +193,7 @@ const NeyarText: FC<NeyarTextProps> = ({
             )
             .map((mention, index) => (
               <button
+                data-test="neyar-text-mention-button"
                 key={mention.value}
                 style={{
                   width: 250,
@@ -206,6 +209,7 @@ const NeyarText: FC<NeyarTextProps> = ({
               >
                 {mention.avatar && (
                   <img
+                    data-test="neyar-text-mention-avatar"
                     src={mention.avatar}
                     style={{
                       width: 45,
