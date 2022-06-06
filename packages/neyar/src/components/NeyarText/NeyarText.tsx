@@ -1,7 +1,10 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
 
-import { Mention } from '../../../types/types';
-
+interface Mention {
+  value: string;
+  label: string;
+  avatar?: string;
+}
 interface NeyarTextProps {
   data: string;
   readOnly?: boolean;

@@ -59,6 +59,7 @@
     "@size-limit/preset-small-lib": "^7.0.8",
     "@swc/cli": "^0.1.57",
     "@swc/core": "^1.2.186",
+    "@types/editorjs__header": "^2.6.0",
     "@types/react-dom": "^18.0.5",
     "editorjs-drag-drop": "^1.1.1",
     "editorjs-toggle-block": "^0.1.2",
