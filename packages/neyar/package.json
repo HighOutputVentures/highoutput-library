@@ -17,7 +17,9 @@
     "lint": "tsdx lint",
     "prepare": "tsdx build",
     "size": "size-limit",
-    "analyze": "size-limit --why"
+    "analyze": "size-limit --why",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "husky": {
     "hooks": {
@@ -44,6 +46,7 @@
     }
   ],
   "devDependencies": {
+    "@babel/core": "^7.18.2",
     "@editorjs/attaches": "^1.2.1",
     "@editorjs/checklist": "^1.3.0",
     "@editorjs/code": "^2.7.0",
@@ -57,10 +60,19 @@
     "@editorjs/raw": "^2.3.1",
     "@editorjs/simple-image": "^1.4.1",
     "@size-limit/preset-small-lib": "^7.0.8",
+    "@storybook/addon-actions": "^6.5.7",
+    "@storybook/addon-essentials": "^6.5.7",
+    "@storybook/addon-interactions": "^6.5.7",
+    "@storybook/addon-links": "^6.5.7",
+    "@storybook/builder-webpack4": "^6.5.7",
+    "@storybook/manager-webpack4": "^6.5.7",
+    "@storybook/react": "^6.5.7",
+    "@storybook/testing-library": "^0.0.11",
     "@swc/cli": "^0.1.57",
     "@swc/core": "^1.2.186",
     "@types/editorjs__header": "^2.6.0",
     "@types/react-dom": "^18.0.5",
+    "babel-loader": "^8.2.5",
     "editorjs-drag-drop": "^1.1.1",
     "editorjs-toggle-block": "^0.1.2",
     "editorjs-undo": "^2.0.1",

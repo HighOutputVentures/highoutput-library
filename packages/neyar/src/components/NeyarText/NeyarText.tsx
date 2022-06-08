@@ -1,14 +1,13 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
 
-interface Mention {
+export interface Mention {
   value: string;
   label: string;
   avatar?: string;
 }
-interface NeyarTextProps {
+export interface NeyarTextProps {
   data: string;
   readOnly?: boolean;
-  onKeyUp?(): void;
   blockIndex: number;
   mentions?: Mention[];
 }
