@@ -47,6 +47,8 @@ export {
   CheckboxGroup,
   CheckboxGroupContext,
   CheckboxGroupProps,
+  useCheckbox, // https://chakra-ui.com/docs/styled-system/component-hooks/use-checkbox
+  useCheckboxGroup, // https://chakra-ui.com/docs/styled-system/component-hooks/use-checkbox-group
   /**
    * Text
    * @reference https://chakra-ui.com/docs/components/typography/text
@@ -146,6 +148,8 @@ export {
   RadioProps,
   RadioGroup,
   RadioGroupProps,
+  useRadio, // https://chakra-ui.com/docs/styled-system/component-hooks/use-radio
+  useRadioGroup, // https://chakra-ui.com/docs/styled-system/component-hooks/use-radio-group
   /** Select
    * @reference  https://chakra-ui.com/docs/components/form/select
    */
