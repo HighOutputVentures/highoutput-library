@@ -50,6 +50,7 @@
   ],
   "devDependencies": {
     "@babel/core": "^7.18.2",
+    "@chakra-ui/storybook-addon": "^4.0.1",
     "@size-limit/preset-small-lib": "^7.0.8",
     "@storybook/addon-essentials": "^6.5.8",
     "@storybook/addon-info": "^5.3.21",
