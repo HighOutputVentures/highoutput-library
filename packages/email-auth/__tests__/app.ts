@@ -15,7 +15,7 @@ const persistenceAdapter = new MongooseAdapter({
 })
 
 const emailProviderAdapter = new SendGridAdapter({
-  apiKey: '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',
+  apiKey: process.env.SENDGRID_API_KEY as string,
   from: {
     email: 'chris@identifi.com.com',
     name: 'no-reply',
