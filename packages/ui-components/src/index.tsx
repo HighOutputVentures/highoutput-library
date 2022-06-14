@@ -408,5 +408,17 @@ export {
 } from '@chakra-ui/react';
 
 import HovProvider from './components/HovProvider';
+import HovRadioImage, {
+  HovRadioImageProps,
+} from './components/HovRadioImage/HovRadioImage';
+import HovRadioImageGroup, {
+  HovRadioImageGroupProps,
+} from './components/HovRadioImageGroup/HovRadioImageGroup';
 
-export { HovProvider };
+export {
+  HovProvider,
+  HovRadioImageGroup,
+  HovRadioImageGroupProps,
+  HovRadioImage,
+  HovRadioImageProps,
+};

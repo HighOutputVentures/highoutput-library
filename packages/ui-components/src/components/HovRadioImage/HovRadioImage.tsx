@@ -1,12 +1,12 @@
 import React, { FC } from 'react';
 import { RadioProps, useRadio, chakra, Box, Image } from '@chakra-ui/react';
 
-export interface HovRadioImage extends RadioProps {
+export interface HovRadioImageProps extends RadioProps {
   image: string;
   selectColor?: string;
 }
 
-const HovRadioImage: FC<HovRadioImage> = props => {
+const HovRadioImage: FC<HovRadioImageProps> = props => {
   const { image, selectColor = 'green.200', w = 12, ...radioProps } = props;
   const {
     state,

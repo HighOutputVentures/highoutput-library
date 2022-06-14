@@ -3,13 +3,13 @@ import { Stack, HStack, useRadioGroup } from '@chakra-ui/react';
 
 import HovRadioImage from '../HovRadioImage/HovRadioImage';
 
-export interface HovRadioImageGroup {
+export interface HovRadioImageGroupProps {
   avatars: Array<{ value: string; image: string }>;
   onChange: (value: string) => void;
   defaultValue?: string;
 }
 
-const HovRadioImageGroup: FC<HovRadioImageGroup> = ({
+const HovRadioImageGroup: FC<HovRadioImageGroupProps> = ({
   avatars,
   onChange,
   defaultValue,
