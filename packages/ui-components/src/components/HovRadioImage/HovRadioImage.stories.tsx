@@ -3,7 +3,7 @@ import React from 'react';
 import HovRadioImage from './HovRadioImage';
 
 export default {
-  title: 'HovRadio',
+  title: 'Hov UI Components/Hov Radio/Radio Image',
   component: HovRadioImage,
 };
 
