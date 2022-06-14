@@ -20,8 +20,8 @@ const HovRadioImageGroup: FC<HovRadioImageGroup> = ({
   });
 
   return (
-    <Stack {...getRootProps()}>
-      <HStack>
+    <Stack {...getRootProps()} data-testid="radio.image.group.stack.container">
+      <HStack data-testid="radio.image.group.horizontal.stack">
         {avatars.map(avatar => {
           return (
             <HovRadioImage
