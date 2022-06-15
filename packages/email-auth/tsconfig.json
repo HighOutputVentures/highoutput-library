@@ -1,11 +1,10 @@
 {
   "include": ["**/*.ts"],
-  "exclude": ["__tests__/**/*", "dist/**/*", "src/**/*.spec.ts"],
+  "exclude": ["__tests__/**/*", "dist/**/*", "src/**/*.spec.ts", "examples/**/*"],
   "compilerOptions": {
     "outDir": "dist",
     "target": "ESNext",
     "module": "commonjs",
-
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,

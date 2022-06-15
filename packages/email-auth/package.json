@@ -1,6 +1,6 @@
 {
-  "name": "email-auth",
-  "version": "1.0.0",
+  "name": "@highoutput/email-auth",
+  "version": "0.1.0",
   "description": "server middleware for email authentication",
   "keywords": [
     "middleware"
@@ -8,7 +8,7 @@
   "author": "High Output Ventures",
   "homepage": "https://github.com/HighOutputVentures/highoutput-library#readme",
   "license": "ISC",
-  "main": "src/server.ts",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
@@ -48,5 +48,8 @@
     "dotenv": "^16.0.1",
     "mongoose": "^6.3.3",
     "typescript": "^4.6.4"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
