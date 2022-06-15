@@ -1,3 +1,0 @@
-# `arque`
-
-> Core for `arque`.

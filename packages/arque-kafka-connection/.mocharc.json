@@ -1,9 +1,0 @@
-{
-  "exit": true,
-  "colors": true,
-  "inline-diffs": true,
-  "recursive": true,
-  "require": ["ts-node/register/transpile-only"],
-  "spec": "__tests__/**/*.test.ts",
-  "timeout": 10000
-}

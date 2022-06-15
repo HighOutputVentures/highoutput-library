@@ -1,6 +1,0 @@
-version: '3.2'
-services:
-  activemq:
-    image: highoutputdev/activemq:latest
-    ports:
-      - 5672:5672
