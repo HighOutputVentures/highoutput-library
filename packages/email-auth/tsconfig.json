@@ -1,0 +1,21 @@
+{
+  "include": ["**/*.ts"],
+  "exclude": ["__tests__/**/*", "dist/**/*", "src/**/*.spec.ts"],
+  "compilerOptions": {
+    "outDir": "dist",
+    "target": "ESNext",
+    "module": "commonjs",
+
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "skipLibCheck": true
+  }                             
+}
