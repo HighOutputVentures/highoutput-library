@@ -3,4 +3,5 @@ node_modules
 packages/*/node_modules
 packages/*/.vscode
 packages/*/build
+packages/*/dist
 lerna-debug.log
