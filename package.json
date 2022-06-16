@@ -2,8 +2,8 @@
   "name": "highoutput-library",
   "description": "Reusable libraries by High Output Ventures",
   "author": "High Output Ventures",
-  "license": "MIT",
+  "license": "ISC",
   "dependencies": {
-    "lerna": "^4.0.0"
+    "lerna": "^5.1.4"
   }
 }
