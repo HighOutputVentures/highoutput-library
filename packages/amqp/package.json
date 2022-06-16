@@ -59,9 +59,5 @@
   "publishConfig": {
     "access": "public"
   },
-<<<<<<< HEAD
-  "gitHead": "028a554c671ad705b7b4ffde9862c3e01031c08d"
-=======
   "gitHead": "dbda442a681f498de346f931b09356dc5733876c"
->>>>>>> 654a88a8bd271d1cd7dbcea509ec4b39eee8c104
 }
