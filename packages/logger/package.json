@@ -1,13 +1,13 @@
 {
   "name": "@highoutput/logger",
-  "version": "0.5.12",
-  "main": "build/index.js",
+  "version": "0.5.13",
+  "main": "dist/index.js",
   "dependencies": {
     "debug": "^3.1.0",
     "lru-cache": "^6.0.0"
   },
   "scripts": {
-    "clean": "rimraf build/",
+    "clean": "rimraf dist/",
     "build": "npm run clean && tsc --project tsconfig.json",
     "test": "mocha \"./test/**/*.spec.ts\"",
     "prepublish": "npm run build"
@@ -29,5 +29,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "8939f765aa2a397d7a89ed9310e64317580f50a9"
+  "gitHead": "028a554c671ad705b7b4ffde9862c3e01031c08d"
 }
