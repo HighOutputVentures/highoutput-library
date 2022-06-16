@@ -1,4 +1,19 @@
 export const colors = {
+  greenLight: { 500: '#4CD471' },
+  limeLight: { 500: '#A8C556' },
+  yellowLight: { 500: '#FFD188' },
+  orangeLight: { 500: '#FFBB96' },
+  redLight: { 500: '#FF9898' },
+  textColor: { 500: '#2D3748' },
+  skyLight: { 500: '#E3E5E6' },
+  roseRed: { 500: '#F56565' },
+  secondary: { 400: '#859FFF ', 500: '#0A3FFF', 600: '#052080' },
+  sunglow: { 500: '#FFD12D' },
+  amberDark: {
+    500: '#806917',
+  },
+  whiteDark: { 500: '#F9F9F9' },
+  black: { 500: '#000000' },
   amber: {
     50: '#FFF8E1',
     100: '#FFECB3',

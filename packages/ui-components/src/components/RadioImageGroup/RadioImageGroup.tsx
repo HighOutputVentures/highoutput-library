@@ -1,15 +1,15 @@
 import React, { FC } from 'react';
 import { Stack, HStack, useRadioGroup } from '@chakra-ui/react';
 
-import HovRadioImage from '../HovRadioImage/HovRadioImage';
+import RadioImage from '../RadioImage/RadioImage';
 
-export interface HovRadioImageGroupProps {
+export interface RadioImageGroupProps {
   avatars: Array<{ value: string; image: string }>;
   onChange: (value: string) => void;
   defaultValue?: string;
 }
 
-const HovRadioImageGroup: FC<HovRadioImageGroupProps> = ({
+const HovRadioImageGroup: FC<RadioImageGroupProps> = ({
   avatars,
   onChange,
   defaultValue,
@@ -24,7 +24,7 @@ const HovRadioImageGroup: FC<HovRadioImageGroupProps> = ({
       <HStack data-testid="radio.image.group.horizontal.stack">
         {avatars.map(avatar => {
           return (
-            <HovRadioImage
+            <RadioImage
               key={avatar.value}
               image={avatar.image}
               {...getRadioProps({ value: avatar.value })}
