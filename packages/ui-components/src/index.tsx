@@ -404,21 +404,21 @@ export {
   LightMode, // https://chakra-ui.com/docs/styled-system/recipes/page-specific-color-mode
   GlobalStyle,
   extendTheme, // https://chakra-ui.com/docs/styled-system/theming/customize-theme
-  ChakraProviderProps as HovProviderProps,
+  ChakraProviderProps as ProviderProps,
 } from '@chakra-ui/react';
 
-import HovProvider from './components/HovProvider';
-import HovRadioImage, {
-  HovRadioImageProps,
-} from './components/HovRadioImage/HovRadioImage';
-import HovRadioImageGroup, {
-  HovRadioImageGroupProps,
-} from './components/HovRadioImageGroup/HovRadioImageGroup';
+import Provider from './components/Provider';
+import RadioImage, {
+  RadioImageProps,
+} from './components/RadioImage/RadioImage';
+import RadioImageGroup, {
+  RadioImageGroupProps,
+} from './components/RadioImageGroup/RadioImageGroup';
 
 export {
-  HovProvider,
-  HovRadioImageGroup,
-  HovRadioImageGroupProps,
-  HovRadioImage,
-  HovRadioImageProps,
+  Provider,
+  RadioImageGroup,
+  RadioImageGroupProps,
+  RadioImage,
+  RadioImageProps,
 };

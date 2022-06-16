@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import HovRadioImageGroup from './HovRadioImageGroup';
+import HovRadioImageGroup from './RadioImageGroup';
 
 describe('HOV Radio Image Group', () => {
   beforeEach(() => {

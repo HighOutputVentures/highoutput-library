@@ -1,6 +1,6 @@
 import React from 'react';
 
-import HovRadioImage from './HovRadioImage';
+import HovRadioImage from './RadioImage';
 
 export default {
   title: 'Hov UI Components/Hov Radio/Radio Image',

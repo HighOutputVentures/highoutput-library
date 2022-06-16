@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Text } from '@chakra-ui/react';
 
-import HovRadioImageGroup from './HovRadioImageGroup';
+import HovRadioImageGroup from './RadioImageGroup';
 
 export default {
   title: 'Hov UI Components/Hov Radio/Radio Image Group',
