@@ -1,9 +1,9 @@
 {
   "name": "@highoutput/email-auth",
-  "version": "0.1.0",
+  "version": "0.1.1-alpha.0",
   "description": "server middleware for email authentication",
   "keywords": [
-    "middleware"
+    "authentication"
   ],
   "author": "High Output Ventures",
   "homepage": "https://github.com/HighOutputVentures/highoutput-library#readme",
@@ -52,5 +52,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "028a554c671ad705b7b4ffde9862c3e01031c08d"
+  "gitHead": "0504b7811865c167a2cc38beedd6de45a3b37678"
 }
