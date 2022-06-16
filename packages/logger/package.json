@@ -10,7 +10,7 @@
     "clean": "rimraf dist/",
     "build": "npm run clean && tsc --project tsconfig.json",
     "test": "mocha \"./test/**/*.spec.ts\"",
-    "prepublish": "npm run build"
+    "prepublishOnly": "npm run build"
   },
   "author": "High Output Ventures",
   "license": "MIT",
@@ -29,5 +29,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "0504b7811865c167a2cc38beedd6de45a3b37678"
+  "gitHead": "8345aecd1dcdc0ed6b2ed69cca6dba09bd80a22c"
 }
