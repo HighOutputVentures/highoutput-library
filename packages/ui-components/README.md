@@ -1,0 +1,67 @@
+### Getting started
+
+We aim to build a library of custom ReactJS components that implements our unique UI design conventions. The ReactJS components will be based primarily on Chakra UI components. React Storybook will be used for documentation and testing.
+
+## Commands
+
+To install package, use:
+
+```bash
+npm i @highoutput/ui-components
+```
+
+### Usage
+
+```typescript
+// React main
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import { HovProvider } from '@highoutput/ui-components';
+
+const App = () => {
+  return (<HovProvider><div>{...components here}</div></HovProvider>);
+};
+
+ReactDOM.render(<App />, document.getElementById('root'));
+```
+
+### Plugin from Editor.js that we can use
+
+```typescript
+import { HovRadioImageGroup } from '@highoutput/ui-components';
+
+export const SamplePage = () => {
+  const [value, setValue] = useState('');
+
+  return (
+    <>
+      <Text>Select Image: {value}</Text>
+      <HovRadioImageGroup
+        avatars={[
+          {
+            value: 'Kat',
+            image: 'https://randomuser.me/api/portraits/women/44.jpg',
+          },
+          {
+            value: 'Kevin',
+            image: 'https://randomuser.me/api/portraits/men/86.jpg',
+          },
+          {
+            value: 'Andy',
+            image: 'https://randomuser.me/api/portraits/men/29.jpg',
+          },
+          {
+            value: 'Jess',
+            image: 'https://randomuser.me/api/portraits/women/95.jpg',
+          },
+        ]}
+        onChange={v => setValue(v)}
+      />
+    </>
+  );
+};
+```
+
+## Contribute
+
+[document for contributing in this library](https://github.com/HighOutputVentures/experiments/tree/main/016)
