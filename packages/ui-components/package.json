@@ -76,5 +76,6 @@
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
     "framer-motion": "^6.3.11"
-  }
+  },
+  "gitHead": "028a554c671ad705b7b4ffde9862c3e01031c08d"
 }
