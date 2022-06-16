@@ -3,7 +3,7 @@
   "version": "0.1.0-rc.8",
   "description": "server middleware for email authentication",
   "keywords": [
-    "middleware"
+    "authentication"
   ],
   "author": "High Output Ventures",
   "homepage": "https://github.com/HighOutputVentures/highoutput-library#readme",
@@ -51,6 +51,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "gitHead": "028a554c671ad705b7b4ffde9862c3e01031c08d"
+  }
 }
