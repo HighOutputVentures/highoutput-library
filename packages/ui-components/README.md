@@ -25,8 +25,6 @@ const App = () => {
 ReactDOM.render(<App />, document.getElementById('root'));
 ```
 
-### Plugin from Editor.js that we can use
-
 ```typescript
 import { HovRadioImageGroup } from '@highoutput/ui-components';
 
