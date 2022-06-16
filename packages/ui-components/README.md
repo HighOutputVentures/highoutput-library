@@ -61,3 +61,7 @@ export const SamplePage = () => {
   );
 };
 ```
+
+## Contribute
+
+[document for contributing in this library](https://github.com/HighOutputVentures/experiments/tree/main/016)
