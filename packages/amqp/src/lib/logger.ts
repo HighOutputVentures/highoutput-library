@@ -1,3 +1,3 @@
-import Logger from '@highoutput/logger';
+import Logger from "@highoutput/logger";
 
-export default new Logger(['amqp']);
+export default new Logger(["amqp"]);
