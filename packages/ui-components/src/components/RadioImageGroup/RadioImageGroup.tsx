@@ -9,7 +9,7 @@ export interface RadioImageGroupProps {
   defaultValue?: string;
 }
 
-const HovRadioImageGroup: FC<RadioImageGroupProps> = ({
+const RadioImageGroup: FC<RadioImageGroupProps> = ({
   avatars,
   onChange,
   defaultValue,
@@ -36,4 +36,4 @@ const HovRadioImageGroup: FC<RadioImageGroupProps> = ({
   );
 };
 
-export default HovRadioImageGroup;
+export default RadioImageGroup;

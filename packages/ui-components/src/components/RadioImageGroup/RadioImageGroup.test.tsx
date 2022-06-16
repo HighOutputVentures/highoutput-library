@@ -2,12 +2,12 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import HovRadioImageGroup from './RadioImageGroup';
+import RadioImageGroup from './RadioImageGroup';
 
-describe('HOV Radio Image Group', () => {
+describe('Radio Image Group', () => {
   beforeEach(() => {
     render(
-      <HovRadioImageGroup
+      <RadioImageGroup
         avatars={[
           {
             value: 'Kat',

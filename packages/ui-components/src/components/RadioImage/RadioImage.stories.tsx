@@ -1,15 +1,15 @@
 import React from 'react';
 
-import HovRadioImage from './RadioImage';
+import RadioImage from './RadioImage';
 
 export default {
-  title: 'Hov UI Components/Hov Radio/Radio Image',
-  component: HovRadioImage,
+  title: 'UI Components/Radio/Radio Image',
+  component: RadioImage,
 };
 
-export const RadioImage = () => {
+export const RadioImageComponent = () => {
   return (
-    <HovRadioImage
+    <RadioImage
       value={'Kat'}
       image={'https://randomuser.me/api/portraits/women/44.jpg'}
     />

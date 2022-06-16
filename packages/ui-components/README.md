@@ -16,17 +16,17 @@ npm i @highoutput/ui-components
 // React main
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { HovProvider } from '@highoutput/ui-components';
+import { Provider } from '@highoutput/ui-components';
 
 const App = () => {
-  return (<HovProvider><div>{...components here}</div></HovProvider>);
+  return (<Provider><div>{...components here}</div></Provider>);
 };
 
 ReactDOM.render(<App />, document.getElementById('root'));
 ```
 
 ```typescript
-import { HovRadioImageGroup } from '@highoutput/ui-components';
+import { RadioImageGroup } from '@highoutput/ui-components';
 
 export const SamplePage = () => {
   const [value, setValue] = useState('');
@@ -34,7 +34,7 @@ export const SamplePage = () => {
   return (
     <>
       <Text>Select Image: {value}</Text>
-      <HovRadioImageGroup
+      <RadioImageGroup
         avatars={[
           {
             value: 'Kat',

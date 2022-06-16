@@ -2,12 +2,12 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import HovRadioImage from './RadioImage';
+import RadioImage from './RadioImage';
 
-describe('HOV Radio Image', () => {
+describe('Radio Image', () => {
   beforeEach(() => {
     render(
-      <HovRadioImage
+      <RadioImage
         value={'Kat'}
         image={'https://randomuser.me/api/portraits/women/44.jpg'}
       />

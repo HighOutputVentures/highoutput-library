@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import { Text } from '@chakra-ui/react';
 
-import HovRadioImageGroup from './RadioImageGroup';
+import RadioImageGroup from './RadioImageGroup';
 
 export default {
-  title: 'Hov UI Components/Hov Radio/Radio Image Group',
-  component: HovRadioImageGroup,
+  title: 'UI Components/Radio/Radio Image Group',
+  component: RadioImageGroup,
 };
 
-export const RadioImageGroup = () => {
+export const RadioImageGroupComponent = () => {
   const [value, setValue] = useState('');
 
   return (
     <>
       <Text>Select Image: {value}</Text>
-      <HovRadioImageGroup
+      <RadioImageGroup
         avatars={[
           {
             value: 'Kat',

@@ -5,19 +5,22 @@ import {
   extendTheme,
 } from '@chakra-ui/react';
 
-import hovTheme from '../theme';
+import defaultTheme from '../theme';
 
-interface HovProviderProps extends ChakraProviderProps {
+interface ProviderProps extends ChakraProviderProps {
   children: ReactNode;
 }
 
-const HovProvider: FC<HovProviderProps> = props => {
+const Provider: FC<ProviderProps> = props => {
   const { children, theme } = props;
   return (
-    <ChakraProvider {...props} theme={extendTheme({ ...hovTheme, ...theme })}>
+    <ChakraProvider
+      {...props}
+      theme={extendTheme({ ...defaultTheme, ...theme })}
+    >
       {children}
     </ChakraProvider>
   );
 };
 
-export default HovProvider;
+export default Provider;
