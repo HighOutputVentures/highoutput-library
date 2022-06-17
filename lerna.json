@@ -7,8 +7,7 @@
     "publish": {
       "ignoreChanges": [
         "*.md",
-        "package-lock.json",
-        "packages/email-auth/**"
+        "package-lock.json"
       ],
       "message": "chore: publish",
       "registry": "https://registry.npmjs.org"
