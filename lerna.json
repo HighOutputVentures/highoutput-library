@@ -1,4 +1,5 @@
 {
+  "npmClient": "npm",
   "packages": [
     "packages/*"
   ],
@@ -9,8 +10,10 @@
         "*.md",
         "package-lock.json"
       ],
-      "message": "chore: publish",
-      "registry": "https://registry.npmjs.org"
+      "message": "chore: publish"
+    },
+    "bootstrap": {
+      "npmClientArgs": ["--no-package-lock"]
     }
   }
 }
