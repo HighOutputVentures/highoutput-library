@@ -1,15 +1,18 @@
 # `@highoutput/object-id`
 
-> Error with code and metadata.
+> Generate unique ids
 
 ## Usage
 
 ```
-import AppError from '@highoutput/error';
+import { ObjectId } from '@highoutput/object-id';
 
-new AppError(
-  'RESOURCE_NOT_FOUND',
-  'Account does not exist.',
-  { id: 'ec6756c7264dcd6851f0345278face9a' },
-)
+enum ObjectType = {
+  User = 0,
+  Post = 1,
+}
+
+const id = new ObjectId(ObjectType.User);
+
+console.log(id.toString());
 ```
