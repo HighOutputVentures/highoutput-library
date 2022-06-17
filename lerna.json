@@ -13,7 +13,10 @@
       "message": "chore: publish"
     },
     "bootstrap": {
-      "npmClientArgs": ["--no-package-lock"]
+      "npmClientArgs": [
+        "--no-package-lock"
+      ]
     }
-  }
+  },
+  "useNx": false
 }

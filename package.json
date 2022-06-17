@@ -1,9 +1,6 @@
 {
   "name": "highoutput-library",
-  "description": "Reusable libraries by High Output Ventures",
+  "description": "Reusable components by High Output Ventures",
   "author": "High Output Ventures",
-  "license": "ISC",
-  "dependencies": {
-    "lerna": "^5.1.4"
-  }
+  "license": "ISC"
 }
