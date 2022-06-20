@@ -1,10 +1,10 @@
 import { Model, Document, FilterQuery, Connection, Schema } from 'mongoose';
 import R from 'ramda';
-import { ObjectId as ObjectID } from '@highoutput/object-id';
+import { ObjectId } from '@highoutput/object-id';
 import { BaseEntity } from './types';
 
-type SerializedObjectID = {
-  _type: 'ObjectID';
+type SerializedObjectId = {
+  _type: 'ObjectId';
   data: Buffer;
 };
 
@@ -24,7 +24,7 @@ function deserialize(doc: Document | null) {
 
   const obj = {
     ...R.omit(['_id', '__v'], raw),
-    id: ObjectID.from(doc._id),
+    id: ObjectId.from(doc._id),
   } as Record<string, unknown>;
 
   return R.reduce(
@@ -37,10 +37,10 @@ function deserialize(doc: Document | null) {
           };
         }
 
-        if ((value as SerializedObjectID)._type === 'ObjectID') {
+        if ((value as SerializedObjectId)._type === 'ObjectId') {
           return {
             ...accum,
-            [field]: ObjectID.from((value as SerializedObjectID).data),
+            [field]: ObjectId.from((value as SerializedObjectId).data),
           };
         }
       }
@@ -60,7 +60,7 @@ function serialize(doc: Record<string, unknown>) {
   if (doc.id) {
     obj = {
       ...obj,
-      _id: (doc.id as ObjectID).toBuffer(),
+      _id: (doc.id as ObjectId).toBuffer(),
     };
   }
 
@@ -69,16 +69,16 @@ function serialize(doc: Record<string, unknown>) {
       if (field === 'id') {
         return {
           ...accum,
-          _id: (value as ObjectID).toBuffer(),
+          _id: (value as ObjectId).toBuffer(),
         };
       }
 
-      if (value instanceof ObjectID) {
+      if (value instanceof ObjectId) {
         return {
           ...accum,
           [field]: {
-            _type: 'ObjectID',
-            data: (value as ObjectID).toBuffer(),
+            _type: 'ObjectId',
+            data: (value as ObjectId).toBuffer(),
           },
         };
       }
@@ -99,14 +99,14 @@ function serializeFilter(filter: FilterQuery<Record<any, any>>) {
       if (field === 'id') {
         return {
           ...accum,
-          _id: (value as ObjectID).toBuffer(),
+          _id: (value as ObjectId).toBuffer(),
         };
       }
 
-      if (value instanceof ObjectID) {
+      if (value instanceof ObjectId) {
         return {
           ...accum,
-          [`${field}.data`]: (value as ObjectID).toBuffer(),
+          [`${field}.data`]: (value as ObjectId).toBuffer(),
         };
       }
 
@@ -139,7 +139,7 @@ export class Repository<
     return deserialize(await this.model.create(serialize(args))) as TEntity;
   }
 
-  async findById(id: ObjectID): Promise<TEntity> {
+  async findById(id: ObjectId): Promise<TEntity> {
     const doc = await this.model.findById(id.toBuffer());
     return deserialize(doc) as TEntity;
   }
@@ -175,7 +175,7 @@ export class Repository<
     ) as TEntity;
   }
 
-  async deleteById(id: ObjectID) {
+  async deleteById(id: ObjectId) {
     await this.model.deleteOne(id.toBuffer());
   }
 
