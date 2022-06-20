@@ -1,5 +1,5 @@
-import { ObjectId } from '@highoutput/object-id';
+import { ObjectId as ObjectID } from '@highoutput/object-id';
 
 export type BaseEntity = {
-  id: ObjectId;
+  id: ObjectID;
 };
