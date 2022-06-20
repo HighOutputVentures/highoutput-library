@@ -1,9 +1,4 @@
-import { ID } from '../types';
-
-type User = {
-  id: ID;
-  emailAddress: string;
-}
+import { ID, User } from '../lib/types';
 
 export interface StorageAdapter<
   TUser extends User = User,
