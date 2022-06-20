@@ -10,5 +10,5 @@ export interface StorageAdapter<
     user: ID;
     otp: string;
   }): Promise<void>;
-  findOneUserByEmail(params: { email: string }): Promise<TUser | null>;
+  findOneUserByEmail(params: { emailAddress: string }): Promise<TUser | null>;
 }

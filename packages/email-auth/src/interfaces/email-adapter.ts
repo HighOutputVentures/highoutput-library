@@ -1,4 +1,6 @@
-export interface EmailAdapter<T = any> {
+import { User } from '../lib/types';
+
+export interface EmailAdapter<T extends User = User> {
   sendEmailOtp(params: {
     otp: string;
     user: T;
