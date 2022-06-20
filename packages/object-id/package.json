@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/object-id",
-  "version": "0.1.5",
+  "version": "0.1.7-rc.2",
   "description": "ObjectId class implementation",
   "keywords": [
     "error"
