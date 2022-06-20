@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/object-id",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "ObjectId class implementation",
   "keywords": [
     "error"
@@ -8,7 +8,7 @@
   "author": "High Output Ventures",
   "homepage": "https://github.com/Proto-Garage/highoutput-library/tree/master/packages/error#README.md",
   "license": "ISC",
-  "main": "build/index.js",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
