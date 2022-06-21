@@ -40,7 +40,7 @@
     "dist"
   ],
   "dependencies": {
-    "@highoutput/object-id": "^0.1.6",
+    "@highoutput/object-id": "^0.1.7-rc.2",
     "mongoose": "~6.3.4",
     "ramda": "~0.28.0",
     "rimraf": "^3.0.2",
