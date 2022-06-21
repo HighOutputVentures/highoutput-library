@@ -20,7 +20,6 @@ type UserDocument = {
   email: string;
 }
 
-
 export class MongooseAdapter implements PersistenceAdapter<
   EmailDocument,
   Pick<EmailDocument, 'user' | 'createdAt'>,
