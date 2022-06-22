@@ -98,7 +98,7 @@ export default class NeyarText {
    */
   static get toolbox() {
     return {
-      title: 'Neyar Text',
+      title: 'Text',
       icon: NeyarTextSVG,
     };
   }

@@ -48,7 +48,6 @@ import NeyarTextComponent, {
 import NeyarText from './class/NeyarText';
 
 export { NeyarText, NeyarTextComponent, MentionProps, NeyarTextProps };
-export * from './components/ReactNeyarEditor';
 
 /** Other Library */
 import DragDrop from 'editorjs-drag-drop';
