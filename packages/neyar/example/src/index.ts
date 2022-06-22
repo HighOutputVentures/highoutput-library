@@ -1,38 +1,20 @@
 import {
   EditorJS,
-
-  /** EditorJS block tools */
   Header,
   Code,
   CheckList,
-  Qoute,
-  Delimiter,
-  ToggleBlock,
   List,
   ImageTool,
-  SimpleImage,
-  Link,
   Embed,
   Table,
-  Attaches,
   Raw,
-  NestedList,
-
-  /** Hov block tools */
   NeyarText,
-
-  /** Plugins */
   Undo,
   DragDrop,
-
-  /** Inline tool */
   Marker,
   InlineCode,
   LinkAutocomplete,
   Underline,
-
-  /** Block tune tool */
-  AlignmentTuneTool,
 } from '../../dist';
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -40,7 +22,6 @@ window.addEventListener('DOMContentLoaded', () => {
     holder: 'editor',
     inlineToolbar: true,
     tools: {
-      /**HOV Tool */
       neyarText: {
         class: NeyarText,
         inlineToolbar: true,
@@ -60,39 +41,24 @@ window.addEventListener('DOMContentLoaded', () => {
           ],
         },
       },
-
-      // paragraph: false as any,
-      code: Code,
+      header: Header,
       checklist: CheckList,
-      header: { class: Header, inlineToolbar: true },
-      list: { class: List, inlineToolbar: true },
-      toggleBlock: ToggleBlock,
-      delimiter: Delimiter,
-      qoute: Qoute,
-      image: ImageTool,
-      simpleImage: SimpleImage,
-      link: Link,
+      list: List,
       embed: Embed,
       table: Table,
-      attaches: Attaches,
+      code: Code,
       raw: Raw,
-      nestedList: NestedList,
-
-      /** Inline tools */
+      image: ImageTool,
       marker: Marker,
       inlineCode: InlineCode,
       linkAutocomplete: LinkAutocomplete,
       underline: Underline,
+      paragraph: false as any,
     },
     defaultBlock: 'neyarText',
     onReady: () => {
       new DragDrop(editor);
       new Undo(editor);
-    },
-    onChange: (api, event) => {
-      // editor.save().then(outputData => {
-      //   console.log(outputData);
-      // });
     },
   });
 });

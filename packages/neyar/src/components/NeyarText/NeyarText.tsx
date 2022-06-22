@@ -1,5 +1,4 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { Avatar, Text, ThemeProvider } from '@highoutput/ui-components';
 
 export interface MentionProps {
   value: string;
@@ -158,73 +157,77 @@ const NeyarText: FC<NeyarTextProps> = ({
   };
 
   return (
-    <ThemeProvider>
-      <div style={{ position: 'relative' }} data-test="neyar-text-container">
+    <div style={{ position: 'relative' }} data-test="neyar-text-container">
+      <div
+        id={`hov-editor-${blockIndex}`}
+        contentEditable={!readOnly}
+        onKeyDown={checkPressed}
+        onKeyUp={getTextContent}
+        dangerouslySetInnerHTML={{ __html: data }}
+        style={{ lineHeight: 1.5, outline: 'none' }}
+        data-test="neyar-text-editor"
+      />
+
+      {Boolean(mentions?.length) && (
         <div
-          id={`hov-editor-${blockIndex}`}
-          contentEditable={!readOnly}
-          onKeyDown={checkPressed}
-          onKeyUp={getTextContent}
-          dangerouslySetInnerHTML={{ __html: data }}
-          style={{ lineHeight: 1.5, outline: 'none' }}
-          data-test="neyar-text-editor"
-        />
-
-        {Boolean(mentions?.length) && (
-          <div
-            data-test="neyar-text-mention-container"
-            ref={wrapperRef}
-            style={{
-              display: !isMentionPressed ? 'none' : 'block',
-              position: 'absolute',
-              left: postionOffset.x, // div mention position x is set here
-              top: postionOffset.y, // div mention position y is set here
-              width: 300,
-              zIndex: 3,
-            }}
-            onClick={() => {
-              setMentionPressed(false);
-              setPositionOffset({ x: 0, y: 0 });
-            }}
-          >
-            {mentions // map mention data with search filter
-              ?.filter(mention =>
-                isMentionPressed && searchMention
-                  ? mention.label
-                      .toLowerCase()
-                      .includes(searchMention.toLowerCase())
-                  : true
-              )
-              .map((mention, index) => (
-                <button
-                  data-test="neyar-text-mention-button"
-                  key={mention.value}
+          data-test="neyar-text-mention-container"
+          ref={wrapperRef}
+          style={{
+            display: !isMentionPressed ? 'none' : 'block',
+            position: 'absolute',
+            left: postionOffset.x, // div mention position x is set here
+            top: postionOffset.y, // div mention position y is set here
+            width: 300,
+            zIndex: 3,
+          }}
+          onClick={() => {
+            setMentionPressed(false);
+            setPositionOffset({ x: 0, y: 0 });
+          }}
+        >
+          {mentions // map mention data with search filter
+            ?.filter(mention =>
+              isMentionPressed && searchMention
+                ? mention.label
+                    .toLowerCase()
+                    .includes(searchMention.toLowerCase())
+                : true
+            )
+            .map((mention, index) => (
+              <button
+                data-test="neyar-text-mention-button"
+                key={mention.value}
+                style={{
+                  width: 250,
+                  height: 55,
+                  cursor: 'pointer',
+                  backgroundColor: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  border: '1px solid',
+                  borderTop: index === 0 ? '1px solid' : '0px',
+                }}
+                onClick={() => onInsertMention(mention)}
+              >
+                <img
+                  src={
+                    mention.avatar ??
+                    'https://as2.ftcdn.net/v2/jpg/00/64/67/63/1000_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg'
+                  }
                   style={{
-                    width: 250,
-                    height: 55,
-                    cursor: 'pointer',
-                    backgroundColor: 'white',
-                    display: 'flex',
-                    alignItems: 'center',
-                    border: '1px solid',
-                    borderTop: index === 0 ? '1px solid' : '0px',
+                    width: 45,
+                    height: 45,
+                    marginLeft: 5,
+                    marginRight: 15,
+                    borderRadius: 180,
                   }}
-                  onClick={() => onInsertMention(mention)}
-                >
-                  <Avatar
-                    ml="5"
-                    src={mention.avatar}
-                    name={mention.label}
-                    size="sm"
-                  />
-
-                  <Text ml="5">{mention.label}</Text>
-                </button>
-              ))}
-          </div>
-        )}
-      </div>
-    </ThemeProvider>
+                />
+                {mention.label}
+              </button>
+            ))}
+        </div>
+      )}
+    </div>
   );
 };
 
