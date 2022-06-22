@@ -49,8 +49,7 @@ window.addEventListener('DOMContentLoaded', () => {
             {
               value: '29856d46-50c5-4a0b-b1e2-b965d7c67b8d',
               label: 'Edward Kenway',
-              avatar:
-                'https://thumbs.dreamstime.com/b/url-type-icon-simple-illustration-129166668.jpg',
+              avatar: null,
             },
             {
               value: '29856d46-50c5-4a0b-b1e2-b965d7c67b8a',
