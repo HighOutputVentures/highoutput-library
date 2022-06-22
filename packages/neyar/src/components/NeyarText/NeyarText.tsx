@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
 
-export interface Mention {
+export interface MentionProps {
   value: string;
   label: string;
   avatar?: string;
@@ -9,7 +9,7 @@ export interface NeyarTextProps {
   data: string;
   readOnly?: boolean;
   blockIndex: number;
-  mentions?: Mention[];
+  mentions?: MentionProps[];
 }
 
 const NeyarText: FC<NeyarTextProps> = ({
@@ -101,7 +101,7 @@ const NeyarText: FC<NeyarTextProps> = ({
     setSearchMention(searchText);
   };
 
-  const onInsertMention = (mention: Mention) => {
+  const onInsertMention = (mention: MentionProps) => {
     const editor = document.getElementById(`hov-editor-${blockIndex}`);
     editor?.focus(); // set the focus in the current block
 

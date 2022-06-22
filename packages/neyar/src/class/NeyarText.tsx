@@ -1,6 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { API } from '@editorjs/editorjs';
+import { API, ToolConfig } from '@editorjs/editorjs';
 
 import NeyarTextComponent from '../components/NeyarText/NeyarText';
 import NeyarTextSVG from '../icons/NeyarTextSvg';
@@ -15,7 +15,7 @@ export default class NeyarText {
   readOnly: boolean;
   data: NeyarTextData;
   nodes: any;
-  config: any;
+  config: ToolConfig;
 
   constructor({ data, config, api, readOnly }: any) {
     this.api = api;
