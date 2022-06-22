@@ -1,6 +1,7 @@
 import { Server } from 'http';
 import parse from 'co-body';
 import { EmailAdapter, StorageAdapter } from './interfaces';
+import cryptoRandomString from 'crypto-random-string';
 
 export class EmailAuthServer {
   constructor(
@@ -12,29 +13,75 @@ export class EmailAuthServer {
       jwtTTL?: string;
       otpTTL?: string;
       urlPrefix?: string;
-    }
-  ) {
-
-  }
+    },
+  ) {}
 
   async init() {
-    this.server
-      .on('request', async (req, res) => {
-        const url = new URL(req.url!);
+    this.server.on('request', async (req, res) => {
+      
+      const url = new URL(
+        req.url!,
+        `${!req.headers.host!.startsWith('https://') ? 'https://' : ''}${
+          req.headers.host
+        }`,
+      );
 
-        if (this.opts?.urlPrefix && !url.pathname.startsWith(this.opts?.urlPrefix)) {
+      if (
+        this.opts?.urlPrefix &&
+        !url.pathname.startsWith(this.opts?.urlPrefix)
+      ) {
+        return;
+      }
+
+      if (
+        req.method === 'POST' &&
+        `${this.opts?.urlPrefix ? this.opts?.urlPrefix : ''}/otp/generate` ===
+          url.pathname
+      ) {
+        const body = await parse.json(req);
+
+        const user = await this.storageAdapter.findOneUserByEmail({
+          emailAddress: body.emailAddress,
+        });
+
+        if (!user) {
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ ok: false }));
+
           return;
         }
 
-        if (req.method === 'POST' && `${this.opts?.urlPrefix}/otp/generate` === url.pathname) {
-          const body = await parse.json(req);
+        const otp = cryptoRandomString({
+          length: 6,
+          type: 'numeric',
+        });
 
-          return;
-        }
+        await this.storageAdapter.saveOtp({
+          user: user.id,
+          otp,
+        });
 
-        if (req.method === 'POST' && `${this.opts?.urlPrefix}/otp/validate` === url.pathname) {
-          return;
-        }
-      });
+        await this.emailAdapter.sendEmailOtp({
+          otp,
+          user,
+        });
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true }));
+
+        return;
+      }
+
+      if (
+        req.method === 'POST' &&
+        `${this.opts?.urlPrefix}/otp/validate` === url.pathname
+      ) {
+        return;
+      }
+
+      console.log('REACHED END');
+      res.writeHead(404, { 'Content-Type': 'application/json' });
+      res.end();
+    });
   }
 }
