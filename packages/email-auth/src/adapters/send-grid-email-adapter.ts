@@ -1,4 +1,4 @@
-import SendGrid from '@sendgrid/mail';
+import sendGrid from '@sendgrid/mail';
 import ejs, { TemplateFunction } from 'ejs';
 import { EmailAdapter } from '../interfaces';
 import { User } from '../lib/types';
@@ -15,9 +15,9 @@ export class SendGridEmailAdapter implements EmailAdapter {
   }
 
   async sendEmailOtp(params: { otp: string; user: User }) {
-    SendGrid.setApiKey(this.opts.apiKey);
+    sendGrid.setApiKey(this.opts.apiKey);
 
-    await SendGrid.send({
+    await sendGrid.send({
       to: params.user.emailAddress,
       text: this.template(params),
       subject: this.opts.subject,

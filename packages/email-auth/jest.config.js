@@ -8,7 +8,7 @@ module.exports = {
   verbose: true,
   watchman: false,
 
-  collectCoverageFrom: ['src/lib/*.ts'],
+  collectCoverageFrom: ['src/**/*.ts'],
   coverageReporters: ['text', 'text-summary'],
   coverageThreshold: {
     global: {
