@@ -386,7 +386,7 @@ export {
   WrapProps,
   WrapItem,
   WrapItemProps,
-   /** Progress
+  /** Progress
    * @reference https://chakra-ui.com/docs/components/feedback/progress
    */
   Progress,
@@ -441,7 +441,7 @@ export {
   ChakraProviderProps as ProviderProps,
 } from '@chakra-ui/react';
 
-import Provider from './components/Provider';
+import ThemeProvider from './components/Provider';
 import RadioImage, {
   RadioImageProps,
 } from './components/RadioImage/RadioImage';
@@ -450,7 +450,7 @@ import RadioImageGroup, {
 } from './components/RadioImageGroup/RadioImageGroup';
 
 export {
-  Provider,
+  ThemeProvider,
   RadioImageGroup,
   RadioImageGroupProps,
   RadioImage,

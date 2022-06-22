@@ -1,4 +1,4 @@
-import EditorJS from '@editorjs/editorjs';
+import EditorJS, { EditorConfig, OutputData } from '@editorjs/editorjs';
 
 /** Editor.js Plugin */
 import Header from '@editorjs/header';
@@ -20,6 +20,8 @@ import Raw from '@editorjs/raw';
 
 export {
   EditorJS,
+  EditorConfig,
+  OutputData,
   Header,
   Code,
   Paragraph, // default text block
