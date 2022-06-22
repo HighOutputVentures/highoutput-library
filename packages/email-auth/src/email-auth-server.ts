@@ -18,13 +18,7 @@ export class EmailAuthServer {
 
   async init() {
     this.server.on('request', async (req, res) => {
-      
-      const url = new URL(
-        req.url!,
-        `${!req.headers.host!.startsWith('https://') ? 'https://' : ''}${
-          req.headers.host
-        }`,
-      );
+      const url = new URL(req.url!, `http://${req.headers.host}`);
 
       if (
         this.opts?.urlPrefix &&
@@ -45,8 +39,8 @@ export class EmailAuthServer {
         });
 
         if (!user) {
-          res.writeHead(200, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ ok: false }));
+          res.writeHead(400);
+          res.end();
 
           return;
         }
