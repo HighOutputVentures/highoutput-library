@@ -423,7 +423,11 @@ export {
   ShowProps,
   Hide,
   HideProps,
+  Collapse,
+  CollapseProps,
   useToast,
+  createStandaloneToast,
+  ToastId,
   useDisclosure, // https://chakra-ui.com/docs/styled-system/utility-hooks/use-disclosure
   UseDisclosureProps,
   UseDisclosureReturn,
