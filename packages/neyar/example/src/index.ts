@@ -60,5 +60,6 @@ window.addEventListener('DOMContentLoaded', () => {
       new DragDrop(editor);
       new Undo(editor);
     },
+    // readOnly: true,
   });
 });

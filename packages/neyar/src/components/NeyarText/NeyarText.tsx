@@ -160,7 +160,7 @@ const NeyarText: FC<NeyarTextProps> = ({
     <div style={{ position: 'relative' }} data-test="neyar-text-container">
       <div
         id={`hov-editor-${blockIndex}`}
-        contentEditable={!readOnly}
+        contentEditable={readOnly}
         onKeyDown={checkPressed}
         onKeyUp={getTextContent}
         dangerouslySetInnerHTML={{ __html: data }}
