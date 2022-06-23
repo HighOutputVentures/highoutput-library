@@ -39,8 +39,15 @@ export class EmailAuthServer {
         });
 
         if (!user) {
-          res.writeHead(400);
-          res.end();
+          res.writeHead(400, {
+            'Content-Type': 'application/json'
+          });
+          res.end(JSON.stringify({
+            error: {
+              code: 'USER_NOT_FOUND',
+              message: 'user with the specified email address does not exist'
+            }
+          }));
 
           return;
         }
