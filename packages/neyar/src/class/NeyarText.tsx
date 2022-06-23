@@ -54,17 +54,6 @@ export default class NeyarText {
   }
 
   /**
-   * validate if text is not empty
-   */
-  validate(savedData: any) {
-    if (savedData.neyarText.trim() === '') {
-      return false;
-    }
-
-    return true;
-  }
-
-  /**
    * saves data after editing
    */
   save(blockContent: any) {
@@ -72,16 +61,6 @@ export default class NeyarText {
 
     return {
       neyarText: content ? content.innerHTML : undefined,
-    };
-  }
-
-  /**
-   * Enable Conversion in Inline Toolbar. NeyarText can be converted to/from other tools
-   */
-  static get conversionConfig() {
-    return {
-      export: 'neyarText', // to convert Paragraph to other block, use 'neyarText' property of saved data
-      import: 'neyarText', // to covert other block's exported string to Paragraph, fill 'neyarText' property of tool data
     };
   }
 

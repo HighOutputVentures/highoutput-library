@@ -209,18 +209,19 @@ const NeyarText: FC<NeyarTextProps> = ({
                 }}
                 onClick={() => onInsertMention(mention)}
               >
-                {mention.avatar && (
-                  <img
-                    data-test="neyar-text-mention-avatar"
-                    src={mention.avatar}
-                    style={{
-                      width: 45,
-                      height: 45,
-                      borderRadius: 180,
-                      marginRight: 20,
-                    }}
-                  />
-                )}{' '}
+                <img
+                  src={
+                    mention.avatar ??
+                    'https://as2.ftcdn.net/v2/jpg/00/64/67/63/1000_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg'
+                  }
+                  style={{
+                    width: 45,
+                    height: 45,
+                    marginLeft: 5,
+                    marginRight: 15,
+                    borderRadius: 180,
+                  }}
+                />
                 {mention.label}
               </button>
             ))}
