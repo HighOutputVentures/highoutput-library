@@ -97,5 +97,6 @@
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "rollup-plugin-image-files": "^1.4.2"
-  }
+  },
+  "gitHead": "6d9db97c9aedcc91891eec72335e81015aa43f05"
 }
