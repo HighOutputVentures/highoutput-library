@@ -7,3 +7,6 @@
 - use `lerna publish` to publish new versions of the packages
 - use the [semver](https://semver.org/) guidelines to help you choose version numbers
 - if you end up updating the versions of packages that you don't want to update, only update the patch version or the prerelease version
+- a small group of people will be designated as `admins`
+  - only the `admins` are given write access to the repository
+  - only the `admins` can publish the packages
