@@ -8,7 +8,8 @@
     "publish": {
       "ignoreChanges": [
         "*.md",
-        "package-lock.json"
+        "package-lock.json",
+        "packages/custom-ckeditor-build/**/*"
       ],
       "message": "chore: publish"
     },

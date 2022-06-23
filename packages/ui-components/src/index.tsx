@@ -165,6 +165,18 @@ export {
    */
   Textarea,
   TextareaProps,
+  /** Form Control
+   * @reference https://chakra-ui.com/docs/components/form/form-control
+   */
+  FormControl,
+  FormControlProps,
+  FormErrorMessage,
+  FormErrorMessageProps,
+  FormLabel,
+  FormLabelProps,
+  FormHelperText,
+  HelpTextProps,
+  FormErrorIcon,
   /** Badge
    * @reference  https://chakra-ui.com/docs/components/data-display/badge
    */
@@ -374,6 +386,28 @@ export {
   WrapProps,
   WrapItem,
   WrapItemProps,
+  /** Progress
+   * @reference https://chakra-ui.com/docs/components/feedback/progress
+   */
+  Progress,
+  ProgressProps,
+  ProgressLabel,
+  ProgressLabelProps,
+  /** Circular Progress
+   * @reference https://chakra-ui.com/docs/components/feedback/circular-progress
+   */
+  CircularProgress,
+  CircularProgressProps,
+  CircularProgressLabel,
+  CircularProgressLabelProps,
+  /** Skeleton
+   * @reference https://chakra-ui.com/docs/components/feedback/skeleton
+   */
+  Skeleton,
+  SkeletonProps,
+  SkeletonText,
+  SkeletonTextProps,
+  SkeletonCircle,
   /** Chakra */
   CloseButton,
   CloseButtonProps,
@@ -389,7 +423,11 @@ export {
   ShowProps,
   Hide,
   HideProps,
+  Collapse,
+  CollapseProps,
   useToast,
+  createStandaloneToast,
+  ToastId,
   useDisclosure, // https://chakra-ui.com/docs/styled-system/utility-hooks/use-disclosure
   UseDisclosureProps,
   UseDisclosureReturn,
@@ -407,7 +445,7 @@ export {
   ChakraProviderProps as ProviderProps,
 } from '@chakra-ui/react';
 
-import Provider from './components/Provider';
+import ThemeProvider from './components/Provider';
 import RadioImage, {
   RadioImageProps,
 } from './components/RadioImage/RadioImage';
@@ -416,7 +454,7 @@ import RadioImageGroup, {
 } from './components/RadioImageGroup/RadioImageGroup';
 
 export {
-  Provider,
+  ThemeProvider,
   RadioImageGroup,
   RadioImageGroupProps,
   RadioImage,

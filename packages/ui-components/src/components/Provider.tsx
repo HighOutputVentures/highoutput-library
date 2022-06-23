@@ -7,11 +7,11 @@ import {
 
 import defaultTheme from '../theme';
 
-interface ProviderProps extends ChakraProviderProps {
+interface ThemeProviderProps extends ChakraProviderProps {
   children: ReactNode;
 }
 
-const Provider: FC<ProviderProps> = props => {
+const ThemeProvider: FC<ThemeProviderProps> = props => {
   const { children, theme } = props;
   return (
     <ChakraProvider
@@ -23,4 +23,4 @@ const Provider: FC<ProviderProps> = props => {
   );
 };
 
-export default Provider;
+export default ThemeProvider;

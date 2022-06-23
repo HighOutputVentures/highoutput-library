@@ -16,10 +16,10 @@ npm i @highoutput/ui-components
 // React main
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Provider } from '@highoutput/ui-components';
+import { ThemeProvider } from '@highoutput/ui-components';
 
 const App = () => {
-  return (<Provider><div>{...components here}</div></Provider>);
+  return (<ThemeProvider><div>{...components here}</div></ThemeProvider>);
 };
 
 ReactDOM.render(<App />, document.getElementById('root'));

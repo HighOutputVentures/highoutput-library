@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/repository",
-  "version": "0.1.0-rc.4",
+  "version": "0.1.0",
   "description": "Repository Class Implementation",
   "author": "High Output Ventures",
   "main": "dist/index.js",
@@ -40,7 +40,7 @@
     "dist"
   ],
   "dependencies": {
-    "@highoutput/object-id": "^0.1.6",
+    "@highoutput/object-id": "^0.1.7",
     "mongoose": "~6.3.4",
     "ramda": "~0.28.0",
     "rimraf": "^3.0.2",
@@ -48,5 +48,6 @@
   },
   "devDependencies": {
     "@types/ramda": "^0.28.13"
-  }
+  },
+  "gitHead": "56617c027bc47412b3e740de0e7916dd02af5e75"
 }
