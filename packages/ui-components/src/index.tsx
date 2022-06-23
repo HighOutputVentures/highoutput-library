@@ -506,7 +506,7 @@ export {
   ComponentStyleConfig,
   forwardRef,
   /**
-   * https://chakra-ui.com/docs/styled-system/theming/customize-theme
+   * @reference https://chakra-ui.com/docs/styled-system/theming/customize-theme
    */
   extendTheme, 
   ChakraProviderProps as ProviderProps,
