@@ -151,7 +151,7 @@ export class Repository<
   ) {
     const document = await this.model.findOneAndUpdate(
       serializeFilter(filter),
-      R.filter((value) => value !== undefined)(data) as never,
+      R.filter((value) => value !== undefined)(serialize(data)) as never,
       {
         upsert: false,
         new: true,
