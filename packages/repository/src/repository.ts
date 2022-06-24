@@ -176,7 +176,7 @@ export class Repository<
   }
 
   async deleteById(id: ObjectId) {
-    await this.model.deleteOne(id.toBuffer());
+    await this.model.deleteOne({ _id: id.toBuffer() });
   }
 
   async deleteMany(filter: FilterQuery<TEntity>) {
