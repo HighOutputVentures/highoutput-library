@@ -148,7 +148,7 @@ export class Repository<
     filter: FilterQuery<TEntity>,
     data: Partial<Omit<TEntity, 'id'>>,
     options?: Partial<{ upsert: boolean; new: boolean }>,
-  ) {
+  ): Promise<TEntity> {
     const document = await this.model.findOneAndUpdate(
       serializeFilter(filter),
       R.filter((value) => value !== undefined)(data) as never,
@@ -159,7 +159,7 @@ export class Repository<
       },
     );
 
-    return deserialize(document);
+    return deserialize(document) as TEntity;
   }
 
   async find(filter: FilterQuery<TEntity>): Promise<TEntity[]> {
