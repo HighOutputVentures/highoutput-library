@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/repository",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Repository Class Implementation",
   "author": "High Output Ventures",
   "main": "dist/index.js",
