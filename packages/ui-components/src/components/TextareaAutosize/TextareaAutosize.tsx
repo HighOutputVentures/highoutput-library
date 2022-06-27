@@ -23,6 +23,7 @@ const TextareaAutosize = React.forwardRef<
       transition="height none"
       minRows={minRows ?? 2}
       maxRows={maxRows ?? 4}
+      data-testid="textarea-autosize"
       {...props}
     />
   );
