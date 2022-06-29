@@ -1,17 +1,22 @@
-import { Kind, GraphQLScalarType, ValueNode } from 'graphql';
+import {
+  Kind,
+  GraphQLScalarType,
+  ValueNode,
+  GraphQLScalarTypeConfig,
+} from 'graphql';
 import { ObjectId } from '@highoutput/object-id';
 
-export const ObjectIdResolver = new GraphQLScalarType<ObjectId, string>({
+export const GraphQLObjectIdConfig: GraphQLScalarTypeConfig<ObjectId, string> = {
   name: 'ObjectId',
   description: 'ObjectId custom scalar type',
 
-  serialize(value: ObjectId) {
-    return value.toString();
-  }
+  serialize(value) {
+    return (value as ObjectId).toString();
+  },
 
-  parseValue(value: string): ObjectId {
-    return ObjectId.from(value);
-  }
+  parseValue(value) {
+    return ObjectId.from(value as string);
+  },
 
   parseLiteral(ast: ValueNode): ObjectId {
     if (ast.kind === Kind.STRING) {
@@ -20,4 +25,6 @@ export const ObjectIdResolver = new GraphQLScalarType<ObjectId, string>({
 
     throw new Error(`'${ast.kind}' type is not supported`);
   }
-})
+}
+
+export const ObjectIdResolver = new GraphQLScalarType(GraphQLObjectIdConfig);
