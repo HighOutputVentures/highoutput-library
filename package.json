@@ -5,5 +5,9 @@
   "license": "ISC",
   "devDependencies": {
     "lerna": "^5.1.4"
+  },
+  "dependencies": {
+    "@highoutput/object-id": "^0.1.7",
+    "graphql": "^16.5.0"
   }
 }
