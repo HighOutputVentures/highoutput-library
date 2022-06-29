@@ -1,0 +1,32 @@
+{
+  "name": "@highoutput/graphql-object-id",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "description": "ObjectId custom GraphQL scalar type",
+  "author": "High Output Ventures",
+  "homepage": "https://github.com/Proto-Garage/highoutput-library/tree/master/packages/graphql-object-id#README.md",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
+  },
+  "bugs": {
+    "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
+  },
+  "scripts": {
+    "clean": "rimraf dist/",
+    "build": "npm run clean && tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@highoutput/object-id": "^0.1.7",
+    "graphql": "^16.5.0"
+  },
+  "devDependencies": {
+    "rimraf": "^3.0.2",
+    "typescript": "^4.7.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
