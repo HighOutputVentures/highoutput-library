@@ -166,10 +166,14 @@ export class Repository<
     return deserialize(document) as TEntity;
   }
 
-  async find(filter: FilterQuery<TEntity>): Promise<TEntity[]> {
+
+  async find(filter: FilterQuery<TEntity>, options?: Partial<{
+    sort: Record<string, 1 | -1> | undefined;
+    limit: number | undefined; 
+  }>): Promise<TEntity[]> {
     return R.map(
       (entity) => deserialize(entity),
-      await this._model.find(serializeFilter(filter)),
+      await this._model.find(serializeFilter(filter), null, options),
     ) as TEntity[];
   }
 
