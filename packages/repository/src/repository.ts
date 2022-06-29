@@ -1,4 +1,4 @@
-import { Model, Document, FilterQuery, Connection, Schema } from 'mongoose';
+import { Model, Document, FilterQuery, Connection, Schema, QueryOptions } from 'mongoose';
 import R from 'ramda';
 import { ObjectId } from '@highoutput/object-id';
 import { BaseEntity } from './types';
@@ -166,10 +166,10 @@ export class Repository<
     return deserialize(document) as TEntity;
   }
 
-  async find(filter: FilterQuery<TEntity>): Promise<TEntity[]> {
+  async find(filter: FilterQuery<TEntity>, options?: QueryOptions): Promise<TEntity[]> {
     return R.map(
       (entity) => deserialize(entity),
-      await this._model.find(serializeFilter(filter)),
+      await this._model.find(serializeFilter(filter), null, options),
     ) as TEntity[];
   }
 
