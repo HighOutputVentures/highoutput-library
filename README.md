@@ -10,3 +10,4 @@
 - a small group of people will be designated as `admins`
   - only the `admins` are given write access to the repository
   - only the `admins` can publish the packages
+- contributors (non-`admins`) can fork the repository and create PRs
