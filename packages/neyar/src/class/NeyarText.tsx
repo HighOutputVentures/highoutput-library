@@ -47,6 +47,7 @@ export default class NeyarText {
         data={this.data.neyarText}
         blockIndex={this.api.blocks.getCurrentBlockIndex() + 1}
         mentions={this.config.mentions || []}
+        readOnly={this.readOnly}
       />
     ); // render react component in from the create react dom
 
@@ -62,6 +63,15 @@ export default class NeyarText {
     return {
       neyarText: content ? content.innerHTML : undefined,
     };
+  }
+
+  /**
+   * Returns true to notify the core that read-only mode is supported
+   *
+   * @return {boolean}
+   */
+  static get isReadOnlySupported() {
+    return true;
   }
 
   static get sanitize() {
