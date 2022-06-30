@@ -8,7 +8,12 @@ export class MongooseStorageAdapter implements StorageAdapter {
     User: Model,
   };
 
-  constructor(private connection: Connection, _opts: {}) {
+  constructor(
+    private connection: Connection,
+    opts: {
+      userModel: string;
+    },
+  ) {
     const schema = new Schema({
       user: {
         type: Buffer,
@@ -21,24 +26,34 @@ export class MongooseStorageAdapter implements StorageAdapter {
       dateTimeCreated: {
         type: Date,
         default: () => new Date(),
-      }
+      },
     });
 
     schema.index({ otp: 1 });
-    schema.index({ user:1, otp: 1 }, { unique: true });
+    schema.index({ user: 1, otp: 1 }, { unique: true });
 
     this.models.Otp = this.connection.model('Otp', schema);
+
+    this.models.User = this.connection.model(opts.userModel);
   }
 
-  validateOtp(_params: { otp: string; }): Promise<User | null> {
-    throw new Error('Method not implemented.');
+  async validateOtp(params: { otp: string }): Promise<User | null> {
+    const otp = await this.models.Otp.findOne({ otp: params.otp });
+
+    if (!otp) {
+      return null;
+    }
+
+    return this.models.User.findOne({ _id: otp.user });
   }
 
-  async saveOtp(params: { user: Buffer; otp: string; }) {
+  async saveOtp(params: { user: Buffer; otp: string }) {
     await this.models.Otp.create(params);
   }
 
-  findOneUserByEmail(_params: { emailAddress: string; }): Promise<User | null> {
-    throw new Error('Method not implemented.');
+  async findOneUserByEmail(params: {
+    emailAddress: string;
+  }): Promise<User | null> {
+    return this.models.User.findOne({ emailAddress: params.emailAddress });
   }
 }

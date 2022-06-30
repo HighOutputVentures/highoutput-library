@@ -1,5 +1,5 @@
 {
-  "version": "0.1.11",
+  "version": "0.1.13",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -77,5 +77,5 @@
     "@emotion/styled": "^11.8.1",
     "framer-motion": "^6.3.11"
   },
-  "gitHead": "8345aecd1dcdc0ed6b2ed69cca6dba09bd80a22c"
+  "gitHead": "6d9db97c9aedcc91891eec72335e81015aa43f05"
 }

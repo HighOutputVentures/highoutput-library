@@ -35,8 +35,8 @@ const theme = extendTheme({
   colors: colors,
   zIndices,
   fonts: {
-    heading: 'Inter',
-    body: 'Inter',
+    heading: "'Inter', sans-serif",
+    body: "'Inter', sans-serif",
   },
   components: {
     Button,
