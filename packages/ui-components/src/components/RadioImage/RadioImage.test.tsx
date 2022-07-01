@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import React from 'react';
 
 import RadioImage from './RadioImage';
-import { RadioImageComponent } from './RadioImage.stories';
+import { Default as RadioImageComponent } from './RadioImage.stories';
 
 describe('Radio Image Component', () => {
   beforeEach(() => {
@@ -54,7 +54,12 @@ describe('Radio Image Component', () => {
 
 describe('Storybook - Radio Image Component', () => {
   beforeEach(() => {
-    render(<RadioImageComponent />);
+    render(
+      <RadioImageComponent
+        value={'Kat'}
+        image={'https://randomuser.me/api/portraits/women/44.jpg'}
+      />
+    );
   });
 
   it('should renders radio image box', async () => {

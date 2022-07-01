@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import React from 'react';
 
 import RadioImageGroup from './RadioImageGroup';
-import { RadioImageGroupComponent } from './RadioImageGroup.stories';
+import { Default as RadioImageGroupComponent } from './RadioImageGroup.stories';
 
 describe('Radio Image Group', () => {
   beforeEach(() => {
