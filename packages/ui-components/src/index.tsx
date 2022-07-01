@@ -5,6 +5,9 @@ import RadioImage, {
 import RadioImageGroup, {
   RadioImageGroupProps,
 } from './components/RadioImageGroup/RadioImageGroup';
+import TextareaAutosize, {
+  TextareaAutosizeProps,
+} from './components/TextareaAutosize/TextareaAutosize';
 
 export {
   Accordion,
@@ -524,4 +527,6 @@ export {
   RadioImageGroupProps,
   RadioImage,
   RadioImageProps,
+  TextareaAutosize,
+  TextareaAutosizeProps,
 };
