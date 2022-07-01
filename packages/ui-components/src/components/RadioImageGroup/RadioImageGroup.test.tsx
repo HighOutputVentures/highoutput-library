@@ -1,8 +1,9 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { render, screen } from '@testing-library/react';
+import React from 'react';
 
 import RadioImageGroup from './RadioImageGroup';
+import { RadioImageGroupComponent } from './RadioImageGroup.stories';
 
 describe('Radio Image Group', () => {
   beforeEach(() => {
@@ -29,6 +30,38 @@ describe('Radio Image Group', () => {
         onChange={jest.fn}
       />
     );
+  });
+
+  it('should renders radio image stack container', async () => {
+    const radioImageBoxGroupStack = await screen.findAllByTestId(
+      'radio.image.group.stack.container'
+    );
+    expect(radioImageBoxGroupStack).toHaveLength(1);
+  });
+
+  it('should renders radio image horizontal stack', async () => {
+    const radioImageBoxGroupStack = await screen.findAllByTestId(
+      'radio.image.group.horizontal.stack'
+    );
+    expect(radioImageBoxGroupStack).toHaveLength(1);
+  });
+
+  it('should render 4 radio image box', async () => {
+    const radioImageBox = await screen.findAllByTestId('radio.image.box');
+    expect(radioImageBox).toHaveLength(4);
+  });
+
+  it('should render 4 radio image container', async () => {
+    const radioImageContainer = await screen.findAllByTestId(
+      'radio.image.container'
+    );
+    expect(radioImageContainer).toHaveLength(4);
+  });
+});
+
+describe('Storybook - Radio Image Group', () => {
+  beforeEach(() => {
+    render(<RadioImageGroupComponent />);
   });
 
   it('should renders radio image stack container', async () => {
