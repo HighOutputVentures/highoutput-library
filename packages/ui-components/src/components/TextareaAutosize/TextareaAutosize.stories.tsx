@@ -7,7 +7,7 @@ export default {
   component: TextareaAutosize,
 };
 
-export const Page = () => {
+export const TextareaAutosizeComponent = () => {
   const [value, setValue] = React.useState('Type here...');
 
   return (
