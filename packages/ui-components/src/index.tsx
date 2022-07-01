@@ -116,6 +116,7 @@ export {
   ContainerProps,
   createStandaloneToast,
   CreateStandAloneToastParam,
+  Divider,
   /**
    * @reference https://chakra-ui.com/docs/components/overlay/drawer
    */
@@ -205,6 +206,7 @@ export {
   InputProps,
   InputRightAddon,
   InputRightElement,
+  keyframes,
   /**
    * @reference https://chakra-ui.com/docs/styled-system/recipes/page-specific-color-mode
    */
@@ -359,6 +361,7 @@ export {
   SlideFade,
   SlideFadeProps,
   SlideProps,
+  Slider,
   Spacer,
   SpacerProps,
   /**
@@ -489,10 +492,12 @@ export {
   useMenuButton,
   UseMenuButtonProps,
   useModal,
+  useMultiStyleConfig,
   /**
    * @reference https://chakra-ui.com/docs/styled-system/utility-hooks/use-outside-click
    */
   useOutsideClick,
+  usePrefersReducedMotion,
   useRadio,
   useRadioGroup,
   /**
