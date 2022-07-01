@@ -3,12 +3,12 @@ import * as React from 'react';
 import TextareaAutosize from './TextareaAutosize';
 
 export default {
-  title: 'Textarea Autosize',
+  title: 'UI Components/Textarea/Textarea Autosize',
   component: TextareaAutosize,
 };
 
 export const Page = () => {
-  const [value, setValue] = React.useState('');
+  const [value, setValue] = React.useState('Type here...');
 
   return (
     <>
