@@ -1,5 +1,5 @@
 {
-  "version": "0.1.14",
+  "version": "0.1.16",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -19,7 +19,8 @@
     "size": "size-limit",
     "analyze": "size-limit --why",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "chromatic": "npx chromatic --project-token=c97132e80915"
   },
   "peerDependencies": {
     "react": ">=16"
@@ -36,7 +37,9 @@
     "trailingComma": "es5"
   },
   "name": "@highoutput/ui-components",
-  "author": "Niel Berongoy",
+  "author": {
+    "name": "Niel Berongoy"
+  },
   "module": "dist/ui-components.esm.js",
   "size-limit": [
     {
@@ -63,6 +66,7 @@
     "@types/react": "^18.0.12",
     "@types/react-dom": "^18.0.5",
     "babel-loader": "^8.2.5",
+    "chromatic": "^6.7.0",
     "husky": "^8.0.1",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
@@ -79,5 +83,7 @@
     "framer-motion": "^6.3.11",
     "react-textarea-autosize": "^8.3.4"
   },
-  "gitHead": "6d9db97c9aedcc91891eec72335e81015aa43f05"
+  "gitHead": "6d9db97c9aedcc91891eec72335e81015aa43f05",
+  "readme": "ERROR: No README data found!",
+  "_id": "@highoutput/ui-components@0.1.15"
 }

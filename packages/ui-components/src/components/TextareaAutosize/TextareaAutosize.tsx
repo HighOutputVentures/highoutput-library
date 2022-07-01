@@ -2,7 +2,7 @@ import { Textarea, TextareaProps } from '@chakra-ui/react';
 import * as React from 'react';
 import ReactTextareaAutosize from 'react-textarea-autosize';
 
-type TextareaAutosizeProps = TextareaProps & {
+export type TextareaAutosizeProps = TextareaProps & {
   minRows?: number;
   maxRows?: number;
 };
