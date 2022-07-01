@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
 import { Text } from '@chakra-ui/react';
+import React, { useState } from 'react';
 
 import RadioImageGroup from './RadioImageGroup';
 
@@ -8,7 +8,7 @@ export default {
   component: RadioImageGroup,
 };
 
-export const RadioImageGroupComponent = () => {
+export const Default = () => {
   const [value, setValue] = useState('');
 
   return (
