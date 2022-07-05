@@ -1,13 +1,32 @@
-export { default as Box } from './box'
-export { default as Stack } from './stack'
-export { default as Button } from './button'
-export { default as Checkbox } from './checkbox'
-export { default as Link } from './link'
-export { default as Form } from './form'
-export { default as Heading } from './heading'
-export { default as Switch } from './switch'
-export { default as Tabs } from './tabs'
-export { default as Flex } from './flex'
-export { default as Text } from './text'
-export { default as Drawer } from './drawer'
-export { default as Select } from './select'
+import { ComponentStyleConfig } from '@chakra-ui/react';
+import Box from './box';
+import Button from './button';
+import Checkbox from './checkbox';
+import Drawer from './drawer';
+import Flex from './flex';
+import Form from './form';
+import Heading from './heading';
+import Link from './link';
+import Select from './select';
+import Stack from './stack';
+import Switch from './switch';
+import Tabs from './tabs';
+import Text from './text';
+
+const components: { [key: string]: ComponentStyleConfig } = {
+  Box,
+  Stack,
+  Button,
+  Checkbox,
+  Link,
+  Form,
+  Heading,
+  Switch,
+  Tabs,
+  Flex,
+  Text,
+  Drawer,
+  Select,
+};
+
+export default components;
