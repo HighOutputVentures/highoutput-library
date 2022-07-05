@@ -1,4 +1,3 @@
-import ThemeProvider from './components/Provider';
 import RadioImage, {
   RadioImageProps,
 } from './components/RadioImage/RadioImage';
@@ -8,6 +7,7 @@ import RadioImageGroup, {
 import TextareaAutosize, {
   TextareaAutosizeProps,
 } from './components/TextareaAutosize/TextareaAutosize';
+import ThemeProvider, { ThemeProviderProps } from './components/ThemeProvider';
 
 export {
   Accordion,
@@ -86,7 +86,6 @@ export {
    */
   Center,
   CenterProps,
-  ChakraProviderProps as ProviderProps,
   /**
    * @reference https://chakra-ui.com/docs/components/form/checkbox
    */
@@ -523,6 +522,7 @@ export {
 } from '@chakra-ui/react';
 export {
   ThemeProvider,
+  ThemeProviderProps,
   RadioImageGroup,
   RadioImageGroupProps,
   RadioImage,
