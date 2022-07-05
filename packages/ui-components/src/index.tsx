@@ -364,6 +364,15 @@ export {
   SlideFadeProps,
   SlideProps,
   Slider,
+  SliderFilledTrack,
+  SliderInnerTrackProps,
+  SliderMark,
+  SliderMarkProps,
+  SliderProps,
+  SliderThumb,
+  SliderThumbProps,
+  SliderTrack,
+  SliderTrackProps,
   Spacer,
   SpacerProps,
   /**
@@ -502,6 +511,7 @@ export {
   usePrefersReducedMotion,
   useRadio,
   useRadioGroup,
+  useSlider,
   /**
    * @reference https://chakra-ui.com/docs/styled-system/utility-hooks/use-theme
    */
