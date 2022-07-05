@@ -66,8 +66,6 @@ export default class Publisher<
       timestamp: Date.now(),
     };
 
-    logger.tag(['publisher', 'request']).verbose(body);
-
     if (!this.sender || this.sender.is_closed()) {
       throw new AppError(
         'PUBLISHER_ERROR',
@@ -76,12 +74,25 @@ export default class Publisher<
     }
 
     try {
-      this.sender.send({
+      const delivery = this.sender.send({
         body: JSON.stringify(body),
       });
+
+      logger.tag(['publisher', 'delivery']).verbose(R.pick([
+        'id',
+        'link',
+        'remote_settled',
+        'remote_state',
+        'sent',
+        'settled',
+        'state',
+        'tag',
+      ], delivery));
     } catch (err) {
       logger.tag('publisher').warn(err);
     }
+
+    logger.tag(['publisher', 'request']).verbose(body);
   }
 
   public async start() {
