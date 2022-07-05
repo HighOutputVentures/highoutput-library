@@ -20,7 +20,9 @@
     "analyze": "size-limit --why",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "chromatic": "npx chromatic --project-token=c97132e80915"
+    "chromatic": "npx chromatic --project-token=c97132e80915",
+    "generate:types": "chakra-cli tokens ./src/theme/index.ts",
+    "postinstall": "npm run generate:types"
   },
   "peerDependencies": {
     "react": ">=16"
@@ -53,6 +55,7 @@
   ],
   "devDependencies": {
     "@babel/core": "^7.18.2",
+    "@chakra-ui/cli": "^2.1.0",
     "@chakra-ui/storybook-addon": "^4.0.1",
     "@size-limit/preset-small-lib": "^7.0.8",
     "@storybook/addon-a11y": "^6.5.9",
