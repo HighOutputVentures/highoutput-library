@@ -1,22 +1,22 @@
-import React, { FC, ReactNode } from 'react';
 import {
   ChakraProvider,
   ChakraProviderProps,
   extendTheme,
 } from '@chakra-ui/react';
-
+import React, { FC } from 'react';
 import defaultTheme from '../theme';
 
-interface ThemeProviderProps extends ChakraProviderProps {
-  children: ReactNode;
-}
+export interface ThemeProviderProps extends ChakraProviderProps {}
 
-const ThemeProvider: FC<ThemeProviderProps> = props => {
-  const { children, theme } = props;
+const ThemeProvider: FC<ThemeProviderProps> = ({
+  theme,
+  children,
+  ...props
+}) => {
   return (
     <ChakraProvider
-      {...props}
       theme={extendTheme({ ...defaultTheme, ...theme })}
+      {...props}
     >
       {children}
     </ChakraProvider>
