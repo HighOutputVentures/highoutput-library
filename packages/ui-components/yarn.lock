@@ -1616,7 +1616,7 @@
     "@chakra-ui/icons" "^2.0.2"
     "webpack-merge" "^5.0.0"
 
-"@chakra-ui/styled-system@2.2.0":
+"@chakra-ui/styled-system@^2.2.0", "@chakra-ui/styled-system@2.2.0":
   "integrity" "sha512-5THQlrMr6CsiulNtjzZV3DqYD85eQ+S8G6rsnjAKqFVJ1G29R392RKK/67R96WIRUJRtsHPq2REeTgAxGLDhOQ=="
   "resolved" "https://registry.npmjs.org/@chakra-ui/styled-system/-/styled-system-2.2.0.tgz"
   "version" "2.2.0"
