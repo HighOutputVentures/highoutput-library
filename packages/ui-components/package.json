@@ -85,7 +85,7 @@
     "framer-motion": "^6.3.11",
     "react-textarea-autosize": "^8.3.4"
   },
-  "gitHead": "6d9db97c9aedcc91891eec72335e81015aa43f05",
+  "gitHead": "29675ab61ed5a5d2cb06ac184eb78528651c9443",
   "readme": "ERROR: No README data found!",
   "_id": "@highoutput/ui-components@0.1.15"
 }
