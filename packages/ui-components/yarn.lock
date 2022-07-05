@@ -3546,14 +3546,9 @@
     "regenerator-runtime" "^0.13.7"
     "resolve-from" "^5.0.0"
 
-"@swc/core-linux-x64-gnu@1.2.208":
-  "integrity" "sha512-j5GvAUf8hwHWKdmkF80HGSSzBzENmuWFG/OBle+0fwqO9NStUGWAoGYwBPiTlJ8aCBjbVGXlCVstHx8OHx+1pw=="
-  "resolved" "https://registry.npmjs.org/@swc/core-linux-x64-gnu/-/core-linux-x64-gnu-1.2.208.tgz"
-  "version" "1.2.208"
-
-"@swc/core-linux-x64-musl@1.2.208":
-  "integrity" "sha512-A+kGJDB3qQ1jaME7YiIH3yWOOx2Pjo8g+63TYsuaDJhA1MzQzg1KBCk5/gGEw5YFGgMqQbU0dp2emORu9UwRHw=="
-  "resolved" "https://registry.npmjs.org/@swc/core-linux-x64-musl/-/core-linux-x64-musl-1.2.208.tgz"
+"@swc/core-win32-x64-msvc@1.2.208":
+  "integrity" "sha512-CkESi36HJSkqicrDQzgSWLOx9oTaVDrD8FnplP8PgpySUgoesyGg3uZt+2moaBTyUjxG6L4OuMTkwa0vsbiFrw=="
+  "resolved" "https://registry.npmjs.org/@swc/core-win32-x64-msvc/-/core-win32-x64-msvc-1.2.208.tgz"
   "version" "1.2.208"
 
 "@swc/core@^1.2.177", "@swc/core@>=1.2.50":
@@ -6986,6 +6981,11 @@
   "integrity" "sha512-EmTr31wppcaIAgblChZiuN/l9Y7DPyw8Xtbg7fIVngn6zMW+IEBJDJngeKC3x6wr0V/vcA2wqeFnaw1bFJbDdA=="
   "resolved" "https://registry.npmjs.org/es6-shim/-/es6-shim-0.35.6.tgz"
   "version" "0.35.6"
+
+"esbuild-windows-64@0.14.43":
+  "integrity" "sha512-8NsuNfI8xwFuJbrCuI+aBqNTYkrWErejFO5aYM+yHqyHuL8mmepLS9EPzAzk8rvfaJrhN0+RvKWAcymViHOKEw=="
+  "resolved" "https://registry.npmjs.org/esbuild-windows-64/-/esbuild-windows-64-0.14.43.tgz"
+  "version" "0.14.43"
 
 "esbuild@^0.14.18":
   "integrity" "sha512-Uf94+kQmy/5jsFwKWiQB4hfo/RkM9Dh7b79p8yqd1tshULdr25G2szLz631NoH3s2ujnKEKVD16RmOxvCNKRFA=="
