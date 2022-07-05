@@ -1,58 +1,20 @@
-import { extendTheme, ThemeConfig } from '@chakra-ui/react'
-
-import { colors } from './color'
-import { zIndices } from './zindex'
-import {
-  Heading,
-  Box,
-  Link,
-  Button,
-  Form,
-  Checkbox,
-  Switch,
-  Tabs,
-  Flex,
-  Stack,
-  Text,
-  Drawer,
-  Select,
-} from './components'
-
-const config: ThemeConfig = {
-  initialColorMode: 'light',
-  useSystemColorMode: false,
-}
+import { extendTheme } from '@chakra-ui/react';
+import colors from './colors';
+import components from './components';
+import config from './config';
+import fonts from './fonts';
+import fontSizes from './fontSizes';
+import styles from './styles';
+import zIndices from './zIndices';
 
 const theme = extendTheme({
   config,
-  styles: {
-    global: {
-      body: {
-        background: '#fcfcfc',
-      },
-    },
-  },
-  colors: colors,
+  styles,
+  colors,
+  fonts,
+  fontSizes,
+  components,
   zIndices,
-  fonts: {
-    heading: "'Inter', sans-serif",
-    body: "'Inter', sans-serif",
-  },
-  components: {
-    Button,
-    Form,
-    Heading,
-    Link,
-    Checkbox,
-    Switch,
-    Tabs,
-    Flex,
-    Stack,
-    Box,
-    Text,
-    Drawer,
-    Select,
-  },
-})
+});
 
-export default theme
+export default theme;
