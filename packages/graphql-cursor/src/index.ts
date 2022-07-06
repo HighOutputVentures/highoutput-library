@@ -26,4 +26,4 @@ export const GraphQLCursorConfig: GraphQLScalarTypeConfig<Buffer, string> = {
   }
 }
 
-export const ObjectIdResolver = new GraphQLScalarType(GraphQLCursorConfig);
+export const CursorResolver = new GraphQLScalarType(GraphQLCursorConfig);
