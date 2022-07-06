@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/graphql-cursor",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "main": "dist/index.js",
   "description": "Cursor custom GraphQL scalar type",
   "author": "High Output Ventures",
