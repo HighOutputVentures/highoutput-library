@@ -7,6 +7,7 @@ import Flex from './flex';
 import Form from './form';
 import Heading from './heading';
 import Link from './link';
+import RadioImage from './radioImage';
 import Select from './select';
 import Stack from './stack';
 import Switch from './switch';
@@ -27,6 +28,7 @@ const components: { [key: string]: ComponentStyleConfig } = {
   Text,
   Drawer,
   Select,
+  RadioImage,
 };
 
 export default components;

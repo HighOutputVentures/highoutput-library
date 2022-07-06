@@ -1,8 +1,4 @@
-import {
-  ChakraProvider,
-  ChakraProviderProps,
-  extendTheme,
-} from '@chakra-ui/react';
+import { ChakraProvider, ChakraProviderProps } from '@chakra-ui/react';
 import React, { FC } from 'react';
 import defaultTheme from '../theme';
 
@@ -14,10 +10,7 @@ const ThemeProvider: FC<ThemeProviderProps> = ({
   ...props
 }) => {
   return (
-    <ChakraProvider
-      theme={extendTheme({ ...defaultTheme, ...theme })}
-      {...props}
-    >
+    <ChakraProvider theme={defaultTheme} {...props}>
       {children}
     </ChakraProvider>
   );

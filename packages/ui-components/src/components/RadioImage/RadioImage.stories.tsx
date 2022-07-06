@@ -1,5 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
+import { ThemeProvider } from '../..';
 
 import RadioImage from './RadioImage';
 
@@ -9,7 +10,9 @@ export default {
 } as ComponentMeta<typeof RadioImage>;
 
 const Template: ComponentStory<typeof RadioImage> = args => (
-  <RadioImage {...args} />
+  <ThemeProvider>
+    <RadioImage {...args} />
+  </ThemeProvider>
 );
 
 export const Default = Template.bind({});
