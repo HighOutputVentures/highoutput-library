@@ -1,5 +1,6 @@
 import { Text } from '@chakra-ui/react';
 import React, { useState } from 'react';
+import ThemeProvider from '../ThemeProvider';
 
 import RadioImageGroup from './RadioImageGroup';
 
@@ -12,7 +13,7 @@ export const Default = () => {
   const [value, setValue] = useState('');
 
   return (
-    <>
+    <ThemeProvider>
       <Text>Select Image: {value}</Text>
       <RadioImageGroup
         avatars={[
@@ -35,6 +36,6 @@ export const Default = () => {
         ]}
         onChange={v => setValue(v)}
       />
-    </>
+    </ThemeProvider>
   );
 };
