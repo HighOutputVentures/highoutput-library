@@ -474,6 +474,7 @@ export {
    * @reference https://chakra-ui.com/docs/styled-system/utility-hooks/use-breakpoint-value
    */
   useBreakpoint,
+  useBreakpointValue,
   useButtonGroup,
   useCheckbox,
   useCheckboxGroup,
