@@ -105,6 +105,7 @@ const HOVEditor: FC<HOVEditorProps> = props => {
             }
             // setEditorInstance(editor);
           }
+          editor.focus()
         }}
         data={value}
         onChange={(_: any, editor: any) => onChange(editor.getData())}

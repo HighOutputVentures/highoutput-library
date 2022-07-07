@@ -1,5 +1,5 @@
 {
-  "version": "0.1.9",
+  "version": "0.1.20",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -89,7 +89,7 @@
     "@editorjs/simple-image": "^1.4.1",
     "@editorjs/table": "^2.0.2",
     "@editorjs/underline": "^1.0.0",
-    "@highoutput/ui-components": "^0.1.13",
+    "@highoutput/ui-components": "^0.1.22",
     "editorjs-drag-drop": "^1.1.1",
     "editorjs-text-alignment-blocktune": "^1.0.3",
     "editorjs-toggle-block": "^0.1.2",
@@ -98,5 +98,5 @@
     "react-dom": "^18.1.0",
     "rollup-plugin-image-files": "^1.4.2"
   },
-  "gitHead": "6d9db97c9aedcc91891eec72335e81015aa43f05"
+  "gitHead": "29675ab61ed5a5d2cb06ac184eb78528651c9443"
 }

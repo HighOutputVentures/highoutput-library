@@ -1,5 +1,5 @@
 {
-  "version": "0.1.13",
+  "version": "0.1.22",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -19,7 +19,9 @@
     "size": "size-limit",
     "analyze": "size-limit --why",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "chromatic": "npx chromatic --project-token=c97132e80915",
+    "generate:types": "chakra-cli tokens ./src/theme/index.ts"
   },
   "peerDependencies": {
     "react": ">=16"
@@ -36,7 +38,9 @@
     "trailingComma": "es5"
   },
   "name": "@highoutput/ui-components",
-  "author": "Niel Berongoy",
+  "author": {
+    "name": "Niel Berongoy"
+  },
   "module": "dist/ui-components.esm.js",
   "size-limit": [
     {
@@ -50,8 +54,10 @@
   ],
   "devDependencies": {
     "@babel/core": "^7.18.2",
+    "@chakra-ui/cli": "^2.1.0",
     "@chakra-ui/storybook-addon": "^4.0.1",
     "@size-limit/preset-small-lib": "^7.0.8",
+    "@storybook/addon-a11y": "^6.5.9",
     "@storybook/addon-essentials": "^6.5.8",
     "@storybook/addon-info": "^5.3.21",
     "@storybook/addon-links": "^6.5.8",
@@ -62,6 +68,7 @@
     "@types/react": "^18.0.12",
     "@types/react-dom": "^18.0.5",
     "babel-loader": "^8.2.5",
+    "chromatic": "^6.7.0",
     "husky": "^8.0.1",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
@@ -75,7 +82,10 @@
     "@chakra-ui/react": "^2.2.1",
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
-    "framer-motion": "^6.3.11"
+    "framer-motion": "^6.3.11",
+    "react-textarea-autosize": "^8.3.4"
   },
-  "gitHead": "6d9db97c9aedcc91891eec72335e81015aa43f05"
+  "gitHead": "29675ab61ed5a5d2cb06ac184eb78528651c9443",
+  "readme": "ERROR: No README data found!",
+  "_id": "@highoutput/ui-components@0.1.15"
 }

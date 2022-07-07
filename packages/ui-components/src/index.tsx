@@ -1,10 +1,13 @@
-import ThemeProvider from './components/Provider';
 import RadioImage, {
   RadioImageProps,
 } from './components/RadioImage/RadioImage';
 import RadioImageGroup, {
   RadioImageGroupProps,
 } from './components/RadioImageGroup/RadioImageGroup';
+import TextareaAutosize, {
+  TextareaAutosizeProps,
+} from './components/TextareaAutosize/TextareaAutosize';
+import ThemeProvider, { ThemeProviderProps } from './components/ThemeProvider';
 
 export {
   Accordion,
@@ -83,7 +86,6 @@ export {
    */
   Center,
   CenterProps,
-  ChakraProviderProps as ProviderProps,
   /**
    * @reference https://chakra-ui.com/docs/components/form/checkbox
    */
@@ -116,6 +118,7 @@ export {
   ContainerProps,
   createStandaloneToast,
   CreateStandAloneToastParam,
+  Divider,
   /**
    * @reference https://chakra-ui.com/docs/components/overlay/drawer
    */
@@ -205,6 +208,7 @@ export {
   InputProps,
   InputRightAddon,
   InputRightElement,
+  keyframes,
   /**
    * @reference https://chakra-ui.com/docs/styled-system/recipes/page-specific-color-mode
    */
@@ -359,6 +363,16 @@ export {
   SlideFade,
   SlideFadeProps,
   SlideProps,
+  Slider,
+  SliderFilledTrack,
+  SliderInnerTrackProps,
+  SliderMark,
+  SliderMarkProps,
+  SliderProps,
+  SliderThumb,
+  SliderThumbProps,
+  SliderTrack,
+  SliderTrackProps,
   Spacer,
   SpacerProps,
   /**
@@ -490,12 +504,15 @@ export {
   useMenuButton,
   UseMenuButtonProps,
   useModal,
+  useMultiStyleConfig,
   /**
    * @reference https://chakra-ui.com/docs/styled-system/utility-hooks/use-outside-click
    */
   useOutsideClick,
+  usePrefersReducedMotion,
   useRadio,
   useRadioGroup,
+  useSlider,
   /**
    * @reference https://chakra-ui.com/docs/styled-system/utility-hooks/use-theme
    */
@@ -516,8 +533,11 @@ export {
 } from '@chakra-ui/react';
 export {
   ThemeProvider,
+  ThemeProviderProps,
   RadioImageGroup,
   RadioImageGroupProps,
   RadioImage,
   RadioImageProps,
+  TextareaAutosize,
+  TextareaAutosizeProps,
 };

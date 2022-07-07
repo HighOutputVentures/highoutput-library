@@ -1,4 +1,4 @@
-export const colors = {
+const colors = {
   greenLight: { 500: '#4CD471' },
   limeLight: { 500: '#A8C556' },
   yellowLight: { 500: '#FFD188' },
@@ -147,3 +147,5 @@ export const colors = {
     900: '#111827',
   },
 };
+
+export default colors;
