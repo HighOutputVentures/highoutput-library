@@ -3546,6 +3546,16 @@
     "regenerator-runtime" "^0.13.7"
     "resolve-from" "^5.0.0"
 
+"@swc/core-linux-x64-gnu@1.2.209":
+  "integrity" "sha512-Fkh5NS/SRbqVsM7URhMHJ3r0piI+iU7BNSLMvQZN8jzWEdxBb26j+DZuEX/4eKBwQ5P6ycCpYYbMBrxfmHfxlA=="
+  "resolved" "https://registry.npmjs.org/@swc/core-linux-x64-gnu/-/core-linux-x64-gnu-1.2.209.tgz"
+  "version" "1.2.209"
+
+"@swc/core-linux-x64-musl@1.2.209":
+  "integrity" "sha512-9YaOGD5ODMfkMxCF9iRxlAcENUhzGSZ752r6oedymPWU/FnjIiw2AGdNKL+jCgplh+/5Q/P1NthSciBlChzzgQ=="
+  "resolved" "https://registry.npmjs.org/@swc/core-linux-x64-musl/-/core-linux-x64-musl-1.2.209.tgz"
+  "version" "1.2.209"
+
 "@swc/core-win32-x64-msvc@1.2.209":
   "integrity" "sha512-0tN/pOHfKpTTgkn0eTfQj0MQfIplZ37/iuXHTsrQEULRcqHxxi+2POnbsLfKChrHOcSzrqFWl8I9szHEnYcyow=="
   "resolved" "https://registry.npmjs.org/@swc/core-win32-x64-msvc/-/core-win32-x64-msvc-1.2.209.tgz"

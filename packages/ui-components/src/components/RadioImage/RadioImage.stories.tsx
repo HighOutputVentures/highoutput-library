@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
-import { ThemeProvider } from '../..';
 
+import { ThemeProvider } from '../..';
 import RadioImage from './RadioImage';
 
 export default {

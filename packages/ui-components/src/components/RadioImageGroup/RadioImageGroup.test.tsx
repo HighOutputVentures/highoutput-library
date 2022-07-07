@@ -61,7 +61,29 @@ describe('Radio Image Group', () => {
 
 describe('Storybook - Radio Image Group', () => {
   beforeEach(() => {
-    render(<RadioImageGroupComponent />);
+    render(
+      <RadioImageGroupComponent
+        avatars={[
+          {
+            value: 'Kat',
+            image: 'https://randomuser.me/api/portraits/women/44.jpg',
+          },
+          {
+            value: 'Kevin',
+            image: 'https://randomuser.me/api/portraits/men/86.jpg',
+          },
+          {
+            value: 'Andy',
+            image: 'https://randomuser.me/api/portraits/men/29.jpg',
+          },
+          {
+            value: 'Jess',
+            image: 'https://randomuser.me/api/portraits/women/95.jpg',
+          },
+        ]}
+        onChange={jest.fn}
+      />
+    );
   });
 
   it('should renders radio image stack container', async () => {
