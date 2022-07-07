@@ -9,6 +9,7 @@ import TextareaAutosize, {
 } from './components/TextareaAutosize/TextareaAutosize';
 import ThemeProvider, { ThemeProviderProps } from './components/ThemeProvider';
 
+export { createIcon } from '@chakra-ui/icons';
 export {
   Accordion,
   AccordionButton,
