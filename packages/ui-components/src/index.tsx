@@ -9,7 +9,7 @@ import TextareaAutosize, {
 } from './components/TextareaAutosize/TextareaAutosize';
 import ThemeProvider, { ThemeProviderProps } from './components/ThemeProvider';
 
-export { createIcon } from '@chakra-ui/icons';
+export * from '@chakra-ui/icons';
 export {
   Accordion,
   AccordionButton,
@@ -178,6 +178,7 @@ export {
   Hide,
   HideProps,
   HStack,
+  HTMLChakraProps,
   /**
    * @reference https://chakra-ui.com/docs/components/media-and-icons/icon
    */
