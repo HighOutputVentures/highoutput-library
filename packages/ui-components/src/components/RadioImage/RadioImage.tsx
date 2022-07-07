@@ -7,12 +7,22 @@ import {
   useRadio,
   useStyleConfig,
 } from '@chakra-ui/react';
+import { StringOrNumber } from '@chakra-ui/utils';
 import React, { forwardRef } from 'react';
 
-export interface RadioImageProps extends HTMLChakraProps<'div'>, ThemingProps {
+declare type EventOrValue =
+  | React.ChangeEvent<HTMLInputElement>
+  | StringOrNumber;
+
+export interface RadioImageProps
+  extends ThemingProps,
+    Omit<HTMLChakraProps<'div'>, 'onChange' | 'value'> {
   image: string;
   selectColor?: string;
-  value?: string;
+  onChange?: (e: EventOrValue) => void;
+  value?: string | number;
+  checked?: boolean;
+  isChecked?: boolean;
 }
 
 const RadioImage = forwardRef<HTMLDivElement, RadioImageProps>((props, ref) => {
