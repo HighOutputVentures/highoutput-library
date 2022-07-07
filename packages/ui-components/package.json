@@ -84,6 +84,7 @@
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
     "framer-motion": "^6.3.11",
+    "lodash": "^4.17.21",
     "react-textarea-autosize": "^8.3.4"
   },
   "gitHead": "29675ab61ed5a5d2cb06ac184eb78528651c9443",

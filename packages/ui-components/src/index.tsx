@@ -8,6 +8,8 @@ import TextareaAutosize, {
   TextareaAutosizeProps,
 } from './components/TextareaAutosize/TextareaAutosize';
 import ThemeProvider, { ThemeProviderProps } from './components/ThemeProvider';
+import theme from './theme';
+import { extendTheme } from './utils/theme.utils';
 
 export { createIcon } from '@chakra-ui/icons';
 export {
@@ -132,10 +134,6 @@ export {
   DrawerHeader,
   DrawerOverlay,
   DrawerProps,
-  /**
-   * @reference https://chakra-ui.com/docs/styled-system/theming/customize-theme
-   */
-  extendTheme,
   /**
    * @refernce https://chakra-ui.com/docs/components/transitions/usage#fade-transition
    */
@@ -541,4 +539,7 @@ export {
   RadioImageProps,
   TextareaAutosize,
   TextareaAutosizeProps,
+  // default theme
+  theme,
+  extendTheme,
 };
