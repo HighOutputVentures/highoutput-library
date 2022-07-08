@@ -4,9 +4,10 @@ import supertest from 'supertest';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { initServer } from './app.next';
 import { promisify } from 'util';
-import { User } from '../src/lib/types';
+import { Otp, User } from '../src/lib/types';
 import { Document } from 'mongoose';
 import { MailService } from '@sendgrid/mail';
+import cryptoRandomString from 'crypto-random-string';
 
 const chance = new Chance();
 
@@ -88,6 +89,43 @@ describe('EmailAuthServer', () => {
         .expect(200);
 
       expect(sendSpy).toBeCalledTimes(1);
+      await teardown(ctx);
+    });
+  });
+
+  describe('POST /otp/validate', () => {
+    it('should validate otp', async function () {
+      const ctx = await setup();
+
+      const userModel = ctx.mongoDb.model<Document & User>('User');
+
+      const otpModel = ctx.mongoDb.model<Document & Otp>('Otp');
+
+      const emailAddress = chance.email();
+
+      const user = await userModel.create({
+        _id: Buffer.from(chance.apple_token()),
+        emailAddress,
+      });
+
+      const otp = cryptoRandomString({
+        length: 6,
+        type: 'numeric',
+      });
+
+      await otpModel.create({
+        user: user._id,
+        otp,
+      });
+
+      const response = await ctx.request
+        .post('/otp/validate')
+        .send({
+          otp,
+        })
+        .expect(200);
+
+      expect(response.body).toHaveProperty(['ok'], true);
       await teardown(ctx);
     });
   });

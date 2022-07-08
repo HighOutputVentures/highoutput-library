@@ -51,7 +51,8 @@ export async function initServer(mongoDbUri: string) {
     mongooseStorageAdapter,
     sendGridEmailAdapter,
     {
-      jwtSecret: process.env.JWT_SECRET as string,
+      jwtSecret: chance.apple_token(),
+      jwtTTL: '30d',
     },
   );
 

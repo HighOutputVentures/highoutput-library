@@ -51,6 +51,10 @@ export class MongooseStorageAdapter implements StorageAdapter {
     await this.models.Otp.create(params);
   }
 
+  async deleteOtp(params: { otp: string }) {
+    await this.models.Otp.deleteOne(params);
+  }
+
   async findOneUserByEmail(params: {
     emailAddress: string;
   }): Promise<User | null> {
