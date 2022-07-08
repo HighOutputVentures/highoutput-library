@@ -43,12 +43,16 @@ export class MongooseStorageAdapter implements StorageAdapter {
     if (!otp) {
       return null;
     }
-
+    console.log({ otp });
     return this.models.User.findOne({ _id: otp.user });
   }
 
   async saveOtp(params: { user: Buffer; otp: string }) {
     await this.models.Otp.create(params);
+  }
+
+  async deleteOtp(params: { otp: string }) {
+    await this.models.Otp.deleteOne(params);
   }
 
   async findOneUserByEmail(params: {
