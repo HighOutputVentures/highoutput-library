@@ -11,7 +11,7 @@ import ThemeProvider, { ThemeProviderProps } from './components/ThemeProvider';
 import theme from './theme';
 import { extendTheme } from './utils/theme.utils';
 
-export { createIcon } from '@chakra-ui/icons';
+export * from '@chakra-ui/icons';
 export {
   Accordion,
   AccordionButton,
@@ -89,6 +89,7 @@ export {
    */
   Center,
   CenterProps,
+  chakra,
   /**
    * @reference https://chakra-ui.com/docs/components/form/checkbox
    */
