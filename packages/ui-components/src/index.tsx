@@ -177,7 +177,6 @@ export {
   Hide,
   HideProps,
   HStack,
-  HTMLChakraProps,
   /**
    * @reference https://chakra-ui.com/docs/components/media-and-icons/icon
    */
