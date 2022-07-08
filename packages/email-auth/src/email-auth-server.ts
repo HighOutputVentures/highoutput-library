@@ -19,7 +19,6 @@ export class EmailAuthServer {
 
   async init() {
     this.server.on('request', async (req, res) => {
-      
       const url = new URL(
         req.url!,
         `${!req.headers.host!.startsWith('https://') ? 'https://' : ''}${
@@ -89,11 +88,11 @@ export class EmailAuthServer {
           url.pathname
       ) {
         const body = await parse.json(req);
-        console.log({ body });
+
         const user = await this.storageAdapter.validateOtp({
           otp: body.otp,
         });
-        console.log({ user });
+    
         if (!user) {
           res.writeHead(400, {
             'Content-Type': 'application/json',
@@ -118,12 +117,15 @@ export class EmailAuthServer {
           expiresIn: this.opts?.jwtTTL as string,
           subject: user.emailAddress,
         });
-
+   
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end({
-          ok: true,
-          token,
-        });
+        res.write(
+          JSON.stringify({
+            ok: true,
+            token,
+          }),
+        );
+        res.end();
 
         return;
       }

@@ -43,7 +43,7 @@ export class MongooseStorageAdapter implements StorageAdapter {
     if (!otp) {
       return null;
     }
-    console.log({ otp });
+
     return this.models.User.findOne({ _id: otp.user });
   }
 
