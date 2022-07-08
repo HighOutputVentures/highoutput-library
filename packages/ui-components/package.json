@@ -87,7 +87,9 @@
     "framer-motion": "^6.3.11",
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
-    "react-textarea-autosize": "^8.3.4"
+    "react-hook-form": "^7.33.1",
+    "react-textarea-autosize": "^8.3.4",
+    "yup": "^0.32.11"
   },
   "gitHead": "29675ab61ed5a5d2cb06ac184eb78528651c9443",
   "readme": "ERROR: No README data found!",
