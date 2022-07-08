@@ -11,7 +11,6 @@ import ThemeProvider, { ThemeProviderProps } from './components/ThemeProvider';
 import theme from './theme';
 import { extendTheme } from './utils/theme.utils';
 
-export * from '@chakra-ui/icons';
 export {
   Accordion,
   AccordionButton,
