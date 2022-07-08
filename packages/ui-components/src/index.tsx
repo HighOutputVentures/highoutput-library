@@ -89,6 +89,7 @@ export {
    */
   Center,
   CenterProps,
+  chakra,
   /**
    * @reference https://chakra-ui.com/docs/components/form/checkbox
    */
