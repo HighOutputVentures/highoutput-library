@@ -84,6 +84,7 @@
     "@chakra-ui/react": "^2.2.1",
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
+    "@hookform/resolvers": "^2.9.5",
     "framer-motion": "^6.3.11",
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
