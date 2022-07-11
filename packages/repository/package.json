@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/repository",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Repository Class Implementation",
   "author": "High Output Ventures",
   "main": "dist/index.js",
@@ -41,7 +41,7 @@
   ],
   "dependencies": {
     "@highoutput/object-id": "^0.1.8",
-    "mongoose": "~6.3.4",
+    "mongoose": "~6.4.3",
     "ramda": "~0.28.0",
     "rimraf": "^3.0.2",
     "typescript": "^4.7.4"
