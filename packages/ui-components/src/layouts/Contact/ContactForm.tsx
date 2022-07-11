@@ -12,10 +12,11 @@ import {
 } from './validation';
 
 export interface ContactFormProps {
-  buttonStyle?: ButtonProps;
+  buttonProps?: ButtonProps;
 }
 
-const ContactForm: FC<ContactFormProps> = () => {
+const ContactForm: FC<ContactFormProps> = props => {
+  const { buttonProps } = props;
   const { register, handleSubmit, formState } = useForm<
     withContactFormSchemaValues
   >({
@@ -81,6 +82,7 @@ const ContactForm: FC<ContactFormProps> = () => {
             variant="primary"
             isLoading={isSubmitting}
             type="submit"
+            {...buttonProps}
           >
             Send
           </Button>
