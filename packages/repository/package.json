@@ -1,7 +1,7 @@
 {
   "name": "@highoutput/repository",
-  "version": "0.3.0",
-  "description": "Repository Class Implementation",
+  "version": "0.3.1",
+  "description": "Repository class implementation",
   "author": "High Output Ventures",
   "main": "dist/index.js",
   "repository": {
@@ -49,5 +49,5 @@
   "devDependencies": {
     "@types/ramda": "^0.28.13"
   },
-  "gitHead": "56617c027bc47412b3e740de0e7916dd02af5e75"
+  "gitHead": "69f10eb28ce27d3efe269fb2dd60cfbced8cbfb4"
 }

@@ -32,9 +32,10 @@
   },
   "dependencies": {
     "@highoutput/object-id": "^0.1.8",
-    "@highoutput/repository": "^0.3.0",
+    "@highoutput/repository": "^0.2.0",
     "@types/ramda": "^0.28.15",
     "mongoose": "^6.4.4",
     "ramda": "^0.28.0"
-  }
+  },
+  "gitHead": "69f10eb28ce27d3efe269fb2dd60cfbced8cbfb4"
 }
