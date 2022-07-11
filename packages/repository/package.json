@@ -41,8 +41,8 @@
   ],
   "dependencies": {
     "@highoutput/object-id": "^0.1.8",
-    "mongoose": "~6.4.3",
-    "ramda": "~0.28.0",
+    "mongoose": "^6.4.4",
+    "ramda": "^0.28.0",
     "rimraf": "^3.0.2",
     "typescript": "^4.7.4"
   },
