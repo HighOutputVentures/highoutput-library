@@ -216,7 +216,11 @@ export const sizeText = {
     letterSpacing: '0%',
     lineHeight: 'auto',
   },
-
+  'leading-9-bold': {
+    fontWeight: '700',
+    fontSize: '30px',
+    lineHeight: '36px',
+  },
   xs: {
     fontWeight: 'normal',
     fontSize: '12px',

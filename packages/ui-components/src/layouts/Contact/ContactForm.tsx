@@ -1,13 +1,16 @@
-import { Box, Button, Stack } from '@chakra-ui/react';
+import { Box, Button, ButtonProps, Stack } from '@chakra-ui/react';
 import React, { FC } from 'react';
 
 import InputField from '../../components/InputField/InputField';
 import SelectField from '../../components/SelectField/SelectField';
 import TextAreaField from '../../components/TextareaField/TextareaField';
 
-export interface ContactFormProps {}
+export interface ContactFormProps {
+  buttonStyle?: ButtonProps;
+}
 
-const ContactForm: FC<ContactFormProps> = () => {
+const ContactForm: FC<ContactFormProps> = props => {
+  const { buttonStyle } = props;
   return (
     <div>
       <Box maxW={512}>
@@ -17,11 +20,6 @@ const ContactForm: FC<ContactFormProps> = () => {
             id="email"
             label="Email"
             placeholder="Input your email address"
-          />
-          <InputField
-            id="category"
-            label="Category"
-            placeholder="Select category"
           />
           <SelectField
             id="category"
