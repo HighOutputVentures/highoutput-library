@@ -10,7 +10,6 @@ export interface StorageAdapter<
     user: ID;
     otp: string;
   }): Promise<void>;
-
   deleteOtp(params: {
     otp: string;
   }): Promise<void>;

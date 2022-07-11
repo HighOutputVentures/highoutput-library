@@ -1,0 +1,40 @@
+{
+  "name": "@highoutput/pagination",
+  "version": "0.0.1",
+  "description": "Pagination library",
+  "keywords": [
+    "error"
+  ],
+  "author": "High Output Ventures",
+  "homepage": "https://github.com/Proto-Garage/highoutput-library/tree/master/packages/error#README.md",
+  "license": "ISC",
+  "main": "build/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
+  },
+  "scripts": {
+    "clean": "rimraf dist/",
+    "build": "npm run clean && tsc --project tsconfig.json",
+    "lint": "eslint \"src/**/*.ts\"",
+    "prepublishOnly": "npm run build"
+  },
+  "bugs": {
+    "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.3",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.7.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@highoutput/object-id": "^0.1.8",
+    "@highoutput/repository": "^0.2.0",
+    "@types/ramda": "^0.28.15",
+    "mongoose": "^6.4.4",
+    "ramda": "^0.28.0"
+  }
+}
