@@ -1,7 +1,6 @@
 import sgMail from '@sendgrid/mail';
 import { EmailAdapter } from '../interfaces';
-import { User } from '../lib/types';
-import { SenderInfo } from '../types';
+import { User, SenderInfo } from '../lib/types';
 
 export class SendGridEmailAdapter implements EmailAdapter {
   private sendGridMail = sgMail;

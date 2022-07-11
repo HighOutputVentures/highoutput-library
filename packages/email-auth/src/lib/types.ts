@@ -10,3 +10,8 @@ export type Otp = {
   user: ID;
   otp: string;
 };
+
+export type SenderInfo = {
+  name: string;
+  email: string;
+};

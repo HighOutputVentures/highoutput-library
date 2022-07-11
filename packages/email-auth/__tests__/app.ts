@@ -1,41 +1,65 @@
 import http from 'http';
-import mongoose from 'mongoose';
-
-import { EmailAuthentication } from '../src';
-import { SendGridAdapter } from '../src/adapters/send-grid-adapter';
-import { MongooseAdapter } from '../src/adapters/mongoose-adapter';
-import { Chance } from 'chance';
-
-const dbURI = 'mongodb://localhost:27017/test-middleware';
+import mongoose, { Schema } from 'mongoose';
+import { MongooseStorageAdapter } from '../src/adapters/mongoose-storage-adapter';
+import { SendGridEmailAdapter } from '../src/adapters/send-grid-email-adapter';
+import { EmailAuthServer } from '../src/email-auth-server';
+import Chance from 'chance';
 
 const chance = new Chance();
-(async () => await mongoose.connect(dbURI).catch((e) => console.error(e)))();
 
-const persistenceAdapter = new MongooseAdapter({
-  db: mongoose.connection,
-  userCollectionString: 'userstests',
-});
+export async function initServer(mongoDbUri: string) {
+  const mongooseConnection = mongoose.createConnection(mongoDbUri);
 
-const emailProviderAdapter = new SendGridAdapter({
-  apiKey: `SG.${chance.apple_token()}`,
-  from: {
-    email: 'chris@identifi.com.com',
-    name: 'no-reply',
-  },
-});
+  const schema = new Schema({
+    _id: {
+      type: Buffer,
+      required: true,
+    },
+    emailAddress: {
+      type: String,
+      required: true,
+    },
+    dateTimeCreated: {
+      type: Date,
+      default: () => new Date(),
+    },
+  });
 
-const server = http.createServer();
+  schema.index({ emailAddress: 1 });
 
-const emailAuthentication = new EmailAuthentication({
-  server,
+  mongooseConnection.model('User', schema);
 
-  persistenceAdapter,
+  const mongooseStorageAdapter = new MongooseStorageAdapter(
+    mongooseConnection,
+    {
+      userModel: 'User',
+    },
+  );
 
-  emailProviderAdapter,
+  const sendGridEmailAdapter = new SendGridEmailAdapter({
+    apiKey: `SG.${chance.apple_token()}`,
+    senderInfo: {
+      email: chance.email(),
+      name: 'no-reply',
+    },
+  });
 
-  jwtSecretKey: 'SECRET',
-});
+  const server = http.createServer();
 
-emailAuthentication.use();
+  const emailAuthServer = new EmailAuthServer(
+    server,
+    mongooseStorageAdapter,
+    sendGridEmailAdapter,
+    {
+      jwtSecret: chance.apple_token(),
+      jwtTTL: '30d',
+    },
+  );
 
-export default server;
+  await emailAuthServer.init();
+
+  return {
+    server,
+    mongooseConnection,
+  };
+}
