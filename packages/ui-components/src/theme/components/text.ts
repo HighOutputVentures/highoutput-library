@@ -216,11 +216,17 @@ export const sizeText = {
     letterSpacing: '0%',
     lineHeight: 'auto',
   },
-  'leading-9-bold': {
-    fontWeight: '700',
+  'text-5xl': {
+    fontWeight: 800,
+    fontSize: '48px',
+    lineHeight: '48px',
+  },
+  'text-3xl': {
+    fontWeight: 700,
     fontSize: '30px',
     lineHeight: '36px',
   },
+  'text-base': { fontWeight: 400, fontSize: '16ox', lineHeight: '28px' },
   xs: {
     fontWeight: 'normal',
     fontSize: '12px',

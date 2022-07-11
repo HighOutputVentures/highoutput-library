@@ -1,17 +1,18 @@
 import { Box, BoxProps, Center, Text } from '@chakra-ui/react';
 import React, { FC, ReactNode } from 'react';
-import ContactForm from './ContactForm';
+import ContactForm, { ContactFormProps } from './ContactForm';
 
 export interface ContactCardProps extends BoxProps {
   children?: ReactNode;
   title?: string;
+  contactFormProps?: ContactFormProps;
 }
 
 const ContactCard: FC<ContactCardProps> = props => {
-  const { children, title = 'Drop your message' } = props;
+  const { children, title = 'Drop your message', contactFormProps } = props;
   return (
     <Box
-      maxW={512}
+      w={512}
       bg="white"
       borderRadius="8px"
       padding="56px"
@@ -19,9 +20,9 @@ const ContactCard: FC<ContactCardProps> = props => {
       {...props}
     >
       <Center mb={8}>
-        <Text size="leading-9-bold">{title}</Text>
+        <Text size="text-3xl">{title}</Text>
       </Center>
-      {children ? children : <ContactForm />}
+      {children ? children : <ContactForm {...contactFormProps} />}
     </Box>
   );
 };

@@ -9,13 +9,13 @@ export default {
   component: ContactForm,
 } as ComponentMeta<typeof ContactForm>;
 
-const TemplateDefault: ComponentStory<typeof ContactForm> = args => (
+const Template: ComponentStory<typeof ContactForm> = args => (
   <ThemeProvider>
     <ContactForm {...args} />
   </ThemeProvider>
 );
 
-export const Default = TemplateDefault.bind({});
+export const Default = Template.bind({});
 
 Default.args = {
   ...Default.args,
