@@ -183,6 +183,10 @@ export class Repository<
     ) as TEntity;
   }
 
+  async deleteOne(filter: FilterQuery<TEntity>) {
+    await this._model.deleteOne(serializeFilter(filter))
+  }
+
   async deleteById(id: ObjectId) {
     await this._model.deleteOne({ _id: id.toBuffer() });
   }
