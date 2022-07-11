@@ -1,4 +1,4 @@
-import { Box, Button, Stack } from '@chakra-ui/react';
+import { Box, Button, ButtonProps, Stack } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import React, { FC } from 'react';
 import { useForm } from 'react-hook-form';
@@ -11,9 +11,12 @@ import {
   withContactFormSchemaValues,
 } from './validation';
 
-export interface ContactFormProps {}
+export interface ContactFormProps {
+  buttonProps?: ButtonProps;
+}
 
-const ContactForm: FC<ContactFormProps> = () => {
+const ContactForm: FC<ContactFormProps> = props => {
+  const { buttonProps } = props;
   const { register, handleSubmit, formState } = useForm<
     withContactFormSchemaValues
   >({
@@ -79,6 +82,7 @@ const ContactForm: FC<ContactFormProps> = () => {
             variant="primary"
             isLoading={isSubmitting}
             type="submit"
+            {...buttonProps}
           >
             Send
           </Button>

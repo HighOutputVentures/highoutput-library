@@ -8,6 +8,10 @@ import TextareaAutosize, {
   TextareaAutosizeProps,
 } from './components/TextareaAutosize/TextareaAutosize';
 import ThemeProvider, { ThemeProviderProps } from './components/ThemeProvider';
+import ContactCard, { ContactCardProps } from './layouts/Contact/ContactCard';
+import ContactForm, { ContactFormProps } from './layouts/Contact/ContactForm';
+import ContactPage, { ContagePageProps } from './layouts/Contact/ContactPage';
+
 import theme from './theme';
 import { extendTheme } from './utils/theme.utils';
 
@@ -539,6 +543,12 @@ export {
   RadioImageProps,
   TextareaAutosize,
   TextareaAutosizeProps,
+  ContactForm,
+  ContactFormProps,
+  ContactCard,
+  ContactCardProps,
+  ContactPage,
+  ContagePageProps,
   // default theme
   theme,
   extendTheme,
