@@ -46,9 +46,9 @@ export async function retrievePage<
 
   let totalCount = 0;
 
-  // if (R.isNil(options.totalCount) || options.totalCount) {
-  //   totalCount = await repository.count(filter);
-  // }
+  if (R.isNil(options.totalCount) || options.totalCount) {
+    totalCount = await repository.count(filter);
+  }
 
   const cursorCriteria = (
     field: Buffer,
