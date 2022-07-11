@@ -1,21 +1,27 @@
-import sgMail from '@sendgrid/mail';
+import sendGrid from '@sendgrid/mail';
+import ejs, { TemplateFunction } from 'ejs';
 import { EmailAdapter } from '../interfaces';
 import { User, SenderInfo } from '../lib/types';
 
 export class SendGridEmailAdapter implements EmailAdapter {
-  private sendGridMail = sgMail;
-  private readonly senderInfo: SenderInfo;
-  constructor(params: { apiKey: string; senderInfo: SenderInfo }) {
-    this.sendGridMail.setApiKey(params.apiKey);
-    this.senderInfo = params.senderInfo;
+  private template: TemplateFunction;
+  constructor(private opts: {
+    apiKey: string;
+    sender: string;
+    subject: string;
+    template: string;
+  }) {
+    this.template = ejs.compile(this.opts.template)
   }
 
   async sendEmailOtp(params: { otp: string; user: User }) {
-    await this.sendGridMail.send({
+    sendGrid.setApiKey(this.opts.apiKey);
+
+    await sendGrid.send({
       to: params.user.emailAddress,
-      text: params.otp,
-      subject: 'Email Otp',
-      from: this.senderInfo.email || 'test@hov.co',
+      text: this.template(params),
+      subject: this.opts.subject,
+      from: this.opts.sender,
     });
   }
 }

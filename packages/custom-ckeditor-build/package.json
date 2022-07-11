@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/custom-ckeditor-build",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A custom CKEditor 5 build made by the CKEditor 5 online builder.",
   "author": "Niel Berongoy",
   "license": "ISC",
@@ -38,7 +38,7 @@
   "dependencies": {
     "@ckeditor/ckeditor5-typing": "^27.1.0",
     "install": "^0.13.0",
-    "npm": "^7.12.1"
+    "npm": "^8.11.0"
   },
   "directories": {
     "lib": "lib",
@@ -60,5 +60,6 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "gitHead": "56617c027bc47412b3e740de0e7916dd02af5e75"
 }

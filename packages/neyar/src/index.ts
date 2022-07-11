@@ -1,4 +1,4 @@
-import EditorJS from '@editorjs/editorjs';
+import EditorJS, { EditorConfig, OutputData } from '@editorjs/editorjs';
 
 /** Editor.js Plugin */
 import Header from '@editorjs/header';
@@ -20,6 +20,8 @@ import Raw from '@editorjs/raw';
 
 export {
   EditorJS,
+  EditorConfig,
+  OutputData,
   Header,
   Code,
   Paragraph, // default text block
@@ -39,9 +41,13 @@ export {
 };
 
 /** HOV Custom Plugin */
+import NeyarTextComponent, {
+  MentionProps,
+  NeyarTextProps,
+} from './components/NeyarText/NeyarText';
 import NeyarText from './class/NeyarText';
 
-export { NeyarText };
+export { NeyarText, NeyarTextComponent, MentionProps, NeyarTextProps };
 
 /** Other Library */
 import DragDrop from 'editorjs-drag-drop';

@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
 
-export interface Mention {
+export interface MentionProps {
   value: string;
   label: string;
   avatar?: string;
@@ -9,7 +9,7 @@ export interface NeyarTextProps {
   data: string;
   readOnly?: boolean;
   blockIndex: number;
-  mentions?: Mention[];
+  mentions?: MentionProps[];
 }
 
 const NeyarText: FC<NeyarTextProps> = ({
@@ -101,7 +101,7 @@ const NeyarText: FC<NeyarTextProps> = ({
     setSearchMention(searchText);
   };
 
-  const onInsertMention = (mention: Mention) => {
+  const onInsertMention = (mention: MentionProps) => {
     const editor = document.getElementById(`hov-editor-${blockIndex}`);
     editor?.focus(); // set the focus in the current block
 
@@ -160,7 +160,7 @@ const NeyarText: FC<NeyarTextProps> = ({
     <div style={{ position: 'relative' }} data-test="neyar-text-container">
       <div
         id={`hov-editor-${blockIndex}`}
-        contentEditable={!readOnly}
+        contentEditable={readOnly ? false : true}
         onKeyDown={checkPressed}
         onKeyUp={getTextContent}
         dangerouslySetInnerHTML={{ __html: data }}
@@ -209,18 +209,19 @@ const NeyarText: FC<NeyarTextProps> = ({
                 }}
                 onClick={() => onInsertMention(mention)}
               >
-                {mention.avatar && (
-                  <img
-                    data-test="neyar-text-mention-avatar"
-                    src={mention.avatar}
-                    style={{
-                      width: 45,
-                      height: 45,
-                      borderRadius: 180,
-                      marginRight: 20,
-                    }}
-                  />
-                )}{' '}
+                <img
+                  src={
+                    mention.avatar ??
+                    'https://as2.ftcdn.net/v2/jpg/00/64/67/63/1000_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg'
+                  }
+                  style={{
+                    width: 45,
+                    height: 45,
+                    marginLeft: 5,
+                    marginRight: 15,
+                    borderRadius: 180,
+                  }}
+                />
                 {mention.label}
               </button>
             ))}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { API } from '@editorjs/editorjs';
+import { API, ToolConfig } from '@editorjs/editorjs';
 
 import NeyarTextComponent from '../components/NeyarText/NeyarText';
 import NeyarTextSVG from '../icons/NeyarTextSvg';
@@ -15,7 +15,7 @@ export default class NeyarText {
   readOnly: boolean;
   data: NeyarTextData;
   nodes: any;
-  config: any;
+  config: ToolConfig;
 
   constructor({ data, config, api, readOnly }: any) {
     this.api = api;
@@ -47,21 +47,11 @@ export default class NeyarText {
         data={this.data.neyarText}
         blockIndex={this.api.blocks.getCurrentBlockIndex() + 1}
         mentions={this.config.mentions || []}
+        readOnly={this.readOnly}
       />
     ); // render react component in from the create react dom
 
     return this.nodes.holder || ''; // return component rendered
-  }
-
-  /**
-   * validate if text is not empty
-   */
-  validate(savedData: any) {
-    if (savedData.neyarText.trim() === '') {
-      return false;
-    }
-
-    return true;
   }
 
   /**
@@ -76,13 +66,12 @@ export default class NeyarText {
   }
 
   /**
-   * Enable Conversion in Inline Toolbar. NeyarText can be converted to/from other tools
+   * Returns true to notify the core that read-only mode is supported
+   *
+   * @return {boolean}
    */
-  static get conversionConfig() {
-    return {
-      export: 'neyarText', // to convert Paragraph to other block, use 'neyarText' property of saved data
-      import: 'neyarText', // to covert other block's exported string to Paragraph, fill 'neyarText' property of tool data
-    };
+  static get isReadOnlySupported() {
+    return true;
   }
 
   static get sanitize() {

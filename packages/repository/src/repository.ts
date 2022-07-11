@@ -124,23 +124,27 @@ export class Repository<
   TEntity extends BaseEntity = BaseEntity,
   TCreate extends BaseEntity = BaseEntity & Partial<Omit<TEntity, 'id'>>,
 > {
-  private model: Model<Document & TEntity>;
+  private _model: Model<Document & TEntity>;
   constructor(mongoose: Connection, collectionName: string, schema: Schema) {
-    this.model = mongoose.model(collectionName, schema);
+    this._model = mongoose.model(collectionName, schema);
+  }
+
+  get model(): Model<Document & TEntity> {
+    return this._model;
   }
 
   async exists(filter: FilterQuery<TEntity>): Promise<boolean> {
-    const entity = await this.model.exists(serializeFilter(filter));
+    const entity = await this._model.exists(serializeFilter(filter));
 
     return !!entity;
   }
 
   async create(args: TCreate): Promise<TEntity> {
-    return deserialize(await this.model.create(serialize(args))) as TEntity;
+    return deserialize(await this._model.create(serialize(args))) as TEntity;
   }
 
   async findById(id: ObjectId): Promise<TEntity> {
-    const doc = await this.model.findById(id.toBuffer());
+    const doc = await this._model.findById(id.toBuffer());
     return deserialize(doc) as TEntity;
   }
 
@@ -148,10 +152,10 @@ export class Repository<
     filter: FilterQuery<TEntity>,
     data: Partial<Omit<TEntity, 'id'>>,
     options?: Partial<{ upsert: boolean; new: boolean }>,
-  ) {
-    const document = await this.model.findOneAndUpdate(
+  ): Promise<TEntity> {
+    const document = await this._model.findOneAndUpdate(
       serializeFilter(filter),
-      R.filter((value) => value !== undefined)(data) as never,
+      R.filter((value) => value !== undefined)(serialize(data)) as never,
       {
         upsert: false,
         new: true,
@@ -159,27 +163,31 @@ export class Repository<
       },
     );
 
-    return deserialize(document);
+    return deserialize(document) as TEntity;
   }
 
-  async find(filter: FilterQuery<TEntity>): Promise<TEntity[]> {
+
+  async find(filter: FilterQuery<TEntity>, options?: Partial<{
+    sort: Record<string, 1 | -1> | undefined;
+    limit: number | undefined; 
+  }>): Promise<TEntity[]> {
     return R.map(
       (entity) => deserialize(entity),
-      await this.model.find(serializeFilter(filter)),
+      await this._model.find(serializeFilter(filter), null, options),
     ) as TEntity[];
   }
 
   async findOne(filter: FilterQuery<TEntity>): Promise<TEntity> {
     return deserialize(
-      await this.model.findOne(serializeFilter(filter)),
+      await this._model.findOne(serializeFilter(filter)),
     ) as TEntity;
   }
 
   async deleteById(id: ObjectId) {
-    await this.model.deleteOne(id.toBuffer());
+    await this._model.deleteOne({ _id: id.toBuffer() });
   }
 
   async deleteMany(filter: FilterQuery<TEntity>) {
-    await this.model.deleteMany(filter);
+    await this._model.deleteMany(filter);
   }
 }
