@@ -16,8 +16,9 @@
   "scripts": {
     "start:example-simple": "tsnd --respawn --transpile-only ./examples/simple/index.ts",
     "test": "jest --config=./jest.config.js --coverage",
-    "build": "tsc",
-    "prepublishOnly": "npm run build"
+    "build": "npm run clean && tsc --project tsconfig.json",
+    "prepublishOnly": "npm run build",
+    "clean": "rimraf dist/"
   },
   "bugs": {
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
@@ -56,6 +57,7 @@
     "ejs": "^3.1.8",
     "mongodb-memory-server": "^8.7.0",
     "mongoose": "^6.3.3",
+    "rimraf": "^3.0.2",
     "node-fetch": "^3.2.6",
     "typescript": "^4.6.4"
   },
