@@ -1,8 +1,9 @@
 import getPort from 'get-port';
 import mongoose, { Connection } from 'mongoose';
 import supertest, { SuperTest, Test } from 'supertest';
-import http, { Server } from 'http';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import express from 'express';
+import { Server } from 'http';
 
 export type Context = {
   mongoose: Connection;
@@ -18,17 +19,19 @@ export async function setup() {
 
   const request = supertest(`http://localhost:${port}`);
 
-  const server = http.createServer();
-  server.listen(port);
+  const app = express();
 
-  const connection = await mongoose.createConnection(mongod.getUri());
+  const server = app.listen(port);
+
+  const connection = mongoose.createConnection(mongod.getUri());
 
   return {
     mongoose: connection,
     request,
-    server,
     mongod,
-  }
+    server,
+    app,
+  };
 }
 
 export async function teardown(ctx: Context) {

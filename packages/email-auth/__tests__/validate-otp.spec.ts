@@ -4,7 +4,6 @@ import { MongooseStorageAdapter } from '../src/adapters';
 import { Schema } from 'mongoose';
 import { faker } from '@faker-js/faker';
 import cryptoRandomString from 'crypto-random-string';
-import { NextFunction, Request, Response } from 'express';
 
 describe('POST /otp/validate', () => {
   test.concurrent('validate otp', async function () {
@@ -55,7 +54,7 @@ describe('POST /otp/validate', () => {
       jwtTTL: '30d',
     });
 
-    ctx.server.on('request', server.expressMiddleware());
+    ctx.app.use(server.expressMiddleware());
 
     const response = await ctx.request
       .post('/otp/validate')

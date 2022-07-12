@@ -18,69 +18,66 @@ export class EmailAuthServer {
 
   public expressMiddleware() {
     const { storageAdapter, emailAdapter, opts } = this;
-    return async function(req: Request, res: Response, next: NextFunction) {
+    return async function (req: Request, res: Response, next: NextFunction) {
       const url = new URL(
         req.url!,
         `${!req.headers.host!.startsWith('https://') ? 'https://' : ''}${
           req.headers.host
         }`,
       );
-  
-      if (
-        opts?.urlPrefix &&
-        !url.pathname.startsWith(opts?.urlPrefix)
-      ) {
+
+      if (opts?.urlPrefix && !url.pathname.startsWith(opts?.urlPrefix)) {
         return;
       }
-  
+
       if (
         req.method === 'POST' &&
         `${opts?.urlPrefix ? opts?.urlPrefix : ''}/otp/generate` ===
           url.pathname
       ) {
         const body = await parse.json(req);
-  
+
         const user = await storageAdapter.findOneUserByEmail({
           emailAddress: body.emailAddress,
         });
-  
+
         if (!user) {
-          res.writeHead(400, {
-            'Content-Type': 'application/json',
+          res.set('Content-Type', 'application/json');
+          res.status(400);
+          res.send({
+            error: {
+              code: 'USER_NOT_FOUND',
+              message: 'user with the specified email address does not exist.',
+            },
           });
-          res.end(
-            JSON.stringify({
-              error: {
-                code: 'USER_NOT_FOUND',
-                message: 'user with the specified email address does not exist.',
-              },
-            }),
-          );
-  
+
           return;
         }
-  
+
         const otp = cryptoRandomString({
           length: 6,
           type: 'numeric',
         });
-  
+
         await storageAdapter.saveOtp({
           user: user.id,
           otp,
         });
-  
+
         await emailAdapter.sendEmailOtp({
           otp,
           user,
         });
-  
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ ok: true }));
-  
+
+        res.set('Content-Type', 'application/json');
+        res.status(200);
+        res.send({
+          ok: true,
+        });
+
         return;
       }
-  
+
       if (
         req.method === 'POST' &&
         `${opts?.urlPrefix ? opts?.urlPrefix : ''}/otp/validate` ===
@@ -90,48 +87,40 @@ export class EmailAuthServer {
         const user = await storageAdapter.validateOtp({
           otp: body.otp,
         });
-  
+
         if (!user) {
-          res.writeHead(400, {
-            'Content-Type': 'application/json',
+          res.set('Content-Type', 'application/json');
+          res.status(400);
+          res.send({
+            error: {
+              code: 'INVALID_OTP',
+              message: 'OTP is invalid.',
+            },
           });
-          res.end(
-            JSON.stringify({
-              error: {
-                code: 'INVALID_OTP',
-                message: 'OTP is invalid.',
-              },
-            }),
-          );
-  
+
           return;
         } else {
           await storageAdapter.deleteOtp({
             otp: body.otp,
           });
         }
-  
+
         const token = jsonwebtoken.sign({}, opts?.jwtSecret as string, {
           expiresIn: opts?.jwtTTL as string,
           subject: user.emailAddress,
         });
-  
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.write(
-          JSON.stringify({
-            ok: true,
-            token,
-          }),
-        );
-        res.end();
-  
+
+        res.set('Content-Type', 'application/json');
+        res.status(200);
+        res.send({
+          ok: true,
+          token,
+        });
+
         return;
       }
-  
-      res.writeHead(404, { 'Content-Type': 'application/json' });
-      res.end();
-  
+
       next();
-    }
+    };
   }
 }

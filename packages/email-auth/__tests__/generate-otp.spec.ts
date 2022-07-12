@@ -37,7 +37,7 @@ describe('POST /otp/generate', () => {
       emailAdapter,
     );
 
-    ctx.server.on('request', server.expressMiddleware());
+    ctx.app.use(server.expressMiddleware());
 
     await ctx.request
       .post('/otp/generate')
@@ -75,7 +75,7 @@ describe('POST /otp/generate', () => {
       }),
       emailAdapter,
     );
-    ctx.server.on('request', server.expressMiddleware());
+    ctx.app.use(server.expressMiddleware());
 
     await ctx.request
       .post('/otp/generate')
