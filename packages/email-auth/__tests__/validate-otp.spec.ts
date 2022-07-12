@@ -55,9 +55,7 @@ describe('POST /otp/validate', () => {
       jwtTTL: '30d',
     });
 
-    ctx.server.on('request', async (req:Request, res: Response, next: NextFunction)=> {
-      await server.expressMiddleware(req, res, next, server);
-    });
+    ctx.server.on('request', server.expressMiddleware());
 
     const response = await ctx.request
       .post('/otp/validate')
