@@ -37,8 +37,12 @@ const ContactForm: FC<ContactFormProps> = props => {
   const { isSubmitting, errors } = formState;
 
   return (
-    <Box maxW={512}>
-      <Box as="form" onSubmitCapture={handleSubmit(onSubmit)}>
+    <Box maxW={512} data-testid="box.contactform.container">
+      <Box
+        as="form"
+        onSubmitCapture={handleSubmit(onSubmit)}
+        data-testid="box.contactform.form"
+      >
         <Stack spacing={4}>
           <InputField
             {...register('name')}
