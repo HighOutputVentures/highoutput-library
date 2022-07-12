@@ -3,9 +3,10 @@ import { EmailAuthServer } from '../src/email-auth-server';
 import { MongooseStorageAdapter } from '../src/adapters';
 import { Schema } from 'mongoose';
 import { faker } from '@faker-js/faker';
+import { Request, Response, NextFunction } from 'express';
 
 describe('POST /otp/generate', () => {
-  test.concurrent('generate otp', async function() {
+  test.concurrent('generate otp', async function () {
     const ctx = await setup();
 
     const emailAddress = faker.internet.email();
@@ -17,32 +18,31 @@ describe('POST /otp/generate', () => {
           type: String,
           index: 1,
           required: true,
-        }
+        },
       }),
     );
 
     await userModel.create({
-      emailAddress
+      emailAddress,
     });
 
     const emailAdapter = {
-      sendEmailOtp: jest.fn(async () => {})
+      sendEmailOtp: jest.fn(async () => {}),
     };
-    
+
     const server = new EmailAuthServer(
-      ctx.server,
       new MongooseStorageAdapter(ctx.mongoose, {
-        userModel: 'User'
+        userModel: 'User',
       }),
-      emailAdapter
+      emailAdapter,
     );
 
-    await server.init();
+    ctx.app.use(server.expressMiddleware());
 
     await ctx.request
       .post('/otp/generate')
       .send({
-        emailAddress
+        emailAddress,
       })
       .expect(200);
 
@@ -61,28 +61,26 @@ describe('POST /otp/generate', () => {
           type: String,
           index: 1,
           required: true,
-        }
+        },
       }),
     );
 
     const emailAdapter = {
-      sendEmailOtp: jest.fn(async () => {})
+      sendEmailOtp: jest.fn(async () => {}),
     };
-    
-    const server = new EmailAuthServer(
-      ctx.server,
-      new MongooseStorageAdapter(ctx.mongoose, {
-        userModel: 'User'
-      }),
-      emailAdapter
-    );
 
-    await server.init();
+    const server = new EmailAuthServer(
+      new MongooseStorageAdapter(ctx.mongoose, {
+        userModel: 'User',
+      }),
+      emailAdapter,
+    );
+    ctx.app.use(server.expressMiddleware());
 
     await ctx.request
       .post('/otp/generate')
       .send({
-        emailAddress
+        emailAddress,
       })
       .expect(400)
       .expect((res) => {
