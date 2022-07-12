@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/email-auth",
-  "version": "0.3.2",
+  "version": "0.5.0",
   "description": "server middleware for email authentication",
   "keywords": [
     "authentication"
@@ -16,8 +16,9 @@
   "scripts": {
     "start:example-simple": "tsnd --respawn --transpile-only ./examples/simple/index.ts",
     "test": "jest --config=./jest.config.js --coverage",
-    "build": "tsc",
-    "prepublishOnly": "npm run build"
+    "build": "npm run clean && tsc --project tsconfig.json",
+    "prepublishOnly": "npm run build",
+    "clean": "rimraf dist/"
   },
   "bugs": {
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
@@ -57,10 +58,11 @@
     "mongodb-memory-server": "^8.7.0",
     "mongoose": "^6.3.3",
     "node-fetch": "^3.2.6",
+    "rimraf": "^3.0.2",
     "typescript": "^4.6.4"
   },
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "6d9db97c9aedcc91891eec72335e81015aa43f05"
+  "gitHead": "69f10eb28ce27d3efe269fb2dd60cfbced8cbfb4"
 }

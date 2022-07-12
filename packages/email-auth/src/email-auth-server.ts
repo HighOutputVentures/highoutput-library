@@ -2,6 +2,7 @@ import { Server } from 'http';
 import parse from 'co-body';
 import { EmailAdapter, StorageAdapter } from './interfaces';
 import cryptoRandomString from 'crypto-random-string';
+import jsonwebtoken from 'jsonwebtoken';
 
 export class EmailAuthServer {
   constructor(
@@ -18,7 +19,12 @@ export class EmailAuthServer {
 
   async init() {
     this.server.on('request', async (req, res) => {
-      const url = new URL(req.url!, `http://${req.headers.host}`);
+      const url = new URL(
+        req.url!,
+        `${!req.headers.host!.startsWith('https://') ? 'https://' : ''}${
+          req.headers.host
+        }`,
+      );
 
       if (
         this.opts?.urlPrefix &&
@@ -40,14 +46,17 @@ export class EmailAuthServer {
 
         if (!user) {
           res.writeHead(400, {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           });
-          res.end(JSON.stringify({
-            error: {
-              code: 'USER_NOT_FOUND',
-              message: 'user with the specified email address does not exist'
-            }
-          }));
+          res.end(
+            JSON.stringify({
+              error: {
+                code: 'USER_NOT_FOUND',
+                message:
+                  'user with the specified email address does not exist.',
+              },
+            }),
+          );
 
           return;
         }
@@ -75,14 +84,51 @@ export class EmailAuthServer {
 
       if (
         req.method === 'POST' &&
-        `${this.opts?.urlPrefix}/otp/validate` === url.pathname
+        `${this.opts?.urlPrefix ? this.opts?.urlPrefix : ''}/otp/validate` ===
+          url.pathname
       ) {
+        const body = await parse.json(req);
+
+        const user = await this.storageAdapter.validateOtp({
+          otp: body.otp,
+        });
+    
+        if (!user) {
+          res.writeHead(400, {
+            'Content-Type': 'application/json',
+          });
+          res.end(
+            JSON.stringify({
+              error: {
+                code: 'INVALID_OTP',
+                message: 'OTP is invalid.',
+              },
+            }),
+          );
+
+          return;
+        } else {
+          await this.storageAdapter.deleteOtp({
+            otp: body.otp,
+          });
+        }
+
+        const token = jsonwebtoken.sign({}, this.opts?.jwtSecret as string, {
+          expiresIn: this.opts?.jwtTTL as string,
+          subject: user.emailAddress,
+        });
+   
+        res.writeHead(200, { 'Content-Type': 'application/json' })
+        res.write(
+          JSON.stringify({
+            ok: true,
+            token,
+          }),
+        );
+        res.end();
+
         return;
       }
-
-      console.log('REACHED END');
-      res.writeHead(404, { 'Content-Type': 'application/json' });
-      res.end();
     });
   }
 }

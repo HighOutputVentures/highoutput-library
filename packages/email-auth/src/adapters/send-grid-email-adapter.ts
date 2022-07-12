@@ -1,7 +1,7 @@
 import sendGrid from '@sendgrid/mail';
 import ejs, { TemplateFunction } from 'ejs';
 import { EmailAdapter } from '../interfaces';
-import { User } from '../lib/types';
+import { User, SenderInfo } from '../lib/types';
 
 export class SendGridEmailAdapter implements EmailAdapter {
   private template: TemplateFunction;
