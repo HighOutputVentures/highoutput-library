@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/email-auth",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "server middleware for email authentication",
   "keywords": [
     "authentication"
@@ -66,5 +66,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "69f10eb28ce27d3efe269fb2dd60cfbced8cbfb4"
+  "gitHead": "c9623084ed3b16dcf3e87f1eace1a4715abb0324"
 }
