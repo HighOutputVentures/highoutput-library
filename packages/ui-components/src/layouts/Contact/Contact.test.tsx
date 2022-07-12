@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 
 import ContactForm from './ContactForm';
@@ -59,5 +59,42 @@ describe('Contact Form Component', () => {
       'button.contactform.submit'
     );
     expect(submitButton).toHaveLength(1);
+  });
+
+  test('user clicks submit in contact form with no value and renders error messages', async () => {
+    const submit = await screen.findByTestId('box.contactform.form');
+    await fireEvent.submit(submit);
+    const errorFormContorl = await screen.findAllByTestId(
+      'formcontainer.error'
+    );
+    expect(errorFormContorl).toHaveLength(4);
+  });
+
+  test('user clicks submit in contact form must contain name is required', async () => {
+    const submit = await screen.findByTestId('box.contactform.form');
+    await fireEvent.submit(submit);
+    const nameRequired = await screen.findByText(/name is required./i);
+    expect(nameRequired).toBeInTheDocument();
+  });
+
+  test('user clicks submit in contact form must contain email is required', async () => {
+    const submit = await screen.findByTestId('box.contactform.form');
+    await fireEvent.submit(submit);
+    const nameRequired = await screen.findByText(/email is required./i);
+    expect(nameRequired).toBeInTheDocument();
+  });
+
+  test('user clicks submit in contact form must contain category is required', async () => {
+    const submit = await screen.findByTestId('box.contactform.form');
+    await fireEvent.submit(submit);
+    const nameRequired = await screen.findByText(/category is required./i);
+    expect(nameRequired).toBeInTheDocument();
+  });
+
+  test('user clicks submit in contact form must contain description is required', async () => {
+    const submit = await screen.findByTestId('box.contactform.form');
+    await fireEvent.submit(submit);
+    const nameRequired = await screen.findByText(/description is required./i);
+    expect(nameRequired).toBeInTheDocument();
   });
 });

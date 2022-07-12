@@ -46,7 +46,10 @@ const FormContainer: FC<FormContainerProps> = ({
         </FormLabel>
       )}
       {children}
-      <FormErrorMessage sx={styles.formErrorMessage}>
+      <FormErrorMessage
+        sx={styles.formErrorMessage}
+        data-testid="formcontainer.error"
+      >
         {errorMsg}
       </FormErrorMessage>
       {helperMsg && (
