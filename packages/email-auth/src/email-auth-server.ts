@@ -16,7 +16,12 @@ export class EmailAuthServer {
     },
   ) {}
 
-  async expressMiddleware(req: Request, res: Response, next: NextFunction, server: EmailAuthServer) {
+  async expressMiddleware(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+    server: EmailAuthServer,
+  ) {
     const url = new URL(
       req.url!,
       `${!req.headers.host!.startsWith('https://') ? 'https://' : ''}${

@@ -148,6 +148,26 @@ export class Repository<
     return deserialize(doc) as TEntity;
   }
 
+  async find(filter: FilterQuery<TEntity>, options?: Partial<{
+    sort: Record<string, 1 | -1> | undefined;
+    limit: number | undefined; 
+  }>): Promise<TEntity[]> {
+    return R.map(
+      (entity) => deserialize(entity),
+      await this._model.find(serializeFilter(filter), null, options),
+    ) as TEntity[];
+  }
+
+  async findOne(filter: FilterQuery<TEntity>): Promise<TEntity> {
+    return deserialize(
+      await this._model.findOne(serializeFilter(filter)),
+    ) as TEntity;
+  }
+
+  async count(filter: FilterQuery<TEntity>): Promise<number> {
+    return this._model.countDocuments(filter);
+  }
+
   async updateOne(
     filter: FilterQuery<TEntity>,
     data: Partial<Omit<TEntity, 'id'>>,
@@ -164,23 +184,6 @@ export class Repository<
     );
 
     return deserialize(document) as TEntity;
-  }
-
-
-  async find(filter: FilterQuery<TEntity>, options?: Partial<{
-    sort: Record<string, 1 | -1> | undefined;
-    limit: number | undefined; 
-  }>): Promise<TEntity[]> {
-    return R.map(
-      (entity) => deserialize(entity),
-      await this._model.find(serializeFilter(filter), null, options),
-    ) as TEntity[];
-  }
-
-  async findOne(filter: FilterQuery<TEntity>): Promise<TEntity> {
-    return deserialize(
-      await this._model.findOne(serializeFilter(filter)),
-    ) as TEntity;
   }
 
   async deleteOne(filter: FilterQuery<TEntity>) {
