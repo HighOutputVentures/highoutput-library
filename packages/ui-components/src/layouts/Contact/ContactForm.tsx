@@ -37,8 +37,12 @@ const ContactForm: FC<ContactFormProps> = props => {
   const { isSubmitting, errors } = formState;
 
   return (
-    <Box maxW={512}>
-      <Box as="form" onSubmitCapture={handleSubmit(onSubmit)}>
+    <Box maxW={512} data-testid="box.contactform.container">
+      <Box
+        as="form"
+        onSubmitCapture={handleSubmit(onSubmit)}
+        data-testid="box.contactform.form"
+      >
         <Stack spacing={4}>
           <InputField
             {...register('name')}
@@ -55,6 +59,7 @@ const ContactForm: FC<ContactFormProps> = props => {
             placeholder="Input your email address"
             errorMsg={errors.email?.message}
             disabled={isSubmitting}
+            data-testid="input.contactform.email"
           />
           <SelectField
             {...register('category')}
@@ -68,6 +73,7 @@ const ContactForm: FC<ContactFormProps> = props => {
             ]}
             errorMsg={errors.category?.message}
             disabled={isSubmitting}
+            data-testid="select.contactform.category"
           />
           <TextAreaField
             {...register('description')}
@@ -76,12 +82,14 @@ const ContactForm: FC<ContactFormProps> = props => {
             placeholder="Enter description"
             errorMsg={errors.description?.message}
             disabled={isSubmitting}
+            data-testid="textarea.contactform.description"
           />
           <Button
             w="full"
             variant="primary"
             isLoading={isSubmitting}
             type="submit"
+            data-testid="button.contactform.submit"
             {...buttonProps}
           >
             Send

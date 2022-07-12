@@ -34,6 +34,7 @@ const FormContainer: FC<FormContainerProps> = ({
       id={id}
       isInvalid={Boolean(errorMsg)}
       isReadOnly={disabled}
+      data-testid="formcontainer.formcontrol"
     >
       {label && (
         <FormLabel
@@ -45,7 +46,10 @@ const FormContainer: FC<FormContainerProps> = ({
         </FormLabel>
       )}
       {children}
-      <FormErrorMessage sx={styles.formErrorMessage}>
+      <FormErrorMessage
+        sx={styles.formErrorMessage}
+        data-testid="formcontainer.error"
+      >
         {errorMsg}
       </FormErrorMessage>
       {helperMsg && (

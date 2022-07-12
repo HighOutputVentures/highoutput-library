@@ -14,7 +14,7 @@ export const withContactFormSchema: SchemaOf<ContactFormInputProps> = object().s
       .email('Please enter a valid email address.')
       .required('Email is required.'),
     category: string().required('Category is required.'),
-    description: string().required('Description is required'),
+    description: string().required('Description is required.'),
   }
 );
 

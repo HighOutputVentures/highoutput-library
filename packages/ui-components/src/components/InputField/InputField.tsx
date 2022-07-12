@@ -93,6 +93,8 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
               }
             }}
             value={inputValue ? inputValue.trim() : undefined}
+            data-testid="inputfield.input"
+            role="input"
           />
           {rightIcon && <InputRightElement>{rightIcon}</InputRightElement>}
         </InputGroup>
