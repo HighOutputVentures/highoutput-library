@@ -49,6 +49,7 @@
     "@faker-js/faker": "^7.3.0",
     "@fakerjs/faker": "^3.0.0",
     "@sendgrid/mail": "^7.6.2",
+    "@types/express": "^4.17.13",
     "@types/node": "^17.0.32",
     "chance": "^1.1.8",
     "co-body": "^6.1.0",

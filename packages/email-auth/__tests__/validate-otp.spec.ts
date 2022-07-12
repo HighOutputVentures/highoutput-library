@@ -1,10 +1,10 @@
 import { setup, teardown } from './fixture';
 import { EmailAuthServer } from '../src/email-auth-server';
 import { MongooseStorageAdapter } from '../src/adapters';
-import { mongo, Schema } from 'mongoose';
+import { Schema } from 'mongoose';
 import { faker } from '@faker-js/faker';
-import { Otp } from '../src/lib/types';
 import cryptoRandomString from 'crypto-random-string';
+import { NextFunction, Request, Response } from 'express';
 
 describe('POST /otp/validate', () => {
   test.concurrent('validate otp', async function () {
@@ -50,17 +50,14 @@ describe('POST /otp/validate', () => {
       sendEmailOtp: jest.fn(async () => {}),
     };
 
-    const server = new EmailAuthServer(
-      ctx.server,
-      mongooseStorageAdapter,
-      emailAdapter,
-      {
-        jwtSecret: faker.git.commitSha(),
-        jwtTTL: '30d',
-      },
-    );
+    const server = new EmailAuthServer(mongooseStorageAdapter, emailAdapter, {
+      jwtSecret: faker.git.commitSha(),
+      jwtTTL: '30d',
+    });
 
-    await server.init();
+    ctx.server.on('request', async (req:Request, res: Response, next: NextFunction)=> {
+      await server.expressMiddleware(req, res, next, server);
+    });
 
     const response = await ctx.request
       .post('/otp/validate')
