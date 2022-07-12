@@ -97,4 +97,17 @@ describe('Contact Form Component', () => {
     const nameRequired = await screen.findByText(/description is required./i);
     expect(nameRequired).toBeInTheDocument();
   });
+
+  test('contact form email validation', async () => {
+    const emailInput = await screen.findByPlaceholderText(
+      'Input your email address'
+    );
+    await fireEvent.change(emailInput, { target: { value: 'test' } });
+    const submit = await screen.findByTestId('box.contactform.form');
+    await fireEvent.submit(submit);
+    const emailValid = await screen.findByText(
+      /please enter a valid email address./i
+    );
+    expect(emailValid).toBeInTheDocument();
+  });
 });
