@@ -186,6 +186,16 @@ export class Repository<
     return deserialize(document) as TEntity;
   }
 
+  async updateMany(
+    filter: FilterQuery<TEntity>,
+    data: Partial<Omit<TEntity, 'id'>>,
+  ) {
+    await this._model.updateMany(
+      serializeFilter(filter),
+      R.filter((value) => value !== undefined)(serialize(data)) as never,
+    );
+  }
+
   async deleteOne(filter: FilterQuery<TEntity>) {
     await this._model.deleteOne(serializeFilter(filter))
   }
