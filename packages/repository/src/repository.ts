@@ -1,6 +1,6 @@
 import { Model, Document, FilterQuery, Connection, Schema } from 'mongoose';
-import R from 'ramda';
 import { ObjectId } from '@highoutput/object-id';
+import R from 'ramda';
 import { BaseEntity } from './types';
 
 type SerializedObjectId = {
@@ -95,12 +95,40 @@ function serialize(doc: Record<string, unknown>) {
 
 function serializeFilter(filter: FilterQuery<Record<any, any>>) {
   return R.reduce(
-    (accum, [field, value]) => {
+    (accum, [field, value]: [string, any]) => {
       if (field === 'id') {
+        if (value instanceof ObjectId) {
+          return {
+            ...accum,
+            _id: value.toBuffer(),
+          };
+        }
+
         return {
           ...accum,
-          _id: (value as ObjectId).toBuffer(),
-        };
+          _id: R.mergeRight(
+            R.reduce((accum, item) => {
+              if (value[item]) {
+                return {
+                  ...accum,
+                  [item]: R.map((id) => id.toBuffer(), value[item])
+                }
+              }
+    
+              return accum;
+            }, {}, ['$in', '$nin']),
+            R.reduce((accum, item) => {
+              if (value[item]) {
+                return {
+                  ...accum,
+                  [item]: value[item].toBuffer()
+                }
+              }
+    
+              return accum;
+            }, {}, ['$eq', '$ne'])
+          ),
+        }
       }
 
       if (value instanceof ObjectId) {
