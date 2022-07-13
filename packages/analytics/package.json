@@ -1,0 +1,27 @@
+{
+  "name": "analytics",
+  "version": "1.0.0",
+  "description": "Analytics",
+  "main": "dist/index.js",
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "prebuild": "rimraf dist",
+    "build": "tsc"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
+  },
+  "author": "Angelica Sacala",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
+  },
+  "homepage": "https://github.com/HighOutputVentures/highoutput-library#readme",
+  "dependencies": {
+    "typescript": "^4.7.4"
+  }
+}
