@@ -1,2 +1,1 @@
-class Analytics{}
-export default Analytics
+export class Analytics{}
