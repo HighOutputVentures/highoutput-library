@@ -6,7 +6,9 @@
   "scripts": {
     "prepublishOnly": "npm run build",
     "prebuild": "rimraf dist",
-    "build": "tsc"
+    "build": "tsc",
+    "test": "jest --config=./jest.config.js",
+    "eslint": "eslint --fix --ext .ts,.tsx src/** tests/**"
   },
   "publishConfig": {
     "access": "public"
@@ -22,6 +24,23 @@
   },
   "homepage": "https://github.com/HighOutputVentures/highoutput-library#readme",
   "dependencies": {
+    "@highoutput/object-id": "^0.1.8",
+    "mixpanel": "^0.16.0",
     "typescript": "^4.7.4"
+  },
+  "devDependencies": {
+    "@types/chance": "^1.1.3",
+    "@types/jest": "^28.1.5",
+    "@types/node": "^18.0.3",
+    "@typescript-eslint/eslint-plugin": "^5.30.6",
+    "@typescript-eslint/parser": "^5.30.6",
+    "chance": "^1.1.8",
+    "eslint": "^8.19.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^28.1.2",
+    "prettier": "^2.7.1",
+    "ts-jest": "^28.0.5"
   }
 }
