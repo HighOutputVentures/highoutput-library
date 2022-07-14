@@ -1,4 +1,3 @@
-import { ObjectId } from '@highoutput/object-id';
 import mixpanel, { Mixpanel } from 'mixpanel';
 
 export class Analytics {
@@ -11,11 +10,10 @@ export class Analytics {
   }
 
   createAccount(params: {
-    accountId: ObjectId;
+    accountId: string;
     firstname?: string;
     lastname?: string;
-    email: string;
-    organizationId?: ObjectId;
+    email?: string;
     created?: Date;
   }) {
     this.driver.people.set(params.accountId.toString(), {
@@ -25,9 +23,6 @@ export class Analytics {
       $last_name: params.lastname,
       $email: params.email,
       $created: params.created ?? new Date(),
-      organizationId: params.organizationId
-        ? params.organizationId.toString()
-        : '',
     });
   }
 }

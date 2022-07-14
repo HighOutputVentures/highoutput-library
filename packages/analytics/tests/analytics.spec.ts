@@ -1,4 +1,3 @@
-import { ObjectId } from '@highoutput/object-id';
 import Chance from 'chance';
 import mixpanel, { Mixpanel } from 'mixpanel';
 import { Analytics } from '../src';
@@ -32,11 +31,10 @@ describe('analytics', () => {
     });
 
     const accountDetails = {
-      accountId: new ObjectId(chanceHelper.integer()),
+      accountId: chanceHelper.string(),
       firstname: chanceHelper.first(),
       lastname: chanceHelper.last(),
       email: chanceHelper.email(),
-      organizationId: new ObjectId(chanceHelper.integer()),
       created: new Date(),
     };
 
@@ -52,7 +50,6 @@ describe('analytics', () => {
       $last_name: accountDetails.lastname,
       $email: accountDetails.email,
       $created: accountDetails.created,
-      organizationId: accountDetails.organizationId.toString(),
     });
   });
 });
