@@ -23,5 +23,6 @@
   "homepage": "https://github.com/HighOutputVentures/highoutput-library#readme",
   "dependencies": {
     "typescript": "^4.7.4"
-  }
+  },
+  "gitHead": "e500eba9b47e0479d2a26e159f117da50967d8a8"
 }
