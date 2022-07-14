@@ -15,41 +15,42 @@ function setup(params: { project: string; mockedMixpanelInstance: unknown }) {
   return { analytics };
 }
 
-describe('analytics', () => {
-  const chanceHelper = new Chance();
-  test('should create an account', async () => {
-    const mockedFunction = jest.fn();
+describe('Analytics', () => {
+  describe('#createAccount', () => {
+    test('should create an account', async () => {
+      const mockedFunction = jest.fn();
 
-    const project = chance.word();
-    const { analytics } = setup({
-      project,
-      mockedMixpanelInstance: {
-        people: {
-          set: mockedFunction,
+      const project = chance.word();
+      const { analytics } = setup({
+        project,
+        mockedMixpanelInstance: {
+          people: {
+            set: mockedFunction,
+          },
         },
-      },
-    });
+      });
 
-    const accountDetails = {
-      accountId: chanceHelper.string(),
-      firstname: chanceHelper.first(),
-      lastname: chanceHelper.last(),
-      email: chanceHelper.email(),
-      created: new Date(),
-    };
+      const accountDetails = {
+        accountId: chance.string(),
+        firstname: chance.first(),
+        lastname: chance.last(),
+        email: chance.email(),
+        created: new Date(),
+      };
 
-    analytics.createAccount(accountDetails);
+      analytics.createAccount(accountDetails);
 
-    expect(mockedFunction.mock.calls[0][0]).toEqual(
-      accountDetails.accountId.toString(),
-    );
-    expect(mockedFunction.mock.calls[0][1]).toEqual({
-      $distinct_id: accountDetails.accountId.toString(),
-      project,
-      $first_name: accountDetails.firstname,
-      $last_name: accountDetails.lastname,
-      $email: accountDetails.email,
-      $created: accountDetails.created,
+      expect(mockedFunction.mock.calls[0][0]).toEqual(
+        accountDetails.accountId.toString(),
+      );
+      expect(mockedFunction.mock.calls[0][1]).toEqual({
+        $distinct_id: accountDetails.accountId.toString(),
+        project,
+        $first_name: accountDetails.firstname,
+        $last_name: accountDetails.lastname,
+        $email: accountDetails.email,
+        $created: accountDetails.created,
+      });
     });
   });
 });
