@@ -5,21 +5,31 @@ import { Analytics } from '../src';
 
 jest.mock('mixpanel');
 
+const chance = new Chance();
+
+function setup(params: { project: string; mockedMixpanelInstance: unknown }) {
+  (mixpanel as jest.Mocked<typeof mixpanel>).init.mockImplementation(
+    () => params.mockedMixpanelInstance as unknown as Mixpanel,
+  );
+  const analytics = new Analytics({ project: params.project });
+
+  return { analytics };
+}
+
 describe('analytics', () => {
   const chanceHelper = new Chance();
   test('should create an account', async () => {
     const mockedFunction = jest.fn();
-    const mockedMixpanelInstance = {
-      people: {
-        set: mockedFunction,
-      },
-    };
 
-    (mixpanel as jest.Mocked<typeof mixpanel>).init.mockImplementation(
-      () => mockedMixpanelInstance as unknown as Mixpanel,
-    );
-    const project = chanceHelper.word();
-    const analytics = new Analytics({ project });
+    const project = chance.word();
+    const { analytics } = setup({
+      project,
+      mockedMixpanelInstance: {
+        people: {
+          set: mockedFunction,
+        },
+      },
+    });
 
     const accountDetails = {
       accountId: new ObjectId(chanceHelper.integer()),
@@ -29,9 +39,9 @@ describe('analytics', () => {
       organizationId: new ObjectId(chanceHelper.integer()),
       created: new Date(),
     };
+
     analytics.createAccount(accountDetails);
 
-    expect(mockedFunction).toBeCalledTimes(1);
     expect(mockedFunction.mock.calls[0][0]).toEqual(
       accountDetails.accountId.toString(),
     );
