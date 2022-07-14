@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/pagination",
-  "version": "0.2.3",
+  "version": "0.3.3",
   "description": "Pagination library",
   "keywords": [
     "error"
@@ -37,5 +37,5 @@
     "mongoose": "^6.4.4",
     "ramda": "^0.28.0"
   },
-  "gitHead": "1276e9c977c1f4e39541ecd242661640811a278b"
+  "gitHead": "63ccbae65304fee6db4f5d7d38d97e9e00e4681d"
 }

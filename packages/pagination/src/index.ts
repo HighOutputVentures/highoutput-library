@@ -2,10 +2,13 @@ import { Repository } from '@highoutput/repository';
 import { ObjectId } from '@highoutput/object-id';
 import R from 'ramda';
 import { FilterQuery } from 'mongoose';
+import { convertFilter } from './lib/convert-filter';
 
 type Node = {
   id: ObjectId;
 }
+
+export { convertFilter }
 
 export async function retrievePage<
   TNode extends Node = Node,
@@ -15,7 +18,7 @@ export async function retrievePage<
   params: {
     first?: number | null;
     after?: Buffer | null;
-    filter?: FilterQuery<TDocument>;
+    filter?: Parameters<typeof convertFilter>[0]
   },
   options: {
     cursorKey?: string;
@@ -83,8 +86,6 @@ export async function retrievePage<
     query = addCursorFilter(filter, params.after);
   }
 
-  console.log(query);
-
   const sort: Record<string, 1 | -1> = { [cursorKey]: sortDirection };
 
   const documents: TDocument[] = await repository.find(query, {
@@ -119,3 +120,5 @@ export async function retrievePage<
     },
   };
 }
+
+// publish trigger: 1
