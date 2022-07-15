@@ -29,7 +29,7 @@ export class Analytics {
   createEvent(params: {
     name: string;
     accountId: string;
-    body: Record<string, string>;
+    body: Record<any, any>;
   }) {
     this.driver.track(params.name, {
       $distinct_id: params.accountId,
