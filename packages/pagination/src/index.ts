@@ -8,7 +8,7 @@ type Node = {
   id: ObjectId;
 }
 
-export { convertFilter }
+export { convertFilter };
 
 export async function retrievePage<
   TNode extends Node = Node,
@@ -45,7 +45,7 @@ export async function retrievePage<
 
   const limit = params.first || 1000;
 
-  const filter: FilterQuery<TDocument | null> = params.filter || {};
+  const filter: FilterQuery<TDocument | null> = convertFilter(params.filter) || {};
 
   let totalCount = 0;
 
