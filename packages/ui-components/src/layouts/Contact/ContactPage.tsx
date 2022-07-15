@@ -19,25 +19,37 @@ const ContactPage: FC<ContagePageProps> = props => {
     iconNode,
   } = props;
   return (
-    <Box pos="relative" w="100%">
-      <Box bg="#000" w="100%" h="400px">
-        <Center pt={20} pb={8}>
-          {iconNode ? iconNode : <HovIcon />}
+    <Box pos="relative" w="100%" data-testid="box.contactpage.container">
+      <Box bg="#000" w="100%" h="400px" data-testid="box.contactpage.banner">
+        <Center pt={20} pb={8} data-testid="center.contactpage.iconposition">
+          {iconNode ? (
+            iconNode
+          ) : (
+            <HovIcon data-testid="icon.contactpage.hovicon" />
+          )}
         </Center>
 
-        <Center>
-          <Text size="text-5xl" color="white">
+        <Center data-testid="center.contactpage.titlepostion">
+          <Text
+            size="text-5xl"
+            color="white"
+            data-testid="text.contactpage.title"
+          >
             {title}
           </Text>
         </Center>
 
-        <Center>
-          <Text size="text-base" color="gray.200">
+        <Center data-testid="center.contactpage.secondarytitleposition">
+          <Text
+            size="text-base"
+            color="gray.200"
+            data-testid="text.contactpage.secondarytitle"
+          >
             {secondaryTitle}
           </Text>
         </Center>
       </Box>
-      <Center>
+      <Center data-testid="center.contactpage.secondarytitleposition">
         <ContactCard
           pos="absolute"
           top="250px"

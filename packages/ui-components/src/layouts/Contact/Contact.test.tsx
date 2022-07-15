@@ -6,6 +6,8 @@ import ContactCard from './ContactCard';
 import { Default as ContactCardComponent } from './ContactCard.stories';
 import ContactForm from './ContactForm';
 import { Default as ContactFormComponent } from './ContactForm.stories';
+import ContactPage from './ContactPage';
+import { Default as ContactPageComponent } from './ContactPage.stories';
 
 describe('Contact Form Component', () => {
   beforeEach(() => {
@@ -282,5 +284,93 @@ describe('Storybook - Contact Card Component', () => {
     const { getByText } = render(<ContactCardComponent title="Test title" />);
     const title = getByText(/test title/i);
     expect(title).toBeInTheDocument();
+  });
+});
+
+describe('Contact Page Component', () => {
+  beforeEach(() => {
+    render(<ContactPage />);
+  });
+
+  it('should render contact page container', async () => {
+    const contactPageContainer = await screen.findAllByTestId(
+      'box.contactpage.container'
+    );
+    expect(contactPageContainer).toHaveLength(1);
+  });
+
+  it('should render contact page banner', async () => {
+    const contactPageBanner = await screen.findAllByTestId(
+      'box.contactpage.banner'
+    );
+    expect(contactPageBanner).toHaveLength(1);
+  });
+
+  it('should render hov icon in center', async () => {
+    const hovIconPosition = await screen.findAllByTestId(
+      'center.contactpage.iconposition'
+    );
+    expect(hovIconPosition).toHaveLength(1);
+  });
+
+  it('should render hov icon', async () => {
+    const hovIcon = await screen.findAllByTestId('icon.contactpage.hovicon');
+    expect(hovIcon).toHaveLength(1);
+  });
+
+  it('should render title center position', async () => {
+    const titleCenterPosition = await screen.findAllByTestId(
+      'center.contactpage.titlepostion'
+    );
+    expect(titleCenterPosition).toHaveLength(1);
+  });
+
+  it('should render title', async () => {
+    const title = await screen.findAllByTestId('text.contactpage.title');
+    expect(title).toHaveLength(1);
+  });
+});
+
+describe('Storybook - Contact Page Component', () => {
+  beforeEach(() => {
+    render(<ContactPageComponent />);
+  });
+
+  it('should render contact page container', async () => {
+    const contactPageContainer = await screen.findAllByTestId(
+      'box.contactpage.container'
+    );
+    expect(contactPageContainer).toHaveLength(1);
+  });
+
+  it('should render contact page banner', async () => {
+    const contactPageBanner = await screen.findAllByTestId(
+      'box.contactpage.banner'
+    );
+    expect(contactPageBanner).toHaveLength(1);
+  });
+
+  it('should render hov icon in center', async () => {
+    const hovIconPosition = await screen.findAllByTestId(
+      'center.contactpage.iconposition'
+    );
+    expect(hovIconPosition).toHaveLength(1);
+  });
+
+  it('should render hov icon', async () => {
+    const hovIcon = await screen.findAllByTestId('icon.contactpage.hovicon');
+    expect(hovIcon).toHaveLength(1);
+  });
+
+  it('should render title center position', async () => {
+    const titleCenterPosition = await screen.findAllByTestId(
+      'center.contactpage.titlepostion'
+    );
+    expect(titleCenterPosition).toHaveLength(1);
+  });
+
+  it('should render title', async () => {
+    const title = await screen.findAllByTestId('text.contactpage.title');
+    expect(title).toHaveLength(1);
   });
 });
