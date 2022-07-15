@@ -17,10 +17,13 @@ const ContactCard: FC<ContactCardProps> = props => {
       borderRadius="8px"
       padding="56px"
       boxShadow="0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -2px rgba(0, 0, 0, 0.05)"
+      data-testid="box.contactcard.container"
       {...props}
     >
-      <Center mb={8}>
-        <Text size="text-3xl">{title}</Text>
+      <Center mb={8} data-testid="center.contactcard.titleposition">
+        <Text size="text-3xl" data-testid="text.contactcard.title">
+          {title}
+        </Text>
       </Center>
       {children ? children : <ContactForm {...contactFormProps} />}
     </Box>

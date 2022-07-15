@@ -2,8 +2,12 @@ import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 
+import ContactCard from './ContactCard';
+import { Default as ContactCardComponent } from './ContactCard.stories';
 import ContactForm from './ContactForm';
 import { Default as ContactFormComponent } from './ContactForm.stories';
+import ContactPage from './ContactPage';
+import { Default as ContactPageComponent } from './ContactPage.stories';
 
 describe('Contact Form Component', () => {
   beforeEach(() => {
@@ -218,5 +222,155 @@ describe('Storybook - Contact Form Component', () => {
       /please enter a valid email address./i
     );
     expect(emailValid).toBeInTheDocument();
+  });
+});
+
+describe('Contact Card Component', () => {
+  beforeEach(() => {
+    render(<ContactCard />);
+  });
+
+  it('should render contact card container', async () => {
+    const contactCardContainer = await screen.findAllByTestId(
+      'box.contactcard.container'
+    );
+    expect(contactCardContainer).toHaveLength(1);
+  });
+
+  it('should render title in center position', async () => {
+    const titleCenter = await screen.findAllByTestId(
+      'center.contactcard.titleposition'
+    );
+    expect(titleCenter).toHaveLength(1);
+  });
+
+  it('should render title', async () => {
+    const title = await screen.findAllByTestId('text.contactcard.title');
+    expect(title).toHaveLength(1);
+  });
+
+  it('should render title pass from props', async () => {
+    const { getByText } = render(<ContactCard title="Test title" />);
+    const title = getByText(/test title/i);
+    expect(title).toBeInTheDocument();
+  });
+});
+
+describe('Storybook - Contact Card Component', () => {
+  beforeEach(() => {
+    render(<ContactCardComponent />);
+  });
+
+  it('should render contact card container', async () => {
+    const contactCardContainer = await screen.findAllByTestId(
+      'box.contactcard.container'
+    );
+    expect(contactCardContainer).toHaveLength(1);
+  });
+
+  it('should render title in center position', async () => {
+    const titleCenter = await screen.findAllByTestId(
+      'center.contactcard.titleposition'
+    );
+    expect(titleCenter).toHaveLength(1);
+  });
+
+  it('should render title', async () => {
+    const title = await screen.findAllByTestId('text.contactcard.title');
+    expect(title).toHaveLength(1);
+  });
+
+  it('should render title pass from props', async () => {
+    const { getByText } = render(<ContactCardComponent title="Test title" />);
+    const title = getByText(/test title/i);
+    expect(title).toBeInTheDocument();
+  });
+});
+
+describe('Contact Page Component', () => {
+  beforeEach(() => {
+    render(<ContactPage />);
+  });
+
+  it('should render contact page container', async () => {
+    const contactPageContainer = await screen.findAllByTestId(
+      'box.contactpage.container'
+    );
+    expect(contactPageContainer).toHaveLength(1);
+  });
+
+  it('should render contact page banner', async () => {
+    const contactPageBanner = await screen.findAllByTestId(
+      'box.contactpage.banner'
+    );
+    expect(contactPageBanner).toHaveLength(1);
+  });
+
+  it('should render hov icon in center', async () => {
+    const hovIconPosition = await screen.findAllByTestId(
+      'center.contactpage.iconposition'
+    );
+    expect(hovIconPosition).toHaveLength(1);
+  });
+
+  it('should render hov icon', async () => {
+    const hovIcon = await screen.findAllByTestId('icon.contactpage.hovicon');
+    expect(hovIcon).toHaveLength(1);
+  });
+
+  it('should render title center position', async () => {
+    const titleCenterPosition = await screen.findAllByTestId(
+      'center.contactpage.titlepostion'
+    );
+    expect(titleCenterPosition).toHaveLength(1);
+  });
+
+  it('should render title', async () => {
+    const title = await screen.findAllByTestId('text.contactpage.title');
+    expect(title).toHaveLength(1);
+  });
+});
+
+describe('Storybook - Contact Page Component', () => {
+  beforeEach(() => {
+    render(<ContactPageComponent />);
+  });
+
+  it('should render contact page container', async () => {
+    const contactPageContainer = await screen.findAllByTestId(
+      'box.contactpage.container'
+    );
+    expect(contactPageContainer).toHaveLength(1);
+  });
+
+  it('should render contact page banner', async () => {
+    const contactPageBanner = await screen.findAllByTestId(
+      'box.contactpage.banner'
+    );
+    expect(contactPageBanner).toHaveLength(1);
+  });
+
+  it('should render hov icon in center', async () => {
+    const hovIconPosition = await screen.findAllByTestId(
+      'center.contactpage.iconposition'
+    );
+    expect(hovIconPosition).toHaveLength(1);
+  });
+
+  it('should render hov icon', async () => {
+    const hovIcon = await screen.findAllByTestId('icon.contactpage.hovicon');
+    expect(hovIcon).toHaveLength(1);
+  });
+
+  it('should render title center position', async () => {
+    const titleCenterPosition = await screen.findAllByTestId(
+      'center.contactpage.titlepostion'
+    );
+    expect(titleCenterPosition).toHaveLength(1);
+  });
+
+  it('should render title', async () => {
+    const title = await screen.findAllByTestId('text.contactpage.title');
+    expect(title).toHaveLength(1);
   });
 });
