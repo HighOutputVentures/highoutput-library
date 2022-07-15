@@ -25,4 +25,16 @@ export class Analytics {
       $created: params.created ?? new Date(),
     });
   }
+
+  createEvent(params: {
+    name: string;
+    accountId: string;
+    body: Record<string, string>;
+  }) {
+    this.driver.track(params.name, {
+      $distinct_id: params.accountId,
+      project: this.project,
+      ...params.body,
+    });
+  }
 }

@@ -53,4 +53,38 @@ describe('Analytics', () => {
       });
     });
   });
+
+  describe('#createEvent', () => {
+    test('should create an event', async () => {
+      const mockedFunction = jest.fn();
+
+      const project = chance.word();
+      const { analytics } = setup({
+        project,
+        mockedMixpanelInstance: {
+          track: mockedFunction,
+        },
+      });
+
+      const eventDetails = {
+        name: chance.word(),
+        accountId: chance.string(),
+        body: {
+          fieldA: chance.string(),
+          fieldB: chance.string(),
+        },
+      };
+
+      analytics.createEvent(eventDetails);
+      console.log(mockedFunction.mock.calls[0]);
+      expect(mockedFunction.mock.calls[0][0]).toEqual(
+        eventDetails.name.toString(),
+      );
+      expect(mockedFunction.mock.calls[0][1]).toEqual({
+        $distinct_id: eventDetails.accountId.toString(),
+        project,
+        ...eventDetails.body,
+      });
+    });
+  });
 });
