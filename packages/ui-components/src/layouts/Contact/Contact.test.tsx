@@ -2,6 +2,8 @@ import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 
+import ContactCard from './ContactCard';
+import { Default as ContactCardComponent } from './ContactCard.stories';
 import ContactForm from './ContactForm';
 import { Default as ContactFormComponent } from './ContactForm.stories';
 
@@ -218,5 +220,67 @@ describe('Storybook - Contact Form Component', () => {
       /please enter a valid email address./i
     );
     expect(emailValid).toBeInTheDocument();
+  });
+});
+
+describe('Contact Card Component', () => {
+  beforeEach(() => {
+    render(<ContactCard />);
+  });
+
+  it('should render contact card container', async () => {
+    const contactCardContainer = await screen.findAllByTestId(
+      'box.contactcard.container'
+    );
+    expect(contactCardContainer).toHaveLength(1);
+  });
+
+  it('should render title in center position', async () => {
+    const titleCenter = await screen.findAllByTestId(
+      'center.contactcard.titleposition'
+    );
+    expect(titleCenter).toHaveLength(1);
+  });
+
+  it('should render title', async () => {
+    const title = await screen.findAllByTestId('text.contactcard.title');
+    expect(title).toHaveLength(1);
+  });
+
+  it('should render title pass from props', async () => {
+    const { getByText } = render(<ContactCard title="Test title" />);
+    const title = getByText(/test title/i);
+    expect(title).toBeInTheDocument();
+  });
+});
+
+describe('Storybook - Contact Card Component', () => {
+  beforeEach(() => {
+    render(<ContactCardComponent />);
+  });
+
+  it('should render contact card container', async () => {
+    const contactCardContainer = await screen.findAllByTestId(
+      'box.contactcard.container'
+    );
+    expect(contactCardContainer).toHaveLength(1);
+  });
+
+  it('should render title in center position', async () => {
+    const titleCenter = await screen.findAllByTestId(
+      'center.contactcard.titleposition'
+    );
+    expect(titleCenter).toHaveLength(1);
+  });
+
+  it('should render title', async () => {
+    const title = await screen.findAllByTestId('text.contactcard.title');
+    expect(title).toHaveLength(1);
+  });
+
+  it('should render title pass from props', async () => {
+    const { getByText } = render(<ContactCardComponent title="Test title" />);
+    const title = getByText(/test title/i);
+    expect(title).toBeInTheDocument();
   });
 });
