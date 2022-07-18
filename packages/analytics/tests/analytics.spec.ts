@@ -76,7 +76,7 @@ describe('Analytics', () => {
       };
 
       analytics.createEvent(eventDetails);
-      console.log(mockedFunction.mock.calls[0]);
+
       expect(mockedFunction.mock.calls[0][0]).toEqual(
         eventDetails.name.toString(),
       );

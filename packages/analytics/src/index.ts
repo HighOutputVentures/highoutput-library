@@ -1,11 +1,11 @@
 import mixpanel, { Mixpanel } from 'mixpanel';
 
 export class Analytics {
-  protected project: string;
+  protected meta: any;
   protected driver: Mixpanel;
 
   constructor(params: { project: string }) {
-    this.project = params.project;
+    this.meta = { project: params.project };
     this.driver = mixpanel.init(process.env.MIXPANEL_TOKEN || 'secrets');
   }
 
@@ -18,7 +18,7 @@ export class Analytics {
   }) {
     this.driver.people.set(params.accountId.toString(), {
       $distinct_id: params.accountId.toString(),
-      project: this.project,
+      project: this.meta.project,
       $first_name: params.firstname,
       $last_name: params.lastname,
       $email: params.email,
@@ -33,7 +33,7 @@ export class Analytics {
   }) {
     this.driver.track(params.name, {
       $distinct_id: params.accountId,
-      project: this.project,
+      project: this.meta.project,
       ...params.body,
     });
   }
