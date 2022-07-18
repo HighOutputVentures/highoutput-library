@@ -45,7 +45,7 @@ describe('Analytics', () => {
       );
       expect(mockedFunction.mock.calls[0][1]).toEqual({
         $distinct_id: accountDetails.accountId.toString(),
-        project,
+        meta: { project },
         $first_name: accountDetails.firstname,
         $last_name: accountDetails.lastname,
         $email: accountDetails.email,
@@ -82,7 +82,7 @@ describe('Analytics', () => {
       );
       expect(mockedFunction.mock.calls[0][1]).toEqual({
         $distinct_id: eventDetails.accountId.toString(),
-        project,
+        meta: { project },
         ...eventDetails.body,
       });
     });
