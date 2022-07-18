@@ -52,6 +52,43 @@ describe('Analytics', () => {
         $created: accountDetails.created,
       });
     });
+
+    test('should create an account - missing createDate', async () => {
+      const mockedFunction = jest.fn();
+
+      const project = chance.word();
+      const { analytics } = setup({
+        project,
+        mockedMixpanelInstance: {
+          people: {
+            set: mockedFunction,
+          },
+        },
+      });
+
+      const accountDetails = {
+        accountId: chance.string(),
+        firstname: chance.first(),
+        lastname: chance.last(),
+        email: chance.email(),
+      };
+
+      analytics.createAccount(accountDetails);
+
+      expect(mockedFunction.mock.calls[0][0]).toEqual(
+        accountDetails.accountId.toString(),
+      );
+
+      const expectedData = mockedFunction.mock.calls[0][1];
+      expect(expectedData.$distinct_id).toEqual(
+        accountDetails.accountId.toString(),
+      );
+      expect(expectedData.meta.project).toEqual(project);
+      expect(expectedData.$first_name).toEqual(accountDetails.firstname);
+      expect(expectedData.$last_name).toEqual(accountDetails.lastname);
+      expect(expectedData.$email).toEqual(accountDetails.email);
+      expect(expectedData.$created).toBeDefined();
+    });
   });
 
   describe('#createEvent', () => {
