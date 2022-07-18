@@ -18,11 +18,23 @@ export class Analytics {
   }) {
     this.driver.people.set(params.accountId.toString(), {
       $distinct_id: params.accountId.toString(),
-      project: this.project,
+      meta: { project: this.project },
       $first_name: params.firstname,
       $last_name: params.lastname,
       $email: params.email,
       $created: params.created ?? new Date(),
+    });
+  }
+
+  createEvent(params: {
+    name: string;
+    accountId: string;
+    body: Record<any, any>;
+  }) {
+    this.driver.track(params.name, {
+      $distinct_id: params.accountId,
+      meta: { project: this.project },
+      ...params.body,
     });
   }
 }
