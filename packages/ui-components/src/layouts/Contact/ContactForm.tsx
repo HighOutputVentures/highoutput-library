@@ -4,7 +4,6 @@ import React, { FC } from 'react';
 import { useForm } from 'react-hook-form';
 
 import InputField from '../../components/InputField/InputField';
-import SelectField from '../../components/SelectField/SelectField';
 import TextAreaField from '../../components/TextareaField/TextareaField';
 import {
   withContactFormSchema,
@@ -24,7 +23,6 @@ const ContactForm: FC<ContactFormProps> = props => {
     defaultValues: {
       name: '',
       email: '',
-      category: '',
       description: '',
     },
     shouldUnregister: true,
@@ -60,20 +58,6 @@ const ContactForm: FC<ContactFormProps> = props => {
             errorMsg={errors.email?.message}
             disabled={isSubmitting}
             data-testid="input.contactform.email"
-          />
-          <SelectField
-            {...register('category')}
-            id="category"
-            label="Category"
-            placeholder="Select category"
-            options={[
-              { label: 'Integration', value: 'integration' },
-              { label: 'General', value: 'general' },
-              { label: 'How-to’s', value: 'howto' },
-            ]}
-            errorMsg={errors.category?.message}
-            disabled={isSubmitting}
-            data-testid="select.contactform.category"
           />
           <TextAreaField
             {...register('description')}
