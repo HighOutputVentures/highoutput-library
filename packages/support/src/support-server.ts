@@ -27,19 +27,11 @@ export class SupportServer {
   private schema = {
     type: 'object',
     properties: {
-      customer: { type: 'string' },
       emailAddress: { type: 'string' },
       message: { type: 'string' },
-      details: {
-        type: 'object',
-        properties: {
-          name: { type: 'string' },
-          category: { type: 'string' },
-        },
-      },
     },
-    required: ['customer', 'emailAddress', 'message'],
-    additionalProperties: false,
+    required: ['emailAddress', 'message'],
+    additionalProperties: true,
   };
 
   public expressMiddleware() {
@@ -152,16 +144,6 @@ export class SupportServer {
                 name: project,
               },
             },
-            Customer: {
-              rich_text: [
-                {
-                  type: 'text',
-                  text: {
-                    content: body.customer,
-                  },
-                },
-              ],
-            },
           },
           children: [
             {
@@ -196,7 +178,6 @@ export class SupportServer {
             },
             {
               type: 'heading_2',
-              //...other keys excluded
               heading_2: {
                 rich_text: [
                   {

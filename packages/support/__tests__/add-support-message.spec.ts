@@ -23,10 +23,10 @@ describe('POST /support/messages', () => {
     await ctx.request
       .post('/support/messages')
       .send({
-        customer: faker.name.findName(),
         emailAddress: faker.internet.email(),
         message: faker.lorem.paragraph(),
         details: {
+          customerName: faker.name.findName(),
           name: faker.name.findName(),
           category: faker.lorem.word(),
         },
