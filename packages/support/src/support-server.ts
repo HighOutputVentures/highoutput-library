@@ -29,9 +29,10 @@ export class SupportServer {
     properties: {
       emailAddress: { type: 'string' },
       message: { type: 'string' },
+      details: { type: 'object' },
     },
     required: ['emailAddress', 'message'],
-    additionalProperties: true,
+    additionalProperties: false,
   };
 
   public expressMiddleware() {

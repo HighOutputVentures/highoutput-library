@@ -30,8 +30,6 @@ app.listen(8080);
   "emailAddress": "alres.arena2019@gmail.com",
   "message": "this is a test message",
   "details": {
-    "customerName": "alres arena",
-    "name": "alres arena",
     "category": "others",
   },
 }
