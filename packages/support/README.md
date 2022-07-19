@@ -27,10 +27,10 @@ app.listen(8080);
 // POST localhost:8080/support/messages
 
 {
-  "customer": "alres arena",
   "emailAddress": "alres.arena2019@gmail.com",
   "message": "this is a test message",
   "details": {
+    "customerName": "alres arena",
     "name": "alres arena",
     "category": "others",
   },
