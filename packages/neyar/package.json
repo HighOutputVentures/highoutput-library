@@ -1,5 +1,5 @@
 {
-  "version": "0.1.29",
+  "version": "0.1.30",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -89,7 +89,7 @@
     "@editorjs/simple-image": "^1.4.1",
     "@editorjs/table": "^2.0.2",
     "@editorjs/underline": "^1.0.0",
-    "@highoutput/ui-components": "^0.1.34",
+    "@highoutput/ui-components": "^0.1.35",
     "editorjs-drag-drop": "^1.1.1",
     "editorjs-text-alignment-blocktune": "^1.0.3",
     "editorjs-toggle-block": "^0.1.2",
