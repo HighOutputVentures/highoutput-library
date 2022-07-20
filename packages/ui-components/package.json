@@ -92,7 +92,7 @@
     "react-textarea-autosize": "^8.3.4",
     "yup": "^0.32.11"
   },
-  "gitHead": "85d338bc95529550cb749b2c62d7af0ebc40cdb0",
+  "gitHead": "6238ffc0950ce84506e05b0c9348ce2654f67a61",
   "readme": "ERROR: No README data found!",
   "_id": "@highoutput/ui-components@0.1.15"
 }
