@@ -8,6 +8,12 @@ import TextareaAutosize, {
   TextareaAutosizeProps,
 } from './components/TextareaAutosize/TextareaAutosize';
 import ThemeProvider, { ThemeProviderProps } from './components/ThemeProvider';
+import CredentialLoginForm, {
+  CredentialLoginFormDefaultProps,
+  CredentialLoginFormEmailProps,
+  CredentialLoginFormNameProps,
+  CredentialLoginFormProps,
+} from './layouts/Auth/CredentialLoginForm';
 import ContactCard, { ContactCardProps } from './layouts/Contact/ContactCard';
 import ContactForm, { ContactFormProps } from './layouts/Contact/ContactForm';
 import ContactPage, { ContagePageProps } from './layouts/Contact/ContactPage';
@@ -549,6 +555,12 @@ export {
   ContactCardProps,
   ContactPage,
   ContagePageProps,
+  CredentialLoginForm,
+  CredentialLoginFormProps,
+  CredentialLoginFormEmailProps,
+  CredentialLoginFormNameProps,
+  CredentialLoginFormDefaultProps,
+  // default theme
   // default theme
   theme,
   extendTheme,
