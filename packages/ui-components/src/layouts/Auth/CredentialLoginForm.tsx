@@ -47,7 +47,7 @@ const CredentialLoginForm: FC<CredentialLoginFormProps> = props => {
     loginTitle,
     containerProps,
     variant,
-    nameLabel,
+    nameLabel = 'Username',
   } = props;
 
   const [showPassword, setShowPassword] = React.useState(false);
