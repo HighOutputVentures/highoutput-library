@@ -1,11 +1,11 @@
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import {
   Box,
+  BoxProps,
   Button,
   ButtonProps,
   Center,
   Stack,
-  StackProps,
   Text,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -13,6 +13,8 @@ import React, { FC, ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import InputField from '../../components/InputField/InputField';
 import {
+  CredentialFormInputEmailProps,
+  CredentialFormInputNameProps,
   withCredentialFormSchemaEmail,
   withCredentialFormSchemaEmailValues,
   withCredentialFormSchemaName,
@@ -23,17 +25,19 @@ export type CredentialLoginFormDefaultProps = {
   loginTitle?: ReactNode;
   signUpTitle?: ReactNode;
   buttonProps?: ButtonProps;
-  containerProps?: StackProps;
+  containerProps?: BoxProps;
 };
 export interface CredentialLoginFormNameProps
   extends CredentialLoginFormDefaultProps {
   variant?: 'name-password';
   nameLabel: string;
+  onSubmit?(values: CredentialFormInputNameProps): void;
 }
 export interface CredentialLoginFormEmailProps
   extends CredentialLoginFormDefaultProps {
   variant?: 'email-password';
   nameLabel?: never;
+  onSubmit?(values: CredentialFormInputEmailProps): void;
 }
 
 export type CredentialLoginFormProps =
@@ -47,6 +51,7 @@ const CredentialLoginForm: FC<CredentialLoginFormProps> = props => {
     loginTitle,
     containerProps,
     variant,
+    onSubmit,
     nameLabel = 'Username',
   } = props;
 
@@ -63,18 +68,20 @@ const CredentialLoginForm: FC<CredentialLoginFormProps> = props => {
     shouldUnregister: true,
   });
 
-  const onSubmit = async (
-    values:
-      | withCredentialFormSchemaNameValues
-      | withCredentialFormSchemaEmailValues
+  const onSubmitForm = async (
+    values: withCredentialFormSchemaNameValues &
+      withCredentialFormSchemaEmailValues
   ) => {
-    console.log(values);
+    if (onSubmit) {
+      onSubmit(values);
+    }
   };
+
   return (
     <Box
       as={'form'}
       maxW={512}
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmitForm)}
       {...containerProps}
     >
       <Center m={0} p={0}>
