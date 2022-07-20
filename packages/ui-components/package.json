@@ -12,7 +12,7 @@
   },
   "scripts": {
     "start": "tsdx watch",
-    "build": "tsdx test --passWithNoTests && tsdx build",
+    "build": "tsdx build",
     "test": "tsdx test --passWithNoTests",
     "lint": "tsdx lint",
     "prepare": "tsdx build",
@@ -92,7 +92,7 @@
     "react-textarea-autosize": "^8.3.4",
     "yup": "^0.32.11"
   },
-  "gitHead": "29675ab61ed5a5d2cb06ac184eb78528651c9443",
+  "gitHead": "d72aa538973703a1cf7e888ffc9feba6610a026f",
   "readme": "ERROR: No README data found!",
   "_id": "@highoutput/ui-components@0.1.15"
 }
