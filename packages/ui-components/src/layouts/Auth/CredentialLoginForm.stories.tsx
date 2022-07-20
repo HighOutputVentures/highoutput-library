@@ -19,5 +19,4 @@ export const Default = Template.bind({});
 
 Default.args = {
   ...Default.args,
-  loginTitle: <Text> Hello world</Text>,
 };
