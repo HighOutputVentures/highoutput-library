@@ -29,13 +29,15 @@ describe('Login Form Email-based Component', () => {
   it('should toggle showing and hiding password', () => {
     const showHideBtn = screen.getByTestId('show-hide-btn');
     fireEvent.click(showHideBtn);
-    expect(
-      screen.getByRole('button', { name: 'show-password' })
-    ).toBeInTheDocument();
+    const showPasswordLabel = screen.getByRole('button', {
+      name: 'show-password',
+    });
+    expect(showPasswordLabel).toBeInTheDocument();
     fireEvent.click(showHideBtn);
-    expect(
-      screen.getByRole('button', { name: 'hide-password' })
-    ).toBeInTheDocument();
+    const hidePasswordLabel = screen.getByRole('button', {
+      name: 'hide-password',
+    });
+    expect(hidePasswordLabel).toBeInTheDocument();
   });
   it('should toggle login to signup form', async () => {
     const switchLink = screen.getByTestId('switch-form-link');
