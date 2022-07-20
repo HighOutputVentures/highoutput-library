@@ -23,8 +23,6 @@ type CredentialLoginFormDefault = {
   signUpTitle?: ReactNode;
   buttonProps?: ButtonProps;
   containerProps?: StackProps;
-  selfRegisterLabel?: ReactNode;
-  selfRegisterUrl?: ReactNode;
 };
 export interface CredentialLoginFormName extends CredentialLoginFormDefault {
   variant?: 'name-password';
