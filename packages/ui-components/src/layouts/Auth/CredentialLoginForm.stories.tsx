@@ -3,7 +3,6 @@ import React from 'react';
 
 import { ThemeProvider } from '../..';
 import CredentialLoginForm from './CredentialLoginForm';
-import { Text } from '@chakra-ui/react';
 export default {
   title: 'UI Layouts/Auth/Credential Login',
   component: CredentialLoginForm,
