@@ -101,7 +101,7 @@ const CredentialLoginForm: FC<CredentialLoginFormProps> = props => {
           <InputField
             {...register('name')}
             id={'name'}
-            label={nameLabel.charAt(0).toUpperCase() + nameLabel.slice(1)}
+            label={nameLabel?.charAt(0).toUpperCase() + nameLabel.slice(1)}
             placeholder={`Input your ${nameLabel.toLowerCase()}`}
             errorMsg={formState.errors.name?.message}
             disabled={formState.isSubmitting}
