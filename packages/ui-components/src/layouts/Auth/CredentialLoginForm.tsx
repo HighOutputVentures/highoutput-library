@@ -1,50 +1,53 @@
+import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import {
-  ButtonProps,
-  Button,
-  Text,
   Box,
-  StackProps,
+  Button,
+  ButtonProps,
   Center,
   Stack,
+  StackProps,
+  Text,
 } from '@chakra-ui/react';
-import React, { ReactNode } from 'react';
-import InputField from '../../components/InputField/InputField';
+import { yupResolver } from '@hookform/resolvers/yup';
+import React, { FC, ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
+import InputField from '../../components/InputField/InputField';
 import {
   withCredentialFormSchemaEmail,
-  withCredentialFormSchemaName,
   withCredentialFormSchemaEmailValues,
+  withCredentialFormSchemaName,
   withCredentialFormSchemaNameValues,
 } from './validation';
-import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import { yupResolver } from '@hookform/resolvers/yup';
-type CredentialLoginFormDefault = {
+
+export type CredentialLoginFormDefaultProps = {
   loginTitle?: ReactNode;
   signUpTitle?: ReactNode;
   buttonProps?: ButtonProps;
   containerProps?: StackProps;
 };
-export interface CredentialLoginFormName extends CredentialLoginFormDefault {
+export interface CredentialLoginFormNameProps
+  extends CredentialLoginFormDefaultProps {
   variant?: 'name-password';
   nameLabel: string;
 }
-export interface CredentialLoginFormEmail extends CredentialLoginFormDefault {
+export interface CredentialLoginFormEmailProps
+  extends CredentialLoginFormDefaultProps {
   variant?: 'email-password';
   nameLabel?: never;
 }
 
-type CredentialLoginFormProps =
-  | CredentialLoginFormName
-  | CredentialLoginFormEmail;
+export type CredentialLoginFormProps =
+  | CredentialLoginFormNameProps
+  | CredentialLoginFormEmailProps;
 
-const CredentialLoginForm = (props: CredentialLoginFormProps) => {
+const CredentialLoginForm: FC<CredentialLoginFormProps> = props => {
   const {
     buttonProps,
     signUpTitle,
     loginTitle,
     containerProps,
     variant,
-    nameLabel,
+    nameLabel = 'Username',
   } = props;
 
   const [showPassword, setShowPassword] = React.useState(false);
@@ -98,8 +101,8 @@ const CredentialLoginForm = (props: CredentialLoginFormProps) => {
           <InputField
             {...register('name')}
             id={'name'}
-            label={nameLabel.charAt(0).toUpperCase() + nameLabel.slice(1)}
-            placeholder={`Input your ${nameLabel.toLowerCase()}`}
+            label={nameLabel?.charAt(0).toUpperCase() + nameLabel?.slice(1)}
+            placeholder={`Input your ${nameLabel?.toLowerCase()}`}
             errorMsg={formState.errors.name?.message}
             disabled={formState.isSubmitting}
             inputChakraProps={{
