@@ -41,14 +41,14 @@ describe('Contact Form Component', () => {
 
   it('should render input field email', async () => {
     const { container } = render(<ContactForm />);
-    const inputEmail = container.querySelector(`input[id="email"]`);
+    const inputEmail = container.querySelector(`input[id="emailAddress"]`);
     expect(inputEmail).toBeInTheDocument();
   });
 
   it('should render textarea field description', async () => {
     const { container } = render(<ContactForm />);
     const textareaDescription = container.querySelector(
-      `textarea[id="description"]`
+      `textarea[id="message"]`
     );
     expect(textareaDescription).toBeInTheDocument();
   });
@@ -136,14 +136,14 @@ describe('Storybook - Contact Form Component', () => {
 
   it('should render input field email', async () => {
     const { container } = render(<ContactForm />);
-    const inputEmail = container.querySelector(`input[id="email"]`);
+    const inputEmail = container.querySelector(`input[id="emailAddress"]`);
     expect(inputEmail).toBeInTheDocument();
   });
 
   it('should render textarea field description', async () => {
     const { container } = render(<ContactForm />);
     const textareaDescription = container.querySelector(
-      `textarea[id="description"]`
+      `textarea[id="message"]`
     );
     expect(textareaDescription).toBeInTheDocument();
   });
