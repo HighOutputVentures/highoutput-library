@@ -17,9 +17,16 @@ import CredentialLoginForm, {
 import ContactCard, { ContactCardProps } from './layouts/Contact/ContactCard';
 import ContactForm, { ContactFormProps } from './layouts/Contact/ContactForm';
 import ContactPage, { ContagePageProps } from './layouts/Contact/ContactPage';
+import {
+  ContactFormInputProps,
+  withContactFormSchema,
+  withContactFormSchemaValues,
+} from './layouts/Contact/validation';
 
 import theme from './theme';
 import { extendTheme } from './utils/theme.utils';
+
+import useSupport from './hooks/useSupport';
 
 export {
   Accordion,
@@ -560,8 +567,12 @@ export {
   CredentialLoginFormEmailProps,
   CredentialLoginFormNameProps,
   CredentialLoginFormDefaultProps,
-  // default theme
+  ContactFormInputProps,
+  withContactFormSchemaValues,
+  withContactFormSchema,
   // default theme
   theme,
   extendTheme,
+  // hooks
+  useSupport,
 };
