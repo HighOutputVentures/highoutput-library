@@ -27,6 +27,8 @@ export class EmailAuthServer {
       );
 
       if (opts?.urlPrefix && !url.pathname.startsWith(opts?.urlPrefix)) {
+        next();
+
         return;
       }
 
