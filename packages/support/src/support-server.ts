@@ -51,7 +51,7 @@ export class SupportServer {
       );
 
       if (prefix && !url.pathname.startsWith(prefix)) {
-        return;
+        return next();
       }
 
       if (
@@ -211,7 +211,7 @@ export class SupportServer {
         return;
       }
 
-      next();
+      return next();
     };
   }
 }
