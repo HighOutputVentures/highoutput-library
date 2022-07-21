@@ -1,20 +1,18 @@
 import { InferType, object, SchemaOf, string } from 'yup';
 
 export interface ContactFormInputProps {
-  name: string;
-  email: string;
-  category: string;
-  description: string;
+  emailAddress: string;
+  message: string;
+  details: { name: string };
 }
 
 export const withContactFormSchema: SchemaOf<ContactFormInputProps> = object().shape(
   {
-    name: string().required('Name is required.'),
-    email: string()
+    emailAddress: string()
       .email('Please enter a valid email address.')
       .required('Email is required.'),
-    category: string().required('Category is required.'),
-    description: string().required('Description is required.'),
+    message: string().required('Description is required.'),
+    details: object().shape({ name: string().required('Name is required.') }),
   }
 );
 
