@@ -1,4 +1,6 @@
 {
+  "include": ["**/*.ts"],
+  "exclude": ["__tests__/**/*", "dist/**/*", "src/**/*.spec.ts", "examples/**/*"],
   "compilerOptions": {
     "types": ["node", "jest"],
     "outDir": "dist",
@@ -19,6 +21,5 @@
     "allowUnusedLabels": false,
     "allowUnreachableCode": false,
     "skipLibCheck": true
-  },
-  "include": ["src/*"]
+  }                             
 }

@@ -1,37 +1,61 @@
-import { Box, Button, ButtonProps, Stack } from '@chakra-ui/react';
+import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  Box,
+  Button,
+  ButtonProps,
+  Stack,
+} from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import React, { FC } from 'react';
 import { useForm } from 'react-hook-form';
 
 import InputField from '../../components/InputField/InputField';
-import SelectField from '../../components/SelectField/SelectField';
 import TextAreaField from '../../components/TextareaField/TextareaField';
+import useSupport from '../../hooks/useSupport';
 import {
+  ContactFormInputProps,
   withContactFormSchema,
   withContactFormSchemaValues,
 } from './validation';
 
 export interface ContactFormProps {
   buttonProps?: ButtonProps;
+  onSubmit?(values: ContactFormInputProps): void;
+  url?: string;
 }
 
-const ContactForm: FC<ContactFormProps> = props => {
-  const { buttonProps } = props;
-  const { register, handleSubmit, formState } = useForm<
+const ContactForm: FC<ContactFormProps> = ({ buttonProps, onSubmit, url }) => {
+  const { postSupport, hasError, isSuccess, isLoading } = useSupport();
+  const { register, handleSubmit, formState, reset } = useForm<
     withContactFormSchemaValues
   >({
     resolver: yupResolver(withContactFormSchema),
     defaultValues: {
-      name: '',
-      email: '',
-      category: '',
-      description: '',
+      emailAddress: '',
+      message: '',
+      details: {
+        name: '',
+      },
     },
     shouldUnregister: true,
   });
 
-  const onSubmit = async (values: withContactFormSchemaValues) => {
-    console.log(values);
+  const onSubmitForm = async (values: withContactFormSchemaValues) => {
+    if (url) {
+      await postSupport(url, values);
+
+      reset({
+        emailAddress: '',
+        message: '',
+        details: {
+          name: '',
+        },
+      });
+    }
+
+    if (onSubmit) onSubmit(values);
   };
 
   const { isSubmitting, errors } = formState;
@@ -40,60 +64,60 @@ const ContactForm: FC<ContactFormProps> = props => {
     <Box maxW={512} data-testid="box.contactform.container">
       <Box
         as="form"
-        onSubmitCapture={handleSubmit(onSubmit)}
+        onSubmitCapture={handleSubmit(onSubmitForm)}
         data-testid="box.contactform.form"
       >
         <Stack spacing={4}>
           <InputField
-            {...register('name')}
+            {...register('details.name')}
             id="name"
             label="Name"
             placeholder="Input your name"
-            errorMsg={errors.name?.message}
+            errorMsg={errors.details?.name?.message}
             disabled={isSubmitting}
           />
           <InputField
-            {...register('email')}
-            id="email"
+            {...register('emailAddress')}
+            id="emailAddress"
             label="Email"
             placeholder="Input your email address"
-            errorMsg={errors.email?.message}
+            errorMsg={errors.emailAddress?.message}
             disabled={isSubmitting}
             data-testid="input.contactform.email"
           />
-          <SelectField
-            {...register('category')}
-            id="category"
-            label="Category"
-            placeholder="Select category"
-            options={[
-              { label: 'Integration', value: 'integration' },
-              { label: 'General', value: 'general' },
-              { label: 'How-to’s', value: 'howto' },
-            ]}
-            errorMsg={errors.category?.message}
-            disabled={isSubmitting}
-            data-testid="select.contactform.category"
-          />
           <TextAreaField
-            {...register('description')}
-            id="description"
+            {...register('message')}
+            id="message"
             label="Desciption of concern"
             placeholder="Enter description"
-            errorMsg={errors.description?.message}
+            errorMsg={errors.message?.message}
             disabled={isSubmitting}
             data-testid="textarea.contactform.description"
           />
           <Button
             w="full"
             variant="primary"
-            isLoading={isSubmitting}
+            isLoading={isSubmitting || isLoading}
             type="submit"
             data-testid="button.contactform.submit"
             {...buttonProps}
           >
             Send
           </Button>
+
+          {hasError && (
+            <Alert status="error">
+              <AlertIcon />
+              <AlertDescription>Ops, Something went wrong.</AlertDescription>
+            </Alert>
+          )}
+
+          {isSuccess && (
+            <Alert status="success">
+              <AlertIcon />
+              <AlertDescription>Message successfully sent !</AlertDescription>
+            </Alert>
+          )}
         </Stack>
       </Box>
     </Box>

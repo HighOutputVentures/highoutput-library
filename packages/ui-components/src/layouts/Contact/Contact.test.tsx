@@ -41,20 +41,14 @@ describe('Contact Form Component', () => {
 
   it('should render input field email', async () => {
     const { container } = render(<ContactForm />);
-    const inputEmail = container.querySelector(`input[id="email"]`);
+    const inputEmail = container.querySelector(`input[id="emailAddress"]`);
     expect(inputEmail).toBeInTheDocument();
-  });
-
-  it('should render select field category', async () => {
-    const { container } = render(<ContactForm />);
-    const selectCategory = container.querySelector(`select[id="category"]`);
-    expect(selectCategory).toBeInTheDocument();
   });
 
   it('should render textarea field description', async () => {
     const { container } = render(<ContactForm />);
     const textareaDescription = container.querySelector(
-      `textarea[id="description"]`
+      `textarea[id="message"]`
     );
     expect(textareaDescription).toBeInTheDocument();
   });
@@ -72,7 +66,7 @@ describe('Contact Form Component', () => {
     const errorFormContorl = await screen.findAllByTestId(
       'formcontainer.error'
     );
-    expect(errorFormContorl).toHaveLength(4);
+    expect(errorFormContorl).toHaveLength(3);
   });
 
   test('user clicks submit in contact form must contain name is required', async () => {
@@ -86,13 +80,6 @@ describe('Contact Form Component', () => {
     const submit = await screen.findByTestId('box.contactform.form');
     await fireEvent.submit(submit);
     const nameRequired = await screen.findByText(/email is required./i);
-    expect(nameRequired).toBeInTheDocument();
-  });
-
-  test('user clicks submit in contact form must contain category is required', async () => {
-    const submit = await screen.findByTestId('box.contactform.form');
-    await fireEvent.submit(submit);
-    const nameRequired = await screen.findByText(/category is required./i);
     expect(nameRequired).toBeInTheDocument();
   });
 
@@ -149,20 +136,14 @@ describe('Storybook - Contact Form Component', () => {
 
   it('should render input field email', async () => {
     const { container } = render(<ContactForm />);
-    const inputEmail = container.querySelector(`input[id="email"]`);
+    const inputEmail = container.querySelector(`input[id="emailAddress"]`);
     expect(inputEmail).toBeInTheDocument();
-  });
-
-  it('should render select field category', async () => {
-    const { container } = render(<ContactForm />);
-    const selectCategory = container.querySelector(`select[id="category"]`);
-    expect(selectCategory).toBeInTheDocument();
   });
 
   it('should render textarea field description', async () => {
     const { container } = render(<ContactForm />);
     const textareaDescription = container.querySelector(
-      `textarea[id="description"]`
+      `textarea[id="message"]`
     );
     expect(textareaDescription).toBeInTheDocument();
   });
@@ -180,7 +161,7 @@ describe('Storybook - Contact Form Component', () => {
     const errorFormContorl = await screen.findAllByTestId(
       'formcontainer.error'
     );
-    expect(errorFormContorl).toHaveLength(4);
+    expect(errorFormContorl).toHaveLength(3);
   });
 
   test('user clicks submit in contact form must contain name is required', async () => {
@@ -194,13 +175,6 @@ describe('Storybook - Contact Form Component', () => {
     const submit = await screen.findByTestId('box.contactform.form');
     await fireEvent.submit(submit);
     const nameRequired = await screen.findByText(/email is required./i);
-    expect(nameRequired).toBeInTheDocument();
-  });
-
-  test('user clicks submit in contact form must contain category is required', async () => {
-    const submit = await screen.findByTestId('box.contactform.form');
-    await fireEvent.submit(submit);
-    const nameRequired = await screen.findByText(/category is required./i);
     expect(nameRequired).toBeInTheDocument();
   });
 

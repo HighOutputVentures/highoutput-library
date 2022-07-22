@@ -1,12 +1,12 @@
 {
-  "name": "analytics",
-  "version": "1.0.1",
+  "name": "@highoutput/analytics",
+  "version": "0.1.6",
   "description": "Analytics",
   "main": "dist/index.js",
   "scripts": {
     "prepublishOnly": "npm run build",
-    "prebuild": "rimraf dist",
-    "build": "tsc",
+    "prebuild": "rimraf dist/",
+    "build": "tsc --project tsconfig.json",
     "test": "jest --config=./jest.config.js --coverage",
     "eslint": "eslint --fix --ext .ts,.tsx src/** tests/**"
   },

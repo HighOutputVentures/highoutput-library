@@ -1,5 +1,5 @@
 {
-  "version": "0.1.33",
+  "version": "0.1.40",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -92,7 +92,7 @@
     "react-textarea-autosize": "^8.3.4",
     "yup": "^0.32.11"
   },
-  "gitHead": "29675ab61ed5a5d2cb06ac184eb78528651c9443",
+  "gitHead": "5154e25d06aeb8982d0cf8cb74bed84d527d87c2",
   "readme": "ERROR: No README data found!",
   "_id": "@highoutput/ui-components@0.1.15"
 }

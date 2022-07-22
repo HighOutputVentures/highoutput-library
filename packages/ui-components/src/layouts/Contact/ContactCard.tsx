@@ -6,10 +6,16 @@ export interface ContactCardProps extends BoxProps {
   children?: ReactNode;
   title?: string;
   contactFormProps?: ContactFormProps;
+  url?: string;
 }
 
 const ContactCard: FC<ContactCardProps> = props => {
-  const { children, title = 'Drop your message', contactFormProps } = props;
+  const {
+    children,
+    title = 'Drop your message',
+    contactFormProps,
+    url,
+  } = props;
   return (
     <Box
       w={512}
@@ -25,7 +31,7 @@ const ContactCard: FC<ContactCardProps> = props => {
           {title}
         </Text>
       </Center>
-      {children ? children : <ContactForm {...contactFormProps} />}
+      {children ? children : <ContactForm {...contactFormProps} url={url} />}
     </Box>
   );
 };

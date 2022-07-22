@@ -9,6 +9,7 @@ export interface ContagePageProps {
   title?: string;
   secondaryTitle?: string;
   iconNode?: ReactNode;
+  url?: string;
 }
 
 const ContactPage: FC<ContagePageProps> = props => {
@@ -17,6 +18,7 @@ const ContactPage: FC<ContagePageProps> = props => {
     title = 'Contact Us',
     secondaryTitle = `Tell us what you need and we'll help you out.`,
     iconNode,
+    url,
   } = props;
   return (
     <Box pos="relative" w="100%" data-testid="box.contactpage.container">
@@ -54,6 +56,7 @@ const ContactPage: FC<ContagePageProps> = props => {
           pos="absolute"
           top="250px"
           w="512px"
+          url={url}
           {...contactCardProps}
         />
       </Center>
