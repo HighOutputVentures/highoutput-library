@@ -27,6 +27,11 @@ export type PaginationProps<T extends number[] = number[]> = {
   options: {
     sizes: T;
   };
+  /**
+   *
+   * _Not yet implemented_
+   *
+   */
   loading?: boolean;
   styles?: Partial<{
     container: WithoutChildren<FlexProps>;
