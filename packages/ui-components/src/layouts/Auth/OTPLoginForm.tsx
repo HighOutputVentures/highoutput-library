@@ -7,7 +7,7 @@ import {
   BoxProps,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import PinInputField from '../../components/OneTimePassword/PinInputField';
+import PinInputField from '../../components/PinInputField/PinInputField';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import {
@@ -20,6 +20,7 @@ export interface OTPLoginFormProps {
   subTitle?: string;
   buttonProps?: ButtonProps;
   containerProps?: BoxProps;
+  buttonText?: string;
   otpType?: 'number' | 'alphanumeric';
   onSubmitOTPValue?(value: AuthenticateNumberSchemaValues): void;
 }
@@ -30,6 +31,7 @@ const OTPLoginForm = (props: OTPLoginFormProps) => {
     buttonProps,
     otpType = 'number',
     containerProps,
+    buttonText,
     onSubmitOTPValue,
   } = props;
   const buttonRef = React.useRef<HTMLButtonElement>(null);
@@ -54,18 +56,20 @@ const OTPLoginForm = (props: OTPLoginFormProps) => {
     }
   };
   return (
-    <Box as="form" onSubmit={handleSubmitOtp(onSubmitOTP)} {...containerProps}>
+    <Box
+      as="form"
+      w={350}
+      onSubmit={handleSubmitOtp(onSubmitOTP)}
+      {...containerProps}
+    >
       <Box mb="6">
-        <Box>
-          {title ? (
-            title
-          ) : (
-            <Heading as="h1" mb={2}>
-              Check your inbox
-            </Heading>
-          )}
-        </Box>
-
+        {title ? (
+          title
+        ) : (
+          <Heading as="h1" mb={2}>
+            Check your inbox
+          </Heading>
+        )}
         {subTitle ? (
           subTitle
         ) : (
@@ -91,7 +95,7 @@ const OTPLoginForm = (props: OTPLoginFormProps) => {
         marginTop={5}
         {...buttonProps}
       >
-        Sign In
+        {buttonText ? buttonText : 'Sign In'}
       </Button>
     </Box>
   );
