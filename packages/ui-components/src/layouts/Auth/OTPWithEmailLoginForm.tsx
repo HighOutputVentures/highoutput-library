@@ -58,13 +58,7 @@ const OTPWithEmailLoginForm = (props: OTPDefaultLoginProps) => {
   const { errors, isSubmitting } = formState;
 
   return (
-    <Box
-      as={'form'}
-      data-testid="box.emailform.form"
-      w={350}
-      {...containerProps}
-      onSubmit={handleSubmit(onSubmitEmail)}
-    >
+    <Box>
       {!otpReceived ? (
         <Box
           as={'form'}
