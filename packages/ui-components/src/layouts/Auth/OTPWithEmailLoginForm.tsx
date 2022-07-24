@@ -8,19 +8,20 @@ import InputField from '../../components/InputField/InputField';
 import OTPLoginForm from './OTPLoginForm';
 
 import {
-  AuthenticateNumberSchemaValues,
+  AuthenticateSchemaValues,
   generateEmailOTPSchema,
   GenerateEmailOTPSchemaValues,
 } from './validation';
 
 export interface OTPDefaultLoginProps {
   onSubmitEmailValue?(value: GenerateEmailOTPSchemaValues): void;
-  onSubmitOTPValue?(value: AuthenticateNumberSchemaValues): void;
-  otpReceived?: boolean;
+  onSubmitOTPValue?(value: AuthenticateSchemaValues): void;
+  otpReceived: boolean;
   containerProps?: BoxProps;
   buttonProps?: ButtonProps;
   title?: ReactNode;
   subTitle?: ReactNode;
+  numberOfFields?: number;
   otpType?: 'number' | 'alphanumeric';
 }
 
@@ -30,7 +31,7 @@ const OTPWithEmailLoginForm = (props: OTPDefaultLoginProps) => {
     onSubmitEmailValue,
     containerProps,
     buttonProps,
-
+    numberOfFields,
     onSubmitOTPValue,
   } = props;
 
@@ -49,7 +50,7 @@ const OTPWithEmailLoginForm = (props: OTPDefaultLoginProps) => {
       onSubmitEmailValue(value);
     }
   };
-  const onSubmitOTP = async (value: AuthenticateNumberSchemaValues) => {
+  const onSubmitOTP = async (value: AuthenticateSchemaValues) => {
     if (onSubmitOTPValue) {
       onSubmitOTPValue(value);
     }
@@ -92,11 +93,14 @@ const OTPWithEmailLoginForm = (props: OTPDefaultLoginProps) => {
           </Button>
         </Box>
       ) : (
-        <OTPLoginForm
-          {...buttonProps}
-          {...containerProps}
-          onSubmitOTPValue={value => onSubmitOTP(value)}
-        />
+        <Box data-testid="otp.component">
+          <OTPLoginForm
+            {...buttonProps}
+            {...containerProps}
+            onSubmitOTPValue={value => onSubmitOTP(value)}
+            numberOfFields={numberOfFields}
+          />
+        </Box>
       )}
     </Box>
   );
