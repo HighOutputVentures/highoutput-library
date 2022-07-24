@@ -10,19 +10,16 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import PinInputField from '../../components/PinInputField/PinInputField';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import {
-  authenticateAlphaNumericSchema,
-  authenticateNumberSchema,
-  AuthenticateNumberSchemaValues,
-} from './validation';
+import { authenticateSchema, AuthenticateSchemaValues } from './validation';
 export interface OTPLoginFormProps {
   title?: string;
   subTitle?: string;
   buttonProps?: ButtonProps;
   containerProps?: BoxProps;
+  numberOfFields?: number;
   buttonText?: string;
   otpType?: 'number' | 'alphanumeric';
-  onSubmitOTPValue?(value: AuthenticateNumberSchemaValues): void;
+  onSubmitOTPValue?(value: AuthenticateSchemaValues): void;
 }
 const OTPLoginForm = (props: OTPLoginFormProps) => {
   const {
@@ -31,6 +28,7 @@ const OTPLoginForm = (props: OTPLoginFormProps) => {
     buttonProps,
     otpType = 'number',
     containerProps,
+    numberOfFields = 6,
     buttonText,
     onSubmitOTPValue,
   } = props;
@@ -39,18 +37,15 @@ const OTPLoginForm = (props: OTPLoginFormProps) => {
     register: registerOtp,
     handleSubmit: handleSubmitOtp,
     formState: formStateOtp,
-  } = useForm<AuthenticateNumberSchemaValues>({
-    resolver: yupResolver(
-      otpType === 'alphanumeric'
-        ? authenticateAlphaNumericSchema
-        : authenticateNumberSchema
-    ),
+  } = useForm<AuthenticateSchemaValues>({
+    resolver: yupResolver(authenticateSchema),
+    context: { numberOfFields: numberOfFields },
     shouldUnregister: true,
     defaultValues: {
       otp: '',
     },
   });
-  const onSubmitOTP = async (value: AuthenticateNumberSchemaValues) => {
+  const onSubmitOTP = async (value: AuthenticateSchemaValues) => {
     if (onSubmitOTPValue) {
       onSubmitOTPValue(value);
     }
@@ -59,6 +54,7 @@ const OTPLoginForm = (props: OTPLoginFormProps) => {
     <Box
       as="form"
       w={350}
+      data-testid="box.otpform.form"
       onSubmit={handleSubmitOtp(onSubmitOTP)}
       {...containerProps}
     >
@@ -76,10 +72,12 @@ const OTPLoginForm = (props: OTPLoginFormProps) => {
           <Text>We have sent a 6-digit code to your email </Text>
         )}
       </Box>
+
       <PinInputField
         {...registerOtp('otp')}
         errorMsg={formStateOtp.errors.otp?.message}
         disabled={formStateOtp.isSubmitting}
+        numberOfFields={numberOfFields}
         chakraPinInputProps={{
           autoFocus: true,
           onComplete: () => buttonRef.current?.click(),
@@ -92,6 +90,7 @@ const OTPLoginForm = (props: OTPLoginFormProps) => {
         type="submit"
         isLoading={formStateOtp.isSubmitting}
         width={'100%'}
+        data-testid="button.otp.submit"
         marginTop={5}
         {...buttonProps}
       >

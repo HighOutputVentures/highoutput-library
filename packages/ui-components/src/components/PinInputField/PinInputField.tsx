@@ -3,16 +3,16 @@ import {
   PinInputField as ChakraPinInputField,
   PinInputProps,
   HStack,
-  Box,
 } from '@chakra-ui/react';
 import React from 'react';
 import { forwardRef } from 'react';
 import { UseFormRegisterReturn } from 'react-hook-form';
+import FormContainer from '../FormContainer/FormContainer';
 
-interface PinInputFieldProps extends UseFormRegisterReturn {
+export interface PinInputFieldProps extends UseFormRegisterReturn {
   numberOfFields?: number;
   chakraPinInputProps?: Omit<PinInputProps, 'children'>;
-  errorMsg: string | undefined;
+  errorMsg?: string | undefined;
 }
 
 const PinInputField = forwardRef<HTMLInputElement, PinInputFieldProps>(
@@ -20,7 +20,7 @@ const PinInputField = forwardRef<HTMLInputElement, PinInputFieldProps>(
     const { numberOfFields = 6, onChange, name, chakraPinInputProps } = props;
 
     return (
-      <Box>
+      <FormContainer id="pin-input" errorMsg={props.errorMsg}>
         <HStack spacing={3}>
           <PinInput
             otp
@@ -44,7 +44,7 @@ const PinInputField = forwardRef<HTMLInputElement, PinInputFieldProps>(
             ))}
           </PinInput>
         </HStack>
-      </Box>
+      </FormContainer>
     );
   }
 );
