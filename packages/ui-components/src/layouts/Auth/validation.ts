@@ -55,18 +55,18 @@ export const authenticateNumberSchema: SchemaOf<{
     .required('OTP code is required.'),
 });
 
-export type AuthenticateNumberSchemaValues = InferType<
-  typeof authenticateNumberSchema
->;
-export const authenticateAlphaNumericSchema: SchemaOf<{
+export const authenticateSchema: SchemaOf<{
   otp: string;
 }> = object().shape({
   otp: string()
-    .matches(/^[a-zA-Z0-9]+$/g, 'Invalid OTP code')
-    .length(6, 'OTP code is incomplete.')
+    .when('$numberOfFields', (numberOfFields, authenticateSchema) => {
+      console.log(numberOfFields);
+      return authenticateSchema.length(
+        numberOfFields,
+        'OTP code is incomplete.'
+      );
+    })
     .required('OTP code is required.'),
 });
 
-export type AuthenticateAlphaNumericSchemaValues = InferType<
-  typeof authenticateAlphaNumericSchema
->;
+export type AuthenticateSchemaValues = InferType<typeof authenticateSchema>;
