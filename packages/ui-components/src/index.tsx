@@ -1,3 +1,6 @@
+import Pagination, {
+  PaginationProps,
+} from './components/Pagination/Pagination';
 import RadioImage, {
   RadioImageProps,
 } from './components/RadioImage/RadioImage';
@@ -575,4 +578,6 @@ export {
   extendTheme,
   // hooks
   useSupport,
+  Pagination,
+  PaginationProps,
 };
