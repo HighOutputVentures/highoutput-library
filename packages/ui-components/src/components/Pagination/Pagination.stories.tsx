@@ -1,5 +1,5 @@
-import { useState } from '@storybook/addons';
-import { ComponentMeta } from '@storybook/react';
+import { useArgs } from '@storybook/client-api';
+import { ComponentMeta, ComponentStory } from '@storybook/react';
 import * as React from 'react';
 
 import { ThemeProvider } from '../..';
@@ -10,37 +10,60 @@ export default {
   component: Pagination,
 } as ComponentMeta<typeof Pagination>;
 
-export const Default = () => {
-  const [page, setPage] = useState(1);
-  const [size, setSize] = useState(5);
+const Template: ComponentStory<typeof Pagination> = () => {
+  const [args, setArgs] = useArgs();
+
+  const handlePageChange = (page: number) => {
+    setArgs({ ...args, page });
+  };
+
+  const handleSizeChange = (size: number) => {
+    setArgs({ ...args, size });
+  };
 
   return (
     <ThemeProvider>
       <Pagination
-        page={page}
-        size={size}
-        total={75}
-        onPageChange={setPage}
-        onSizeChange={setSize}
-        options={{
-          sizes: [5, 10, 25, 50],
-        }}
-        styles={{
-          container: {
-            fontSize: 'sm',
-          },
-          controls: {
-            rounded: 'full',
-          },
-          controlIcons: {
-            fontSize: 'xl',
-          },
-          dropdown: {
-            border: '1px solid',
-            borderColor: 'gray.200',
-          },
-        }}
+        page={args.page}
+        size={args.size}
+        total={args.total}
+        options={args.options}
+        loading={args.loading}
+        onPageChange={handlePageChange}
+        onSizeChange={handleSizeChange}
+        styles={args.styles}
       />
     </ThemeProvider>
   );
+};
+
+export const Default = Template.bind({});
+
+const noop = () => {};
+
+Default.args = {
+  page: 1,
+  size: 5,
+  options: {
+    sizes: [5, 10, 25, 50],
+  },
+  loading: false,
+  onPageChange: noop,
+  onSizeChange: noop,
+  total: 75,
+  styles: {
+    container: {
+      fontSize: 'sm',
+    },
+    controls: {
+      rounded: 'full',
+    },
+    controlIcons: {
+      fontSize: 'xl',
+    },
+    dropdown: {
+      border: '1px solid',
+      borderColor: 'gray.200',
+    },
+  },
 };
