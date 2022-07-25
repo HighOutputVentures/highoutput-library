@@ -32,6 +32,8 @@ const OTPWithEmailLoginForm = (props: OTPDefaultLoginProps) => {
     containerProps,
     buttonProps,
     numberOfFields,
+    title,
+    subTitle,
     onSubmitOTPValue,
   } = props;
 
@@ -97,6 +99,8 @@ const OTPWithEmailLoginForm = (props: OTPDefaultLoginProps) => {
           <OTPLoginForm
             {...buttonProps}
             {...containerProps}
+            title={title}
+            subTitle={subTitle}
             onSubmitOTPValue={value => onSubmitOTP(value)}
             numberOfFields={numberOfFields}
           />

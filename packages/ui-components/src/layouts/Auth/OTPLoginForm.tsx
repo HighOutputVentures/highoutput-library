@@ -8,12 +8,12 @@ import {
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import PinInputField from '../../components/PinInputField/PinInputField';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { authenticateSchema, AuthenticateSchemaValues } from './validation';
 export interface OTPLoginFormProps {
-  title?: string;
-  subTitle?: string;
+  title?: ReactNode;
+  subTitle?: ReactNode;
   buttonProps?: ButtonProps;
   containerProps?: BoxProps;
   numberOfFields?: number;
