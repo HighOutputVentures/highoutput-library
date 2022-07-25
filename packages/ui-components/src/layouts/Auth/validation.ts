@@ -46,25 +46,20 @@ export const generateEmailOTPSchema: SchemaOf<{
 export type GenerateEmailOTPSchemaValues = InferType<
   typeof generateEmailOTPSchema
 >;
-export const authenticateNumberSchema: SchemaOf<{
-  otp: string;
-}> = object().shape({
-  otp: string()
-    .matches(/^[0-9]+$/g, 'Invalid OTP code')
-    .length(6, 'OTP code is incomplete.')
-    .required('OTP code is required.'),
-});
 
 export const authenticateSchema: SchemaOf<{
   otp: string;
 }> = object().shape({
   otp: string()
-    .when('$numberOfFields', (numberOfFields, authenticateSchema) => {
-      return authenticateSchema.length(
-        numberOfFields,
-        'OTP code is incomplete.'
-      );
-    })
+    .when(
+      '$numberOfFields',
+      (numberOfFields: number, authenticateSchema: any) => {
+        return authenticateSchema.length(
+          numberOfFields,
+          'OTP code is incomplete.'
+        );
+      }
+    )
     .required('OTP code is required.'),
 });
 
