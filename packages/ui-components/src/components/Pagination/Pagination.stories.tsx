@@ -10,7 +10,7 @@ export default {
   component: Pagination,
 } as ComponentMeta<typeof Pagination>;
 
-const Template: ComponentStory<typeof Pagination> = () => {
+const Template: ComponentStory<typeof Pagination> = props => {
   const [args, setArgs] = useArgs();
 
   const handlePageChange = (page: number) => {
@@ -24,6 +24,7 @@ const Template: ComponentStory<typeof Pagination> = () => {
   return (
     <ThemeProvider>
       <Pagination
+        {...props}
         page={args.page}
         size={args.size}
         total={args.total}

@@ -12,7 +12,7 @@ import {
   Text,
   TextProps,
 } from '@chakra-ui/react';
-import * as React from 'react';
+import React, { FC, useCallback, useId } from 'react';
 import ChevronLeftIcon from './ChevronLeftIcon';
 import ChevronRightIcon from './ChevronRightIcon';
 
@@ -22,8 +22,8 @@ export type PaginationProps<T extends number[] = number[]> = {
   page: number;
   size: T[number];
   total: number;
-  onSizeChange: (newSize: T[number]) => void;
-  onPageChange: (newPage: number) => void;
+  onSizeChange?: (newSize: T[number]) => void;
+  onPageChange?: (newPage: number) => void;
   options: {
     sizes: T;
   };
@@ -46,7 +46,7 @@ export type PaginationProps<T extends number[] = number[]> = {
   }>;
 };
 
-export default function Pagination<T extends number[]>({
+const Pagination: FC<PaginationProps> = ({
   page,
   size,
   total,
@@ -54,27 +54,27 @@ export default function Pagination<T extends number[]>({
   onSizeChange,
   options,
   styles,
-}: PaginationProps<T>) {
-  const id = React.useId();
+}) => {
+  const id = useId();
 
   const hasPrev = page > 1;
   const hasNext = page * size < total;
 
   const handleSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onSizeChange(parseInt(e.target.value));
+    if (onSizeChange) onSizeChange(parseInt(e.target.value));
   };
 
   const handlePageChange = (type: 'increment' | 'decrement') => {
     const newPage = type === 'increment' ? page + 1 : page - 1;
 
-    return () => onPageChange(newPage);
+    return () => (onPageChange ? onPageChange(newPage) : newPage);
   };
 
   const indexStart = (page - 1) * size + 1;
   const indexStop = page * size;
   const remainder = total % size;
 
-  const getPageInfo = React.useCallback(() => {
+  const getPageInfo = useCallback(() => {
     let pageInfo = '';
 
     pageInfo += 'Page ';
@@ -140,4 +140,6 @@ export default function Pagination<T extends number[]>({
       </HStack>
     </Flex>
   );
-}
+};
+
+export default Pagination;
