@@ -2,16 +2,12 @@ import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 
-import CustomPinInputField from './CustomPinInputField';
+import OTPInputField from './OTPInputField';
 
 describe('Input Field Component', () => {
   beforeEach(() => {
     render(
-      <CustomPinInputField
-        name="input"
-        onBlur={jest.fn()}
-        onChange={jest.fn()}
-      />
+      <OTPInputField name="input" onBlur={jest.fn()} onChange={jest.fn()} />
     );
   });
 

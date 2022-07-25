@@ -5,7 +5,7 @@ import { ThemeProvider } from '../..';
 
 import OTPForm from './OTPForm';
 export default {
-  title: 'UI Components/OTP/OTP Form',
+  title: 'UI Layouts/OTP/OTP Form',
   component: OTPForm,
 } as ComponentMeta<typeof OTPForm>;
 

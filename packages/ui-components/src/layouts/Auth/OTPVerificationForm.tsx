@@ -4,7 +4,7 @@ import React, { ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 
 import InputField from '../../components/InputField/InputField';
-import OTPForm from '../../components/OTPForm/OTPForm';
+import OTPForm from './OTPForm';
 
 import {
   AuthenticateSchemaValues,

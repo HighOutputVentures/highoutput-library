@@ -10,7 +10,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import React, { ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
-import CustomPinInputField from '../../components/PinInputField/CustomPinInputField';
+import OTPInputField from '../../components/PinInputField/OTPInputField';
+
 import {
   AuthenticateSchemaValues,
   authenticateSchema,
@@ -78,7 +79,7 @@ const OTPForm = (props: OTPFormProps) => {
         )}
       </Box>
 
-      <CustomPinInputField
+      <OTPInputField
         {...registerOtp('otp')}
         errorMsg={formStateOtp.errors.otp?.message}
         disabled={formStateOtp.isSubmitting}

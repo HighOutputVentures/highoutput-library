@@ -32,10 +32,11 @@ import useSupport from './hooks/useSupport';
 import OTPVerificationForm, {
   OTPVerificationProps,
 } from './layouts/Auth/OTPVerificationForm';
-import OTPForm, { OTPFormProps } from './components/OTPForm/OTPForm';
-import CustomPinInputField, {
-  CustomPinInputFieldProps,
-} from './components/PinInputField/CustomPinInputField';
+
+import OTPForm, { OTPFormProps } from './layouts/Auth/OTPForm';
+import OTPInputField, {
+  OTPInputFieldProps,
+} from './components/PinInputField/OTPInputField';
 
 export {
   Accordion,
@@ -583,8 +584,8 @@ export {
   OTPVerificationProps,
   OTPForm,
   OTPFormProps,
-  CustomPinInputField,
-  CustomPinInputFieldProps,
+  OTPInputField,
+  OTPInputFieldProps,
   // default theme
   theme,
   extendTheme,
