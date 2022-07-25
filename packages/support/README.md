@@ -5,7 +5,7 @@
 ## Usage
 
 ```ts
-import { SupportServer } from '@highoutput-library/support';
+import { SupportServer } from '@highoutput/support';
 
 const app = express();
 
