@@ -16,7 +16,7 @@ export interface OTPInputFieldProps extends UseFormRegisterReturn {
 }
 
 const OTPInputField = forwardRef<HTMLInputElement, OTPInputFieldProps>(
-  props => {
+  (props, _) => {
     const { numberOfFields = 6, onChange, name, chakraPinInputProps } = props;
 
     return (
