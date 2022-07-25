@@ -22,7 +22,13 @@ const ContactPage: FC<ContagePageProps> = props => {
   } = props;
   return (
     <Box pos="relative" w="100%" data-testid="box.contactpage.container">
-      <Box bg="#000" w="100%" h="400px" data-testid="box.contactpage.banner">
+      <Box
+        minW={'600px'}
+        bg="#000"
+        w="100%"
+        h="400px"
+        data-testid="box.contactpage.banner"
+      >
         <Center pt={20} pb={8} data-testid="center.contactpage.iconposition">
           {iconNode ? (
             iconNode
@@ -51,7 +57,10 @@ const ContactPage: FC<ContagePageProps> = props => {
           </Text>
         </Center>
       </Box>
-      <Center data-testid="center.contactpage.secondarytitleposition">
+      <Center
+        minW={'600px'}
+        data-testid="center.contactpage.secondarytitleposition"
+      >
         <ContactCard
           pos="absolute"
           top="250px"

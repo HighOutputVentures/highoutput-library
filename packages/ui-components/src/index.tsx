@@ -17,6 +17,7 @@ import CredentialLoginForm, {
   CredentialLoginFormNameProps,
   CredentialLoginFormProps,
 } from './layouts/Auth/CredentialLoginForm';
+
 import ContactCard, { ContactCardProps } from './layouts/Contact/ContactCard';
 import ContactForm, { ContactFormProps } from './layouts/Contact/ContactForm';
 import ContactPage, { ContagePageProps } from './layouts/Contact/ContactPage';
@@ -30,6 +31,15 @@ import theme from './theme';
 import { extendTheme } from './utils/theme.utils';
 
 import useSupport from './hooks/useSupport';
+
+import OTPVerificationForm, {
+  OTPVerificationProps,
+} from './layouts/Auth/OTPVerificationForm';
+
+import OTPForm, { OTPFormProps } from './layouts/Auth/OTPForm';
+import OTPInputField, {
+  OTPInputFieldProps,
+} from './components/PinInputField/OTPInputField';
 
 export {
   Accordion,
@@ -573,6 +583,12 @@ export {
   ContactFormInputProps,
   withContactFormSchemaValues,
   withContactFormSchema,
+  OTPVerificationForm,
+  OTPVerificationProps,
+  OTPForm,
+  OTPFormProps,
+  OTPInputField,
+  OTPInputFieldProps,
   // default theme
   theme,
   extendTheme,

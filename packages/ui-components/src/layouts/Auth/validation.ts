@@ -34,3 +34,38 @@ export const withCredentialFormSchemaName: SchemaOf<CredentialFormInputNameProps
 export type withCredentialFormSchemaNameValues = InferType<
   typeof withCredentialFormSchemaName
 >;
+
+export const generateEmailOTPSchema: SchemaOf<{
+  emailAddress: string;
+}> = object().shape({
+  emailAddress: string()
+    .email('Please enter a valid email address.')
+    .required('Email is required.'),
+});
+
+export type GenerateEmailOTPSchemaValues = InferType<
+  typeof generateEmailOTPSchema
+>;
+export const authenticateNumberSchema: SchemaOf<{
+  otp: string;
+}> = object().shape({
+  otp: string()
+    .matches(/^[0-9]+$/g, 'Invalid OTP code')
+    .length(6, 'OTP code is incomplete.')
+    .required('OTP code is required.'),
+});
+
+export const authenticateSchema: SchemaOf<{
+  otp: string;
+}> = object().shape({
+  otp: string()
+    .when('$numberOfFields', (numberOfFields, authenticateSchema) => {
+      return authenticateSchema.length(
+        numberOfFields,
+        'OTP code is incomplete.'
+      );
+    })
+    .required('OTP code is required.'),
+});
+
+export type AuthenticateSchemaValues = InferType<typeof authenticateSchema>;
