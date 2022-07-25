@@ -7,11 +7,16 @@ import {
   BoxProps,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import PinInputField from '../../components/PinInputField/PinInputField';
+
 import React, { ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
-import { authenticateSchema, AuthenticateSchemaValues } from './validation';
-export interface OTPLoginFormProps {
+import CustomPinInputField from '../../components/PinInputField/CustomPinInputField';
+import {
+  AuthenticateSchemaValues,
+  authenticateSchema,
+} from '../../layouts/Auth/validation';
+
+export interface OTPFormProps {
   title?: ReactNode;
   subTitle?: ReactNode;
   buttonProps?: ButtonProps;
@@ -21,7 +26,7 @@ export interface OTPLoginFormProps {
   otpType?: 'number' | 'alphanumeric';
   onSubmitOTPValue?(value: AuthenticateSchemaValues): void;
 }
-const OTPLoginForm = (props: OTPLoginFormProps) => {
+const OTPForm = (props: OTPFormProps) => {
   const {
     subTitle,
     title,
@@ -73,7 +78,7 @@ const OTPLoginForm = (props: OTPLoginFormProps) => {
         )}
       </Box>
 
-      <PinInputField
+      <CustomPinInputField
         {...registerOtp('otp')}
         errorMsg={formStateOtp.errors.otp?.message}
         disabled={formStateOtp.isSubmitting}
@@ -100,4 +105,4 @@ const OTPLoginForm = (props: OTPLoginFormProps) => {
   );
 };
 
-export default OTPLoginForm;
+export default OTPForm;

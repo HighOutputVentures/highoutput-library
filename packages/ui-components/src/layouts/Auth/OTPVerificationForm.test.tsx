@@ -1,11 +1,11 @@
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
-import OTPWithEmailLoginForm from './OTPWithEmailLoginForm';
+import OTPVerificationForm from './OTPVerificationForm';
 
 describe('Email Login Component', () => {
   beforeEach(() => {
-    render(<OTPWithEmailLoginForm otpReceived={false} />);
+    render(<OTPVerificationForm otpReceived={false} />);
   });
 
   it('should render button submit for email', async () => {
@@ -23,7 +23,7 @@ describe('Email Login Component', () => {
 });
 describe('One Time Password Verification Component', () => {
   beforeEach(() => {
-    render(<OTPWithEmailLoginForm otpReceived={true} />);
+    render(<OTPVerificationForm otpReceived={true} />);
   });
 
   it('should render otp component', async () => {

@@ -4,8 +4,7 @@ import React, { ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 
 import InputField from '../../components/InputField/InputField';
-
-import OTPLoginForm from './OTPLoginForm';
+import OTPForm from '../../components/OTPForm/OTPForm';
 
 import {
   AuthenticateSchemaValues,
@@ -13,7 +12,7 @@ import {
   GenerateEmailOTPSchemaValues,
 } from './validation';
 
-export interface OTPDefaultLoginProps {
+export interface OTPVerificationProps {
   onSubmitEmailValue?(value: GenerateEmailOTPSchemaValues): void;
   onSubmitOTPValue?(value: AuthenticateSchemaValues): void;
   otpReceived: boolean;
@@ -25,7 +24,7 @@ export interface OTPDefaultLoginProps {
   otpType?: 'number' | 'alphanumeric';
 }
 
-const OTPWithEmailLoginForm = (props: OTPDefaultLoginProps) => {
+const OTPVerificationForm = (props: OTPVerificationProps) => {
   const {
     otpReceived,
     onSubmitEmailValue,
@@ -96,7 +95,7 @@ const OTPWithEmailLoginForm = (props: OTPDefaultLoginProps) => {
         </Box>
       ) : (
         <Box data-testid="otp.component">
-          <OTPLoginForm
+          <OTPForm
             {...buttonProps}
             {...containerProps}
             title={title}
@@ -110,4 +109,4 @@ const OTPWithEmailLoginForm = (props: OTPDefaultLoginProps) => {
   );
 };
 
-export default OTPWithEmailLoginForm;
+export default OTPVerificationForm;

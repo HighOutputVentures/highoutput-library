@@ -1,11 +1,11 @@
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
-import OTPLoginForm from './OTPLoginForm';
+import OTPForm from './OTPForm';
 
 describe('One Time Password Login Component', () => {
   beforeEach(() => {
-    render(<OTPLoginForm />);
+    render(<OTPForm />);
   });
 
   it('should render button submit for otp', async () => {

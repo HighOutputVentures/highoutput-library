@@ -3,15 +3,15 @@ import React from 'react';
 
 import { ThemeProvider } from '../..';
 
-import OTPLoginForm from './OTPLoginForm';
+import OTPVerificationForm from './OTPVerificationForm';
 export default {
   title: 'UI Layouts/Auth/OTP Login',
-  component: OTPLoginForm,
-} as ComponentMeta<typeof OTPLoginForm>;
+  component: OTPVerificationForm,
+} as ComponentMeta<typeof OTPVerificationForm>;
 
-const Template: ComponentStory<typeof OTPLoginForm> = args => (
+const Template: ComponentStory<typeof OTPVerificationForm> = args => (
   <ThemeProvider>
-    <OTPLoginForm {...args} />
+    <OTPVerificationForm {...args} />
   </ThemeProvider>
 );
 

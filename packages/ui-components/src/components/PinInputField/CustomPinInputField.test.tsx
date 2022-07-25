@@ -2,15 +2,15 @@ import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 
-import PinInputField from './PinInputField';
+import CustomPinInputField from './CustomPinInputField';
 
 describe('Input Field Component', () => {
   beforeEach(() => {
     render(
-      <PinInputField
+      <CustomPinInputField
         name="input"
-        onBlur={async () => console.log('change')}
-        onChange={async () => console.log('change')}
+        onBlur={jest.fn()}
+        onChange={jest.fn()}
       />
     );
   });
