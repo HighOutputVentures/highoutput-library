@@ -15,6 +15,7 @@ export class Analytics {
     lastname?: string;
     email?: string;
     created?: Date;
+    body?: Record<any, any>;
   }) {
     this.driver.people.set(params.accountId.toString(), {
       $distinct_id: params.accountId.toString(),
@@ -23,6 +24,7 @@ export class Analytics {
       $last_name: params.lastname,
       $email: params.email,
       $created: params.created ?? new Date(),
+      ...params.body,
     });
   }
 
