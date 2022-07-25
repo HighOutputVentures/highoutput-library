@@ -60,7 +60,6 @@ export const authenticateSchema: SchemaOf<{
 }> = object().shape({
   otp: string()
     .when('$numberOfFields', (numberOfFields, authenticateSchema) => {
-      console.log(numberOfFields);
       return authenticateSchema.length(
         numberOfFields,
         'OTP code is incomplete.'
