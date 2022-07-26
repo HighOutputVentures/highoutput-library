@@ -1,3 +1,4 @@
+import { ObjectId } from '@highoutput/object-id';
 import Chance from 'chance';
 import mixpanel, { Mixpanel } from 'mixpanel';
 import { Analytics } from '../src';
@@ -90,7 +91,7 @@ describe('Analytics', () => {
       expect(expectedData.$created).toBeDefined();
     });
 
-    test('should create an account - add body', async () => {
+    test('should create an account - add extra fields', async () => {
       const mockedFunction = jest.fn();
 
       const project = chance.word();
@@ -109,8 +110,9 @@ describe('Analytics', () => {
         lastname: chance.last(),
         email: chance.email(),
         created: new Date(),
-        fieldA: chance.string(),
+        fieldA: Buffer.from('fieldA'),
         fieldB: chance.string(),
+        fieldC: ObjectId.from(Buffer.from(chance.string())),
       };
 
       analytics.createAccount(accountDetails);
@@ -126,8 +128,9 @@ describe('Analytics', () => {
         $last_name: accountDetails.lastname,
         $email: accountDetails.email,
         $created: accountDetails.created,
-        fieldA: accountDetails.fieldA,
+        fieldA: new ObjectId(accountDetails.fieldA).toString(),
         fieldB: accountDetails.fieldB,
+        fieldC: accountDetails.fieldC.toString(),
       });
     });
   });
@@ -148,7 +151,7 @@ describe('Analytics', () => {
         name: chance.word(),
         accountId: chance.string(),
         fieldA: chance.string(),
-        fieldB: chance.string(),
+        fieldB: Buffer.from(chance.string()),
       };
 
       analytics.createEvent(eventDetails);
@@ -160,7 +163,7 @@ describe('Analytics', () => {
         $distinct_id: eventDetails.accountId.toString(),
         meta: { project },
         fieldA: eventDetails.fieldA,
-        fieldB: eventDetails.fieldB,
+        fieldB: new ObjectId(eventDetails.fieldB).toString(),
       });
     });
   });

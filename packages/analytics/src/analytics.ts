@@ -1,5 +1,35 @@
+import { ObjectId } from '@highoutput/object-id';
 import mixpanel, { Mixpanel } from 'mixpanel';
 import R from 'ramda';
+
+function serialize(doc: Record<string, unknown>) {
+  const obj: Record<string, unknown> = doc;
+
+  return R.reduce(
+    (accum, [field, value]) => {
+      if (value instanceof Buffer) {
+        return {
+          ...accum,
+          [field]: new ObjectId(value).toString(),
+        };
+      }
+
+      if (value instanceof ObjectId) {
+        return {
+          ...accum,
+          [field]: (value as ObjectId).toString(),
+        };
+      }
+
+      return {
+        ...accum,
+        [field]: value,
+      };
+    },
+    {},
+    R.toPairs(obj) as [string, unknown][],
+  ) as Record<string, unknown>;
+}
 
 export class Analytics {
   protected project: string;
@@ -18,6 +48,13 @@ export class Analytics {
     created?: Date;
     [key: string]: any;
   }) {
+    const extraFields = serialize(
+      R.omit(
+        ['accountId', 'firstname', 'lastname', 'email', 'created'],
+        params,
+      ),
+    );
+
     this.driver.people.set(params.accountId.toString(), {
       $distinct_id: params.accountId.toString(),
       meta: { project: this.project },
@@ -25,10 +62,7 @@ export class Analytics {
       $last_name: params.lastname,
       $email: params.email,
       $created: params.created ?? new Date(),
-      ...R.omit(
-        ['accountId', 'firstname', 'lastname', 'email', 'created'],
-        params,
-      ),
+      ...extraFields,
     });
   }
 
@@ -36,7 +70,7 @@ export class Analytics {
     this.driver.track(params.name, {
       $distinct_id: params.accountId,
       meta: { project: this.project },
-      ...R.omit(['accountId', 'name'], params),
+      ...serialize(R.omit(['accountId', 'name'], params)),
     });
   }
 }
