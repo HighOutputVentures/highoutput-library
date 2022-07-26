@@ -1,3 +1,4 @@
+import { ObjectId } from '@highoutput/object-id';
 import Chance from 'chance';
 import mixpanel, { Mixpanel } from 'mixpanel';
 import { Analytics } from '../src';
@@ -111,6 +112,7 @@ describe('Analytics', () => {
         created: new Date(),
         fieldA: Buffer.from('fieldA'),
         fieldB: chance.string(),
+        fieldC: ObjectId.from(Buffer.from(chance.string())),
       };
 
       analytics.createAccount(accountDetails);
@@ -128,6 +130,7 @@ describe('Analytics', () => {
         $created: accountDetails.created,
         fieldA: accountDetails.fieldA.toString('hex'),
         fieldB: accountDetails.fieldB,
+        fieldC: accountDetails.fieldC.toString(),
       });
     });
   });

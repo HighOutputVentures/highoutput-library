@@ -1,3 +1,4 @@
+import { ObjectId } from '@highoutput/object-id';
 import mixpanel, { Mixpanel } from 'mixpanel';
 import R from 'ramda';
 
@@ -10,6 +11,13 @@ function serialize(doc: Record<string, unknown>) {
         return {
           ...accum,
           [field]: (value as Buffer).toString('hex'),
+        };
+      }
+
+      if (value instanceof ObjectId) {
+        return {
+          ...accum,
+          [field]: (value as ObjectId).toString(),
         };
       }
 
