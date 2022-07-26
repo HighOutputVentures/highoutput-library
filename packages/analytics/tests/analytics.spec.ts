@@ -90,7 +90,7 @@ describe('Analytics', () => {
       expect(expectedData.$created).toBeDefined();
     });
 
-    test('should create an account - add body', async () => {
+    test('should create an account - add extra fields', async () => {
       const mockedFunction = jest.fn();
 
       const project = chance.word();
@@ -109,7 +109,7 @@ describe('Analytics', () => {
         lastname: chance.last(),
         email: chance.email(),
         created: new Date(),
-        fieldA: chance.string(),
+        fieldA: Buffer.from('fieldA'),
         fieldB: chance.string(),
       };
 
@@ -126,7 +126,7 @@ describe('Analytics', () => {
         $last_name: accountDetails.lastname,
         $email: accountDetails.email,
         $created: accountDetails.created,
-        fieldA: accountDetails.fieldA,
+        fieldA: accountDetails.fieldA.toString('hex'),
         fieldB: accountDetails.fieldB,
       });
     });
@@ -148,7 +148,7 @@ describe('Analytics', () => {
         name: chance.word(),
         accountId: chance.string(),
         fieldA: chance.string(),
-        fieldB: chance.string(),
+        fieldB: Buffer.from(chance.string()),
       };
 
       analytics.createEvent(eventDetails);
@@ -160,7 +160,7 @@ describe('Analytics', () => {
         $distinct_id: eventDetails.accountId.toString(),
         meta: { project },
         fieldA: eventDetails.fieldA,
-        fieldB: eventDetails.fieldB,
+        fieldB: eventDetails.fieldB.toString('hex'),
       });
     });
   });
