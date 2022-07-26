@@ -18,7 +18,7 @@ const Template: ComponentStory<typeof Pagination> = props => {
   };
 
   const handleSizeChange = (size: number) => {
-    setArgs({ ...args, size });
+    setArgs({ ...args, size, page: 1 });
   };
 
   return (
