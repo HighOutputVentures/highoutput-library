@@ -109,10 +109,8 @@ describe('Analytics', () => {
         lastname: chance.last(),
         email: chance.email(),
         created: new Date(),
-        body: {
-          fieldA: chance.string(),
-          fieldB: chance.string(),
-        },
+        fieldA: chance.string(),
+        fieldB: chance.string(),
       };
 
       analytics.createAccount(accountDetails);
@@ -120,6 +118,7 @@ describe('Analytics', () => {
       expect(mockedFunction.mock.calls[0][0]).toEqual(
         accountDetails.accountId.toString(),
       );
+
       expect(mockedFunction.mock.calls[0][1]).toEqual({
         $distinct_id: accountDetails.accountId.toString(),
         meta: { project },
@@ -127,7 +126,8 @@ describe('Analytics', () => {
         $last_name: accountDetails.lastname,
         $email: accountDetails.email,
         $created: accountDetails.created,
-        ...accountDetails.body,
+        fieldA: accountDetails.fieldA,
+        fieldB: accountDetails.fieldB,
       });
     });
   });
@@ -147,10 +147,8 @@ describe('Analytics', () => {
       const eventDetails = {
         name: chance.word(),
         accountId: chance.string(),
-        body: {
-          fieldA: chance.string(),
-          fieldB: chance.string(),
-        },
+        fieldA: chance.string(),
+        fieldB: chance.string(),
       };
 
       analytics.createEvent(eventDetails);
@@ -161,7 +159,8 @@ describe('Analytics', () => {
       expect(mockedFunction.mock.calls[0][1]).toEqual({
         $distinct_id: eventDetails.accountId.toString(),
         meta: { project },
-        ...eventDetails.body,
+        fieldA: eventDetails.fieldA,
+        fieldB: eventDetails.fieldB,
       });
     });
   });
