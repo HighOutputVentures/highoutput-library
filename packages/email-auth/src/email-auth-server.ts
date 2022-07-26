@@ -1,7 +1,7 @@
 import parse from 'co-body';
 import { EmailAdapter, StorageAdapter } from './interfaces';
 import cryptoRandomString from 'crypto-random-string';
-import jsonwebtoken from 'jsonwebtoken';
+import jsonwebtoken, { JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
 export class EmailAuthServer {
@@ -124,5 +124,17 @@ export class EmailAuthServer {
 
       next();
     };
+  }
+  public validateJWT(token: string): JwtPayload | null {
+    try {
+      const result = jsonwebtoken.verify(token, this.opts?.jwtSecret as string) as JwtPayload;
+      return {
+        expiresIn: result.exp,
+        subject: result.sub
+      }
+    }
+    catch (e) {
+      return null;
+    }
   }
 }
