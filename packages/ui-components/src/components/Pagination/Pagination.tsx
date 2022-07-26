@@ -18,14 +18,14 @@ import ChevronRightIcon from './ChevronRightIcon';
 
 type WithoutChildren<T> = Omit<T, 'children'>;
 
-export type PaginationProps<T extends number[] = number[]> = {
+export type PaginationProps = {
   page: number;
-  size: T[number];
+  size: number;
   total: number;
-  onSizeChange?: (newSize: T[number]) => void;
+  onSizeChange?: (newSize: number) => void;
   onPageChange?: (newPage: number) => void;
   options: {
-    sizes: T;
+    sizes: number[];
   };
   /**
    *
