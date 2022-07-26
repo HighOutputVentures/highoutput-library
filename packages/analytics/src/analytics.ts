@@ -10,7 +10,7 @@ function serialize(doc: Record<string, unknown>) {
       if (value instanceof Buffer) {
         return {
           ...accum,
-          [field]: (value as Buffer).toString('hex'),
+          [field]: new ObjectId(value).toString(),
         };
       }
 

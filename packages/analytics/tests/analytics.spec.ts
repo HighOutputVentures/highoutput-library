@@ -128,7 +128,7 @@ describe('Analytics', () => {
         $last_name: accountDetails.lastname,
         $email: accountDetails.email,
         $created: accountDetails.created,
-        fieldA: accountDetails.fieldA.toString('hex'),
+        fieldA: new ObjectId(accountDetails.fieldA).toString(),
         fieldB: accountDetails.fieldB,
         fieldC: accountDetails.fieldC.toString(),
       });
@@ -163,7 +163,7 @@ describe('Analytics', () => {
         $distinct_id: eventDetails.accountId.toString(),
         meta: { project },
         fieldA: eventDetails.fieldA,
-        fieldB: eventDetails.fieldB.toString('hex'),
+        fieldB: new ObjectId(eventDetails.fieldB).toString(),
       });
     });
   });
