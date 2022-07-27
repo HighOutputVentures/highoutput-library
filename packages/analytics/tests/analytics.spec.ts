@@ -39,7 +39,7 @@ describe('Analytics', () => {
         created: new Date(),
       };
 
-      analytics.createAccount(accountDetails);
+      await analytics.createAccount(accountDetails);
 
       expect(mockedFunction.mock.calls[0][0]).toEqual(
         accountDetails.accountId.toString(),
@@ -74,7 +74,7 @@ describe('Analytics', () => {
         email: chance.email(),
       };
 
-      analytics.createAccount(accountDetails);
+      await analytics.createAccount(accountDetails);
 
       expect(mockedFunction.mock.calls[0][0]).toEqual(
         accountDetails.accountId.toString(),
@@ -115,7 +115,7 @@ describe('Analytics', () => {
         fieldC: ObjectId.from(Buffer.from(chance.string())),
       };
 
-      analytics.createAccount(accountDetails);
+      await analytics.createAccount(accountDetails);
 
       expect(mockedFunction.mock.calls[0][0]).toEqual(
         accountDetails.accountId.toString(),
@@ -154,7 +154,7 @@ describe('Analytics', () => {
         fieldB: Buffer.from(chance.string()),
       };
 
-      analytics.createEvent(eventDetails);
+      await analytics.createEvent(eventDetails);
 
       expect(mockedFunction.mock.calls[0][0]).toEqual(
         eventDetails.name.toString(),

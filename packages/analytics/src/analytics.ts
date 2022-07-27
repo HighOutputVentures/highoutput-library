@@ -40,7 +40,7 @@ export class Analytics {
     this.driver = mixpanel.init(process.env.MIXPANEL_TOKEN || 'secrets');
   }
 
-  createAccount(params: {
+  async createAccount(params: {
     accountId: string;
     firstname?: string;
     lastname?: string;
@@ -55,22 +55,33 @@ export class Analytics {
       ),
     );
 
-    this.driver.people.set(params.accountId.toString(), {
-      $distinct_id: params.accountId.toString(),
-      meta: { project: this.project },
-      $first_name: params.firstname,
-      $last_name: params.lastname,
-      $email: params.email,
-      $created: params.created ?? new Date(),
-      ...extraFields,
+    await new Promise<void>((resolve) => {
+      this.driver.people.set(params.accountId.toString(), {
+        $distinct_id: params.accountId.toString(),
+        meta: { project: this.project },
+        $first_name: params.firstname,
+        $last_name: params.lastname,
+        $email: params.email,
+        $created: params.created ?? new Date(),
+        ...extraFields,
+      });
+
+      resolve();
     });
   }
 
-  createEvent(params: { name: string; accountId: string; [key: string]: any }) {
-    this.driver.track(params.name, {
-      $distinct_id: params.accountId,
-      meta: { project: this.project },
-      ...serialize(R.omit(['accountId', 'name'], params)),
+  async createEvent(params: {
+    name: string;
+    accountId: string;
+    [key: string]: any;
+  }) {
+    await new Promise<void>((resolve) => {
+      this.driver.track(params.name, {
+        $distinct_id: params.accountId,
+        meta: { project: this.project },
+        ...serialize(R.omit(['accountId', 'name'], params)),
+      });
+      resolve();
     });
   }
 }
