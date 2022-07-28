@@ -2,10 +2,10 @@
   "name": "@highoutput/cli",
   "version": "0.6.1",
   "description": "HOVCLI frontend",
-  "main": "./dist/index.js",
+  "main": "./dist/src/index.js",
   "author": "High Output Ventures",
   "bin": {
-    "hovcli": "./dist/index.js"
+    "hovcli": "./dist/src/index.js"
   },
   "scripts": {
     "clean": "rimraf dist/",
