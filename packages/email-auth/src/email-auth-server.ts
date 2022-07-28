@@ -3,6 +3,7 @@ import { EmailAdapter, StorageAdapter } from './interfaces';
 import cryptoRandomString from 'crypto-random-string';
 import jsonwebtoken, { JsonWebTokenError, JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
+import { Claims } from './lib/types';
 
 export class EmailAuthServer {
   constructor(
@@ -125,12 +126,12 @@ export class EmailAuthServer {
       next();
     };
   }
-  public validateJWT(token: string): JwtPayload {
+  public validateJWT(token: string): Claims {
     try {
       const result = jsonwebtoken.verify(token, this.opts?.jwtSecret as string) as JwtPayload;
       return {
-        expiresIn: result.exp,
-        subject: result.sub
+        expiresIn: result.exp as number,
+        subject: result.sub as string,
       }
     }
     catch (e) {
