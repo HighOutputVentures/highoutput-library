@@ -8,7 +8,7 @@ const handlePageChange = jest.fn();
 const handleSizeChange = jest.fn();
 
 describe('Pagination', () => {
-  beforeEach(() => {
+  beforeAll(() => {
     render(
       <Pagination
         page={2}
