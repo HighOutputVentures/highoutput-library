@@ -1,4 +1,4 @@
-import { Deployment, DeploymentStatus } from '../../types';
+import { Deployment, DeploymentStatus } from '../types'
 import R from 'ramda';
 import chalk from 'chalk';
 

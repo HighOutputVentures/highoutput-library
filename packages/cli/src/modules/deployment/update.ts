@@ -1,4 +1,4 @@
-import { Deployment, ObjectID, ResourceType } from '../../../types';
+import { Deployment, ObjectID, ResourceType } from '../../types'
 import { Command } from 'commander';
 import R from 'ramda';
 import renderDeployments from '../../library/render-deployments';

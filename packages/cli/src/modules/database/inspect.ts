@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import renderDatabase from '../../library/render-database';
 import * as client from '../../library/client';
-import { Database, ObjectID, ResourceType } from '../../../types';
+import { Database, ObjectID, ResourceType } from '../../types'
 
 const command = new Command('inspect');
 

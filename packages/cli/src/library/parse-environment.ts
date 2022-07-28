@@ -1,4 +1,4 @@
-import { EnvironmentVariable } from '../../types';
+import { EnvironmentVariable } from '../types'
 import R from 'ramda';
 
 export default function(environment: string[]) {

@@ -1,4 +1,4 @@
-import { Database, DeploymentTag, DatabaseStatus, ObjectID, ResourceType, DatabaseType } from '../../../types';
+import { Database, DeploymentTag, DatabaseStatus, ObjectID, ResourceType, DatabaseType } from '../../types'
 import { Command } from 'commander';
 import R from 'ramda';
 import * as client from '../../library/client';

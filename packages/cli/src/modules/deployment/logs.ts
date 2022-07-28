@@ -1,4 +1,4 @@
-import { ObjectID, ResourceType } from '../../../types';
+import { ObjectID, ResourceType } from '../../types'
 import { Command } from 'commander';
 import * as client from '../../library/client';
 

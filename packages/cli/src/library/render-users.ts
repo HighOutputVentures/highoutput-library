@@ -1,4 +1,4 @@
-import { User } from '../../types';
+import { User } from '../types'
 import chalk from 'chalk';
 import { DateTime } from 'luxon';
 

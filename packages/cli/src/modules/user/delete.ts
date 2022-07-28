@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 import * as client from '../../library/client';
-import { ResourceType, User } from '../../../types';
+import { ResourceType, User } from '../../types'
 
 const command = new Command('delete')
   .argument('<id>', 'user ID')

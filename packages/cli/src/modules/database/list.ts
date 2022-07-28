@@ -1,4 +1,4 @@
-import { Database, ResourceType } from '../../../types';
+import { Database, ResourceType } from '../../types'
 import { Command } from 'commander';
 import * as client from '../../library/client';
 import renderDatabases from '../../library/render-databases';

@@ -1,4 +1,4 @@
-import { DeploymentTag } from '../../types';
+import { DeploymentTag } from '../types';
 import R from 'ramda';
 
 export default function(tags: string[]) {
