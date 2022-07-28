@@ -100,13 +100,17 @@ const Pagination: FC<PaginationProps> = ({
         </Text>
 
         <Select
-          data-testid="pagination.dropdown"
+          data-testid={`${id}-pagination.dropdown`}
           onChange={handleSizeChange}
           value={size}
           {...styles?.dropdown}
         >
           {options.sizes.map((size, index) => (
-            <option value={size} key={id + size + index}>
+            <option
+              value={size}
+              key={id + size + index}
+              data-testid={`${id}-${size}-${index}`}
+            >
               {size}
             </option>
           ))}
@@ -121,7 +125,7 @@ const Pagination: FC<PaginationProps> = ({
         <HStack {...styles?.controlsContainer}>
           <IconButton
             aria-label=""
-            data-testid="pagination.controls.prev"
+            data-testid={`${id}-pagination.controls.prev`}
             icon={<Icon as={ChevronLeftIcon} {...styles?.controlIcons} />}
             onClick={handlePageChange('decrement')}
             disabled={!hasPrev}
@@ -130,7 +134,7 @@ const Pagination: FC<PaginationProps> = ({
 
           <IconButton
             aria-label=""
-            data-testid="pagination.controls.next"
+            data-testid={`${id}-pagination.controls.next`}
             icon={<Icon as={ChevronRightIcon} {...styles?.controlIcons} />}
             onClick={handlePageChange('increment')}
             disabled={!hasNext}
