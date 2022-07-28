@@ -1,4 +1,6 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import '@testing-library/react/dont-cleanup-after-each';
+
+import { fireEvent, render, screen } from '@testing-library/react';
 import * as React from 'react';
 import Pagination from './Pagination';
 
@@ -6,8 +8,6 @@ const handlePageChange = jest.fn();
 const handleSizeChange = jest.fn();
 
 describe('Pagination', () => {
-  afterEach(cleanup);
-
   beforeEach(() => {
     render(
       <Pagination
@@ -23,10 +23,8 @@ describe('Pagination', () => {
     );
   });
 
-  it('Should be able to change page size', () => {
-    const dropdown = screen.getByTestId<HTMLSelectElement>(
-      'pagination.dropdown'
-    );
+  it('Should be able to change page size', async () => {
+    const dropdown = await screen.getByTestId(':r0:-pagination.dropdown');
 
     fireEvent.change(dropdown, {
       target: {
@@ -37,15 +35,15 @@ describe('Pagination', () => {
     expect(handleSizeChange).toBeCalledWith(expect.any(Number));
   });
 
-  it('Should be able to go to previous page', () => {
-    const button = screen.getByTestId('pagination.controls.prev');
-    fireEvent.click(button);
+  it('Should be able to go to previous page', async () => {
+    const prevBtn = await screen.getByTestId(':r0:-pagination.controls.prev');
+    fireEvent.click(prevBtn);
     expect(handlePageChange).toBeCalledWith(expect.any(Number));
   });
 
-  it('Should be able to go to next page', () => {
-    const button = screen.getByTestId('pagination.controls.next');
-    fireEvent.click(button);
+  it('Should be able to go to next page', async () => {
+    const nextBtn = await screen.getByTestId(':r0:-pagination.controls.next');
+    fireEvent.click(nextBtn);
     expect(handlePageChange).toBeCalledWith(expect.any(Number));
   });
 });
