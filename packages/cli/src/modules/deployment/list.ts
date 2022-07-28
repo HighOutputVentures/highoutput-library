@@ -1,4 +1,4 @@
-import { Deployment, ResourceType } from '../../../types';
+import { Deployment, ResourceType } from '../../types'
 import { Command } from 'commander';
 import renderDeployments from '../../library/render-deployments';
 import * as client from '../../library/client';

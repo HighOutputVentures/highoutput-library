@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import renderDeployment from '../../library/render-deployment';
 import * as client from '../../library/client';
-import { Deployment, ObjectID, ResourceType } from '../../../types';
+import { Deployment, ObjectID, ResourceType } from '../../types'
 
 const command = new Command('inspect');
 

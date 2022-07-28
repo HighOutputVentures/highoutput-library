@@ -1,4 +1,4 @@
-import { Database, DatabaseStatus } from '../../types';
+import { Database, DatabaseStatus } from '../types'
 import R from 'ramda';
 import Str from '@supercharge/strings';
 import chalk from 'chalk';

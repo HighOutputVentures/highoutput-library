@@ -1,5 +1,5 @@
 import path from 'path';
-import { Deployment, DeploymentTag, DeploymentStatus, EnvironmentVariable, ObjectID, ResourceType } from '../../../types';
+import { Deployment, DeploymentTag, DeploymentStatus, EnvironmentVariable, ObjectID, ResourceType } from '../../types'
 import { Command } from 'commander';
 import R from 'ramda';
 import git from 'git-utils';

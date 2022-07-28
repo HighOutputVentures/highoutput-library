@@ -4,7 +4,7 @@ import {
   ObjectID,
   ResourceType,
   User,
-} from '../../../types';
+} from '../../types'
 import renderUsers from '../../library/render-users';
 
 const command = new Command('create')

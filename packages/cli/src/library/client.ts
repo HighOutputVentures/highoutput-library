@@ -1,4 +1,4 @@
-import { ObjectID, Resource, ResourceType } from '../../types';
+import { ObjectID, Resource, ResourceType } from '../types';
 import fetch from 'node-fetch';
 import AppError from '@highoutput/error';
 import pluralize from 'pluralize';

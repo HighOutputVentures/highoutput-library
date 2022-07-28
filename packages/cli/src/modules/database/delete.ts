@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { Database, ObjectID, ResourceType } from '../../../types';
+import { Database, ObjectID, ResourceType } from '../../types'
 import * as client from '../../library/client';
 import renderDatabases from '../../library/render-databases';
 
