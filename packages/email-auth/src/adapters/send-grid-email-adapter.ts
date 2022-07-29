@@ -1,7 +1,7 @@
 import sendGrid from '@sendgrid/mail';
 import ejs, { TemplateFunction } from 'ejs';
 import { EmailAdapter } from '../interfaces';
-import { User, SenderInfo } from '../lib/types';
+import { User } from '../lib/types';
 
 export class SendGridEmailAdapter implements EmailAdapter {
   private template: TemplateFunction;
@@ -19,7 +19,7 @@ export class SendGridEmailAdapter implements EmailAdapter {
 
     await sendGrid.send({
       to: params.user.emailAddress,
-      text: this.template(params),
+      html: this.template(params),
       subject: this.opts.subject,
       from: this.opts.sender,
     });
