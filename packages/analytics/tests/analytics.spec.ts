@@ -19,7 +19,9 @@ function setup(params: { project: string; mockedMixpanelInstance: unknown }) {
 describe('Analytics', () => {
   describe('#createAccount', () => {
     test('should create an account', async () => {
-      const mockedFunction = jest.fn();
+      const mockedFunction = jest.fn(function (_args, _args2, cb) {
+        cb();
+      });
 
       const project = chance.word();
       const { analytics } = setup({
@@ -39,7 +41,7 @@ describe('Analytics', () => {
         created: new Date(),
       };
 
-      analytics.createAccount(accountDetails);
+      await analytics.createAccount(accountDetails);
 
       expect(mockedFunction.mock.calls[0][0]).toEqual(
         accountDetails.accountId.toString(),
@@ -55,7 +57,9 @@ describe('Analytics', () => {
     });
 
     test('should create an account - missing createDate', async () => {
-      const mockedFunction = jest.fn();
+      const mockedFunction = jest.fn(function (_args, _args2, cb) {
+        cb();
+      });
 
       const project = chance.word();
       const { analytics } = setup({
@@ -74,7 +78,7 @@ describe('Analytics', () => {
         email: chance.email(),
       };
 
-      analytics.createAccount(accountDetails);
+      await analytics.createAccount(accountDetails);
 
       expect(mockedFunction.mock.calls[0][0]).toEqual(
         accountDetails.accountId.toString(),
@@ -92,8 +96,9 @@ describe('Analytics', () => {
     });
 
     test('should create an account - add extra fields', async () => {
-      const mockedFunction = jest.fn();
-
+      const mockedFunction = jest.fn(function (_args, _args2, cb) {
+        cb();
+      });
       const project = chance.word();
       const { analytics } = setup({
         project,
@@ -115,7 +120,7 @@ describe('Analytics', () => {
         fieldC: ObjectId.from(Buffer.from(chance.string())),
       };
 
-      analytics.createAccount(accountDetails);
+      await analytics.createAccount(accountDetails);
 
       expect(mockedFunction.mock.calls[0][0]).toEqual(
         accountDetails.accountId.toString(),
@@ -133,11 +138,39 @@ describe('Analytics', () => {
         fieldC: accountDetails.fieldC.toString(),
       });
     });
+
+    test('should error', async () => {
+      const mockedFunction = jest.fn(function (_args, _args2, cb) {
+        cb(new Error('error'));
+      });
+
+      const project = chance.word();
+      const { analytics } = setup({
+        project,
+        mockedMixpanelInstance: {
+          people: {
+            set: mockedFunction,
+          },
+        },
+      });
+
+      const accountDetails = {
+        accountId: chance.string(),
+      };
+
+      try {
+        await analytics.createAccount(accountDetails);
+      } catch (e) {
+        expect(mockedFunction).toThrow();
+      }
+    });
   });
 
   describe('#createEvent', () => {
     test('should create an event', async () => {
-      const mockedFunction = jest.fn();
+      const mockedFunction = jest.fn(function (_args, _args2, cb) {
+        cb();
+      });
 
       const project = chance.word();
       const { analytics } = setup({
@@ -154,7 +187,7 @@ describe('Analytics', () => {
         fieldB: Buffer.from(chance.string()),
       };
 
-      analytics.createEvent(eventDetails);
+      await analytics.createEvent(eventDetails);
 
       expect(mockedFunction.mock.calls[0][0]).toEqual(
         eventDetails.name.toString(),
@@ -165,6 +198,33 @@ describe('Analytics', () => {
         fieldA: eventDetails.fieldA,
         fieldB: new ObjectId(eventDetails.fieldB).toString(),
       });
+    });
+
+    test('should error', async () => {
+      const mockedFunction = jest.fn(function (_args, _args2, cb) {
+        cb(new Error('error'));
+      });
+
+      const project = chance.word();
+      const { analytics } = setup({
+        project,
+        mockedMixpanelInstance: {
+          track: mockedFunction,
+        },
+      });
+
+      const eventDetails = {
+        name: chance.word(),
+        accountId: chance.string(),
+        fieldA: chance.string(),
+        fieldB: Buffer.from(chance.string()),
+      };
+
+      try {
+        await analytics.createEvent(eventDetails);
+      } catch (e) {
+        expect(mockedFunction).toThrow();
+      }
     });
   });
 });
