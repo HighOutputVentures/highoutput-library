@@ -15,8 +15,3 @@ export type SenderInfo = {
   name: string;
   email: string;
 };
-
-export type Claims = {
-  expiresIn: number;
-  subject: string;
-};

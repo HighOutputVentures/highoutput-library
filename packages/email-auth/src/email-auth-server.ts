@@ -1,9 +1,8 @@
 import parse from 'co-body';
 import { EmailAdapter, StorageAdapter } from './interfaces';
 import cryptoRandomString from 'crypto-random-string';
-import jsonwebtoken, { JsonWebTokenError, JwtPayload } from 'jsonwebtoken';
+import jsonwebtoken from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
-import { Claims } from './lib/types';
 
 export class EmailAuthServer {
   constructor(
@@ -110,7 +109,7 @@ export class EmailAuthServer {
 
         const token = jsonwebtoken.sign({}, opts?.jwtSecret as string, {
           expiresIn: opts?.jwtTTL as string,
-          subject: user.emailAddress,
+          subject: user.id.toString('base64url'),
         });
 
         res.set('Content-Type', 'application/json');
@@ -126,16 +125,7 @@ export class EmailAuthServer {
       next();
     };
   }
-  public validateJWT(token: string): Claims {
-    try {
-      const result = jsonwebtoken.verify(token, this.opts?.jwtSecret as string) as JwtPayload;
-      return {
-        expiresIn: result.exp as number,
-        subject: result.sub as string,
-      }
-    }
-    catch (e) {
-      throw new JsonWebTokenError('Invalid token or secret.');
-    }
+  public validateJWT(token: string) {
+    return jsonwebtoken.verify(token, this.opts?.jwtSecret as string);
   }
 }
