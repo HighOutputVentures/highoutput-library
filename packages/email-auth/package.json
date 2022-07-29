@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/email-auth",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "description": "server middleware for email authentication",
   "keywords": [
     "authentication"
