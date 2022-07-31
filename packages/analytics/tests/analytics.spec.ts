@@ -14,7 +14,7 @@ function setup(params: { project: string; mockedMixpanelInstance: unknown }) {
   (mixpanel as jest.Mocked<typeof mixpanel>).init.mockImplementation(
     () => params.mockedMixpanelInstance as unknown as Mixpanel,
   );
-  const analytics = new Analytics({ project: params.project });
+  const analytics = new Analytics({ project: params.project, token: 'secret' });
 
   return { analytics };
 }

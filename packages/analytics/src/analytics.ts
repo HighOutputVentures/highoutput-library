@@ -41,9 +41,9 @@ export class Analytics {
   protected queue: PQueue;
   protected status: 'STARTED' | 'SHUTTING_DOWN';
 
-  constructor(params: { project: string }) {
+  constructor(params: { project: string; token: string }) {
     this.project = params.project;
-    this.driver = mixpanel.init(process.env.MIXPANEL_TOKEN || 'secrets');
+    this.driver = mixpanel.init(params.token);
     this.queue = new PQueue({ concurrency: 1 });
     this.status = 'STARTED';
   }
