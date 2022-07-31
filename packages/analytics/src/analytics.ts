@@ -121,4 +121,10 @@ export class Analytics {
       }
     });
   }
+
+  async stop() {
+    this.status = 'SHUTTING_DOWN';
+    this.queue.clear();
+    await this.queue.onIdle();
+  }
 }
