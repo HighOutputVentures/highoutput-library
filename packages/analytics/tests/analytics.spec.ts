@@ -1,9 +1,12 @@
+import EventEmitter from 'events';
+import delay from '@highoutput/delay';
 import { ObjectId } from '@highoutput/object-id';
 import Chance from 'chance';
 import mixpanel, { Mixpanel } from 'mixpanel';
 import { Analytics } from '../src';
 
 jest.mock('mixpanel');
+jest.setTimeout(10000);
 
 const chance = new Chance();
 
@@ -41,7 +44,7 @@ describe('Analytics', () => {
         created: new Date(),
       };
 
-      await analytics.createAccount(accountDetails);
+      analytics.createAccount(accountDetails);
 
       expect(mockedFunction.mock.calls[0][0]).toEqual(
         accountDetails.accountId.toString(),
@@ -78,7 +81,7 @@ describe('Analytics', () => {
         email: chance.email(),
       };
 
-      await analytics.createAccount(accountDetails);
+      analytics.createAccount(accountDetails);
 
       expect(mockedFunction.mock.calls[0][0]).toEqual(
         accountDetails.accountId.toString(),
@@ -120,7 +123,7 @@ describe('Analytics', () => {
         fieldC: ObjectId.from(Buffer.from(chance.string())),
       };
 
-      await analytics.createAccount(accountDetails);
+      analytics.createAccount(accountDetails);
 
       expect(mockedFunction.mock.calls[0][0]).toEqual(
         accountDetails.accountId.toString(),
@@ -139,7 +142,7 @@ describe('Analytics', () => {
       });
     });
 
-    test('should error', async () => {
+    test('should not throw when request encountered an error', async () => {
       const mockedFunction = jest.fn(function (_args, _args2, cb) {
         cb(new Error('error'));
       });
@@ -158,11 +161,33 @@ describe('Analytics', () => {
         accountId: chance.string(),
       };
 
-      try {
-        await analytics.createAccount(accountDetails);
-      } catch (e) {
-        expect(mockedFunction).toThrow();
-      }
+      expect(() => analytics.createAccount(accountDetails)).not.toThrow();
+    });
+
+    test('should not call mixpanel request if status is SHUTTING_DOWN', async () => {
+      const mockedFunction = jest.fn();
+
+      const project = chance.word();
+      const { analytics } = setup({
+        project,
+        mockedMixpanelInstance: {
+          people: {
+            set: mockedFunction,
+          },
+        },
+      });
+
+      const accountDetails = {
+        accountId: chance.string(),
+      };
+
+      await analytics.stop();
+
+      analytics.createAccount(accountDetails);
+
+      await delay('1s');
+
+      expect(mockedFunction).not.toBeCalled();
     });
   });
 
@@ -187,7 +212,7 @@ describe('Analytics', () => {
         fieldB: Buffer.from(chance.string()),
       };
 
-      await analytics.createEvent(eventDetails);
+      analytics.createEvent(eventDetails);
 
       expect(mockedFunction.mock.calls[0][0]).toEqual(
         eventDetails.name.toString(),
@@ -200,7 +225,7 @@ describe('Analytics', () => {
       });
     });
 
-    test('should error', async () => {
+    test('should not throw error when request encountered an error', async () => {
       const mockedFunction = jest.fn(function (_args, _args2, cb) {
         cb(new Error('error'));
       });
@@ -220,11 +245,116 @@ describe('Analytics', () => {
         fieldB: Buffer.from(chance.string()),
       };
 
-      try {
-        await analytics.createEvent(eventDetails);
-      } catch (e) {
-        expect(mockedFunction).toThrow();
-      }
+      expect(() => analytics.createEvent(eventDetails)).not.toThrow();
+    });
+
+    test('should not call mixpanel request if status is SHUTTING_DOWN', async () => {
+      const mockedFunction = jest.fn();
+
+      const project = chance.word();
+      const { analytics } = setup({
+        project,
+        mockedMixpanelInstance: {
+          track: mockedFunction,
+        },
+      });
+
+      const eventDetails = {
+        name: chance.word(),
+        accountId: chance.string(),
+        fieldA: chance.string(),
+        fieldB: Buffer.from(chance.string()),
+      };
+
+      await analytics.stop();
+
+      analytics.createEvent(eventDetails);
+
+      await delay('1s');
+
+      expect(mockedFunction).not.toBeCalled();
+    });
+  });
+
+  describe('#stop', () => {
+    test('should wait for current item in queue to finish', async () => {
+      const callbackWatcher = jest.fn();
+      const mockedFunction = jest.fn(function (_args, _args2, cb) {
+        const eventEmitter = new EventEmitter();
+        const eventName = chance.word();
+        eventEmitter.on(eventName, () => {
+          callbackWatcher();
+          cb();
+        });
+
+        (async () => {
+          await delay('1s');
+          eventEmitter.emit(eventName);
+        })();
+      });
+
+      const project = chance.word();
+      const { analytics } = setup({
+        project,
+        mockedMixpanelInstance: {
+          track: mockedFunction,
+        },
+      });
+
+      analytics.createEvent({
+        name: chance.word(),
+        accountId: chance.string(),
+        fieldA: chance.string(),
+        fieldB: Buffer.from(chance.string()),
+      });
+
+      expect(callbackWatcher).not.toBeCalled();
+      await analytics.stop();
+      expect(callbackWatcher).toBeCalledTimes(1);
+    });
+
+    test('should discard operations waiting in queue', async () => {
+      const callbackWatcher = jest.fn();
+      const mockedFunction = jest.fn(function (_args, _args2, cb) {
+        const eventEmitter = new EventEmitter();
+        const eventName = chance.word();
+        eventEmitter.on(eventName, () => {
+          callbackWatcher();
+          cb();
+        });
+
+        (async () => {
+          await delay('2s');
+          eventEmitter.emit(eventName);
+        })();
+      });
+
+      const project = chance.word();
+      const { analytics } = setup({
+        project,
+        mockedMixpanelInstance: {
+          track: mockedFunction,
+        },
+      });
+
+      analytics.createEvent({
+        name: chance.word(),
+        accountId: chance.string(),
+        fieldA: chance.string(),
+        fieldB: Buffer.from(chance.string()),
+      });
+
+      analytics.createEvent({
+        name: chance.word(),
+        accountId: chance.string(),
+        fieldA: chance.string(),
+        fieldB: Buffer.from(chance.string()),
+      });
+
+      await analytics.stop();
+
+      expect(callbackWatcher).toBeCalledTimes(1);
+      expect(mockedFunction).toBeCalledTimes(1);
     });
   });
 });
