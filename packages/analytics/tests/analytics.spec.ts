@@ -6,7 +6,6 @@ import mixpanel, { Mixpanel } from 'mixpanel';
 import { Analytics } from '../src';
 
 jest.mock('mixpanel');
-jest.setTimeout(10000);
 
 const chance = new Chance();
 
