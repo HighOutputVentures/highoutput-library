@@ -65,8 +65,8 @@ export class Analytics {
       ),
     );
 
-    try {
-      this.queue.add(async () => {
+    this.queue.add(async () => {
+      try {
         await new Promise<void>((resolve, reject) => {
           this.driver.people.set(
             params.accountId.toString(),
@@ -88,10 +88,10 @@ export class Analytics {
             },
           );
         });
-      });
-    } catch (error) {
-      logger.tag('createAccount').verbose(error);
-    }
+      } catch (error) {
+        logger.tag('createAccount').verbose(error);
+      }
+    });
   }
 
   createEvent(params: {
@@ -101,8 +101,8 @@ export class Analytics {
   }) {
     if (this.status === 'SHUTTING_DOWN') return;
 
-    try {
-      this.queue.add(async () => {
+    this.queue.add(async () => {
+      try {
         await new Promise<void>((resolve, reject) => {
           this.driver.track(
             params.eventName,
@@ -120,10 +120,10 @@ export class Analytics {
             },
           );
         });
-      });
-    } catch (error) {
-      logger.tag('createEvent').verbose(error);
-    }
+      } catch (error) {
+        logger.tag('createEvent').verbose(error);
+      }
+    });
   }
 
   async stop() {
