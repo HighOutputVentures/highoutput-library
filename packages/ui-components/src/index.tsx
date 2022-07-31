@@ -36,10 +36,18 @@ import OTPVerificationForm, {
   OTPVerificationProps,
 } from './layouts/Auth/OTPVerificationForm';
 
-import OTPForm, { OTPFormProps } from './layouts/Auth/OTPForm';
+import {
+  AuthConfig,
+  AuthContext,
+  AuthProvider,
+  useAuth,
+  UseAuthReturn,
+} from './components/AuthProvider';
+
 import OTPInputField, {
   OTPInputFieldProps,
 } from './components/PinInputField/OTPInputField';
+import OTPForm, { OTPFormProps } from './layouts/Auth/OTPForm';
 
 export {
   Accordion,
@@ -596,4 +604,9 @@ export {
   useSupport,
   Pagination,
   PaginationProps,
+  AuthConfig,
+  AuthContext,
+  AuthProvider,
+  UseAuthReturn,
+  useAuth,
 };
