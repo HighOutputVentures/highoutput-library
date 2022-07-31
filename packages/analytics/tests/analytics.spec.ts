@@ -206,22 +206,24 @@ describe('Analytics', () => {
       });
 
       const eventDetails = {
-        name: chance.word(),
+        eventName: chance.word(),
         accountId: chance.string(),
-        fieldA: chance.string(),
-        fieldB: Buffer.from(chance.string()),
+        body: {
+          fieldA: chance.string(),
+          fieldB: Buffer.from(chance.string()),
+        },
       };
 
       analytics.createEvent(eventDetails);
 
       expect(mockedFunction.mock.calls[0][0]).toEqual(
-        eventDetails.name.toString(),
+        eventDetails.eventName.toString(),
       );
       expect(mockedFunction.mock.calls[0][1]).toEqual({
         $distinct_id: eventDetails.accountId.toString(),
         meta: { project },
-        fieldA: eventDetails.fieldA,
-        fieldB: new ObjectId(eventDetails.fieldB).toString(),
+        fieldA: eventDetails.body.fieldA,
+        fieldB: new ObjectId(eventDetails.body.fieldB).toString(),
       });
     });
 
@@ -239,10 +241,12 @@ describe('Analytics', () => {
       });
 
       const eventDetails = {
-        name: chance.word(),
+        eventName: chance.word(),
         accountId: chance.string(),
-        fieldA: chance.string(),
-        fieldB: Buffer.from(chance.string()),
+        body: {
+          fieldA: chance.string(),
+          fieldB: Buffer.from(chance.string()),
+        },
       };
 
       expect(() => analytics.createEvent(eventDetails)).not.toThrow();
@@ -260,10 +264,9 @@ describe('Analytics', () => {
       });
 
       const eventDetails = {
-        name: chance.word(),
+        eventName: chance.word(),
         accountId: chance.string(),
-        fieldA: chance.string(),
-        fieldB: Buffer.from(chance.string()),
+        body: { fieldA: chance.string(), fieldB: Buffer.from(chance.string()) },
       };
 
       await analytics.stop();
@@ -302,10 +305,12 @@ describe('Analytics', () => {
       });
 
       analytics.createEvent({
-        name: chance.word(),
+        eventName: chance.word(),
         accountId: chance.string(),
-        fieldA: chance.string(),
-        fieldB: Buffer.from(chance.string()),
+        body: {
+          fieldA: chance.string(),
+          fieldB: Buffer.from(chance.string()),
+        },
       });
 
       expect(callbackWatcher).not.toBeCalled();
@@ -338,17 +343,21 @@ describe('Analytics', () => {
       });
 
       analytics.createEvent({
-        name: chance.word(),
+        eventName: chance.word(),
         accountId: chance.string(),
-        fieldA: chance.string(),
-        fieldB: Buffer.from(chance.string()),
+        body: {
+          fieldA: chance.string(),
+          fieldB: Buffer.from(chance.string()),
+        },
       });
 
       analytics.createEvent({
-        name: chance.word(),
+        eventName: chance.word(),
         accountId: chance.string(),
-        fieldA: chance.string(),
-        fieldB: Buffer.from(chance.string()),
+        body: {
+          fieldA: chance.string(),
+          fieldB: Buffer.from(chance.string()),
+        },
       });
 
       await analytics.stop();

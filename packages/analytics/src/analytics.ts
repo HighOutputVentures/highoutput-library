@@ -94,18 +94,22 @@ export class Analytics {
     });
   }
 
-  createEvent(params: { name: string; accountId: string; [key: string]: any }) {
+  createEvent(params: {
+    eventName: string;
+    accountId: string;
+    body: Record<any, any>;
+  }) {
     if (this.status === 'SHUTTING_DOWN') return;
 
     this.queue.add(async () => {
       try {
         await new Promise<void>((resolve, reject) => {
           this.driver.track(
-            params.name,
+            params.eventName,
             {
               $distinct_id: params.accountId,
               meta: { project: this.project },
-              ...serialize(R.omit(['accountId', 'name'], params)),
+              ...serialize(params.body),
             },
             (err) => {
               if (err) {
