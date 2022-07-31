@@ -78,4 +78,4 @@ Type: `object`
 Any properties relevant to the event. Values with types of `Buffer` or `ObjectID` are serialized into string using [bs58](https://www.npmjs.com/package/bs58).
 
 #### .stop()
-Clears the queue and waits for the pending request to Mixpanel finish.
+Clears the queue and waits for the pending request to Mixpanel to finish.
