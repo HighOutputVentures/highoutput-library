@@ -1,6 +1,10 @@
+import Logger from '@highoutput/logger';
 import { ObjectId } from '@highoutput/object-id';
 import mixpanel, { Mixpanel } from 'mixpanel';
+import PQueue from 'p-queue';
 import R from 'ramda';
+
+const logger = new Logger(['analytics']);
 
 function serialize(doc: Record<string, unknown>) {
   const obj: Record<string, unknown> = doc;
@@ -34,13 +38,17 @@ function serialize(doc: Record<string, unknown>) {
 export class Analytics {
   protected project: string;
   protected driver: Mixpanel;
+  protected queue: PQueue;
+  protected status: 'STARTED' | 'SHUTTING_DOWN';
 
   constructor(params: { project: string }) {
     this.project = params.project;
     this.driver = mixpanel.init(process.env.MIXPANEL_TOKEN || 'secrets');
+    this.queue = new PQueue({ concurrency: 1 });
+    this.status = 'STARTED';
   }
 
-  async createAccount(params: {
+  createAccount(params: {
     accountId: string;
     firstname?: string;
     lastname?: string;
@@ -48,6 +56,8 @@ export class Analytics {
     created?: Date;
     [key: string]: any;
   }) {
+    if (this.status === 'SHUTTING_DOWN') return;
+
     const extraFields = serialize(
       R.omit(
         ['accountId', 'firstname', 'lastname', 'email', 'created'],
@@ -55,50 +65,60 @@ export class Analytics {
       ),
     );
 
-    await new Promise<void>((resolve, reject) => {
-      this.driver.people.set(
-        params.accountId.toString(),
-        {
-          $distinct_id: params.accountId.toString(),
-          meta: { project: this.project },
-          $first_name: params.firstname,
-          $last_name: params.lastname,
-          $email: params.email,
-          $created: params.created ?? new Date(),
-          ...extraFields,
-        },
-        (err) => {
-          if (err) {
-            reject(err);
-          }
+    this.queue.add(async () => {
+      try {
+        await new Promise<void>((resolve, reject) => {
+          this.driver.people.set(
+            params.accountId.toString(),
+            {
+              $distinct_id: params.accountId.toString(),
+              meta: { project: this.project },
+              $first_name: params.firstname,
+              $last_name: params.lastname,
+              $email: params.email,
+              $created: params.created ?? new Date(),
+              ...extraFields,
+            },
+            (err) => {
+              if (err) {
+                reject(err);
+              }
 
-          resolve();
-        },
-      );
+              resolve();
+            },
+          );
+        });
+      } catch (error) {
+        logger.tag('createAccount').verbose(error);
+      }
     });
   }
 
-  async createEvent(params: {
-    name: string;
-    accountId: string;
-    [key: string]: any;
-  }) {
-    await new Promise<void>((resolve, reject) => {
-      this.driver.track(
-        params.name,
-        {
-          $distinct_id: params.accountId,
-          meta: { project: this.project },
-          ...serialize(R.omit(['accountId', 'name'], params)),
-        },
-        (err) => {
-          if (err) {
-            reject(err);
-          }
+  createEvent(params: { name: string; accountId: string; [key: string]: any }) {
+    if (this.status === 'SHUTTING_DOWN') return;
 
-          resolve();
-        },
-      );
+    this.queue.add(async () => {
+      try {
+        await new Promise<void>((resolve, reject) => {
+          this.driver.track(
+            params.name,
+            {
+              $distinct_id: params.accountId,
+              meta: { project: this.project },
+              ...serialize(R.omit(['accountId', 'name'], params)),
+            },
+            (err) => {
+              if (err) {
+                reject(err);
+              }
+
+              resolve();
+            },
+          );
+        });
+      } catch (error) {
+        logger.tag('createEvent').verbose(error);
+      }
     });
   }
 }
