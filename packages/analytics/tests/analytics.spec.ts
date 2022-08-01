@@ -19,7 +19,7 @@ function setup(params: { project: string; mockedMixpanelInstance: unknown }) {
 }
 
 describe('Analytics', () => {
-  describe('#createAccount', () => {
+  describe('#setAccount', () => {
     test('should create an account', async () => {
       const mockedFunction = jest.fn(function (_args, _args2, cb) {
         cb();
@@ -37,13 +37,15 @@ describe('Analytics', () => {
 
       const accountDetails = {
         accountId: chance.string(),
-        firstname: chance.first(),
-        lastname: chance.last(),
-        email: chance.email(),
-        created: new Date(),
+        body: {
+          firstname: chance.first(),
+          lastname: chance.last(),
+          email: chance.email(),
+          created: new Date(),
+        },
       };
 
-      analytics.createAccount(accountDetails);
+      analytics.setAccount(accountDetails);
 
       expect(mockedFunction.mock.calls[0][0]).toEqual(
         accountDetails.accountId.toString(),
@@ -51,10 +53,10 @@ describe('Analytics', () => {
       expect(mockedFunction.mock.calls[0][1]).toEqual({
         $distinct_id: accountDetails.accountId.toString(),
         meta: { project },
-        $first_name: accountDetails.firstname,
-        $last_name: accountDetails.lastname,
-        $email: accountDetails.email,
-        $created: accountDetails.created,
+        $first_name: accountDetails.body.firstname,
+        $last_name: accountDetails.body.lastname,
+        $email: accountDetails.body.email,
+        $created: accountDetails.body.created,
       });
     });
 
@@ -75,12 +77,14 @@ describe('Analytics', () => {
 
       const accountDetails = {
         accountId: chance.string(),
-        firstname: chance.first(),
-        lastname: chance.last(),
-        email: chance.email(),
+        body: {
+          firstname: chance.first(),
+          lastname: chance.last(),
+          email: chance.email(),
+        },
       };
 
-      analytics.createAccount(accountDetails);
+      analytics.setAccount(accountDetails);
 
       expect(mockedFunction.mock.calls[0][0]).toEqual(
         accountDetails.accountId.toString(),
@@ -91,9 +95,9 @@ describe('Analytics', () => {
         accountDetails.accountId.toString(),
       );
       expect(expectedData.meta.project).toEqual(project);
-      expect(expectedData.$first_name).toEqual(accountDetails.firstname);
-      expect(expectedData.$last_name).toEqual(accountDetails.lastname);
-      expect(expectedData.$email).toEqual(accountDetails.email);
+      expect(expectedData.$first_name).toEqual(accountDetails.body.firstname);
+      expect(expectedData.$last_name).toEqual(accountDetails.body.lastname);
+      expect(expectedData.$email).toEqual(accountDetails.body.email);
       expect(expectedData.$created).toBeDefined();
     });
 
@@ -113,16 +117,18 @@ describe('Analytics', () => {
 
       const accountDetails = {
         accountId: chance.string(),
-        firstname: chance.first(),
-        lastname: chance.last(),
-        email: chance.email(),
-        created: new Date(),
-        fieldA: Buffer.from('fieldA'),
-        fieldB: chance.string(),
-        fieldC: ObjectId.from(Buffer.from(chance.string())),
+        body: {
+          firstname: chance.first(),
+          lastname: chance.last(),
+          email: chance.email(),
+          created: new Date(),
+          fieldA: Buffer.from('fieldA'),
+          fieldB: chance.string(),
+          fieldC: ObjectId.from(Buffer.from(chance.string())),
+        },
       };
 
-      analytics.createAccount(accountDetails);
+      analytics.setAccount(accountDetails);
 
       expect(mockedFunction.mock.calls[0][0]).toEqual(
         accountDetails.accountId.toString(),
@@ -131,13 +137,13 @@ describe('Analytics', () => {
       expect(mockedFunction.mock.calls[0][1]).toEqual({
         $distinct_id: accountDetails.accountId.toString(),
         meta: { project },
-        $first_name: accountDetails.firstname,
-        $last_name: accountDetails.lastname,
-        $email: accountDetails.email,
-        $created: accountDetails.created,
-        fieldA: new ObjectId(accountDetails.fieldA).toString(),
-        fieldB: accountDetails.fieldB,
-        fieldC: accountDetails.fieldC.toString(),
+        $first_name: accountDetails.body.firstname,
+        $last_name: accountDetails.body.lastname,
+        $email: accountDetails.body.email,
+        $created: accountDetails.body.created,
+        fieldA: new ObjectId(accountDetails.body.fieldA).toString(),
+        fieldB: accountDetails.body.fieldB,
+        fieldC: accountDetails.body.fieldC.toString(),
       });
     });
 
@@ -158,9 +164,12 @@ describe('Analytics', () => {
 
       const accountDetails = {
         accountId: chance.string(),
+        body: {
+          fieldA: Buffer.from('fieldA'),
+        },
       };
 
-      expect(() => analytics.createAccount(accountDetails)).not.toThrow();
+      expect(() => analytics.setAccount(accountDetails)).not.toThrow();
     });
 
     test('should not call mixpanel request if status is SHUTTING_DOWN', async () => {
@@ -178,11 +187,14 @@ describe('Analytics', () => {
 
       const accountDetails = {
         accountId: chance.string(),
+        body: {
+          fieldA: Buffer.from('fieldA'),
+        },
       };
 
       await analytics.stop();
 
-      analytics.createAccount(accountDetails);
+      analytics.setAccount(accountDetails);
 
       await delay('1s');
 
@@ -191,7 +203,7 @@ describe('Analytics', () => {
   });
 
   describe('#createEvent', () => {
-    test('should create an event', async () => {
+    test('should create an event with an accountId', async () => {
       const mockedFunction = jest.fn(function (_args, _args2, cb) {
         cb();
       });
@@ -219,7 +231,40 @@ describe('Analytics', () => {
         eventDetails.eventName.toString(),
       );
       expect(mockedFunction.mock.calls[0][1]).toEqual({
-        $distinct_id: eventDetails.accountId.toString(),
+        distinct_id: eventDetails.accountId.toString(),
+        meta: { project },
+        fieldA: eventDetails.body.fieldA,
+        fieldB: new ObjectId(eventDetails.body.fieldB).toString(),
+      });
+    });
+
+    test('should create an event without accountId', async () => {
+      const mockedFunction = jest.fn(function (_args, _args2, cb) {
+        cb();
+      });
+
+      const project = chance.word();
+      const { analytics } = setup({
+        project,
+        mockedMixpanelInstance: {
+          track: mockedFunction,
+        },
+      });
+
+      const eventDetails = {
+        eventName: chance.word(),
+        body: {
+          fieldA: chance.string(),
+          fieldB: Buffer.from(chance.string()),
+        },
+      };
+
+      analytics.createEvent(eventDetails);
+
+      expect(mockedFunction.mock.calls[0][0]).toEqual(
+        eventDetails.eventName.toString(),
+      );
+      expect(mockedFunction.mock.calls[0][1]).toEqual({
         meta: { project },
         fieldA: eventDetails.body.fieldA,
         fieldB: new ObjectId(eventDetails.body.fieldB).toString(),
