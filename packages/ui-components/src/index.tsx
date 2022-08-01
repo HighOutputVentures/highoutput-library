@@ -40,6 +40,7 @@ import OTPForm, { OTPFormProps } from './layouts/Auth/OTPForm';
 import OTPInputField, {
   OTPInputFieldProps,
 } from './components/PinInputField/OTPInputField';
+import AutoForm, { AutoFormProps } from './layouts/Forms/AutoForm';
 
 export {
   Accordion,
@@ -589,6 +590,8 @@ export {
   OTPFormProps,
   OTPInputField,
   OTPInputFieldProps,
+  AutoForm,
+  AutoFormProps,
   // default theme
   theme,
   extendTheme,
