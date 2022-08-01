@@ -50,20 +50,15 @@ export class Analytics {
 
   createAccount(params: {
     accountId: string;
-    firstname?: string;
-    lastname?: string;
-    email?: string;
-    created?: Date;
-    [key: string]: any;
+    body: {
+      firstname?: string;
+      lastname?: string;
+      email?: string;
+      created?: Date;
+      [key: string]: any;
+    };
   }) {
     if (this.status === 'SHUTTING_DOWN') return;
-
-    const extraFields = serialize(
-      R.omit(
-        ['accountId', 'firstname', 'lastname', 'email', 'created'],
-        params,
-      ),
-    );
 
     this.queue.add(async () => {
       try {
@@ -73,11 +68,16 @@ export class Analytics {
             {
               $distinct_id: params.accountId.toString(),
               meta: { project: this.project },
-              $first_name: params.firstname,
-              $last_name: params.lastname,
-              $email: params.email,
-              $created: params.created ?? new Date(),
-              ...extraFields,
+              $first_name: params.body.firstname,
+              $last_name: params.body.lastname,
+              $email: params.body.email,
+              $created: params.body.created ?? new Date(),
+              ...serialize(
+                R.omit(
+                  ['accountId', 'firstname', 'lastname', 'email', 'created'],
+                  params.body,
+                ),
+              ),
             },
             (err) => {
               if (err) {

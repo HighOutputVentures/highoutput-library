@@ -37,10 +37,12 @@ describe('Analytics', () => {
 
       const accountDetails = {
         accountId: chance.string(),
-        firstname: chance.first(),
-        lastname: chance.last(),
-        email: chance.email(),
-        created: new Date(),
+        body: {
+          firstname: chance.first(),
+          lastname: chance.last(),
+          email: chance.email(),
+          created: new Date(),
+        },
       };
 
       analytics.createAccount(accountDetails);
@@ -51,10 +53,10 @@ describe('Analytics', () => {
       expect(mockedFunction.mock.calls[0][1]).toEqual({
         $distinct_id: accountDetails.accountId.toString(),
         meta: { project },
-        $first_name: accountDetails.firstname,
-        $last_name: accountDetails.lastname,
-        $email: accountDetails.email,
-        $created: accountDetails.created,
+        $first_name: accountDetails.body.firstname,
+        $last_name: accountDetails.body.lastname,
+        $email: accountDetails.body.email,
+        $created: accountDetails.body.created,
       });
     });
 
@@ -75,9 +77,11 @@ describe('Analytics', () => {
 
       const accountDetails = {
         accountId: chance.string(),
-        firstname: chance.first(),
-        lastname: chance.last(),
-        email: chance.email(),
+        body: {
+          firstname: chance.first(),
+          lastname: chance.last(),
+          email: chance.email(),
+        },
       };
 
       analytics.createAccount(accountDetails);
@@ -91,9 +95,9 @@ describe('Analytics', () => {
         accountDetails.accountId.toString(),
       );
       expect(expectedData.meta.project).toEqual(project);
-      expect(expectedData.$first_name).toEqual(accountDetails.firstname);
-      expect(expectedData.$last_name).toEqual(accountDetails.lastname);
-      expect(expectedData.$email).toEqual(accountDetails.email);
+      expect(expectedData.$first_name).toEqual(accountDetails.body.firstname);
+      expect(expectedData.$last_name).toEqual(accountDetails.body.lastname);
+      expect(expectedData.$email).toEqual(accountDetails.body.email);
       expect(expectedData.$created).toBeDefined();
     });
 
@@ -113,13 +117,15 @@ describe('Analytics', () => {
 
       const accountDetails = {
         accountId: chance.string(),
-        firstname: chance.first(),
-        lastname: chance.last(),
-        email: chance.email(),
-        created: new Date(),
-        fieldA: Buffer.from('fieldA'),
-        fieldB: chance.string(),
-        fieldC: ObjectId.from(Buffer.from(chance.string())),
+        body: {
+          firstname: chance.first(),
+          lastname: chance.last(),
+          email: chance.email(),
+          created: new Date(),
+          fieldA: Buffer.from('fieldA'),
+          fieldB: chance.string(),
+          fieldC: ObjectId.from(Buffer.from(chance.string())),
+        },
       };
 
       analytics.createAccount(accountDetails);
@@ -131,13 +137,13 @@ describe('Analytics', () => {
       expect(mockedFunction.mock.calls[0][1]).toEqual({
         $distinct_id: accountDetails.accountId.toString(),
         meta: { project },
-        $first_name: accountDetails.firstname,
-        $last_name: accountDetails.lastname,
-        $email: accountDetails.email,
-        $created: accountDetails.created,
-        fieldA: new ObjectId(accountDetails.fieldA).toString(),
-        fieldB: accountDetails.fieldB,
-        fieldC: accountDetails.fieldC.toString(),
+        $first_name: accountDetails.body.firstname,
+        $last_name: accountDetails.body.lastname,
+        $email: accountDetails.body.email,
+        $created: accountDetails.body.created,
+        fieldA: new ObjectId(accountDetails.body.fieldA).toString(),
+        fieldB: accountDetails.body.fieldB,
+        fieldC: accountDetails.body.fieldC.toString(),
       });
     });
 
@@ -158,6 +164,9 @@ describe('Analytics', () => {
 
       const accountDetails = {
         accountId: chance.string(),
+        body: {
+          fieldA: Buffer.from('fieldA'),
+        },
       };
 
       expect(() => analytics.createAccount(accountDetails)).not.toThrow();
@@ -178,6 +187,9 @@ describe('Analytics', () => {
 
       const accountDetails = {
         accountId: chance.string(),
+        body: {
+          fieldA: Buffer.from('fieldA'),
+        },
       };
 
       await analytics.stop();
