@@ -19,7 +19,7 @@ function setup(params: { project: string; mockedMixpanelInstance: unknown }) {
 }
 
 describe('Analytics', () => {
-  describe('#createAccount', () => {
+  describe('#setAccount', () => {
     test('should create an account', async () => {
       const mockedFunction = jest.fn(function (_args, _args2, cb) {
         cb();
@@ -45,7 +45,7 @@ describe('Analytics', () => {
         },
       };
 
-      analytics.createAccount(accountDetails);
+      analytics.setAccount(accountDetails);
 
       expect(mockedFunction.mock.calls[0][0]).toEqual(
         accountDetails.accountId.toString(),
@@ -84,7 +84,7 @@ describe('Analytics', () => {
         },
       };
 
-      analytics.createAccount(accountDetails);
+      analytics.setAccount(accountDetails);
 
       expect(mockedFunction.mock.calls[0][0]).toEqual(
         accountDetails.accountId.toString(),
@@ -128,7 +128,7 @@ describe('Analytics', () => {
         },
       };
 
-      analytics.createAccount(accountDetails);
+      analytics.setAccount(accountDetails);
 
       expect(mockedFunction.mock.calls[0][0]).toEqual(
         accountDetails.accountId.toString(),
@@ -169,7 +169,7 @@ describe('Analytics', () => {
         },
       };
 
-      expect(() => analytics.createAccount(accountDetails)).not.toThrow();
+      expect(() => analytics.setAccount(accountDetails)).not.toThrow();
     });
 
     test('should not call mixpanel request if status is SHUTTING_DOWN', async () => {
@@ -194,7 +194,7 @@ describe('Analytics', () => {
 
       await analytics.stop();
 
-      analytics.createAccount(accountDetails);
+      analytics.setAccount(accountDetails);
 
       await delay('1s');
 

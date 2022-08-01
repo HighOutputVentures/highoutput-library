@@ -48,7 +48,7 @@ export class Analytics {
     this.status = 'STARTED';
   }
 
-  createAccount(params: {
+  setAccount(params: {
     accountId: string;
     body: {
       firstname?: string;
