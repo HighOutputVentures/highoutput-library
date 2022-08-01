@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/analytics",
-  "version": "0.1.8",
+  "version": "0.2.0",
   "description": "Analytics",
   "main": "dist/index.js",
   "scripts": {
