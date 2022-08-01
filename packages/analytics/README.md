@@ -14,14 +14,19 @@ const analytics = new Analytics({
   token: 'secret',
 });
 
-analytics.createAccount({
+// Create or update user
+analytics.setAccount({
   accountId: 'unique-id-123',
-  firstname: 'juan',
-  lastname: 'bautista',
-  email: 'juan.bautista@mail.com',
-  created: new Date(),
+  body: {
+    firstname: 'juan',
+    lastname: 'bautista',
+    email: 'juan.bautista@mail.com',
+    created: new Date(),
+  }
 });
 
+// Create an event.
+// Omit `accountId` if event does not need to be associated to user.
 analytics.createEvent({
   eventName: 'CREATE_POST',
   accountId: 'unique-id-123',
@@ -50,8 +55,14 @@ Token from Mixpanel.
 ### queue
 `Analytics` instance.
 
-#### .createAccount(options)
-Stores account details to Mixpanel. Only the `accountId` is required. The `firstname`, `lastname`, `email`, and `created` are predefined properties but are not required. If `created` is omitted, it defaults to `new Date()`.
+#### .setAccount(options)
+Create or update user details to. Only the `accountId` is required.
+
+##### options.accountId
+Unique identifier of the user. In Mixpanel, this will appear as Distinct ID.
+
+##### options.body
+Details of the user. The `firstname`, `lastname`, `email`, and `created` are predefined properties but are not required. If `created` is omitted, it defaults to `new Date()`.
 
 Any additional custom properties can be added. Values with types of `Buffer` or `ObjectID` are serialized into string using [bs58](https://www.npmjs.com/package/bs58).
 
@@ -67,10 +78,10 @@ Type: `string`
 
 Name of the event.
 
-##### options.accountId
+##### options.accountId?
 Type: `string`
 
-Account associated to the event. Every event in Mixpanel is associated to a specific account.
+User associated to the event. If omitted, the event created will not be associated to any user.
 
 ##### options.body
 Type: `object`
