@@ -11,7 +11,7 @@ npm install @highoutput/analytics
 ```
 
 ## Usage
-```
+```typescript
 import Analytics from '@highoutput/analytics';
 
 const analytics = new Analytics({
