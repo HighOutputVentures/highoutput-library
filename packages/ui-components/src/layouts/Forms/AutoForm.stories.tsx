@@ -3,16 +3,16 @@ import React from 'react';
 
 import { ThemeProvider } from '../..';
 import AutoForm from './AutoForm';
-import { schema } from './schema';
+import { autoFormSchema } from './autoFormSchema';
 
 export default {
-  title: 'UI Layouts/AutoForm/AutoForm Login',
+  title: 'UI Layouts/Form/AutoForm',
   component: AutoForm,
 } as ComponentMeta<typeof AutoForm>;
 
 const Template: ComponentStory<typeof AutoForm> = args => (
   <ThemeProvider>
-    <AutoForm {...args} yupSchema={schema} />
+    <AutoForm {...args} />
   </ThemeProvider>
 );
 
@@ -20,4 +20,6 @@ export const Default = Template.bind({});
 
 Default.args = {
   ...Default.args,
+  yupSchema: autoFormSchema,
+  placeholders: ['Enter title', 'Enter description'],
 };

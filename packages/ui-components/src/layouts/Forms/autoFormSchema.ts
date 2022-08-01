@@ -1,14 +1,14 @@
 import { InferType, object, string } from 'yup';
 
-export const schema = object().shape({
+export const autoFormSchema = object().shape({
   title: string()
     .required()
     .label('Title')
-    .required('This is required'),
+    .required('Title is required'),
   description: string()
     .label('Description')
     .meta({ type: 'textarea' })
-    .required('This is required'),
+    .required('Description is required'),
 });
 
-export type SchemaValues = InferType<typeof schema>;
+export type SchemaValues = InferType<typeof autoFormSchema>;

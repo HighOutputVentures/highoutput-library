@@ -2,10 +2,11 @@ import AutoForm from './AutoForm';
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
-import { schema } from './schema';
+import { autoFormSchema } from './autoFormSchema';
+
 describe('Auto form component', () => {
   beforeEach(() => {
-    render(<AutoForm yupSchema={schema} />);
+    render(<AutoForm yupSchema={autoFormSchema} />);
   });
 
   it('should render form inputs', async () => {
