@@ -203,7 +203,7 @@ describe('Analytics', () => {
   });
 
   describe('#createEvent', () => {
-    test('should create an event', async () => {
+    test('should create an event with an accountId', async () => {
       const mockedFunction = jest.fn(function (_args, _args2, cb) {
         cb();
       });
@@ -232,6 +232,39 @@ describe('Analytics', () => {
       );
       expect(mockedFunction.mock.calls[0][1]).toEqual({
         distinct_id: eventDetails.accountId.toString(),
+        meta: { project },
+        fieldA: eventDetails.body.fieldA,
+        fieldB: new ObjectId(eventDetails.body.fieldB).toString(),
+      });
+    });
+
+    test('should create an event without accountId', async () => {
+      const mockedFunction = jest.fn(function (_args, _args2, cb) {
+        cb();
+      });
+
+      const project = chance.word();
+      const { analytics } = setup({
+        project,
+        mockedMixpanelInstance: {
+          track: mockedFunction,
+        },
+      });
+
+      const eventDetails = {
+        eventName: chance.word(),
+        body: {
+          fieldA: chance.string(),
+          fieldB: Buffer.from(chance.string()),
+        },
+      };
+
+      analytics.createEvent(eventDetails);
+
+      expect(mockedFunction.mock.calls[0][0]).toEqual(
+        eventDetails.eventName.toString(),
+      );
+      expect(mockedFunction.mock.calls[0][1]).toEqual({
         meta: { project },
         fieldA: eventDetails.body.fieldA,
         fieldB: new ObjectId(eventDetails.body.fieldB).toString(),

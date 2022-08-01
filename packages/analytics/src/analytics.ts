@@ -96,7 +96,7 @@ export class Analytics {
 
   createEvent(params: {
     eventName: string;
-    accountId: string;
+    accountId?: string;
     body: Record<any, any>;
   }) {
     if (this.status === 'SHUTTING_DOWN') return;
