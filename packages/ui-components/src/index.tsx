@@ -49,6 +49,9 @@ import {
   UseAuthReturn,
 } from './components/AuthProvider';
 
+import AutoForm, { AutoFormProps } from './layouts/Forms/AutoForm';
+
+
 export {
   Accordion,
   AccordionButton,
@@ -600,6 +603,8 @@ export {
   OTPFormProps,
   OTPInputField,
   OTPInputFieldProps,
+  AutoForm,
+  AutoFormProps,
   // default theme
   theme,
   extendTheme,
