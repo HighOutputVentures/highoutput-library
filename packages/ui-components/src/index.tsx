@@ -36,11 +36,21 @@ import OTPVerificationForm, {
   OTPVerificationProps,
 } from './layouts/Auth/OTPVerificationForm';
 
-import OTPForm, { OTPFormProps } from './layouts/Auth/OTPForm';
 import OTPInputField, {
   OTPInputFieldProps,
 } from './components/PinInputField/OTPInputField';
+import OTPForm, { OTPFormProps } from './layouts/Auth/OTPForm';
+
+import {
+  AuthConfig,
+  AuthContext,
+  AuthProvider,
+  useAuth,
+  UseAuthReturn,
+} from './components/AuthProvider';
+
 import AutoForm, { AutoFormProps } from './layouts/Forms/AutoForm';
+
 
 export {
   Accordion,
@@ -445,11 +455,14 @@ export {
   TableBodyProps,
   TableCaption,
   TableCaptionProps,
+  TableCellProps,
+  TableColumnHeaderProps,
   TableContainer,
   TableContainerProps,
   TableFooterProps,
   TableHeadProps,
   TableProps,
+  TableRowProps,
   TabList,
   TabListProps,
   TabPanel,
@@ -599,4 +612,9 @@ export {
   useSupport,
   Pagination,
   PaginationProps,
+  AuthConfig,
+  AuthContext,
+  AuthProvider,
+  UseAuthReturn,
+  useAuth,
 };
