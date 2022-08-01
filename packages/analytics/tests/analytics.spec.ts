@@ -231,7 +231,7 @@ describe('Analytics', () => {
         eventDetails.eventName.toString(),
       );
       expect(mockedFunction.mock.calls[0][1]).toEqual({
-        $distinct_id: eventDetails.accountId.toString(),
+        distinct_id: eventDetails.accountId.toString(),
         meta: { project },
         fieldA: eventDetails.body.fieldA,
         fieldB: new ObjectId(eventDetails.body.fieldB).toString(),

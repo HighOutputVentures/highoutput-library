@@ -107,7 +107,7 @@ export class Analytics {
           this.driver.track(
             params.eventName,
             {
-              $distinct_id: params.accountId,
+              distinct_id: params.accountId,
               meta: { project: this.project },
               ...serialize(params.body),
             },
