@@ -3,17 +3,16 @@ import {
   BoxProps,
   Button,
   ButtonProps,
-  Input,
   InputProps,
-  Textarea,
   TextareaProps,
   VStack,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import React from 'react';
-import FormContainer from '../../components/FormContainer/FormContainer';
-import { useForm } from 'react-hook-form';
-import ReactTextareaAutosize from 'react-textarea-autosize';
+import React, { FC } from 'react';
+import { useForm, UseFormReturn } from 'react-hook-form';
+
+import InputField from '../../components/InputField/InputField';
+import TextAreaField from '../../components/TextareaField/TextareaField';
 
 export type AutoFormProps = {
   yupSchema?: any;
@@ -25,7 +24,58 @@ export type AutoFormProps = {
   textAreaProps?: TextareaProps;
 };
 
-const AutoForm = (props: AutoFormProps) => {
+export enum InputTypeEnum {
+  Textarea = 'textarea',
+  Input = 'input',
+}
+
+export interface InputTypeProps {
+  key: string;
+  label: string;
+  placeholder: string;
+}
+
+const getInputType = (
+  input: InputTypeProps,
+  type: InputTypeEnum,
+  form: UseFormReturn
+) => {
+  const { key, placeholder, label } = input;
+  const { register, formState } = form;
+  const { isSubmitting, errors } = formState;
+  const error = errors[`${key}`]?.message as unknown as string;
+
+  const input_type = {
+    textarea: (
+      <TextAreaField
+        {...register(key)}
+        key={key}
+        id={key}
+        label={label}
+        placeholder={placeholder}
+        errorMsg={error}
+        disabled={isSubmitting}
+        textAreaProps={{ width: '100%' }}
+      />
+    ),
+    input: (
+      <InputField
+        {...register(key)}
+        key={key}
+        id={key}
+        label={label}
+        placeholder={placeholder}
+        errorMsg={error}
+        disabled={isSubmitting}
+        inputChakraProps={{ width: '100%' }}
+      />
+    ),
+  };
+
+  return input_type[type];
+};
+
+const AutoForm: FC<AutoFormProps> = (props) => {
   const {
     yupSchema,
     buttonProps,
@@ -38,61 +88,32 @@ const AutoForm = (props: AutoFormProps) => {
 
   const dataKey = Object.keys(yupSchema.fields);
 
-  const { register, handleSubmit, formState } = useForm({
+  const form = useForm({
     resolver: yupResolver(yupSchema),
 
     shouldUnregister: true,
   });
 
+  const { handleSubmit } = form;
+
   const onSubmitData = (s: any) => {
     if (onSubmitForm) onSubmitForm(s);
   };
+
   return (
     <Box width={512} {...boxContainer}>
       <VStack as={'form'} onSubmitCapture={handleSubmit(onSubmitData)}>
         {dataKey.map((key, idx) => {
-          const error = formState.errors[`${key}`]?.message;
-          return (
-            <FormContainer
-              id={key}
-              key={key}
-              required={yupSchema.fields[`${key}`].exclusiveTests.required}
-              label={
-                yupSchema.fields[`${key}`].spec.label ??
-                key.charAt(0).toUpperCase() + key.slice(1)
-              }
-              errorMsg={(error as unknown) as string}
-            >
-              {yupSchema.fields[`${key}`].spec?.meta?.type === 'textarea' ? (
-                <Textarea
-                  as={ReactTextareaAutosize}
-                  {...register(`${key}`)}
-                  placeholder={placeholders?.[idx]}
-                  data-testid="form.input.container"
-                  errorBorderColor={'red.500'}
-                  _focus={{ border: 'none' }}
-                  _active={{ border: 'none' }}
-                  isReadOnly={formState.isSubmitting}
-                  {...textAreaProps}
-                />
-              ) : (
-                <Input
-                  id={key}
-                  placeholder={placeholders?.[idx]}
-                  {...register(`${key}`)}
-                  width={'100%'}
-                  data-testid="form.input.container"
-                  borderRadius={'8px'}
-                  border={'1px solid rgba(128,128,128,0.3)'}
-                  padding={'0.5rem'}
-                  errorBorderColor={'red.500'}
-                  _active={{ border: 'none' }}
-                  {...inputProps}
-                  isReadOnly={formState.isSubmitting}
-                />
-              )}
-            </FormContainer>
-          );
+          const input = {
+            key,
+            label:
+              yupSchema.fields[`${key}`].spec.label ??
+              key.charAt(0).toUpperCase() + key.slice(1),
+            placeholder: placeholders?.[idx],
+          } as InputTypeProps;
+          const type = yupSchema.fields[`${key}`].spec?.meta?.type || 'input';
+
+          return getInputType(input, type, form);
         })}
         <Button
           type="submit"
