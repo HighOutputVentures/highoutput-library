@@ -33,6 +33,8 @@ export interface InputTypeProps {
   key: string;
   label: string;
   placeholder: string;
+  inputProps?: InputProps;
+  textAreaProps?: TextareaProps;
 }
 
 const getInputType = (
@@ -40,7 +42,7 @@ const getInputType = (
   type: InputTypeEnum,
   form: UseFormReturn
 ) => {
-  const { key, placeholder, label } = input;
+  const { key, placeholder, label, inputProps, textAreaProps } = input;
   const { register, formState } = form;
   const { isSubmitting, errors } = formState;
   const error = errors[`${key}`]?.message as unknown as string;
@@ -55,7 +57,7 @@ const getInputType = (
         placeholder={placeholder}
         errorMsg={error}
         disabled={isSubmitting}
-        textAreaProps={{ width: '100%' }}
+        textAreaProps={{ width: '100%', ...textAreaProps }}
       />
     ),
     input: (
@@ -67,7 +69,7 @@ const getInputType = (
         placeholder={placeholder}
         errorMsg={error}
         disabled={isSubmitting}
-        inputChakraProps={{ width: '100%' }}
+        inputChakraProps={{ width: '100%', ...inputProps }}
       />
     ),
   };
@@ -110,6 +112,8 @@ const AutoForm: FC<AutoFormProps> = (props) => {
               yupSchema.fields[`${key}`].spec.label ??
               key.charAt(0).toUpperCase() + key.slice(1),
             placeholder: placeholders?.[idx],
+            inputProps,
+            textAreaProps,
           } as InputTypeProps;
           const type = yupSchema.fields[`${key}`].spec?.meta?.type || 'input';
 
@@ -122,7 +126,7 @@ const AutoForm: FC<AutoFormProps> = (props) => {
           {...buttonProps}
           data-testid="button.form.submit"
         >
-          Sumbit
+          Submit
         </Button>
       </VStack>
     </Box>
