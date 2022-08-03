@@ -13,7 +13,7 @@ import { useForm } from 'react-hook-form';
 
 import InputField from '../../components/InputField/InputField';
 import TextAreaField from '../../components/TextareaField/TextareaField';
-import useSupport from '../../hooks/useSupport';
+import useSupport from './useSupport';
 import {
   ContactFormInputProps,
   withContactFormSchema,
@@ -28,19 +28,18 @@ export interface ContactFormProps {
 
 const ContactForm: FC<ContactFormProps> = ({ buttonProps, onSubmit, url }) => {
   const { postSupport, hasError, isSuccess, isLoading } = useSupport();
-  const { register, handleSubmit, formState, reset } = useForm<
-    withContactFormSchemaValues
-  >({
-    resolver: yupResolver(withContactFormSchema),
-    defaultValues: {
-      emailAddress: '',
-      message: '',
-      details: {
-        name: '',
+  const { register, handleSubmit, formState, reset } =
+    useForm<withContactFormSchemaValues>({
+      resolver: yupResolver(withContactFormSchema),
+      defaultValues: {
+        emailAddress: '',
+        message: '',
+        details: {
+          name: '',
+        },
       },
-    },
-    shouldUnregister: true,
-  });
+      shouldUnregister: true,
+    });
 
   const onSubmitForm = async (values: withContactFormSchemaValues) => {
     if (url) {

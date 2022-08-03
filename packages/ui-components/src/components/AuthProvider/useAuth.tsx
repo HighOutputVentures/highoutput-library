@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { postJson } from '../../utils/http.utils';
 import AuthContext from './AuthContext';
-import { postJson } from './utils';
 
 export type UseAuthReturn = {
   generateOtp(email: string): Promise<{ ok: boolean }>;
@@ -12,7 +12,7 @@ const useAuth = (): UseAuthReturn => {
   const prefix = config.hostname;
 
   const generateOtp: UseAuthReturn['generateOtp'] = React.useCallback(
-    async emailAddress => {
+    async (emailAddress) => {
       const url = prefix + '/otp/generate';
 
       return await postJson<{ ok: true }>(url, { emailAddress });
@@ -21,7 +21,7 @@ const useAuth = (): UseAuthReturn => {
   );
 
   const validateOtp: UseAuthReturn['validateOtp'] = React.useCallback(
-    async otp => {
+    async (otp) => {
       const url = prefix + '/otp/validate';
 
       return await postJson<{ token: string }>(url, { otp });

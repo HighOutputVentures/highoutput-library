@@ -30,7 +30,7 @@ import {
 import theme from './theme';
 import { extendTheme } from './utils/theme.utils';
 
-import useSupport from './hooks/useSupport';
+import useSupport from './layouts/Contact/useSupport';
 
 import OTPVerificationForm, {
   OTPVerificationProps,
@@ -50,7 +50,6 @@ import {
 } from './components/AuthProvider';
 
 import AutoForm, { AutoFormProps } from './layouts/Forms/AutoForm';
-
 
 export {
   Accordion,
