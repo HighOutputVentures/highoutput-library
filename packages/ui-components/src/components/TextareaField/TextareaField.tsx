@@ -70,6 +70,7 @@ const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaFieldProps>(
             resize="vertical"
             {...textAreaProps}
             {...styleProps}
+            data-testid="textareafield.input"
           />
           {rightIcon && <InputRightElement>{rightIcon}</InputRightElement>}
         </InputGroup>
