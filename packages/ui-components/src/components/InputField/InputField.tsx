@@ -1,7 +1,9 @@
 import {
   CSSObject,
   Input,
+  InputElementProps,
   InputGroup,
+  InputGroupProps,
   InputLeftElement,
   InputProps,
   InputRightElement,
@@ -14,7 +16,8 @@ import FormContainer, {
   FormContainerProps,
 } from '../FormContainer/FormContainer';
 
-export interface InputFieldProps extends FormContainerProps {
+type WithoutChildren<T> = Omit<T, 'children'>;
+export interface InputFieldProps extends Omit<FormContainerProps, 'partProps'> {
   size?: ThemeTypings['sizes'];
   type?: string;
   maxLength?: number;
@@ -26,13 +29,16 @@ export interface InputFieldProps extends FormContainerProps {
   disabled?: boolean;
   readOnly?: boolean;
   defaultValue?: string;
-  inputChakraProps?: InputProps;
-  inputGroupChakraProps?: InputProps;
   variant?: string;
   _hover?: CSSObject;
   onPressEnter?(): void;
-  hasLeftPointerEvents?: boolean;
   inputValue?: string | undefined;
+  partProps?: Partial<{
+    input: WithoutChildren<InputProps>;
+    inputGroup: WithoutChildren<InputGroupProps>;
+    inputLeftElement: WithoutChildren<InputElementProps>;
+    inputRightElement: WithoutChildren<InputElementProps>;
+  }>;
 }
 
 const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
@@ -52,33 +58,35 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
       disabled,
       readOnly,
       defaultValue,
-      inputChakraProps,
+      partProps,
       variant = 'primary',
       onPressEnter,
-      hasLeftPointerEvents,
       inputValue,
     } = props;
-    const styles = useMultiStyleConfig('Form', { variant });
+    const styles = useMultiStyleConfig('Form', { variant, size });
 
     return (
       <FormContainer {...props}>
-        <InputGroup size={size}>
+        <InputGroup
+          sx={styles.formInputGroup}
+          {...partProps?.inputGroup}
+          size={size}
+          data-testid="inputfield.inputgroup"
+        >
           {leftIcon && (
-            <InputLeftElement
-              pointerEvents={hasLeftPointerEvents ? 'all' : 'none'}
-            >
+            <InputLeftElement {...partProps?.inputLeftElement}>
               {leftIcon}
             </InputLeftElement>
           )}
           <Input
-            {...inputChakraProps}
+            sx={styles.formInput}
+            {...partProps?.input}
             errorBorderColor="red.500"
             autoFocus={autoFocus}
             ref={ref}
             name={name}
             onChange={onChange}
             onBlur={onBlur}
-            sx={styles.formInput}
             type={type}
             placeholder={placeholder}
             autoComplete={autoComplete}
@@ -96,7 +104,11 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
             role="input"
             data-testid="inputfield.input"
           />
-          {rightIcon && <InputRightElement>{rightIcon}</InputRightElement>}
+          {rightIcon && (
+            <InputRightElement {...partProps?.inputRightElement}>
+              {rightIcon}
+            </InputRightElement>
+          )}
         </InputGroup>
       </FormContainer>
     );
