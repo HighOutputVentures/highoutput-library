@@ -74,7 +74,10 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
           data-testid="inputfield.inputgroup"
         >
           {leftIcon && (
-            <InputLeftElement {...partProps?.inputLeftElement}>
+            <InputLeftElement
+              {...partProps?.inputLeftElement}
+              data-testid="inputfield.leftelement"
+            >
               {leftIcon}
             </InputLeftElement>
           )}
@@ -105,7 +108,10 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
             data-testid="inputfield.input"
           />
           {rightIcon && (
-            <InputRightElement {...partProps?.inputRightElement}>
+            <InputRightElement
+              {...partProps?.inputRightElement}
+              data-testid="inputfield.rightelement"
+            >
               {rightIcon}
             </InputRightElement>
           )}
