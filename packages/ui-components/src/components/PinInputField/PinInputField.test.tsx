@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 
-import OTPInputField from './OTPInputField';
+import OTPInputField from './PinInputField';
 
 describe('Input Field Component', () => {
   beforeEach(() => {

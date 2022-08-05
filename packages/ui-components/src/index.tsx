@@ -36,9 +36,9 @@ import OTPVerificationForm, {
   OTPVerificationProps,
 } from './layouts/Auth/OTPVerificationForm';
 
-import OTPInputField, {
-  OTPInputFieldProps,
-} from './components/PinInputField/OTPInputField';
+import PinInputField, {
+  PinInputFieldProps,
+} from './components/PinInputField/PinInputField';
 import OTPForm, { OTPFormProps } from './layouts/Auth/OTPForm';
 
 import {
@@ -325,8 +325,8 @@ export {
    * @reference https://chakra-ui.com/docs/components/form/pin-input
    */
   PinInput,
-  PinInputField,
-  PinInputFieldProps,
+  PinInputField as Pin,
+  PinInputFieldProps as PinProps,
   PinInputProps,
   /**
    * @reference https://chakra-ui.com/docs/components/overlay/popover
@@ -600,8 +600,8 @@ export {
   OTPVerificationProps,
   OTPForm,
   OTPFormProps,
-  OTPInputField,
-  OTPInputFieldProps,
+  PinInputField,
+  PinInputFieldProps,
   AutoForm,
   AutoFormProps,
   // default theme

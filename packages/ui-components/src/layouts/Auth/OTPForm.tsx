@@ -1,20 +1,19 @@
 import {
   Box,
+  BoxProps,
   Button,
+  ButtonProps,
   Heading,
   Text,
-  ButtonProps,
-  BoxProps,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import React, { ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
-import OTPInputField from '../../components/PinInputField/OTPInputField';
-
+import PinInputField from '../../components/PinInputField/PinInputField';
 import {
-  AuthenticateSchemaValues,
   authenticateSchema,
+  AuthenticateSchemaValues,
 } from '../../layouts/Auth/validation';
 
 export interface OTPFormProps {
@@ -79,16 +78,14 @@ const OTPForm = (props: OTPFormProps) => {
         )}
       </Box>
 
-      <OTPInputField
+      <PinInputField
         {...registerOtp('otp')}
         errorMsg={formStateOtp.errors.otp?.message}
         disabled={formStateOtp.isSubmitting}
         numberOfFields={numberOfFields}
-        chakraPinInputProps={{
-          autoFocus: true,
-          onComplete: () => buttonRef.current?.click(),
-          type: otpType,
-        }}
+        autoFocus
+        onComplete={buttonRef.current?.click}
+        type={otpType}
       />
       <Button
         variant={'primary'}
