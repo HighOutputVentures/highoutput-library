@@ -45,7 +45,7 @@ const getInputType = (
   const { key, placeholder, label, inputProps, textAreaProps } = input;
   const { register, formState } = form;
   const { isSubmitting, errors } = formState;
-  const error = errors[`${key}`]?.message as unknown as string;
+  const error = (errors[`${key}`]?.message as unknown) as string;
 
   const input_type = {
     textarea: (
@@ -69,7 +69,7 @@ const getInputType = (
         placeholder={placeholder}
         errorMsg={error}
         disabled={isSubmitting}
-        inputChakraProps={{ width: '100%', ...inputProps }}
+        partProps={{ input: { width: '100%', ...inputProps } }}
       />
     ),
   };
@@ -77,7 +77,7 @@ const getInputType = (
   return input_type[type];
 };
 
-const AutoForm: FC<AutoFormProps> = (props) => {
+const AutoForm: FC<AutoFormProps> = props => {
   const {
     yupSchema,
     buttonProps,
