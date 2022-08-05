@@ -79,6 +79,7 @@ const OTPForm = (props: OTPFormProps) => {
       </Box>
 
       <PinInputField
+        id="otp"
         {...registerOtp('otp')}
         errorMsg={formStateOtp.errors.otp?.message}
         disabled={formStateOtp.isSubmitting}

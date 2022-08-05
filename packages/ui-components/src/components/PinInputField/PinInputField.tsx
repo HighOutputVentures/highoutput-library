@@ -6,16 +6,21 @@ import {
   PinInputProps,
   useStyleConfig,
 } from '@chakra-ui/react';
-import React, { forwardRef } from 'react';
-import { ChangeHandler, UseFormRegisterReturn } from 'react-hook-form';
+import React, { forwardRef, useMemo } from 'react';
+import { ChangeHandler } from 'react-hook-form';
 
-import FormContainer from '../FormContainer/FormContainer';
+import FormContainer, {
+  FormContainerProps,
+} from '../FormContainer/FormContainer';
 
 type WithoutChildren<T> = Omit<T, 'children'>;
 
 export interface PinInputFieldProps
-  extends Omit<UseFormRegisterReturn, 'onChange'>,
-    Omit<PinInputProps, 'onChange' | 'children'> {
+  extends Omit<
+      FormContainerProps,
+      'onChange' | 'partProps' | 'size' | 'variant'
+    >,
+    Omit<PinInputProps, 'onChange' | 'children' | 'id'> {
   numberOfFields?: number;
   onChange: ChangeHandler;
   errorMsg?: string | undefined;
@@ -26,23 +31,40 @@ export interface PinInputFieldProps
 
 const PinInputField = forwardRef<HTMLInputElement, PinInputFieldProps>(
   (props, _) => {
-    const { numberOfFields = 6, onChange, name, size, variant } = props;
-    const styles = useStyleConfig('Pin', { size, variant });
+    const {
+      numberOfFields = 6,
+      onChange,
+      size,
+      variant,
+      partProps,
+      name,
+      type = 'alphanumeric',
+      onComplete,
+    } = props;
+    const styles = useStyleConfig('PinInputField', { size, variant });
+    const fieldsArray = useMemo(
+      () => Array.from({ length: numberOfFields }),
+      [numberOfFields]
+    );
 
     return (
-      <FormContainer id="pininput.container" errorMsg={props.errorMsg}>
+      <FormContainer {...props}>
         <HStack spacing={3}>
           <PinInput
+            autoFocus
             otp
+            focusBorderColor="amber.500"
             errorBorderColor="red.300"
             isInvalid={Boolean(props?.errorMsg)}
+            type={type}
             {...props}
-            onChange={value => {
+            onChange={(value) => {
               onChange?.({ target: { value, name } });
             }}
+            onComplete={onComplete}
             data-testid="pininput.input"
           >
-            {Array.from({ length: numberOfFields }).map((_, idx) => (
+            {fieldsArray.map((_, idx) => (
               <Pin
                 fontSize="lg"
                 fontWeight="semibold"
@@ -51,6 +73,7 @@ const PinInputField = forwardRef<HTMLInputElement, PinInputFieldProps>(
                 h="12"
                 key={idx}
                 sx={styles}
+                {...partProps?.pin}
                 data-testid="pininput.pin"
               />
             ))}
