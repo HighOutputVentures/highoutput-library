@@ -1,56 +1,108 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import * as React from 'react';
 import AuthProvider from './AuthProvider';
-import useAuth from './useAuth';
+import constants from './constants';
+import logout from './logout';
+import useAuthService from './useAuthService';
+import useAuthState from './useAuthState';
 
-const ead = new Date().toISOString();
 const otp = Math.random().toString();
+const email = new Date().toISOString() + '@gmail.com';
+const token = new Date().toISOString();
 
 const generateOtp = jest.fn();
 const validateOtp = jest.fn();
+const removeCookie = jest.fn();
 
-jest.mock('./useAuth', () => {
-  return () => ({
-    generateOtp,
-    validateOtp,
+jest.mock('js-cookie', () => {
+  const originalModule = jest.requireActual('js-cookie');
+
+  return jest.fn({
+    ...originalModule,
+    __esModule: true,
+    remove: removeCookie,
   });
 });
 
-const hostname = 'http://localhost:3000';
+jest.mock('./useAuthService', () => {
+  return jest.fn(() => ({
+    generateOtp,
+    validateOtp,
+  }));
+});
+
+jest.mock('./useAuthState', () => {
+  return jest.fn(() => ({
+    token,
+    status: 'authenticated',
+  }));
+});
 
 describe('AuthProvider', () => {
+  afterEach(cleanup);
+
   beforeEach(() => {
     render(
-      <AuthProvider hostname={hostname}>
+      <AuthProvider hostname="http://localhost:3000">
         <Component />
       </AuthProvider>
     );
   });
 
   it('Should be able to generate OTP', () => {
-    const button = screen.getByTestId('otp.generate');
-    fireEvent.click(button);
-    expect(generateOtp).toHaveBeenCalledWith(ead);
+    fireEvent.click(screen.getByTestId('service.generate'));
+    expect(generateOtp).toHaveBeenCalledWith(email);
   });
 
   it('Should be able to validate OTP', () => {
-    const button = screen.getByTestId('otp.validate');
-    fireEvent.click(button);
+    fireEvent.click(screen.getByTestId('service.validate'));
     expect(validateOtp).toHaveBeenCalledWith(otp);
+  });
+
+  it('Should be able to logout', () => {
+    fireEvent.click(screen.getByTestId('utils.logout'));
+    expect(removeCookie).toHaveBeenCalledWith(constants.accessTokenId);
+  });
+
+  it('Should be able get token', () => {
+    expect(screen.getByTestId('state.token')).toHaveTextContent(token);
+  });
+
+  it('Should be able get status', () => {
+    expect(screen.getByTestId('state.status')).toHaveTextContent(
+      'authenticated'
+    );
   });
 });
 
 const Component = () => {
-  const { generateOtp, validateOtp } = useAuth();
+  const { generateOtp, validateOtp } = useAuthService();
+  const { status, token } = useAuthState();
 
   return (
     <div>
-      <button data-testid="otp.generate" onClick={() => generateOtp(ead)}>
-        Generate OTP
-      </button>
-      <button data-testid="otp.validate" onClick={() => validateOtp(otp)}>
-        Validate OTP
-      </button>
+      <div>
+        <div data-testid="state.status">{status}</div>
+        <div data-testid="state.token">{token}</div>
+      </div>
+
+      <div>
+        <button
+          data-testid="service.generate"
+          onClick={() => generateOtp(email)}
+        >
+          Generate OTP
+        </button>
+        <button data-testid="service.validate" onClick={() => validateOtp(otp)}>
+          Validate OTP
+        </button>
+      </div>
+
+      <div>
+        <button data-testid="utils.logout" onClick={logout}>
+          Logout
+        </button>
+      </div>
     </div>
   );
 };

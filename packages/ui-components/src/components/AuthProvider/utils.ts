@@ -1,10 +1,9 @@
-type Dict = Record<string, unknown>;
-
-type PostJson = <T = unknown>(url: string, postfields: Dict) => Promise<T>;
-
-export const postJson: PostJson = async (u, d) => {
-  const response = await fetch(u, {
-    body: JSON.stringify(d),
+export async function postJson<T>(
+  url: string,
+  postfields: Record<string, unknown>
+): Promise<T> {
+  const response = await fetch(url, {
+    body: JSON.stringify(postfields),
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -12,8 +11,6 @@ export const postJson: PostJson = async (u, d) => {
   });
 
   const parsed = await response.json();
-
   if (!response.ok) throw new Error(parsed.error.message);
-
   return parsed;
-};
+}

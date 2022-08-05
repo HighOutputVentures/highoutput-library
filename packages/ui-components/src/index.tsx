@@ -40,8 +40,14 @@ import {
   AuthConfig,
   AuthContext,
   AuthProvider,
-  useAuth,
-  UseAuthReturn,
+  AuthService,
+  AuthState,
+  constants,
+  getAuthState,
+  logout,
+  useAuthService,
+  useAuthState,
+  useProfile,
 } from './components/AuthProvider';
 
 import OTPInputField, {
@@ -607,9 +613,16 @@ export {
   useSupport,
   Pagination,
   PaginationProps,
+  // auth provider
   AuthConfig,
   AuthContext,
   AuthProvider,
-  UseAuthReturn,
-  useAuth,
+  AuthService,
+  AuthState,
+  constants,
+  useProfile,
+  getAuthState,
+  useAuthService,
+  logout,
+  useAuthState,
 };
