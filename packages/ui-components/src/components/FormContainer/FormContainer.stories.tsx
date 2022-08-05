@@ -1,3 +1,4 @@
+import { Input } from '@chakra-ui/react';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
@@ -19,4 +20,7 @@ export const Default = Template.bind({});
 
 Default.args = {
   ...Default.args,
+  children: <Input />,
+  label: 'Form Container Label',
+  errorMsg: 'Error message',
 };
