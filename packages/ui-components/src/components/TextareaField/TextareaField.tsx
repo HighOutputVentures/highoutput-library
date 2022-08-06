@@ -2,7 +2,6 @@ import {
   InputGroup,
   InputLeftElement,
   InputRightElement,
-  StyleProps,
   Textarea,
   TextareaProps,
   useMultiStyleConfig,
@@ -15,8 +14,7 @@ import FormContainer, {
 
 export interface TextAreaFieldProps
   extends FormContainerProps,
-    Omit<TextareaProps, 'onBlur' | 'id' | 'onChange' | 'size'>,
-    StyleProps {
+    Omit<TextareaProps, 'onBlur' | 'id' | 'onChange' | 'size'> {
   type?: string;
   autoFocus?: boolean;
   placeholder: string;

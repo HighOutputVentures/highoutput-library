@@ -3,6 +3,7 @@ import {
   chakra,
   HTMLChakraProps,
   Image,
+  StyleProps,
   ThemingProps,
   useRadio,
   useStyleConfig,
@@ -16,6 +17,7 @@ declare type EventOrValue =
 
 export interface RadioImageProps
   extends ThemingProps,
+    StyleProps,
     Omit<HTMLChakraProps<'div'>, 'onChange' | 'value'> {
   image: string;
   selectColor?: string;
@@ -29,13 +31,8 @@ const RadioImage = forwardRef<HTMLDivElement, RadioImageProps>((props, ref) => {
   const { image, size, variant, selectColor, ...rest } = props;
   const styles = useStyleConfig('RadioImage', { size, variant });
 
-  const {
-    state,
-    getInputProps,
-    getCheckboxProps,
-    htmlProps,
-    getLabelProps,
-  } = useRadio(rest);
+  const { state, getInputProps, getCheckboxProps, htmlProps, getLabelProps } =
+    useRadio(rest);
 
   return (
     <chakra.label {...htmlProps} cursor="pointer">
