@@ -1,9 +1,9 @@
+import { HStack, Stack, ThemingProps, useRadioGroup } from '@chakra-ui/react';
 import React, { FC } from 'react';
-import { Stack, HStack, useRadioGroup } from '@chakra-ui/react';
 
 import RadioImage from '../RadioImage/RadioImage';
 
-export interface RadioImageGroupProps {
+export interface RadioImageGroupProps extends ThemingProps {
   avatars: Array<{ value: string; image: string }>;
   onChange: (value: string) => void;
   defaultValue?: string;
@@ -22,7 +22,7 @@ const RadioImageGroup: FC<RadioImageGroupProps> = ({
   return (
     <Stack {...getRootProps()} data-testid="radio.image.group.stack.container">
       <HStack data-testid="radio.image.group.horizontal.stack">
-        {avatars.map(avatar => {
+        {avatars.map((avatar) => {
           return (
             <RadioImage
               key={avatar.value}
