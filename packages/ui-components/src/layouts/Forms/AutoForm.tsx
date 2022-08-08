@@ -12,7 +12,9 @@ import React, { FC } from 'react';
 import { useForm, UseFormReturn } from 'react-hook-form';
 
 import InputField from '../../components/InputField/InputField';
-import TextAreaField from '../../components/TextareaField/TextareaField';
+import TextAreaField, {
+  TextAreaFieldProps,
+} from '../../components/TextareaField/TextareaField';
 
 export type AutoFormProps = {
   yupSchema?: any;
@@ -34,7 +36,7 @@ export interface InputTypeProps {
   label: string;
   placeholder: string;
   inputProps?: InputProps;
-  textAreaProps?: TextareaProps;
+  textAreaProps?: TextAreaFieldProps;
 }
 
 const getInputType = (
@@ -45,11 +47,12 @@ const getInputType = (
   const { key, placeholder, label, inputProps, textAreaProps } = input;
   const { register, formState } = form;
   const { isSubmitting, errors } = formState;
-  const error = (errors[`${key}`]?.message as unknown) as string;
+  const error = errors[`${key}`]?.message as unknown as string;
 
   const input_type = {
     textarea: (
       <TextAreaField
+        {...textAreaProps}
         {...register(key)}
         key={key}
         id={key}
@@ -57,7 +60,7 @@ const getInputType = (
         placeholder={placeholder}
         errorMsg={error}
         disabled={isSubmitting}
-        textAreaProps={{ width: '100%', ...textAreaProps }}
+        width="100%"
       />
     ),
     input: (
@@ -77,7 +80,7 @@ const getInputType = (
   return input_type[type];
 };
 
-const AutoForm: FC<AutoFormProps> = props => {
+const AutoForm: FC<AutoFormProps> = (props) => {
   const {
     yupSchema,
     buttonProps,
