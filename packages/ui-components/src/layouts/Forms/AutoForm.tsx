@@ -11,19 +11,25 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import React, { FC } from 'react';
 import { useForm, UseFormReturn } from 'react-hook-form';
 
-import InputField from '../../components/InputField/InputField';
+import InputField, {
+  InputFieldProps,
+} from '../../components/InputField/InputField';
 import TextAreaField, {
   TextAreaFieldProps,
 } from '../../components/TextareaField/TextareaField';
 
+type WithoutChildren<T> = Omit<T, 'children'>;
+
 export type AutoFormProps = {
   yupSchema?: any;
-  inputProps?: InputProps;
   onSubmitForm?(v: any): void;
-  buttonProps?: ButtonProps;
-  boxContainer?: BoxProps;
   placeholders?: Array<string>;
-  textAreaProps?: TextareaProps;
+  partProps?: {
+    boxContainer: WithoutChildren<BoxProps>;
+    button: WithoutChildren<ButtonProps>;
+    textarea: WithoutChildren<TextareaProps>;
+    input: WithoutChildren<InputProps>;
+  };
 };
 
 export enum InputTypeEnum {
@@ -35,8 +41,10 @@ export interface InputTypeProps {
   key: string;
   label: string;
   placeholder: string;
-  inputProps?: InputProps;
-  textAreaProps?: TextAreaFieldProps;
+  partProps?: {
+    textarea: WithoutChildren<TextAreaFieldProps>;
+    input: WithoutChildren<InputFieldProps>;
+  };
 }
 
 const getInputType = (
@@ -44,15 +52,15 @@ const getInputType = (
   type: InputTypeEnum,
   form: UseFormReturn
 ) => {
-  const { key, placeholder, label, inputProps, textAreaProps } = input;
+  const { key, placeholder, label, partProps } = input;
   const { register, formState } = form;
   const { isSubmitting, errors } = formState;
-  const error = errors[`${key}`]?.message as unknown as string;
+  const error = (errors[`${key}`]?.message as unknown) as string;
 
   const input_type = {
     textarea: (
       <TextAreaField
-        {...textAreaProps}
+        {...partProps?.textarea}
         {...register(key)}
         key={key}
         id={key}
@@ -72,7 +80,7 @@ const getInputType = (
         placeholder={placeholder}
         errorMsg={error}
         disabled={isSubmitting}
-        partProps={{ input: { width: '100%', ...inputProps } }}
+        partProps={{ input: { width: '100%', ...partProps?.input } }}
       />
     ),
   };
@@ -80,16 +88,8 @@ const getInputType = (
   return input_type[type];
 };
 
-const AutoForm: FC<AutoFormProps> = (props) => {
-  const {
-    yupSchema,
-    buttonProps,
-    boxContainer,
-    onSubmitForm,
-    placeholders,
-    inputProps,
-    textAreaProps,
-  } = props;
+const AutoForm: FC<AutoFormProps> = props => {
+  const { yupSchema, partProps, onSubmitForm, placeholders } = props;
 
   const dataKey = Object.keys(yupSchema.fields);
 
@@ -106,7 +106,7 @@ const AutoForm: FC<AutoFormProps> = (props) => {
   };
 
   return (
-    <Box width={512} {...boxContainer}>
+    <Box width={512} {...partProps?.boxContainer}>
       <VStack as={'form'} onSubmitCapture={handleSubmit(onSubmitData)}>
         {dataKey.map((key, idx) => {
           const input = {
@@ -115,8 +115,7 @@ const AutoForm: FC<AutoFormProps> = (props) => {
               yupSchema.fields[`${key}`].spec.label ??
               key.charAt(0).toUpperCase() + key.slice(1),
             placeholder: placeholders?.[idx],
-            inputProps,
-            textAreaProps,
+            partProps,
           } as InputTypeProps;
           const type = yupSchema.fields[`${key}`].spec?.meta?.type || 'input';
 
@@ -126,7 +125,7 @@ const AutoForm: FC<AutoFormProps> = (props) => {
           type="submit"
           variant={'primary'}
           width={'100%'}
-          {...buttonProps}
+          {...partProps?.button}
           data-testid="button.form.submit"
         >
           Submit
