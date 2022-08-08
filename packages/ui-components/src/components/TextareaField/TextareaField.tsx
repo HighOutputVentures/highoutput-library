@@ -6,6 +6,7 @@ import {
   TextareaProps,
   useMultiStyleConfig,
 } from '@chakra-ui/react';
+import omit from 'lodash/omit';
 import React, { forwardRef, ReactNode } from 'react';
 
 import FormContainer, {
@@ -30,7 +31,6 @@ const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaFieldProps>(
   (props, ref) => {
     const {
       isDisabled = false,
-      type = 'text',
       autoFocus,
       leftIcon,
       rightIcon,
@@ -59,10 +59,9 @@ const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaFieldProps>(
             onChange={onChange}
             onBlur={onBlur}
             sx={styles.formTextarea}
-            type={type}
             color="gray.700"
             resize="vertical"
-            {...props}
+            {...omit(props, 'errorMsg')}
             data-testid="textareafield.input"
           />
           {rightIcon && <InputRightElement>{rightIcon}</InputRightElement>}
