@@ -11,22 +11,33 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import React, { FC } from 'react';
 import { useForm } from 'react-hook-form';
 
-import InputField from '../../components/InputField/InputField';
-import TextAreaField from '../../components/TextareaField/TextareaField';
-import useSupport from '../../hooks/useSupport';
+import InputField, {
+  InputFieldProps,
+} from '../../components/InputField/InputField';
+import TextAreaField, {
+  TextAreaFieldProps,
+} from '../../components/TextareaField/TextareaField';
+import useSupport from './useSupport';
 import {
   ContactFormInputProps,
   withContactFormSchema,
   withContactFormSchemaValues,
 } from './validation';
 
+type WithoutChildren<T> = Omit<T, 'children'>;
+
 export interface ContactFormProps {
-  buttonProps?: ButtonProps;
   onSubmit?(values: ContactFormInputProps): void;
   url?: string;
+  partProps?: Partial<{
+    input: WithoutChildren<InputFieldProps>;
+    textarea: WithoutChildren<TextAreaFieldProps>;
+    button: WithoutChildren<ButtonProps>;
+  }>;
 }
 
-const ContactForm: FC<ContactFormProps> = ({ buttonProps, onSubmit, url }) => {
+const ContactForm: FC<ContactFormProps> = props => {
+  const { onSubmit, url, partProps } = props;
   const { postSupport, hasError, isSuccess, isLoading } = useSupport();
   const { register, handleSubmit, formState, reset } = useForm<
     withContactFormSchemaValues
@@ -69,6 +80,7 @@ const ContactForm: FC<ContactFormProps> = ({ buttonProps, onSubmit, url }) => {
       >
         <Stack spacing={4}>
           <InputField
+            {...partProps?.input}
             {...register('details.name')}
             id="name"
             label="Name"
@@ -77,6 +89,7 @@ const ContactForm: FC<ContactFormProps> = ({ buttonProps, onSubmit, url }) => {
             disabled={isSubmitting}
           />
           <InputField
+            {...partProps?.input}
             {...register('emailAddress')}
             id="emailAddress"
             label="Email"
@@ -86,6 +99,7 @@ const ContactForm: FC<ContactFormProps> = ({ buttonProps, onSubmit, url }) => {
             data-testid="input.contactform.email"
           />
           <TextAreaField
+            {...partProps?.textarea}
             {...register('message')}
             id="message"
             label="Desciption of concern"
@@ -98,9 +112,9 @@ const ContactForm: FC<ContactFormProps> = ({ buttonProps, onSubmit, url }) => {
             w="full"
             variant="primary"
             isLoading={isSubmitting || isLoading}
+            {...partProps?.button}
             type="submit"
             data-testid="button.contactform.submit"
-            {...buttonProps}
           >
             Send
           </Button>
@@ -115,7 +129,7 @@ const ContactForm: FC<ContactFormProps> = ({ buttonProps, onSubmit, url }) => {
           {isSuccess && (
             <Alert status="success">
               <AlertIcon />
-              <AlertDescription>Message successfully sent !</AlertDescription>
+              <AlertDescription>Message successfully sent!</AlertDescription>
             </Alert>
           )}
         </Stack>

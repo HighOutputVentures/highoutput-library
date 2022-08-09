@@ -30,16 +30,26 @@ import {
 import theme from './theme';
 import { extendTheme } from './utils/theme.utils';
 
-import useSupport from './hooks/useSupport';
+import useSupport from './layouts/Contact/useSupport';
 
 import OTPVerificationForm, {
   OTPVerificationProps,
 } from './layouts/Auth/OTPVerificationForm';
 
+import PinInputField, {
+  PinInputFieldProps,
+} from './components/PinInputField/PinInputField';
 import OTPForm, { OTPFormProps } from './layouts/Auth/OTPForm';
-import OTPInputField, {
-  OTPInputFieldProps,
-} from './components/PinInputField/OTPInputField';
+
+import {
+  AuthConfig,
+  AuthContext,
+  AuthProvider,
+  useAuth,
+  UseAuthReturn,
+} from './components/AuthProvider';
+
+import AutoForm, { AutoFormProps } from './layouts/Forms/AutoForm';
 
 export {
   Accordion,
@@ -315,8 +325,8 @@ export {
    * @reference https://chakra-ui.com/docs/components/form/pin-input
    */
   PinInput,
-  PinInputField,
-  PinInputFieldProps,
+  PinInputField as Pin,
+  PinInputFieldProps as PinProps,
   PinInputProps,
   /**
    * @reference https://chakra-ui.com/docs/components/overlay/popover
@@ -444,11 +454,14 @@ export {
   TableBodyProps,
   TableCaption,
   TableCaptionProps,
+  TableCellProps,
+  TableColumnHeaderProps,
   TableContainer,
   TableContainerProps,
   TableFooterProps,
   TableHeadProps,
   TableProps,
+  TableRowProps,
   TabList,
   TabListProps,
   TabPanel,
@@ -587,8 +600,10 @@ export {
   OTPVerificationProps,
   OTPForm,
   OTPFormProps,
-  OTPInputField,
-  OTPInputFieldProps,
+  PinInputField,
+  PinInputFieldProps,
+  AutoForm,
+  AutoFormProps,
   // default theme
   theme,
   extendTheme,
@@ -596,4 +611,9 @@ export {
   useSupport,
   Pagination,
   PaginationProps,
+  AuthConfig,
+  AuthContext,
+  AuthProvider,
+  UseAuthReturn,
+  useAuth,
 };

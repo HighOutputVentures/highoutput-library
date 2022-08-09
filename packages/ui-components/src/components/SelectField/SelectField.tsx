@@ -9,11 +9,12 @@ import FormContainer, {
   FormContainerProps,
 } from '../FormContainer/FormContainer';
 
-export interface SelectFieldProps extends FormContainerProps {
+export interface SelectFieldProps
+  extends FormContainerProps,
+    Omit<SelectFieldChakraProps, 'onBlur' | 'id' | 'onChange'> {
   options: Array<{ label: string; value: string }>;
   placeholder?: string;
   defaultValue?: string | number;
-  selectChakraProps?: SelectFieldChakraProps;
   variant?: string;
 }
 
@@ -27,7 +28,6 @@ const SelectField = forwardRef<HTMLSelectElement, SelectFieldProps>(
       placeholder,
       defaultValue,
       disabled,
-      selectChakraProps,
       variant = 'primary',
     } = props;
     const styles = useMultiStyleConfig('Form', { variant });
@@ -35,7 +35,7 @@ const SelectField = forwardRef<HTMLSelectElement, SelectFieldProps>(
     return (
       <FormContainer {...props}>
         <Select
-          {...selectChakraProps}
+          {...props}
           ref={ref}
           name={name}
           onChange={onChange}
@@ -44,6 +44,7 @@ const SelectField = forwardRef<HTMLSelectElement, SelectFieldProps>(
           placeholder={placeholder}
           defaultValue={defaultValue}
           disabled={disabled}
+          data-testid="selectfield.select"
         >
           {options.map(({ value, label }) => (
             <option
