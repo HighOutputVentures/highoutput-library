@@ -1,8 +1,5 @@
 import * as React from 'react';
-
-export type AuthConfig = {
-  hostname: string;
-};
+import type { AuthConfig } from './types';
 
 const AuthContext = React.createContext<AuthConfig>({
   hostname: '',

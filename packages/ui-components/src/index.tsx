@@ -1,6 +1,22 @@
+import {
+  AuthConfig,
+  AuthContext,
+  AuthProvider,
+  AuthService,
+  AuthState,
+  constants,
+  getAuthState,
+  logout,
+  useAuthService,
+  useAuthState,
+  useProfile,
+} from './components/AuthProvider';
 import Pagination, {
   PaginationProps,
 } from './components/Pagination/Pagination';
+import PinInputField, {
+  PinInputFieldProps,
+} from './components/PinInputField/PinInputField';
 import RadioImage, {
   RadioImageProps,
 } from './components/RadioImage/RadioImage';
@@ -17,40 +33,23 @@ import CredentialLoginForm, {
   CredentialLoginFormNameProps,
   CredentialLoginFormProps,
 } from './layouts/Auth/CredentialLoginForm';
-
+import OTPForm, { OTPFormProps } from './layouts/Auth/OTPForm';
+import OTPVerificationForm, {
+  OTPVerificationProps,
+} from './layouts/Auth/OTPVerificationForm';
 import ContactCard, { ContactCardProps } from './layouts/Contact/ContactCard';
 import ContactForm, { ContactFormProps } from './layouts/Contact/ContactForm';
 import ContactPage, { ContagePageProps } from './layouts/Contact/ContactPage';
+import useSupport from './layouts/Contact/useSupport';
 import {
   ContactFormInputProps,
   withContactFormSchema,
   withContactFormSchemaValues,
 } from './layouts/Contact/validation';
-
+import AutoForm, { AutoFormProps } from './layouts/Forms/AutoForm';
 import theme from './theme';
 import { extendTheme } from './utils/theme.utils';
-
-import useSupport from './layouts/Contact/useSupport';
-
-import OTPVerificationForm, {
-  OTPVerificationProps,
-} from './layouts/Auth/OTPVerificationForm';
-
-import PinInputField, {
-  PinInputFieldProps,
-} from './components/PinInputField/PinInputField';
-import OTPForm, { OTPFormProps } from './layouts/Auth/OTPForm';
-
-import {
-  AuthConfig,
-  AuthContext,
-  AuthProvider,
-  useAuth,
-  UseAuthReturn,
-} from './components/AuthProvider';
-
 import useInfiniteScroll from './hooks/useInfiniteScroll/useInfiniteScroll';
-import AutoForm, { AutoFormProps } from './layouts/Forms/AutoForm';
 
 export {
   Accordion,
@@ -612,10 +611,19 @@ export {
   useSupport,
   Pagination,
   PaginationProps,
+  // auth provider
   AuthConfig,
   AuthContext,
   AuthProvider,
   UseAuthReturn,
   useAuth,
-  useInfiniteScroll,
+  AuthService,
+  AuthState,
+  constants,
+  useProfile,
+  getAuthState,
+  useAuthService,
+  logout,
+  useAuthState,
+  useInfiniteScroll
 };
