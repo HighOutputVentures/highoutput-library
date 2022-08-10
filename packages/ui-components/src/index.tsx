@@ -49,6 +49,7 @@ import {
   UseAuthReturn,
 } from './components/AuthProvider';
 
+import useInfiniteScroll from './hooks/useInfiniteScroll/useInfiniteScroll';
 import AutoForm, { AutoFormProps } from './layouts/Forms/AutoForm';
 
 export {
@@ -616,4 +617,5 @@ export {
   AuthProvider,
   UseAuthReturn,
   useAuth,
+  useInfiniteScroll,
 };
