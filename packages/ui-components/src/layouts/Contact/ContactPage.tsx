@@ -1,20 +1,26 @@
-import { Box, Center, Text } from '@chakra-ui/react';
+import { Box, BoxProps, Center, Text, TextProps } from '@chakra-ui/react';
 import React, { FC, ReactNode } from 'react';
 import { HovIcon } from '../../icons';
 
 import ContactCard, { ContactCardProps } from './ContactCard';
 
-export interface ContagePageProps {
-  contactCardProps?: ContactCardProps;
+type WithoutChildren<T> = Omit<T, 'children'>;
+
+export interface ContagePageProps extends BoxProps {
   title?: string;
   secondaryTitle?: string;
   iconNode?: ReactNode;
   url?: string;
+  partProps?: {
+    contactCard: WithoutChildren<ContactCardProps>;
+    title: WithoutChildren<TextProps>;
+    secondaryTitle: WithoutChildren<TextProps>;
+  };
 }
 
 const ContactPage: FC<ContagePageProps> = props => {
   const {
-    contactCardProps,
+    partProps,
     title = 'Contact Us',
     secondaryTitle = `Tell us what you need and we'll help you out.`,
     iconNode,
@@ -27,6 +33,7 @@ const ContactPage: FC<ContagePageProps> = props => {
         bg="#000"
         w="100%"
         h="400px"
+        {...props}
         data-testid="box.contactpage.banner"
       >
         <Center pt={20} pb={8} data-testid="center.contactpage.iconposition">
@@ -41,6 +48,7 @@ const ContactPage: FC<ContagePageProps> = props => {
           <Text
             size="text-5xl"
             color="white"
+            {...partProps?.title}
             data-testid="text.contactpage.title"
           >
             {title}
@@ -51,6 +59,7 @@ const ContactPage: FC<ContagePageProps> = props => {
           <Text
             size="text-base"
             color="gray.200"
+            {...partProps?.secondaryTitle}
             data-testid="text.contactpage.secondarytitle"
           >
             {secondaryTitle}
@@ -66,7 +75,7 @@ const ContactPage: FC<ContagePageProps> = props => {
           top="250px"
           w="512px"
           url={url}
-          {...contactCardProps}
+          {...partProps?.contactCard}
         />
       </Center>
     </Box>

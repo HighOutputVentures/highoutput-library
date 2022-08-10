@@ -16,10 +16,15 @@ describe('Select Field Component', () => {
     );
   });
 
-  it('should renders select field form container', async () => {
+  it('should render select field form container', async () => {
     const formControl = await screen.findAllByTestId(
       'formcontainer.formcontrol'
     );
     expect(formControl).toHaveLength(1);
+  });
+
+  it('should render select field select input', async () => {
+    const select = await screen.findAllByTestId('selectfield.select');
+    expect(select).toHaveLength(1);
   });
 });

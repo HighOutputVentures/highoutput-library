@@ -30,29 +30,12 @@ import {
 import theme from './theme';
 import { extendTheme } from './utils/theme.utils';
 
-import useSupport from './hooks/useSupport';
+import useSupport from './layouts/Contact/useSupport';
 
 import OTPVerificationForm, {
   OTPVerificationProps,
 } from './layouts/Auth/OTPVerificationForm';
 
-import {
-  AuthConfig,
-  AuthContext,
-  AuthProvider,
-  AuthService,
-  AuthState,
-  constants,
-  getAuthState,
-  logout,
-  useAuthService,
-  useAuthState,
-  useProfile,
-} from './components/AuthProvider';
-
-import OTPInputField, {
-  OTPInputFieldProps,
-} from './components/PinInputField/OTPInputField';
 import OTPForm, { OTPFormProps } from './layouts/Auth/OTPForm';
 
 export {
@@ -329,8 +312,8 @@ export {
    * @reference https://chakra-ui.com/docs/components/form/pin-input
    */
   PinInput,
-  PinInputField,
-  PinInputFieldProps,
+  PinInputField as Pin,
+  PinInputFieldProps as PinProps,
   PinInputProps,
   /**
    * @reference https://chakra-ui.com/docs/components/overlay/popover
@@ -604,8 +587,10 @@ export {
   OTPVerificationProps,
   OTPForm,
   OTPFormProps,
-  OTPInputField,
-  OTPInputFieldProps,
+  PinInputField,
+  PinInputFieldProps,
+  AutoForm,
+  AutoFormProps,
   // default theme
   theme,
   extendTheme,

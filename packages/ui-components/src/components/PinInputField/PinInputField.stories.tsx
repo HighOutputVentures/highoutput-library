@@ -2,16 +2,16 @@ import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
 import { ThemeProvider } from '../..';
-import OTPInputField from './OTPInputField';
+import PinInputField from './PinInputField';
 
 export default {
-  title: 'UI Components/Form/PinInput Field',
-  component: OTPInputField,
-} as ComponentMeta<typeof OTPInputField>;
+  title: 'UI Components/Form/Pin Input Field',
+  component: PinInputField,
+} as ComponentMeta<typeof PinInputField>;
 
-const Template: ComponentStory<typeof OTPInputField> = args => (
+const Template: ComponentStory<typeof PinInputField> = args => (
   <ThemeProvider>
-    <OTPInputField {...args} />
+    <PinInputField {...args} />
   </ThemeProvider>
 );
 

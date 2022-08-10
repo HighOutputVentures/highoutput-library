@@ -1,4 +1,4 @@
-import { Box, Button, BoxProps, ButtonProps } from '@chakra-ui/react';
+import { Box, BoxProps, Button, ButtonProps } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import React, { ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
@@ -75,9 +75,11 @@ const OTPVerificationForm = (props: OTPVerificationProps) => {
             errorMsg={errors.emailAddress?.message}
             disabled={isSubmitting}
             placeholder={'Enter your email address'}
-            inputChakraProps={{
-              'aria-label': 'email-input',
-              role: 'input',
+            partProps={{
+              input: {
+                'aria-label': 'email-input',
+                role: 'input',
+              },
             }}
           />
 

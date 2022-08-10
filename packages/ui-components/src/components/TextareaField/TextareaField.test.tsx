@@ -15,10 +15,15 @@ describe('Form Container Component', () => {
     );
   });
 
-  it('should renders  form container', async () => {
+  it('should renders form container', async () => {
     const formControl = await screen.findAllByTestId(
       'formcontainer.formcontrol'
     );
     expect(formControl).toHaveLength(1);
+  });
+
+  it('should renders text area field input', async () => {
+    const textareInput = await screen.findAllByTestId('textareafield.input');
+    expect(textareInput).toHaveLength(1);
   });
 });
