@@ -56,6 +56,7 @@
     "@babel/core": "^7.18.2",
     "@chakra-ui/cli": "^2.1.0",
     "@chakra-ui/storybook-addon": "^4.0.1",
+    "@faker-js/faker": "^7.4.0",
     "@size-limit/preset-small-lib": "^7.0.8",
     "@storybook/addon-a11y": "^6.5.9",
     "@storybook/addon-essentials": "^6.5.8",
