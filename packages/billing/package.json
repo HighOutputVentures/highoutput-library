@@ -1,11 +1,11 @@
 {
   "name": "billing",
   "version": "0.0.1",
-  "description": "> TODO: description",
+  "description": "CLI utility to initialize Stripe environment",
   "author": "rogermadjos <roger@hov.co>",
   "homepage": "https://github.com/HighOutputVentures/highoutput-library#readme",
   "license": "ISC",
-  "main": "lib/billing.js",
+  "main": "./dist/index.js",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -18,7 +18,8 @@
     "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
   },
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "test": "echo \"Error: run tests from root\" && exit 1",
+    "dev": "ts-node src/index.ts --project tsconfig.json"
   },
   "bugs": {
     "url": "https://github.com/HighOutputVentures/highoutput-library/issues"
