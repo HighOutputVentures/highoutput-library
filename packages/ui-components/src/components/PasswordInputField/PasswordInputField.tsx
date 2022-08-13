@@ -1,11 +1,23 @@
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import { InputProps, Button } from '@chakra-ui/react';
+import {
+  InputProps,
+  Button,
+  InputGroupProps,
+  InputElementProps,
+} from '@chakra-ui/react';
 import React, { forwardRef } from 'react';
 import { UseFormRegisterReturn } from 'react-hook-form';
 import InputField from '../InputField/InputField';
 
+type WithoutChildren<T> = Omit<T, 'children'>;
+
 export interface PasswordInputProps extends UseFormRegisterReturn {
-  chakraInputProps?: Omit<InputProps, 'children'>;
+  partProps?: Partial<{
+    input: WithoutChildren<InputProps>;
+    inputGroup: WithoutChildren<InputGroupProps>;
+    inputLeftElement: WithoutChildren<InputElementProps>;
+    inputRightElement: WithoutChildren<InputElementProps>;
+  }>;
   placeholder: string;
   errorMsg?: string;
   onPressEnter?: () => void;
@@ -14,7 +26,7 @@ export interface PasswordInputProps extends UseFormRegisterReturn {
 const PasswordInputField = forwardRef<HTMLInputElement, PasswordInputProps>(
   (props, _) => {
     const {
-      chakraInputProps,
+      partProps,
       placeholder,
       onBlur,
       errorMsg,
@@ -28,12 +40,7 @@ const PasswordInputField = forwardRef<HTMLInputElement, PasswordInputProps>(
       <InputField
         placeholder={placeholder}
         id="Password-input"
-        partProps={{
-          input: {
-            'aria-label': 'password-input',
-            ...chakraInputProps,
-          },
-        }}
+        {...partProps}
         type={showPassword ? 'text' : 'password'}
         errorMsg={errorMsg}
         onBlur={onBlur}
