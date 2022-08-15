@@ -15,4 +15,6 @@ export type StripeConfig = {
   };
 };
 
+export type ProductsConfig = StripeConfig['tiers'];
+
 export type PortalConfig = StripeConfig['customerPortal'];

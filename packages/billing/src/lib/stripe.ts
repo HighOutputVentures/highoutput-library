@@ -1,7 +1,8 @@
 /* eslint-disable import/extensions */
 /* eslint-disable no-console */
 import Stripe from 'stripe';
-import { PortalConfig } from '../types';
+import * as R from 'ramda';
+import { PortalConfig, ProductsConfig } from '../types';
 
 let stripe: Stripe;
 
@@ -15,11 +16,25 @@ export function setupStripe() {
   });
 }
 
-export function createProducts() {
-  // TODO
+export function createProducts(products: ProductsConfig) {
+  const prices = R.map((product: ProductsConfig[number]) => {
+    return stripe.prices.create({
+      unit_amount: product.free ? 0 : product.pricePerUnit,
+      currency: 'usd',
+      recurring: {
+        interval: 'month',
+      },
+      product_data: {
+        name: product.name,
+      },
+    });
+  }, products);
+
+  return Promise.all(prices);
 }
 
 export async function setupCustomerPortal(config: PortalConfig) {
+  // TODO: ADD PRODUCT CATALOG TO SUBSCRIPTION
   const configuration = await stripe.billingPortal.configurations.create({
     business_profile: {
       headline: config.businessProfile.headline,

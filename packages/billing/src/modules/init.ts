@@ -22,8 +22,9 @@ const init = new Command('init')
 
       stripe.setupStripe();
 
-      // TODO: CREATE STRIPE PRODUCTS
+      const prices = await stripe.createProducts(configFile.tiers);
 
+      // TODO: ADD PRODUCT & PRICING TO CUSTOMER PORTAL
       stripe.setupCustomerPortal(configFile.customerPortal);
     } catch (error) {
       console.error(`\x1b[31m${(error as Error).message}\x1b[0m`);
