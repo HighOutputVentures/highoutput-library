@@ -31,104 +31,122 @@ export class EmailAuthServer {
 
         return;
       }
-
-      if (
-        req.method === 'POST' &&
-        `${opts?.urlPrefix ? opts?.urlPrefix : ''}/otp/generate` ===
-          url.pathname
-      ) {
-        const body = await parse.json(req);
-
-        const user = await storageAdapter.findOneUserByEmail({
-          emailAddress: body.emailAddress,
-        });
-
-        if (!user) {
-          res.set('Content-Type', 'application/json');
-          res.status(400);
-          res.send({
-            error: {
-              code: 'USER_NOT_FOUND',
-              message: 'user with the specified email address does not exist.',
-            },
+  
+      try {
+        if (
+          req.method === 'POST' &&
+          `${opts?.urlPrefix ? opts?.urlPrefix : ''}/otp/generate` ===
+            url.pathname
+        ) {
+          const body = await parse.json(req);
+  
+          const user = await storageAdapter.findOneUserByEmail({
+            emailAddress: body.emailAddress,
           });
-
-          return;
-        }
-
-        const otp = cryptoRandomString({
-          length: 6,
-          type: 'numeric',
-        });
-
-        try {
-          await storageAdapter.saveOtp({
-            user: user.id,
-            otp,
-          });
-        }
-        catch(e: any) {
-          res.status(500);
-          if (e.code === 'FORBIDDEN') {
-            res.status(403);
+  
+          if (!user) {
+            res.set('Content-Type', 'application/json');
+            res.status(400);
+            res.send({
+              error: {
+                code: 'USER_NOT_FOUND',
+                message: 'user with the specified email address does not exist.',
+              },
+            });
+  
+            return;
           }
-          res.send();
-        }
-
-        await emailAdapter.sendEmailOtp({
-          otp,
-          user,
-        });
-
-        res.set('Content-Type', 'application/json');
-        res.status(200);
-        res.send({
-          ok: true,
-        });
-
-        return;
-      }
-
-      if (
-        req.method === 'POST' &&
-        `${opts?.urlPrefix ? opts?.urlPrefix : ''}/otp/validate` ===
-          url.pathname
-      ) {
-        const body = await parse.json(req);
-        const user = await storageAdapter.validateOtp({
-          otp: body.otp,
-        });
-
-        if (!user) {
-          res.set('Content-Type', 'application/json');
-          res.status(400);
-          res.send({
-            error: {
-              code: 'INVALID_OTP',
-              message: 'OTP is invalid.',
-            },
+  
+          const otp = cryptoRandomString({
+            length: 6,
+            type: 'numeric',
           });
-
+  
+          try {
+            await storageAdapter.saveOtp({
+              user: user.id,
+              otp,
+            });
+          }
+          catch(error: any) {
+            if (error.code === 'FORBIDDEN') {
+              res.status(403);
+              res.send({
+                error: {
+                  code: 'FORBIDDEN',
+                  message: error.message
+                }
+              });
+  
+              return;
+            } else {
+              throw error;
+            }
+          }
+  
+          await emailAdapter.sendEmailOtp({
+            otp,
+            user,
+          });
+  
+          res.set('Content-Type', 'application/json');
+          res.status(200);
+          res.send({
+            ok: true,
+          });
+  
           return;
-        } else {
-          await storageAdapter.deleteOtp({
+        }
+  
+        if (
+          req.method === 'POST' &&
+          `${opts?.urlPrefix ? opts?.urlPrefix : ''}/otp/validate` ===
+            url.pathname
+        ) {
+          const body = await parse.json(req);
+          const user = await storageAdapter.validateOtp({
             otp: body.otp,
           });
+  
+          if (!user) {
+            res.set('Content-Type', 'application/json');
+            res.status(400);
+            res.send({
+              error: {
+                code: 'INVALID_OTP',
+                message: 'OTP is invalid.',
+              },
+            });
+  
+            return;
+          } else {
+            await storageAdapter.deleteOtp({
+              otp: body.otp,
+            });
+          }
+  
+          const token = jsonwebtoken.sign({}, opts?.jwtSecret as string, {
+            expiresIn: opts?.jwtTTL as string,
+            subject: user.id.toString('base64url'),
+          });
+  
+          res.set('Content-Type', 'application/json');
+          res.status(200);
+          res.send({
+            ok: true,
+            token,
+          });
+  
+          return;
         }
-
-        const token = jsonwebtoken.sign({}, opts?.jwtSecret as string, {
-          expiresIn: opts?.jwtTTL as string,
-          subject: user.id.toString('base64url'),
-        });
-
-        res.set('Content-Type', 'application/json');
-        res.status(200);
+      } catch (error: any) {
+        console.error(error);
+        res.status(500);
         res.send({
-          ok: true,
-          token,
+          error: {
+            code: 'SERVER_ERROR'
+          }
         });
-
-        return;
       }
 
       next();
