@@ -1,11 +1,15 @@
+/* eslint-disable import/extensions */
 /* eslint-disable no-console */
 /* eslint-disable import/no-dynamic-require */
 import { Command } from 'commander';
 import { readFile } from 'fs/promises';
+import path from 'path';
+import { StripeConfig } from '../types';
+import * as stripe from '../lib/stripe';
 
 async function readConfig(config: string) {
-  const path = `./${config}`;
-  const data = await readFile(path, { encoding: 'utf8' });
+  const configPath = path.join(process.cwd(), config);
+  const data = await readFile(configPath, { encoding: 'utf8' });
   return JSON.parse(data);
 }
 
@@ -14,12 +18,13 @@ const init = new Command('init')
   .argument('<config>', 'path to JSON config file')
   .action(async (config: string) => {
     try {
-      const configFile = await readConfig(config);
-      console.log(configFile.name, 'secret', process.env.STRIPE_SECRET_KEY);
+      const configFile: StripeConfig = await readConfig(config);
 
-      // TODO: SETUP STRIPE
+      stripe.setupStripe();
+
       // TODO: CREATE STRIPE PRODUCTS
-      // TODO: SETUP CUSTOMER PORTAL
+
+      stripe.setupCustomerPortal(configFile.customerPortal);
     } catch (error) {
       console.error(`\x1b[31m${(error as Error).message}\x1b[0m`);
     }
