@@ -61,10 +61,19 @@ export class EmailAuthServer {
           type: 'numeric',
         });
 
-        await storageAdapter.saveOtp({
-          user: user.id,
-          otp,
-        });
+        try {
+          await storageAdapter.saveOtp({
+            user: user.id,
+            otp,
+          });
+        }
+        catch(e: any) {
+          res.status(500);
+          if (e.code === 'FORBIDDEN') {
+            res.status(403);
+          }
+          res.send();
+        }
 
         await emailAdapter.sendEmailOtp({
           otp,
