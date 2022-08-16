@@ -2,8 +2,10 @@ export type StripeConfig = {
   tiers: {
     id: string;
     name: string;
+    description?: string;
     pricePerUnit?: number; // required unless `free` is set
     free?: boolean;
+    metadata?: Record<string, unknown>;
   }[];
   customerPortal: {
     returnUrl: string;
