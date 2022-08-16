@@ -69,7 +69,7 @@ export class EmailAuthServer {
             });
           }
           catch(error: any) {
-            if (error.code === 'FORBIDDEN') {
+            if (error.extensions.code === 'FORBIDDEN') {
               res.status(403);
               res.send({
                 error: {
