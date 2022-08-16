@@ -18,7 +18,7 @@
     "url": "git+https://github.com/HighOutputVentures/highoutput-library.git"
   },
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1",
+    "test": "jest",
     "dev": "ts-node src/index.ts --project tsconfig.json"
   },
   "bugs": {

@@ -5,40 +5,45 @@ import { readFile } from 'fs/promises';
 import * as R from 'ramda';
 import { StripeConfig } from '../types';
 
-export default async function readConfig(config: string) {
-  const ajv = new Ajv();
-  const configPath = path.join(process.cwd(), config);
-  const configSchema: JTDSchemaType<StripeConfig> = {
-    properties: {
-      tiers: {
-        elements: {
-          properties: {
-            id: { type: 'string' },
-            name: { type: 'string' },
-          },
-          optionalProperties: {
-            pricePerUnit: { type: 'int32' },
-            free: { type: 'boolean' },
-          },
-        },
-      },
-      customerPortal: {
+const ajv = new Ajv();
+const configSchema: JTDSchemaType<StripeConfig> = {
+  properties: {
+    tiers: {
+      elements: {
         properties: {
-          returnUrl: { type: 'string' },
-          businessProfile: {
-            properties: {
-              headline: { type: 'string' },
-            },
-            optionalProperties: {
-              privacyPolicyUrl: { type: 'string' },
-              termsOfServiceUrl: { type: 'string' },
-            },
+          id: { type: 'string' },
+          name: { type: 'string' },
+        },
+        optionalProperties: {
+          pricePerUnit: { type: 'int32' },
+          free: { type: 'boolean' },
+          description: { type: 'string' },
+          metadata: {
+            values: { type: 'string' },
           },
         },
       },
     },
-  };
-  const parse = ajv.compileParser(configSchema);
+    customerPortal: {
+      properties: {
+        returnUrl: { type: 'string' },
+        businessProfile: {
+          properties: {
+            headline: { type: 'string' },
+          },
+          optionalProperties: {
+            privacyPolicyUrl: { type: 'string' },
+            termsOfServiceUrl: { type: 'string' },
+          },
+        },
+      },
+    },
+  },
+};
+const parse = ajv.compileParser(configSchema);
+
+export default async function readConfig(config: string) {
+  const configPath = path.join(process.cwd(), config);
 
   const data = await readFile(configPath, { encoding: 'utf8' });
   const parsedConfig = parse(data);
