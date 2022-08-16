@@ -24,8 +24,7 @@ const init = new Command('init')
 
       const products = await stripe.createProducts(configFile.tiers);
 
-      // TODO: ADD PRODUCT & PRICING TO CUSTOMER PORTAL
-      stripe.setupCustomerPortal(configFile.customerPortal);
+      await stripe.setupCustomerPortal(configFile.customerPortal, products);
     } catch (error) {
       console.error(`\x1b[31m${(error as Error).message}\x1b[0m`);
     }

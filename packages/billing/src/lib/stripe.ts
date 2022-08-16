@@ -36,12 +36,14 @@ export async function createProducts(products: ProductsConfig) {
     return {
       prices: [price.id],
       product: price.product,
-    };
+    } as Stripe.BillingPortal.ConfigurationCreateParams.Features.SubscriptionUpdate.Product;
   }, pricesObject);
 }
 
-export async function setupCustomerPortal(config: PortalConfig) {
-  // TODO: ADD PRODUCT CATALOG TO SUBSCRIPTION
+export async function setupCustomerPortal(
+  config: PortalConfig,
+  products: Stripe.BillingPortal.ConfigurationCreateParams.Features.SubscriptionUpdate.Product[],
+) {
   const configuration = await stripe.billingPortal.configurations.create({
     business_profile: {
       headline: config.businessProfile.headline,
@@ -53,12 +55,20 @@ export async function setupCustomerPortal(config: PortalConfig) {
         allowed_updates: ['email'],
         enabled: true,
       },
+      payment_method_update: {
+        enabled: true,
+      },
       invoice_history: {
         enabled: true,
       },
       subscription_cancel: {
         enabled: true,
         mode: 'at_period_end',
+      },
+      subscription_update: {
+        enabled: true,
+        default_allowed_updates: ['price'],
+        products,
       },
     },
     default_return_url: config.returnUrl,
