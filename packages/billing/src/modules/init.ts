@@ -22,7 +22,7 @@ const init = new Command('init')
 
       stripe.setupStripe();
 
-      const prices = await stripe.createProducts(configFile.tiers);
+      const products = await stripe.createProducts(configFile.tiers);
 
       // TODO: ADD PRODUCT & PRICING TO CUSTOMER PORTAL
       stripe.setupCustomerPortal(configFile.customerPortal);

@@ -16,8 +16,8 @@ export function setupStripe() {
   });
 }
 
-export function createProducts(products: ProductsConfig) {
-  const prices = R.map((product: ProductsConfig[number]) => {
+export async function createProducts(products: ProductsConfig) {
+  const pricesConfig = R.map((product: ProductsConfig[number]) => {
     return stripe.prices.create({
       unit_amount: product.free ? 0 : product.pricePerUnit,
       currency: 'usd',
@@ -30,7 +30,14 @@ export function createProducts(products: ProductsConfig) {
     });
   }, products);
 
-  return Promise.all(prices);
+  const pricesObject = await Promise.all(pricesConfig);
+
+  return R.map((price) => {
+    return {
+      prices: [price.id],
+      product: price.product,
+    };
+  }, pricesObject);
 }
 
 export async function setupCustomerPortal(config: PortalConfig) {
