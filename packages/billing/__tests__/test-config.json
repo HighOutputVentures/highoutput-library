@@ -1,0 +1,39 @@
+{
+  "tiers": [
+    {
+      "id": "free_pricing",
+      "name": "Starter",
+      "free": true,
+      "description": "Enjoy free access to our services forever.",
+      "metadata": {
+        "project": "Typographic Studio"
+      }
+    },
+    {
+      "id": "professional_pricing",
+      "name": "Professional",
+      "pricePerUnit": 1200,
+      "description": "Enhance your work with our professional plan.",
+      "metadata": {
+        "project": "Typographic Studio"
+      }
+    },
+    {
+      "id": "organization_pricing",
+      "name": "Organization",
+      "pricePerUnit": 4500,
+      "description": "Everything in Professional plus more.",
+      "metadata": {
+        "project": "Typographic Studio"
+      }
+    }
+  ],
+  "customerPortal": {
+    "returnUrl": "https://example.com",
+    "businessProfile": {
+      "headline": "v2 Hand-picked webfonts for your business.",
+      "privacyPolicyUrl": "https://example.com/privacy",
+      "termsOfServiceUrl": "https://example.com/terms"
+    }
+  }
+}
