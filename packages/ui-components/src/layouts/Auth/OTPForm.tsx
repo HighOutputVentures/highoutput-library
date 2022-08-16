@@ -26,7 +26,7 @@ export interface OTPFormProps {
   buttonText?: string;
   otpType?: 'number' | 'alphanumeric';
   onSubmitOTPValue?(value: AuthenticateSchemaValues): void;
-  partProps: {
+  partProps?: {
     title: WithoutChildren<TextProps>;
     subTitle: WithoutChildren<TextProps>;
     button: WithoutChildren<ButtonProps>;
