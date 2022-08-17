@@ -1,7 +1,10 @@
-import { Meta } from '@storybook/addon-docs';
+import { Meta, Preview } from '@storybook/addon-docs';
+
+import { HovIcon } from '../icons';
+import ThemeProvider from '../components/ThemeProvider';
 
 <Meta
-  title="Welcome"
+  title="Getting Started"
   parameters={{
     previewTabs: {
       canvas: { hidden: true },
@@ -9,10 +12,69 @@ import { Meta } from '@storybook/addon-docs';
   }}
 />
 
-# Welcome
+# HOV UI Components
 
-**current version:** 0.2.0-alpha.0
+**CURRENT VERSION:** 0.2.0-alpha.0
 
-**@highoutput/ui-components** is a UI component aim to build a library of custom ReactJS components that implements our unique UI design
-conventions. The ReactJS components will be based primarily on Chakra UI components.
-React Storybook will be used for documentation and testing.
+**@highoutput/ui-components** is a ui component library that is built around [chakra ui](https://chakra-ui.com/), and aims to be:
+
+- a reusable block of components
+- very customizable with ease of styling
+- easy to implement
+
+## Getting Started
+
+To install package, use:
+
+```bash
+npm i @highoutput/ui-components
+```
+
+### Usage
+
+```typescript
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import { ThemeProvider } from '@highoutput/ui-components';
+
+const App = () => {
+  return (<ThemeProvider><div>{...components here}</div></ThemeProvider>);
+};
+
+ReactDOM.render(<App />, document.getElementById('root'));
+```
+
+```typescript
+import { RadioImageGroup } from '@highoutput/ui-components';
+
+export const SamplePage = () => {
+  const [value, setValue] = useState('');
+
+  return (
+    <>
+      <Text>Select Image: {value}</Text>
+      <RadioImageGroup
+        avatars={[
+          {
+            value: 'Kat',
+            image: 'https://randomuser.me/api/portraits/women/44.jpg',
+          },
+          {
+            value: 'Kevin',
+            image: 'https://randomuser.me/api/portraits/men/86.jpg',
+          },
+          {
+            value: 'Andy',
+            image: 'https://randomuser.me/api/portraits/men/29.jpg',
+          },
+          {
+            value: 'Jess',
+            image: 'https://randomuser.me/api/portraits/women/95.jpg',
+          },
+        ]}
+        onChange={v => setValue(v)}
+      />
+    </>
+  );
+};
+```
