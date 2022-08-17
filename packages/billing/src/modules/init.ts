@@ -2,7 +2,8 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-dynamic-require */
 import { Command } from 'commander';
-import * as stripe from '../lib/stripe';
+import * as stripe from '../lib/setup';
+import createProducts from '../lib/create-products';
 import readConfig from '../lib/read-config';
 
 const init = new Command('init')
@@ -12,9 +13,7 @@ const init = new Command('init')
     try {
       const configFile = await readConfig(config);
 
-      stripe.setupStripe();
-
-      const products = await stripe.createProducts(configFile.tiers);
+      const products = await createProducts(configFile.tiers);
 
       await stripe.setupCustomerPortal(configFile.customerPortal, products);
     } catch (error) {

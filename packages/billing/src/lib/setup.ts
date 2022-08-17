@@ -1,44 +1,17 @@
 /* eslint-disable import/extensions */
 /* eslint-disable no-console */
 import Stripe from 'stripe';
-import * as R from 'ramda';
-import { PortalConfig, ProductsConfig } from '../types';
+import { PortalConfig } from '../types';
 
-let stripe: Stripe;
-
-export function setupStripe() {
-  if (!process.env.STRIPE_SECRET_KEY) {
-    throw new Error('Secret key is required.');
-  }
-
-  stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-    apiVersion: '2022-08-01',
-  });
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error('Secret key is required.');
 }
 
-export async function createProducts(products: ProductsConfig) {
-  const pricesConfig = R.map((product: ProductsConfig[number]) => {
-    return stripe.prices.create({
-      unit_amount: product.free ? 0 : product.pricePerUnit,
-      currency: 'usd',
-      recurring: {
-        interval: 'month',
-      },
-      product_data: {
-        name: product.name,
-      },
-    });
-  }, products);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+  apiVersion: '2022-08-01',
+});
 
-  const pricesObject = await Promise.all(pricesConfig);
-
-  return R.map((price) => {
-    return {
-      prices: [price.id],
-      product: price.product,
-    } as Stripe.BillingPortal.ConfigurationCreateParams.Features.SubscriptionUpdate.Product;
-  }, pricesObject);
-}
+export default stripe;
 
 export async function setupCustomerPortal(
   config: PortalConfig,
