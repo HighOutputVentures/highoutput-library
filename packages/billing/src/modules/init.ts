@@ -2,8 +2,9 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-dynamic-require */
 import { Command } from 'commander';
-import * as stripe from '../lib/stripe';
+import createProducts from '../lib/create-products';
 import readConfig from '../lib/read-config';
+import setupCustomerPortal from '../lib/setup-customer-portal';
 
 const init = new Command('init')
   .description('Initialize the Stripe environment')
@@ -12,11 +13,13 @@ const init = new Command('init')
     try {
       const configFile = await readConfig(config);
 
-      stripe.setupStripe();
+      const products = await createProducts(configFile.tiers);
 
-      const products = await stripe.createProducts(configFile.tiers);
-
-      await stripe.setupCustomerPortal(configFile.customerPortal, products);
+      const portalId = await setupCustomerPortal(
+        configFile.customerPortal,
+        products,
+      );
+      console.log(`Customer portal configured successfully: ${portalId}`);
     } catch (error) {
       console.error(`\x1b[31m${(error as Error).message}\x1b[0m`);
     }
