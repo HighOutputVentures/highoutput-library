@@ -1,4 +1,8 @@
 const colors = {
+  primary: { 500: '#7070DD' },
+  secondary: { 500: '#BAEFC2' },
+  tertiary: { 500: '#75AEE4' },
+
   greenLight: { 500: '#4CD471' },
   limeLight: { 500: '#A8C556' },
   yellowLight: { 500: '#FFD188' },
@@ -7,7 +11,6 @@ const colors = {
   textColor: { 500: '#2D3748' },
   skyLight: { 500: '#E3E5E6' },
   roseRed: { 500: '#F56565' },
-  secondary: { 400: '#859FFF ', 500: '#0A3FFF', 600: '#052080' },
   sunglow: { 500: '#FFD12D' },
   amberDark: {
     500: '#806917',

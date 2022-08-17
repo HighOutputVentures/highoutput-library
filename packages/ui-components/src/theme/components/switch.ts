@@ -8,7 +8,7 @@ export const Switch = {
     primary: {
       track: {
         _checked: {
-          bg: 'amber.500',
+          bg: 'primary.500',
         },
       },
     },
@@ -32,6 +32,6 @@ export const Switch = {
   defaultProps: {
     variant: 'primary',
   },
-}
+};
 
-export default Switch
+export default Switch;

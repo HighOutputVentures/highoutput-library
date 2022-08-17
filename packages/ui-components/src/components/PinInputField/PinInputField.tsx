@@ -42,10 +42,9 @@ const PinInputField = forwardRef<HTMLInputElement, PinInputFieldProps>(
       onComplete,
     } = props;
     const styles = useStyleConfig('PinInputField', { size, variant });
-    const fieldsArray = useMemo(
-      () => Array.from({ length: numberOfFields }),
-      [numberOfFields]
-    );
+    const fieldsArray = useMemo(() => Array.from({ length: numberOfFields }), [
+      numberOfFields,
+    ]);
 
     return (
       <FormContainer {...props}>
@@ -53,12 +52,12 @@ const PinInputField = forwardRef<HTMLInputElement, PinInputFieldProps>(
           <PinInput
             autoFocus
             otp
-            focusBorderColor="amber.500"
+            focusBorderColor="primary.500"
             errorBorderColor="red.300"
             isInvalid={Boolean(props?.errorMsg)}
             type={type}
             {...props}
-            onChange={(value) => {
+            onChange={value => {
               onChange?.({ target: { value, name } });
             }}
             onComplete={onComplete}

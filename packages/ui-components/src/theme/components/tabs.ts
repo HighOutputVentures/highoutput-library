@@ -11,7 +11,7 @@ export const Tabs = {
         _selected: {
           paddingBottom: '6px',
           borderBottom: '2px solid',
-          borderBottomColor: 'amber.500',
+          borderBottomColor: 'primary.500',
           color: 'gray.800',
           fontWeight: 'semibold',
         },
@@ -27,6 +27,6 @@ export const Tabs = {
   defaultProps: {
     variant: 'primary',
   },
-}
+};
 
-export default Tabs
+export default Tabs;
