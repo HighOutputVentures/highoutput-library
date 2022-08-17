@@ -1,9 +1,10 @@
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import {
-  InputProps,
   Button,
-  InputGroupProps,
+  ButtonProps,
   InputElementProps,
+  InputGroupProps,
+  InputProps,
 } from '@chakra-ui/react';
 import React, { forwardRef } from 'react';
 import { UseFormRegisterReturn } from 'react-hook-form';
@@ -13,6 +14,7 @@ type WithoutChildren<T> = Omit<T, 'children'>;
 
 export interface PasswordInputProps extends UseFormRegisterReturn {
   partProps?: Partial<{
+    button: WithoutChildren<ButtonProps>;
     input: WithoutChildren<InputProps>;
     inputGroup: WithoutChildren<InputGroupProps>;
     inputLeftElement: WithoutChildren<InputElementProps>;
@@ -40,7 +42,7 @@ const PasswordInputField = forwardRef<HTMLInputElement, PasswordInputProps>(
       <InputField
         placeholder={placeholder}
         id="Password-input"
-        {...partProps}
+        partProps={partProps}
         type={showPassword ? 'text' : 'password'}
         errorMsg={errorMsg}
         onBlur={onBlur}
@@ -51,6 +53,7 @@ const PasswordInputField = forwardRef<HTMLInputElement, PasswordInputProps>(
             background={'none'}
             _hover={{ background: 'none' }}
             _active={{ background: 'none' }}
+            {...partProps?.button}
             aria-label={'show-hide-btn'}
             onClick={onClickRightIcon}
           >
