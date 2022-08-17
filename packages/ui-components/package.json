@@ -87,6 +87,7 @@
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
     "@hookform/resolvers": "^2.9.5",
+    "@storybook/addon-docs": "^6.5.10",
     "framer-motion": "^6.3.11",
     "js-cookie": "^3.0.1",
     "lodash": "^4.17.21",
