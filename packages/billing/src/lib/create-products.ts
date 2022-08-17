@@ -26,5 +26,7 @@ export default async function createProducts(products: ProductsConfig) {
     });
   }, products);
 
-  return pMap(prices, priceMapper, { concurrency: 5 });
+  return pMap(prices as Iterable<Stripe.Price>, priceMapper, {
+    concurrency: 5,
+  });
 }
