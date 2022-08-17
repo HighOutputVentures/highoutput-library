@@ -19,9 +19,9 @@ export default create({
   textColor: '#0F0F0F',
   textInverseColor: 'rgba(255,255,255,0.9)',
 
-  barTextColor: '#FAFAFA',
-  barSelectedColor: '#0F0F0F',
-  barBg: '#7070DD',
+  barTextColor: '#0F0F0F',
+  barSelectedColor: '#7070DD',
+  barBg: '#FAFAFA',
 
   inputBg: '#FAFAFA',
   inputBorder: 'silver',
