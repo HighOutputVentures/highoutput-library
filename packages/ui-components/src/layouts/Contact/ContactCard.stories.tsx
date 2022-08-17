@@ -5,7 +5,7 @@ import { ThemeProvider } from '../..';
 import ContactCard from './ContactCard';
 
 export default {
-  title: 'UI Layouts/Contact/Contact Card',
+  title: 'Layouts/Contact/Contact Card',
   component: ContactCard,
 } as ComponentMeta<typeof ContactCard>;
 

@@ -6,7 +6,7 @@ import { ThemeProvider } from '../..';
 import Pagination from './Pagination';
 
 export default {
-  title: 'UI Components/Pagination',
+  title: 'Components/Pagination',
   component: Pagination,
 } as ComponentMeta<typeof Pagination>;
 

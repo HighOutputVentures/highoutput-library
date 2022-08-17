@@ -4,7 +4,7 @@ import React from 'react';
 import { ThemeProvider } from '../..';
 import CredentialLoginForm from './CredentialLoginForm';
 export default {
-  title: 'UI Layouts/Auth/Credential Login',
+  title: 'Layouts/Auth/Credential Login',
   component: CredentialLoginForm,
 } as ComponentMeta<typeof CredentialLoginForm>;
 

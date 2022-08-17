@@ -8,7 +8,7 @@ export const parameters = {
   viewMode: 'docs',
   options: {
     storySort: {
-      order: ['Getting Started', 'UI Layouts', 'UI Components'],
+      order: ['Getting Started', 'Layouts', 'Components'],
     },
   },
 };

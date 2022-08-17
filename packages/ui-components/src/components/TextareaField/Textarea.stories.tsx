@@ -5,7 +5,7 @@ import { ThemeProvider } from '../..';
 import TextareaField from './TextareaField';
 
 export default {
-  title: 'UI Components/Form/Textarea Field',
+  title: 'Components/Form/Textarea Field',
   component: TextareaField,
 } as ComponentMeta<typeof TextareaField>;
 
