@@ -7,6 +7,7 @@ module.exports = {
   maxWorkers: 1,
   testTimeout: 5000000,
   testMatch: ['**/?(*.)+(spec|test).[jt]s?(x)'],
+  testPathIgnorePatterns: ['dist'],
   transform: {
     '^.+\\.ts?$': 'ts-jest',
   },
