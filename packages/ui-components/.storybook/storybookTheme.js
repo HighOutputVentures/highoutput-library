@@ -29,6 +29,6 @@ export default create({
   inputBorderRadius: 4,
 
   brandTitle: 'HOV UI Components',
-  brandUrl: 'https://ui-components-nberongoy.vercel.app/',
+  brandUrl: 'https://hov-ui-components-highoutput.vercel.app/',
   brandTarget: '_self',
 });
