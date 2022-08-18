@@ -6,11 +6,11 @@ import AutoForm from './AutoForm';
 import { autoFormSchema } from './validations';
 
 export default {
-  title: 'UI Layouts/Form/AutoForm',
+  title: 'Layouts/Form/AutoForm',
   component: AutoForm,
 } as ComponentMeta<typeof AutoForm>;
 
-const Template: ComponentStory<typeof AutoForm> = (args) => (
+const Template: ComponentStory<typeof AutoForm> = args => (
   <ThemeProvider>
     <AutoForm {...args} />
   </ThemeProvider>

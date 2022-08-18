@@ -5,7 +5,7 @@ import { ThemeProvider } from '../..';
 import RadioImage from './RadioImage';
 
 export default {
-  title: 'UI Components/Radio/Radio Image',
+  title: 'Components/Radio/Radio Image',
   component: RadioImage,
 } as ComponentMeta<typeof RadioImage>;
 

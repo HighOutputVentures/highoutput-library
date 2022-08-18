@@ -6,7 +6,7 @@ import { ThemeProvider } from '../..';
 import FormContainer from './FormContainer';
 
 export default {
-  title: 'UI Components/Form/Form Container',
+  title: 'Components/Form/Form Container',
   component: FormContainer,
 } as ComponentMeta<typeof FormContainer>;
 

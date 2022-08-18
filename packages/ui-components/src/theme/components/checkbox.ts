@@ -12,13 +12,13 @@ export const Checkbox = {
         pointerEvents: 'none',
         _focus: { shadow: 'none' },
         _checked: {
-          bg: 'sunglow.500',
-          color: 'amberDark.500',
-          borderColor: 'sunglow.500',
+          bg: 'primary.500',
+          color: 'primary.500',
+          borderColor: 'primary.500',
           _hover: {
-            bg: 'amber.500',
-            color: 'amberDark.500',
-            borderColor: 'amber.500',
+            bg: 'primary.500',
+            color: 'primary.500',
+            borderColor: 'primary.500',
           },
         },
       },
@@ -43,6 +43,6 @@ export const Checkbox = {
   defaultProps: {
     variant: 'primary',
   },
-}
+};
 
-export default Checkbox
+export default Checkbox;

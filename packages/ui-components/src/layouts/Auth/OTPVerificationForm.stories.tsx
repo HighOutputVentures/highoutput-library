@@ -5,7 +5,7 @@ import { ThemeProvider } from '../..';
 
 import OTPVerificationForm from './OTPVerificationForm';
 export default {
-  title: 'UI Layouts/Auth/OTP Login',
+  title: 'Layouts/Auth/OTP Login',
   component: OTPVerificationForm,
 } as ComponentMeta<typeof OTPVerificationForm>;
 

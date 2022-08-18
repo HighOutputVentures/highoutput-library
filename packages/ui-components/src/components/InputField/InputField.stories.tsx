@@ -5,7 +5,7 @@ import { ThemeProvider } from '../..';
 import InputField from './InputField';
 
 export default {
-  title: 'UI Components/Form/Input Field',
+  title: 'Components/Form/Input Field',
   component: InputField,
 } as ComponentMeta<typeof InputField>;
 

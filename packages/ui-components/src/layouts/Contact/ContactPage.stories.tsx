@@ -5,7 +5,7 @@ import { ThemeProvider } from '../..';
 import ContactPage from './ContactPage';
 
 export default {
-  title: 'UI Layouts/Contact/Contact Page',
+  title: 'Layouts/Contact/Contact Page',
   component: ContactPage,
 } as ComponentMeta<typeof ContactPage>;
 

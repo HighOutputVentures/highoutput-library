@@ -11,6 +11,8 @@ import {
   StackProps,
   Text,
   TextProps,
+  ThemingProps,
+  useMultiStyleConfig,
 } from '@chakra-ui/react';
 import React, { FC, useCallback, useId } from 'react';
 import ChevronLeftIcon from './ChevronLeftIcon';
@@ -18,7 +20,7 @@ import ChevronRightIcon from './ChevronRightIcon';
 
 type WithoutChildren<T> = Omit<T, 'children'>;
 
-export type PaginationProps = {
+export interface PaginationProps extends ThemingProps {
   page: number;
   size: number;
   total: number;
@@ -33,7 +35,7 @@ export type PaginationProps = {
    *
    */
   loading?: boolean;
-  styles?: Partial<{
+  partProps?: Partial<{
     container: WithoutChildren<FlexProps>;
     dropdown: WithoutChildren<SelectProps>;
     dropdownLabel: WithoutChildren<TextProps>;
@@ -44,7 +46,7 @@ export type PaginationProps = {
     controlIcons: WithoutChildren<IconProps>;
     controlsContainer: WithoutChildren<StackProps>;
   }>;
-};
+}
 
 const Pagination: FC<PaginationProps> = ({
   page,
@@ -53,8 +55,10 @@ const Pagination: FC<PaginationProps> = ({
   onPageChange,
   onSizeChange,
   options,
-  styles,
+  partProps,
+  variant,
 }) => {
+  const styles = useMultiStyleConfig('Pagination', { variant });
   const id = useId();
 
   const hasPrev = page > 1;
@@ -92,10 +96,16 @@ const Pagination: FC<PaginationProps> = ({
       id={id}
       alignItems="center"
       justifyContent="space-between"
-      {...styles?.container}
+      sx={styles.container}
+      {...partProps?.container}
     >
-      <HStack spacing={2} {...styles?.dropdownContainer}>
-        <Text as="span" whiteSpace="nowrap" {...styles?.dropdownLabel}>
+      <HStack spacing={2} {...partProps?.dropdownContainer}>
+        <Text
+          as="span"
+          whiteSpace="nowrap"
+          sx={styles.dropdownLabel}
+          {...partProps?.dropdownLabel}
+        >
           Show rows per page
         </Text>
 
@@ -103,7 +113,8 @@ const Pagination: FC<PaginationProps> = ({
           data-testid={`${id}-pagination.dropdown`}
           onChange={handleSizeChange}
           value={size}
-          {...styles?.dropdown}
+          sx={styles.dropdown}
+          {...partProps?.dropdown}
         >
           {options.sizes.map((size, index) => (
             <option
@@ -117,28 +128,42 @@ const Pagination: FC<PaginationProps> = ({
         </Select>
       </HStack>
 
-      <HStack spacing={4} {...styles?.captionAndControlsContainer}>
-        <Text as="span" {...styles?.caption}>
+      <HStack spacing={4} {...partProps?.captionAndControlsContainer}>
+        <Text as="span" sx={styles.caption} {...partProps?.caption}>
           {getPageInfo()}
         </Text>
 
-        <HStack {...styles?.controlsContainer}>
+        <HStack {...partProps?.controlsContainer}>
           <IconButton
             aria-label=""
             data-testid={`${id}-pagination.controls.prev`}
-            icon={<Icon as={ChevronLeftIcon} {...styles?.controlIcons} />}
+            icon={
+              <Icon
+                as={ChevronLeftIcon}
+                sx={styles.controlIcons}
+                {...partProps?.controlIcons}
+              />
+            }
             onClick={handlePageChange('decrement')}
             disabled={!hasPrev}
-            {...styles?.controls}
+            sx={styles.iconButton}
+            {...partProps?.controls}
           />
 
           <IconButton
             aria-label=""
             data-testid={`${id}-pagination.controls.next`}
-            icon={<Icon as={ChevronRightIcon} {...styles?.controlIcons} />}
+            icon={
+              <Icon
+                as={ChevronRightIcon}
+                sx={styles.controlIcons}
+                {...partProps?.controlIcons}
+              />
+            }
             onClick={handlePageChange('increment')}
             disabled={!hasNext}
-            {...styles?.controls}
+            sx={styles.iconButton}
+            {...partProps?.controls}
           />
         </HStack>
       </HStack>

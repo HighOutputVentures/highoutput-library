@@ -1,4 +1,4 @@
-import { sizeText } from './text'
+import { sizeText } from './text';
 
 export const Link = {
   baseStyle: {
@@ -10,13 +10,13 @@ export const Link = {
   variants: {
     primary: {
       fontWeight: 'medium',
-      color: 'sunglow.500',
+      color: 'primary.500',
     },
     orange: {
       fontWeight: 'medium',
       color: 'orange.500',
     },
   },
-}
+};
 
-export default Link
+export default Link;

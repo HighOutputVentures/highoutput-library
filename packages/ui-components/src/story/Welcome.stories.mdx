@@ -1,8 +1,28 @@
-### Getting started
+import { Meta, Preview } from '@storybook/addon-docs';
 
-We aim to build a library of custom ReactJS components that implements our unique UI design conventions. The ReactJS components will be based primarily on Chakra UI components. React Storybook will be used for documentation and testing.
+import { HovIcon } from '../icons';
+import ThemeProvider from '../components/ThemeProvider';
 
-## Commands
+<Meta
+  title="Getting Started"
+  parameters={{
+    previewTabs: {
+      canvas: { hidden: true },
+    },
+  }}
+/>
+
+# HOV UI Components
+
+**CURRENT VERSION:** 0.2.0-alpha.0
+
+**@highoutput/ui-components** is a ui component library that is built around [chakra ui](https://chakra-ui.com/), and aims to be:
+
+- a reusable block of components
+- very customizable with ease of styling
+- easy to implement
+
+## Getting Started
 
 To install package, use:
 
@@ -13,7 +33,6 @@ npm i @highoutput/ui-components
 ### Usage
 
 ```typescript
-// React main
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { ThemeProvider } from '@highoutput/ui-components';
@@ -59,12 +78,3 @@ export const SamplePage = () => {
   );
 };
 ```
-
-## Other Documented Usage
-
-[Components Live Preview](https://ui-components-nberongoy.vercel.app/)
-[Contact Us Form](https://www.notion.so/highoutput/Contact-us-form-6b4a49c0cbe24891a34d96e1b34b1e6e)
-
-## Contribute
-
-[document for contributing in this library](https://github.com/HighOutputVentures/experiments/tree/main/016)

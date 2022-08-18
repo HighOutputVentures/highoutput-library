@@ -5,7 +5,7 @@ import { ThemeProvider } from '../..';
 import ContactForm from './ContactForm';
 
 export default {
-  title: 'UI Layouts/Contact/Contact Form',
+  title: 'Layouts/Contact/Contact Form',
   component: ContactForm,
 } as ComponentMeta<typeof ContactForm>;
 

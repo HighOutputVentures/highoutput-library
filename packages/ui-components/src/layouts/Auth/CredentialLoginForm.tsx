@@ -7,11 +7,14 @@ import {
   Center,
   Stack,
   Text,
+  TextProps,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import React, { FC, ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
-import InputField from '../../components/InputField/InputField';
+import InputField, {
+  InputFieldProps,
+} from '../../components/InputField/InputField';
 import {
   CredentialFormInputEmailProps,
   CredentialFormInputNameProps,
@@ -21,11 +24,17 @@ import {
   withCredentialFormSchemaNameValues,
 } from './validation';
 
+type WithoutChildren<T> = Omit<T, 'children'>;
+
 export type CredentialLoginFormDefaultProps = {
   loginTitle?: ReactNode;
   signUpTitle?: ReactNode;
-  buttonProps?: ButtonProps;
-  containerProps?: BoxProps;
+  partProps?: {
+    title: WithoutChildren<TextProps>;
+    button: WithoutChildren<ButtonProps>;
+    containerProps: WithoutChildren<BoxProps>;
+    input: WithoutChildren<InputFieldProps>;
+  };
 };
 export interface CredentialLoginFormNameProps
   extends CredentialLoginFormDefaultProps {
@@ -46,10 +55,9 @@ export type CredentialLoginFormProps =
 
 const CredentialLoginForm: FC<CredentialLoginFormProps> = props => {
   const {
-    buttonProps,
+    partProps,
     signUpTitle,
     loginTitle,
-    containerProps,
     variant,
     onSubmit,
     nameLabel = 'Username',
@@ -81,8 +89,8 @@ const CredentialLoginForm: FC<CredentialLoginFormProps> = props => {
     <Box
       as={'form'}
       maxW={512}
+      {...partProps?.containerProps}
       onSubmit={handleSubmit(onSubmitForm)}
-      {...containerProps}
     >
       <Center m={0} p={0}>
         {isSignUp && signUpTitle ? (
@@ -90,13 +98,13 @@ const CredentialLoginForm: FC<CredentialLoginFormProps> = props => {
         ) : !isSignUp && loginTitle ? (
           loginTitle
         ) : !isSignUp && !loginTitle ? (
-          <Text size="text-3xl" my={8}>
+          <Text size="text-3xl" my={8} {...partProps?.title}>
             Login
           </Text>
         ) : (
           isSignUp &&
           !signUpTitle && (
-            <Text size="text-3xl" my={8}>
+            <Text size="text-3xl" my={8} {...partProps?.title}>
               Sign up
             </Text>
           )
@@ -118,6 +126,7 @@ const CredentialLoginForm: FC<CredentialLoginFormProps> = props => {
                 role: 'input',
               },
             }}
+            {...partProps?.input}
           />
         ) : (
           <InputField
@@ -130,6 +139,7 @@ const CredentialLoginForm: FC<CredentialLoginFormProps> = props => {
             partProps={{
               input: { 'aria-label': 'email-input', role: 'input' },
             }}
+            {...partProps?.input}
           />
         )}
 
@@ -159,6 +169,7 @@ const CredentialLoginForm: FC<CredentialLoginFormProps> = props => {
               role: 'input',
             },
           }}
+          {...partProps?.input}
         />
       </Stack>
       <Button
@@ -167,7 +178,7 @@ const CredentialLoginForm: FC<CredentialLoginFormProps> = props => {
         isLoading={formState.isSubmitting}
         type="submit"
         my={8}
-        {...buttonProps}
+        {...partProps?.button}
       >
         {isSignUp ? 'Sign Up' : 'Login'}
       </Button>

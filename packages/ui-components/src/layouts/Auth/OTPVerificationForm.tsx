@@ -1,10 +1,10 @@
-import { Box, BoxProps, Button, ButtonProps } from '@chakra-ui/react';
+import { Box, Button } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import React, { ReactNode } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 
 import InputField from '../../components/InputField/InputField';
-import OTPForm from './OTPForm';
+import OTPForm, { OTPFormProps } from './OTPForm';
 
 import {
   AuthenticateSchemaValues,
@@ -12,14 +12,10 @@ import {
   GenerateEmailOTPSchemaValues,
 } from './validation';
 
-export interface OTPVerificationProps {
+export interface OTPVerificationProps extends OTPFormProps {
   onSubmitEmailValue?(value: GenerateEmailOTPSchemaValues): void;
   onSubmitOTPValue?(value: AuthenticateSchemaValues): void;
   otpReceived: boolean;
-  containerProps?: BoxProps;
-  buttonProps?: ButtonProps;
-  title?: ReactNode;
-  subTitle?: ReactNode;
   numberOfFields?: number;
   otpType?: 'number' | 'alphanumeric';
 }
@@ -28,12 +24,11 @@ const OTPVerificationForm = (props: OTPVerificationProps) => {
   const {
     otpReceived,
     onSubmitEmailValue,
-    containerProps,
-    buttonProps,
     numberOfFields,
     title,
     subTitle,
     onSubmitOTPValue,
+    partProps,
   } = props;
 
   const { register, handleSubmit, formState } = useForm<
@@ -66,7 +61,7 @@ const OTPVerificationForm = (props: OTPVerificationProps) => {
           as={'form'}
           data-testid="box.emailform.form"
           w={350}
-          {...containerProps}
+          {...partProps?.container}
           onSubmit={handleSubmit(onSubmitEmail)}
         >
           <InputField
@@ -90,7 +85,7 @@ const OTPVerificationForm = (props: OTPVerificationProps) => {
             width={'100%'}
             marginTop={'10px'}
             data-testid="button.email.submit"
-            {...buttonProps}
+            {...partProps?.button}
           >
             Sign In
           </Button>
@@ -98,8 +93,7 @@ const OTPVerificationForm = (props: OTPVerificationProps) => {
       ) : (
         <Box data-testid="otp.component">
           <OTPForm
-            {...buttonProps}
-            {...containerProps}
+            partProps={partProps}
             title={title}
             subTitle={subTitle}
             onSubmitOTPValue={value => onSubmitOTP(value)}
