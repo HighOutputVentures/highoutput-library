@@ -207,7 +207,8 @@ export class Repository<
       {
         upsert: false,
         new: true,
-        ...options,
+        setDefaultsOnInsert: true,
+        ...(options || {}),
       },
     );
 
