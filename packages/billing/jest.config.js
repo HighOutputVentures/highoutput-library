@@ -17,4 +17,5 @@ module.exports = {
     enableSymlinks: true,
   },
   watchman: false,
+  setupFiles: ['./__tests__/setup-env.ts'],
 };
