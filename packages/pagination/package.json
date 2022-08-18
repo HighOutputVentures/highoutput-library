@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/pagination",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Pagination library",
   "keywords": [
     "error"
@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@highoutput/object-id": "^0.1.8",
-    "@highoutput/repository": "^0.4.0",
+    "@highoutput/repository": "^0.4.1",
     "@types/ramda": "^0.28.15",
     "mongoose": "^6.4.4",
     "ramda": "^0.28.0"
