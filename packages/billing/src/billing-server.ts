@@ -5,18 +5,20 @@ import { Request, Response, NextFunction } from 'express';
 import * as R from 'ramda';
 import { AuthorizationAdapter } from './interfaces/authorization-adapter';
 import { handlerMapper, tryCatch } from './lib/route-handlers';
+import { setSecretKey } from './lib/setup';
 
 type Method = keyof typeof handlerMapper;
 type Endpoint = keyof typeof handlerMapper[Method];
 
 export default class BillingServer {
-  // eslint-disable-next-line no-useless-constructor
   constructor(
     private options: {
       stripeSecretKey: string;
       authorizationAdapter: AuthorizationAdapter;
     },
-  ) {}
+  ) {
+    setSecretKey(this.options.stripeSecretKey);
+  }
 
   public expressMiddleware() {
     const { authorizationAdapter } = this.options;
