@@ -194,7 +194,7 @@ export class Repository<
   }
 
   async count(filter: FilterQuery<TEntity>): Promise<number> {
-    return this._model.countDocuments(filter);
+    return this._model.countDocuments(serializeFilter(filter));
   }
 
   async updateOne(
