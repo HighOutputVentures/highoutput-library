@@ -8,7 +8,13 @@ export const parameters = {
   viewMode: 'docs',
   options: {
     storySort: {
-      order: ['Getting Started', 'Layouts', 'Components'],
+      order: [
+        'Getting Started',
+        'Layouts',
+        'Components',
+        'Contribution Guide',
+        'Releases',
+      ],
     },
   },
 };
