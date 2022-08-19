@@ -135,6 +135,7 @@ function serializeFilter(filter: FilterQuery<Record<any, any>>) {
         return {
           ...accum,
           [`${field}.data`]: (value as ObjectId).toBuffer(),
+          [`${field}._type`]: 'ObjectId',
         };
       }
 
