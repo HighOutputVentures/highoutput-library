@@ -10,6 +10,8 @@ import { setSecretKey } from './lib/setup';
 type Method = keyof typeof handlerMapper;
 type Endpoint = keyof typeof handlerMapper[Method];
 
+const ENDPOINTS_REGEX = /^\/tiers$|^\/secret$/;
+
 export default class BillingServer {
   constructor(
     private options: {
@@ -27,39 +29,59 @@ export default class BillingServer {
       res: Response,
       next: NextFunction,
     ) {
-      const user = await authorizationAdapter.authorize('TOKEN');
+      const { method, path } = req;
+      const [endpoint] = path.match(ENDPOINTS_REGEX) as RegExpMatchArray;
+
+      if (R.isNil(endpoint)) {
+        next();
+        return;
+      }
+
+      const { authorization: authHeader } = req.headers;
+
+      if (R.isNil(authHeader)) {
+        res.sendStatus(404);
+        res.send({
+          error: {
+            code: 'UNAUTHORIZED_ACCESS',
+            message: 'Invalid authorization header.',
+          },
+        });
+        return;
+      }
+
+      const [, token] = (authHeader as string).split(' ');
+
+      const user = await authorizationAdapter.authorize(token);
 
       if (R.isNil(user)) {
         res.set('Content-Type', 'application/json');
         res.sendStatus(400);
         res.send({
           error: {
-            code: 'USER_NOT_FOUND',
-            message: 'user with the specified email address does not exist.',
+            code: 'UNAUTHENTICATED_ACCESS',
+            message: 'User is not found.',
           },
         });
-
-        next();
         return;
       }
 
-      const { method, path } = req;
-      const [endpoint] = path.match(/^\/tiers$|^\/secret$/) as RegExpMatchArray;
+      const handler = R.compose<
+        [typeof handlerMapper],
+        typeof handlerMapper[Method],
+        typeof handlerMapper[Method][Endpoint]
+      >(
+        R.prop(endpoint.replace(/\//, '')),
+        R.prop(method.toLowerCase()),
+      )(handlerMapper);
 
-      if (R.isNil(endpoint)) {
-        res.sendStatus(404);
-        next();
-        return;
-      }
-
-      const handler = R.prop(method.toLowerCase() as Method, handlerMapper);
-      const [error, data] = await tryCatch(
-        R.prop(endpoint.replace(/\//, '') as Endpoint, handler),
-      );
+      const [error, data] = await tryCatch<
+        Parameters<typeof handler>,
+        ReturnType<typeof handler>
+      >(handler);
 
       if (error) {
         res.sendStatus(400);
-        next();
         return;
       }
 
@@ -67,8 +89,6 @@ export default class BillingServer {
         ok: true,
         data,
       });
-
-      next();
     };
   }
 }
