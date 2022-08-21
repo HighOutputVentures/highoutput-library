@@ -5,13 +5,14 @@ import * as R from 'ramda';
 import Stripe from 'stripe';
 import stripe from './setup';
 
-export async function tryCatch(
-  fn: () => Promise<unknown>,
-  ...args: Parameters<typeof fn>
-): Promise<[null, ReturnType<typeof fn>] | [Error]> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function tryCatch<T extends any[], U>(
+  fn: (...args: T) => U,
+  ...params: T
+): Promise<[null, Awaited<U>] | [Error]> {
   try {
-    const data = await fn(...args);
-    return [null, data as ReturnType<typeof fn>];
+    const data = await fn(...params);
+    return [null, data];
   } catch (error) {
     return [error as Error];
   }
