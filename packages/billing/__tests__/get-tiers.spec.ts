@@ -37,6 +37,7 @@ describe('GET /tiers', () => {
 
     await ctx.request
       .get('/tiers')
+      .set('Authorization', 'Bearer Token')
       .expect('Content-Type', /json/)
       .expect(200)
       .expect((res) => {
