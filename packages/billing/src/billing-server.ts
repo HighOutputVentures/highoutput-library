@@ -75,10 +75,7 @@ export default class BillingServer {
         R.prop(method.toLowerCase()),
       )(handlerMapper);
 
-      const [error, data] = await tryCatch<
-        Parameters<typeof handler>,
-        ReturnType<typeof handler>
-      >(handler);
+      const [error, data] = await tryCatch(handler, req);
 
       if (error) {
         res.sendStatus(400);
