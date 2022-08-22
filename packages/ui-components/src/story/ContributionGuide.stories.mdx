@@ -1,0 +1,404 @@
+import { Meta, Preview } from '@storybook/addon-docs';
+
+<Meta
+  title="Contribution Guide"
+  parameters={{
+    previewTabs: {
+      canvas: { hidden: true },
+    },
+  }}
+/>
+
+# Contribution Guide
+
+1. [Component](#component-guide)
+2. [Hook](#hook-guide)
+3. [Utility](#utility-guide)
+4. [Theme](#theme-guide)
+
+Folder structure under src folder
+
+```
+- src
+  - components
+  - layouts
+  - icons
+  - hooks
+  - utils
+  - theme
+  - story
+  - index.tsx
+```
+
+### Component Guide
+
+`components` - under components is where the reusable single ui components are located, each component has a file structued within it
+
+```
+- components
+  - RadioImage [folder name for component]
+    - RadioImage.tsx [reusable component]
+    - RadioImage.stories.tsx [storybook component for testing/demo the component]
+    - RadioImage.docs.mdx [to customize docs tab]
+    - RadioImage.test.tsx [test file]
+```
+
+```typescript
+// RadioImage.tsx
+import {
+  Box,
+  chakra,
+  HTMLChakraProps,
+  Image,
+  StyleProps,
+  ThemingProps,
+  useRadio,
+  useStyleConfig,
+} from '@chakra-ui/react';
+import { StringOrNumber } from '@chakra-ui/utils';
+import React, { forwardRef } from 'react';
+
+declare type EventOrValue =
+  | React.ChangeEvent<HTMLInputElement>
+  | StringOrNumber;
+
+export interface RadioImageProps
+  extends ThemingProps,
+    StyleProps,
+    Omit<HTMLChakraProps<'div'>, 'onChange' | 'value'> {
+  image: string;
+  selectColor?: string;
+  onChange?: (e: EventOrValue) => void;
+  value?: string | number;
+  checked?: boolean;
+  isChecked?: boolean;
+}
+
+const RadioImage = forwardRef<HTMLDivElement, RadioImageProps>((props, ref) => {
+  const { image, size, variant, selectColor, ...rest } = props;
+  const styles = useStyleConfig('RadioImage', { size, variant });
+
+  const {
+    state,
+    getInputProps,
+    getCheckboxProps,
+    htmlProps,
+    getLabelProps,
+  } = useRadio(rest);
+
+  return (
+    <chakra.label {...htmlProps} cursor="pointer">
+      <input {...getInputProps({})} hidden data-testid="radio.image.input" />
+      <Box
+        ref={ref}
+        w={12}
+        p={1}
+        sx={styles}
+        {...getCheckboxProps()}
+        rounded="full"
+        bg={
+          state.isChecked
+            ? selectColor || (styles.color as string) || 'green.500'
+            : 'transparent'
+        }
+        data-testid="radio.image.box"
+      >
+        <Image
+          src={image}
+          rounded="full"
+          {...getLabelProps()}
+          data-testid="radio.image.container"
+        />
+      </Box>
+    </chakra.label>
+  );
+});
+
+export default RadioImage;
+```
+
+```typescript
+// RadioImage.stories.tsx
+import { ComponentMeta, ComponentStory } from '@storybook/react';
+import React from 'react';
+
+import { ThemeProvider } from '../..';
+import RadioImage from './RadioImage';
+
+export default {
+  title: 'Components/Radio/Radio Image',
+  component: RadioImage,
+} as ComponentMeta<typeof RadioImage>;
+
+const Template: ComponentStory<typeof RadioImage> = args => (
+  <ThemeProvider>
+    <RadioImage {...args} />
+  </ThemeProvider>
+);
+
+export const Default = Template.bind({});
+
+Default.args = {
+  ...Default.args,
+  value: 'Kat',
+  image: 'https://randomuser.me/api/portraits/women/44.jpg',
+};
+```
+
+```typescript
+// RadioImage.test.tsx
+import '@testing-library/jest-dom';
+import { render, screen } from '@testing-library/react';
+import React from 'react';
+
+import RadioImage from './RadioImage';
+import { Default as RadioImageComponent } from './RadioImage.stories';
+
+describe('Radio Image Component', () => {
+  beforeEach(() => {
+    render(
+      <RadioImage
+        value={'Kat'}
+        image={'https://randomuser.me/api/portraits/women/44.jpg'}
+      />
+    );
+  });
+
+  it('should renders radio image box', async () => {
+    const radioImageBox = await screen.findAllByTestId('radio.image.box');
+    expect(radioImageBox).toHaveLength(1);
+  });
+
+  it('should renders radio image container', async () => {
+    const radioImageContainer = await screen.findAllByTestId(
+      'radio.image.container'
+    );
+    expect(radioImageContainer).toHaveLength(1);
+  });
+
+  it('should contain image src url pass from props', async () => {
+    const radioImageContainer = screen.getByTestId('radio.image.container');
+
+    expect(radioImageContainer.getAttribute('src')).toBe(
+      'https://randomuser.me/api/portraits/women/44.jpg'
+    );
+  });
+
+  it('should render radio input value holder', async () => {
+    const radioImageInput = await screen.findAllByTestId('radio.image.input');
+
+    expect(radioImageInput).toHaveLength(1);
+  });
+
+  it('should contain the value pass from props', async () => {
+    const radioImageInput = screen.getByTestId('radio.image.input');
+    expect(radioImageInput.getAttribute('value')).toBe('Kat');
+  });
+
+  it('should render radio input value holder as hidden', async () => {
+    const radioImageInput = screen.getByTestId('radio.image.input');
+    expect(radioImageInput).not.toBeVisible();
+  });
+});
+
+describe('Storybook - Radio Image Component', () => {
+  beforeEach(() => {
+    render(
+      <RadioImageComponent
+        value={'Kat'}
+        image={'https://randomuser.me/api/portraits/women/44.jpg'}
+      />
+    );
+  });
+
+  it('should renders radio image box', async () => {
+    const radioImageBox = await screen.findAllByTestId('radio.image.box');
+    expect(radioImageBox).toHaveLength(1);
+  });
+
+  it('should renders radio image container', async () => {
+    const radioImageContainer = await screen.findAllByTestId(
+      'radio.image.container'
+    );
+    expect(radioImageContainer).toHaveLength(1);
+  });
+
+  it('should contain image src url pass from props', async () => {
+    const radioImageContainer = screen.getByTestId('radio.image.container');
+
+    expect(radioImageContainer.getAttribute('src')).toBe(
+      'https://randomuser.me/api/portraits/women/44.jpg'
+    );
+  });
+
+  it('should render radio input value holder', async () => {
+    const radioImageInput = await screen.findAllByTestId('radio.image.input');
+
+    expect(radioImageInput).toHaveLength(1);
+  });
+
+  it('should contain the value pass from props', async () => {
+    const radioImageInput = screen.getByTestId('radio.image.input');
+    expect(radioImageInput.getAttribute('value')).toBe('Kat');
+  });
+
+  it('should render radio input value holder as hidden', async () => {
+    const radioImageInput = screen.getByTestId('radio.image.input');
+    expect(radioImageInput).not.toBeVisible();
+  });
+});
+```
+
+after creating all those files you can now import your component into `src/index.tsx`
+file which would make it available to anyone who use the library
+
+```typescript
+//index.tsx
+import RadioImage, {
+  RadioImageProps,
+} from './components/RadioImage/RadioImage';
+
+export {
+  RadioImage,
+  RadioImageProps, // note: always include exporting the component props
+};
+```
+
+### Hook Guide
+
+`hooks` - you can put all the reusable hooks in this folder and then you can export a file
+from hooks into the `src/index.tsx` file if needed
+
+```typescript
+// sample hook
+const useSampleHook = () => {
+  const save = () => {};
+  return {
+    save,
+  };
+};
+
+export default useSampleHook;
+```
+
+```typescript
+// index.tsx
+import useSampleHook './hooks/useSampleHook/useSampleHook';
+
+export { useSampleHook }
+```
+
+### Utility Guide
+
+`utils` - this is where we save the utility function files that our library needed, you can also export
+this one in the `index.tsx` same as hook if needed only
+
+### Theme Guide
+
+`theme` - this is where we save the default design system that we setup in our
+library _(user can overide this one)_
+
+```
+- theme
+  - components
+  - config.ts
+  - color.ts
+  - fonts.ts
+  - fontSizes.ts
+  - index.ts
+  - zIndices.ts
+  - styles.ts
+```
+
+`theme/components` - is where we set up default style of chakra ui components if we want to
+
+```typescript
+// theme/components/button.tsx
+import { ComponentStyleConfig } from '@chakra-ui/react';
+
+export const Button: ComponentStyleConfig = {
+  baseStyle: {
+    _focus: { boxShadow: 'none' },
+    alignItems: 'center',
+    alignSelf: 'center',
+    borderRadius: '4px',
+    color: 'gray.800',
+    outline: 'none',
+  },
+};
+
+export default Button;
+```
+
+```typescript
+// theme/index.ts
+import { extendTheme } from '@chakra-ui/react';
+
+import { Button } from './components';
+
+const theme = extendTheme({
+  components: {
+    Button,
+  },
+});
+
+export default theme;
+```
+
+to know more about component styling please go to this documentation
+[chakra ui component styling](https://chakra-ui.com/docs/styled-system/theming/component-style)
+
+`colors.ts` - is where we setup are global colors that we can specify and use
+
+```typescript
+// color.ts
+export const colors = {
+  amber: {
+    50: '#FFF8E1',
+    100: '#FFECB3',
+    200: '#FFE082',
+    300: '#FFD54F',
+    400: '#FFCA28',
+    500: '#FFC107',
+    600: '#FFB300',
+    700: '#FFA000',
+    800: '#FF8F00',
+    900: '#FF6F00',
+  },
+};
+```
+
+```typescript
+// theme/index.ts
+import { extendTheme } from '@chakra-ui/react';
+
+import { colors } from './color';
+
+const theme = extendTheme({
+  colors: colors,
+});
+
+export default theme;
+```
+
+```typescript
+// usage
+<Button backgroundColor="amber.500" />
+```
+
+to know more about theme/color styling please go to this documentation [chakra ui theme](https://chakra-ui.com/docs/styled-system/theming/theme)
+
+### How to run library
+
+To run library go to ui-components root directory and run command:
+
+```
+npm install
+npm run storybook
+```
+
+To test components, run command:
+
+```
+npm test
+```
