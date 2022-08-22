@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable import/extensions */
 /* eslint-disable import/prefer-default-export */
 // import { Response } from 'express';
@@ -19,7 +20,6 @@ export async function tryCatch(
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function getTiersHandler(_req: Request) {
   const prices = await stripe.prices.list({ expand: ['product'] });
   const tiers = R.map((price) => {
@@ -37,23 +37,12 @@ async function getTiersHandler(_req: Request) {
   return tiers;
 }
 
-async function getClientSecret(req: Request) {
-  const amount = parseFloat(req.query.amount as string);
-  const currency = req.query.currency as string;
-
-  if (R.isNil(amount)) {
-    throw new Error('Amount is required.');
-  }
-
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount,
-    currency: currency ?? 'usd',
-    automatic_payment_methods: {
-      enabled: true,
-    },
+async function getClientSecret(_req: Request) {
+  const setupIntent = await stripe.setupIntents.create({
+    payment_method_types: ['card'],
   });
 
-  return R.pick(['id', 'status', 'amount', 'currency'], paymentIntent);
+  return R.pick(['id', 'status', 'client_secret', 'customer'], setupIntent);
 }
 
 export const handlerMapper = {

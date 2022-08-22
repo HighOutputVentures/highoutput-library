@@ -18,23 +18,25 @@ describe('GET /secret', () => {
     });
     const ctx = await setup(billingServer);
     const expected = {
-      id: `pi_${faker.random.alphaNumeric(24)}`,
-      amount: 1200,
-      currency: 'usd',
+      id: `seti_${faker.random.alphaNumeric(24)}`,
+      client_secret: `seti_${faker.random.alphaNumeric(
+        24,
+      )}_secret_${faker.random.alphaNumeric(24)}`,
       status: 'requires_payment_method',
+      customer: `cus_${faker.random.alphaNumeric(24)}`,
     };
     nock(/stripe.com/)
-      .post(/\/v1\/payment_intents/)
+      .post(/\/v1\/setup_intents/)
       .reply(200, expected);
 
     await ctx.request
       .get('/secret')
-      .query({ amount: expected.amount, currency: expected.currency })
       .set('Authorization', 'Bearer Token')
       .expect('Content-Type', /json/)
       .expect(200)
       .expect((res) => {
         expect(res.body.ok).toEqual(true);
+        expect(res.body.data.client_secret).toBeTruthy();
         expect(res.body.data).toMatchObject(expected);
       });
 
