@@ -1,6 +1,5 @@
 /* eslint-disable import/extensions */
 import { faker } from '@faker-js/faker';
-import nock from 'nock';
 import BillingServer from '../src/billing-server';
 import { setup, teardown } from './fixture';
 
@@ -12,28 +11,12 @@ describe('GET /tiers', () => {
       ),
     };
     const billingServer = new BillingServer({
-      stripeSecretKey: '',
+      stripeSecretKey:
+        'sk_test_51LWeDVGrNXva3DrphN3qGT3dnhh2bAoNZ7O80w4XpMEbBlMeLul10aMS7a41PXZHl8vOpcDI6JZ7KoNTSBFyV9r800kV6WzTLo',
       authorizationAdapter,
+      config: './__tests__/test-config.json',
     });
     const ctx = await setup(billingServer);
-    const expected = {
-      data: [
-        {
-          id: faker.datatype.uuid(),
-          unit_amount: parseInt(faker.random.numeric(), 10),
-          currency: 'usd',
-          product: {
-            id: faker.datatype.uuid(),
-            name: faker.commerce.productName(),
-            description: faker.commerce.productDescription(),
-            metadata: { company: faker.company.name() },
-          },
-        },
-      ],
-    };
-    nock(/stripe.com/)
-      .get(/\/v1\/prices/)
-      .reply(200, expected);
 
     await ctx.request
       .get('/tiers')
