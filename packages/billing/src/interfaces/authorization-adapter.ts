@@ -3,5 +3,8 @@ type User = {
 };
 
 export interface AuthorizationAdapter {
-  authorize(ctx: unknown): Promise<User | null>;
+  authorize(params: {
+    scheme: 'Bearer';
+    parameters: string;
+  }): Promise<User | null>;
 }
