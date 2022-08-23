@@ -1,0 +1,208 @@
+import { Meta, Preview } from '@storybook/addon-docs';
+
+<Meta
+  title="Provider and Hooks/Auth Provider with Hooks"
+  parameters={{
+    previewTabs: {
+      canvas: { hidden: true },
+    },
+  }}
+/>
+
+# Auth Provider with Hooks
+
+designed to be integrated with `@highoutput/email-auth`
+
+### Usage
+
+```typescript
+// src/pages/_app.tsx
+import {ApolloProvider} from '@apollo/client';
+import {ThemeProvider} from '@highoutput/ui-components';
+import type {AppProps} from 'next/app';
+import client from '~/config/client';
+import {AuthProvider} from '@highoutput/ui-components';
+
+export default function App({Component, pageProps}: AppProps) {
+  return (
+    <AuthProvider hostname={process.env.NEXT_PUBLIC_API_URL}>
+      <ApolloProvider client={client}>
+        <ThemeProvider theme={theme}>
+          <Component {...pageProps} />
+        </ThemeProvider>
+      </ApolloProvider>
+    </AuthProvider>
+  );
+}
+```
+
+Using `useAuthService.generateOtp` with `useAuthState.session`
+
+```typescript
+// src/pages/login.tsx
+function Login() {
+  const router = useRouter();
+
+  const { generateOtp } = useAuthService();
+  const { session } = useAuthState({
+    onauthenticated() {
+      router.push("/dashboard");
+    },
+  });
+
+  const [email, setEmail] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+			// sends a post request to `<hostname>/otp/generate`
+      await generateOtp(email)
+      await router.push(`/verify?emailAddress=${email}`)
+    } catch {
+      ...
+    } finally {
+      ...
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="email"
+        name="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          setEmail(e.target.value);
+        }}
+      />
+
+      <button type="submit" disabled={session.status !== "unauthenticated"}>
+        Login
+      </button>
+    </form>
+  );
+}
+```
+
+What is this snippet?
+
+```typescript
+const { session } = useAuthState({
+  onauthenticated() {
+    router.push('/dashboard');
+  },
+});
+```
+
+One use for this is if you want to sync browser tabs. Whenever the `session.status` changes to `authenticated`,
+`onauthenticated` callback runs. Hence, if you call `router.push` it will be executed.
+
+Using `useAuthState.validateOtp` with `useAuthState.session`
+
+```typescript
+// src/pages/verify.tsx
+function Verify() {
+  const router = useRouter();
+
+  const { validateOtp } = useAuthService();
+  const { session } = useAuthState({
+    onauthenticated() {
+      router.push("/dashboard");
+    },
+  });
+
+  const [otp, setOtp] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+		  // sends a post request to `<hostname>/otp/validate`
+			// automatically saves the token in cookie
+      await validateOtp(otp)
+      await router.push("/dashboard")
+    } catch {
+      ...
+    } finally {
+      ...
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <OtpField value={otp} onChange={setOtp} />
+
+      <button type="submit" disabled={session.status !== "unauthenticated"}>
+        Login
+      </button>
+    </form>
+  );
+}
+```
+
+Using `useAuthState.token`
+
+```typescript
+// src/pages/dashboard.tsx
+export default function Dashboard() {
+  const router = useRouter();
+
+  const { token } = useAuthState({
+    // send to login page when `session.status` changes to `unauthenticated`
+    onunauthenticated() {
+      router.push('/login');
+    },
+  });
+
+  // you can pass this token to your apollo config or use it somewhere else
+  console.log(token);
+
+  return (
+    <div>
+      <Notifs />
+      <Chart />
+      <Recent />
+    </div>
+  );
+}
+```
+
+Usage with `Next.js` middleware
+
+Example scenario:
+
+You want a user to be redirected to login page when they access a protected route and you also want them to be redirected to
+`/dashboard` when they access a public route like `/login` or `/signup`. Ideally, we do a redirect before the page is even sent to the browser hence do it on server’s side.
+What we can do is to check if token is in the cookie by taking advantage of Next.js' middleware like so
+
+```typescript
+// src/_middleware.ts
+import {constants} from '@highoutput/ui-components';
+import type {NextRequest} from 'next/server';
+import {NextResponse} from 'next/server';
+
+export function middleware(req: NextRequest) {
+  // this is how you would access the token from cookie when running in ssr
+  const authorized = req.cookies.has(constants.accessTokenId);
+
+  if (authorized && isPublic(req.nextUrl.pathname)) {
+    return NextResponse.redirect(new URL('/dashboard', req.nextUrl.origin));
+  }
+
+  if (!authorized && isProtected(req.nextUrl.pathname)) {
+    return NextResponse.redirect(new URL('/login', req.nextUrl.origin));
+  }
+
+  return NextResponse.next();
+}
+
+function isPublic(pathname: string) {
+  return /^\/(login|verify)/gi.test(pathname);
+}
+
+function isProtected(pathname: string) {
+  return /^\/(dashboard|settings|me)/gi.test(pathname);
+}
+```
