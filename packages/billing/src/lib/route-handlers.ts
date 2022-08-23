@@ -27,12 +27,23 @@ async function getTiersHandler(req: Request) {
   return config.tiers;
 }
 
-async function getClientSecret(_req: Request) {
-  const setupIntent = await stripe.setupIntents.create({
+async function getClientSecret(req: Request) {
+  const { userId } = req.params;
+
+  const intentList = await stripe.setupIntents.list({
+    customer: userId,
+  });
+
+  if (!R.isEmpty(intentList.data)) {
+    const [intent] = intentList.data;
+    return R.pick(['client_secret'], intent);
+  }
+
+  const intent = await stripe.setupIntents.create({
     payment_method_types: ['card'],
   });
 
-  return R.pick(['id', 'status', 'client_secret', 'customer'], setupIntent);
+  return R.pick(['client_secret'], intent);
 }
 
 export const handlerMapper = {
