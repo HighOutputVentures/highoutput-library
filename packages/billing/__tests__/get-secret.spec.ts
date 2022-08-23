@@ -15,6 +15,7 @@ describe('GET /secret', () => {
       stripeSecretKey:
         'sk_test_51LWeDVGrNXva3DrphN3qGT3dnhh2bAoNZ7O80w4XpMEbBlMeLul10aMS7a41PXZHl8vOpcDI6JZ7KoNTSBFyV9r800kV6WzTLo',
       authorizationAdapter,
+      config: './test-config.json',
     });
     const ctx = await setup(billingServer);
     const expected = {

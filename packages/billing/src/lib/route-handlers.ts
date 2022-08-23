@@ -3,9 +3,9 @@
 /* eslint-disable import/prefer-default-export */
 // import { Response } from 'express';
 import * as R from 'ramda';
-import Stripe from 'stripe';
 import { Request } from 'express';
 import stripe from './setup';
+import readConfig from './read-config';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function tryCatch(
@@ -20,21 +20,11 @@ export async function tryCatch(
   }
 }
 
-async function getTiersHandler(_req: Request) {
-  const prices = await stripe.prices.list({ expand: ['product'] });
-  const tiers = R.map((price) => {
-    return {
-      ...R.pick(
-        ['id', 'name', 'description', 'metadata'],
-        price.product as Stripe.Product,
-      ),
-      price: {
-        ...R.pick(['id', 'currency', 'unit_amount'], price),
-      },
-    };
-  }, prices.data);
+async function getTiersHandler(req: Request) {
+  const { configPath } = req.params;
+  const config = await readConfig(configPath);
 
-  return tiers;
+  return config.tiers;
 }
 
 async function getClientSecret(_req: Request) {

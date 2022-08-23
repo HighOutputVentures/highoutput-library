@@ -17,13 +17,14 @@ export default class BillingServer {
     private options: {
       stripeSecretKey: string;
       authorizationAdapter: AuthorizationAdapter;
+      config: string;
     },
   ) {
     setSecretKey(this.options.stripeSecretKey);
   }
 
   public expressMiddleware() {
-    const { authorizationAdapter } = this.options;
+    const { authorizationAdapter, config } = this.options;
     return async function billing(
       req: Request,
       res: Response,
@@ -65,6 +66,8 @@ export default class BillingServer {
         });
         return;
       }
+
+      req.params.configPath = config;
 
       const handler = R.compose<
         [typeof handlerMapper],
