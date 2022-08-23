@@ -51,9 +51,12 @@ export default class BillingServer {
         return;
       }
 
-      const [, token] = (authHeader as string).split(' ');
+      const [scheme, token] = (authHeader as string).split(' ');
 
-      const user = await authorizationAdapter.authorize(token);
+      const user = await authorizationAdapter.authorize({
+        scheme: scheme as 'Bearer',
+        parameters: token,
+      });
 
       if (R.isNil(user)) {
         res.set('Content-Type', 'application/json');
