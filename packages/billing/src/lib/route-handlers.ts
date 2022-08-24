@@ -100,20 +100,22 @@ async function updateSubscription(
     expand: ['items.data.price.product', 'latest_invoice.payment_intent'],
   });
 
+  const [item] = subscription.items.data;
+  const product = item.price.product as Stripe.Product;
   const invoice = subscription.latest_invoice as Stripe.Invoice;
   const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
 
   if (paymentIntent.status === 'succeeded') {
     await storageAdapter.updateSubscription({
       id: Buffer.from(id),
-      subscription: subscription.id,
+      subscription: product.name,
     });
   }
 
   return {
     user: id,
-    tier: subscription.id,
-    quantity: subscription.items.data[0].quantity,
+    tier: product.name,
+    quantity: item.quantity,
   };
 }
 
