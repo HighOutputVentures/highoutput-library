@@ -89,7 +89,6 @@ export default class BillingServer {
       const [error, data] = await tryCatch(handler, [req, storageAdapter]);
 
       if (error) {
-        console.error('ERROR', error);
         res.sendStatus(400);
         return;
       }

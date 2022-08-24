@@ -24,7 +24,6 @@ export async function tryCatch(
   fn:
     | undefined
     | ((req: Request, storageAdapter: StorageAdapter) => Promise<unknown>),
-  // param: Request,
   args: [Request, StorageAdapter],
 ): Promise<[null, Awaited<Promise<unknown>>] | [Error]> {
   try {
@@ -32,7 +31,6 @@ export async function tryCatch(
       throw new Error('Handler not found.');
     }
 
-    // const data = await fn(param);
     const data = await fn(...args);
     return [null, data];
   } catch (error) {
@@ -121,8 +119,6 @@ async function updateSubscription(
 }
 
 async function getSubscription(req: Request, storageAdapter: StorageAdapter) {
-  // eslint-disable-next-line no-console
-  console.log('PARAMS', req.query, typeof req.query.id);
   const { id } = req.query;
 
   if (R.isNil(id)) {
@@ -131,7 +127,6 @@ async function getSubscription(req: Request, storageAdapter: StorageAdapter) {
 
   return storageAdapter.getSubscription({
     id: Buffer.from(id as string, 'base64url'),
-    // id,
   });
 }
 
