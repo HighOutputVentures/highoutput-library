@@ -20,3 +20,18 @@ export type StripeConfig = {
 export type ProductsConfig = StripeConfig['tiers'];
 
 export type PortalConfig = StripeConfig['customerPortal'];
+
+export type User = {
+  id: Buffer;
+};
+
+export type Subscription = {
+  user: Buffer;
+  tier: string;
+  quantity?: number;
+};
+
+export type Customer = {
+  user: Buffer;
+  customerId: string;
+};
