@@ -11,7 +11,7 @@ import {
   useAuthState,
   useProfile,
 } from './components/AuthProvider';
-import HovSpinner from './components/HovSpinner/HovSpinner';
+import LogoSpinner from './components/LogoSpinner/LogoSpinner';
 import Pagination, {
   PaginationProps,
 } from './components/Pagination/Pagination';
@@ -624,5 +624,5 @@ export {
   useAuthService,
   logout,
   useAuthState,
-  HovSpinner,
+  LogoSpinner,
 };

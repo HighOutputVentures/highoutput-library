@@ -1,23 +1,23 @@
 import { cleanup, render } from '@testing-library/react';
 import * as React from 'react';
-import HovSpinner from './HovSpinner';
+import LogoSpinner from './LogoSpinner';
 
 const duration = Math.random();
 
-jest.mock('./HovSpinner', () => {
+jest.mock('./LogoSpinner', () => {
   return ({ children }: React.PropsWithChildren<{ duration: number }>) => {
     return <div>{children}</div>;
   };
 });
 
-describe('HovSpinner', () => {
+describe('LogoSpinner', () => {
   afterEach(cleanup);
 
   it('Should render children', () => {
     const { getByText } = render(
-      <HovSpinner duration={duration}>
+      <LogoSpinner duration={duration}>
         <div>Hello world</div>
-      </HovSpinner>
+      </LogoSpinner>
     );
 
     expect(getByText('Hello world')).toBeDefined();
