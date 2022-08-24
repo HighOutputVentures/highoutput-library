@@ -5,13 +5,16 @@ import { Request, Response, NextFunction } from 'express';
 import * as R from 'ramda';
 import { AuthorizationAdapter } from './interfaces/authorization-adapter';
 import { StorageAdapter } from './interfaces/storage-adapter';
-import { handlerMapper, tryCatch } from './lib/route-handlers';
+import {
+  Endpoints,
+  handlerMapper,
+  Mapper,
+  Methods,
+  tryCatch,
+} from './lib/route-handlers';
 import { setSecretKey } from './lib/setup';
 
-type Method = keyof typeof handlerMapper;
-type Endpoint = keyof typeof handlerMapper[Method];
-
-const ENDPOINTS_REGEX = /^\/tiers$|^\/secret$/;
+const ENDPOINTS_REGEX = /^\/tiers$|^\/secret$|^\/subscription/;
 
 export default class BillingServer {
   constructor(
@@ -26,7 +29,7 @@ export default class BillingServer {
   }
 
   public expressMiddleware() {
-    const { authorizationAdapter, config } = this.options;
+    const { authorizationAdapter, config, storageAdapter } = this.options;
     return async function billing(
       req: Request,
       res: Response,
@@ -75,15 +78,15 @@ export default class BillingServer {
       req.params.configPath = config;
 
       const handler = R.compose<
-        [typeof handlerMapper],
-        typeof handlerMapper[Method],
-        typeof handlerMapper[Method][Endpoint]
+        [Mapper],
+        Mapper[Methods],
+        Mapper[Methods][Endpoints]
       >(
         R.prop(endpoint.replace(/\//, '')),
         R.prop(method.toLowerCase()),
       )(handlerMapper);
 
-      const [error, data] = await tryCatch(handler, req);
+      const [error, data] = await tryCatch(handler, [req, storageAdapter]);
 
       if (error) {
         res.sendStatus(400);

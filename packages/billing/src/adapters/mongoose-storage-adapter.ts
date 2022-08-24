@@ -83,4 +83,11 @@ export default class MongooseStorageAdapter implements StorageAdapter {
   async findOneCustomerById(params: { id: Buffer }) {
     return this.models.Customer.findOne({ user: params.id });
   }
+
+  async saveUserAsCustomer(params: { id: Buffer; customerId: string }) {
+    return this.models.Customer.create({
+      user: params.id,
+      customerId: params.customerId,
+    });
+  }
 }

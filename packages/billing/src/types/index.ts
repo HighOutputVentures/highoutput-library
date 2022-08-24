@@ -30,3 +30,8 @@ export type Subscription = {
   tier: string;
   quantity?: number;
 };
+
+export type Customer = {
+  user: Buffer;
+  customerId: string;
+};
