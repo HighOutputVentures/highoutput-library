@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/extensions
 import { Subscription, User } from '../types';
 
-export interface StorageAdapter<TUser extends User> {
+export interface StorageAdapter<TUser extends User = User> {
   getSubscription(params: { id: Buffer }): Promise<Subscription>;
   updateSubscription(params: {
     id: Buffer;
@@ -11,5 +11,5 @@ export interface StorageAdapter<TUser extends User> {
     id: Buffer;
     subscription: string;
   }): Promise<void>;
-  findOneUserById(params: { id: Buffer }): Promise<TUser | null>;
+  findOneCustomerById(params: { id: Buffer }): Promise<TUser | null>;
 }

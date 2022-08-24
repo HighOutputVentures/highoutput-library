@@ -4,6 +4,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as R from 'ramda';
 import { AuthorizationAdapter } from './interfaces/authorization-adapter';
+import { StorageAdapter } from './interfaces/storage-adapter';
 import { handlerMapper, tryCatch } from './lib/route-handlers';
 import { setSecretKey } from './lib/setup';
 
@@ -17,6 +18,7 @@ export default class BillingServer {
     private options: {
       stripeSecretKey: string;
       authorizationAdapter: AuthorizationAdapter;
+      storageAdapter: StorageAdapter;
       config: string;
     },
   ) {
