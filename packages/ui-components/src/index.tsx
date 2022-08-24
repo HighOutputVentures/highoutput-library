@@ -11,6 +11,7 @@ import {
   useAuthState,
   useProfile,
 } from './components/AuthProvider';
+import LogoSpinner from './components/LogoSpinner/LogoSpinner';
 import Pagination, {
   PaginationProps,
 } from './components/Pagination/Pagination';
@@ -572,6 +573,7 @@ export {
   WrapItemProps,
   WrapProps,
 } from '@chakra-ui/react';
+export { isValidMotionProp, motion } from 'framer-motion';
 export {
   ThemeProvider,
   ThemeProviderProps,
@@ -622,4 +624,5 @@ export {
   useAuthService,
   logout,
   useAuthState,
+  LogoSpinner,
 };
