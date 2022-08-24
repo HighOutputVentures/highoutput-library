@@ -69,7 +69,14 @@ export default class MongooseStorageAdapter implements StorageAdapter {
   async updateSubscription(params: { id: Buffer; subscription: string }) {
     return this.models.Subscription.findOneAndUpdate(
       { user: params.id },
-      R.pick(['subscription'], params),
+      { ...R.pick(['subscription'], params) },
+    ).lean();
+  }
+
+  async deleteSubscription(params: { id: Buffer }) {
+    return this.models.Subscription.findOneAndUpdate(
+      { user: params.id },
+      { subscription: {} },
     ).lean();
   }
 
