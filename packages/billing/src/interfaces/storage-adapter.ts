@@ -5,7 +5,8 @@ export interface StorageAdapter {
   getSubscription(params: { id: Buffer }): Promise<Subscription>;
   updateSubscription(params: {
     id: Buffer;
-    subscription: string;
+    tier: string;
+    quantity?: number;
   }): Promise<void>;
   deleteSubscription(params: {
     id: Buffer;

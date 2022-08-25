@@ -24,7 +24,6 @@ export async function tryCatch(
   fn:
     | undefined
     | ((req: Request, storageAdapter: StorageAdapter) => Promise<unknown>),
-  // param: Request,
   args: [Request, StorageAdapter],
 ): Promise<[null, Awaited<Promise<unknown>>] | [Error]> {
   try {
@@ -32,7 +31,6 @@ export async function tryCatch(
       throw new Error('Handler not found.');
     }
 
-    // const data = await fn(param);
     const data = await fn(...args);
     return [null, data];
   } catch (error) {
@@ -108,7 +106,8 @@ async function updateSubscription(
   if (paymentIntent.status === 'succeeded') {
     await storageAdapter.updateSubscription({
       id: Buffer.from(id),
-      subscription: product.name,
+      tier: product.name,
+      quantity: item.quantity,
     });
   }
 
@@ -117,6 +116,18 @@ async function updateSubscription(
     tier: product.name,
     quantity: item.quantity,
   };
+}
+
+async function getSubscription(req: Request, storageAdapter: StorageAdapter) {
+  const { id } = req.query;
+
+  if (R.isNil(id)) {
+    throw new Error('Cannot find ID in request parameters.');
+  }
+
+  return storageAdapter.getSubscription({
+    id: Buffer.from(id as string, 'base64url'),
+  });
 }
 
 export type Methods = 'get' | 'put';
@@ -135,6 +146,7 @@ export const handlerMapper: Mapper = {
   get: {
     tiers: getTiersHandler,
     secret: getClientSecret,
+    subscription: getSubscription,
   },
   put: {
     subscription: updateSubscription,
