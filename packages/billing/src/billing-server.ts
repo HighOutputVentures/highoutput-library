@@ -14,7 +14,7 @@ import {
 } from './lib/route-handlers';
 import { setSecretKey } from './lib/setup';
 
-const ENDPOINTS_REGEX = /^\/tiers$|^\/secret$|^\/subscription/;
+const ENDPOINTS_REGEX = /^\/tiers$|^\/secret$|^\/subscription|^\/portal$/;
 
 export default class BillingServer {
   constructor(
@@ -90,6 +90,11 @@ export default class BillingServer {
 
       if (error) {
         res.sendStatus(400);
+        return;
+      }
+
+      if (endpoint.match(/portal/)) {
+        res.redirect((data as Record<'url', string>)?.url);
         return;
       }
 
