@@ -15,6 +15,9 @@ export type StripeConfig = {
       termsOfServiceUrl?: string;
     };
   };
+  webhook: {
+    url: string;
+  };
 };
 
 export type ProductsConfig = StripeConfig['tiers'];
