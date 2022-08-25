@@ -130,8 +130,28 @@ async function getSubscription(req: Request, storageAdapter: StorageAdapter) {
   });
 }
 
+async function getPortal(req: Request, storageAdapter: StorageAdapter) {
+  const id = Buffer.from(req.query.id as string, 'base64url');
+  const customer = await storageAdapter.findOneCustomerById({ id });
+  let customerId = customer?.customerId as string;
+
+  if (R.isNil(customer)) {
+    customerId = await createCustomer(id);
+    await storageAdapter.saveUserAsCustomer({
+      id,
+      customerId,
+    });
+  }
+
+  const session = await stripe.billingPortal.sessions.create({
+    customer: customerId,
+  });
+
+  return R.pick(['url'], session);
+}
+
 export type Methods = 'get' | 'put';
-export type Endpoints = 'tiers' | 'secret' | 'subscription';
+export type Endpoints = 'tiers' | 'secret' | 'subscription' | 'portal';
 
 export type Mapper = {
   [method in Methods]: {
@@ -147,6 +167,7 @@ export const handlerMapper: Mapper = {
     tiers: getTiersHandler,
     secret: getClientSecret,
     subscription: getSubscription,
+    portal: getPortal,
   },
   put: {
     subscription: updateSubscription,
