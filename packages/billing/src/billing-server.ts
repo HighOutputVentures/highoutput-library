@@ -23,13 +23,15 @@ export default class BillingServer {
       authorizationAdapter: AuthorizationAdapter;
       storageAdapter: StorageAdapter;
       config: string;
+      endpointSecret: string;
     },
   ) {
     setSecretKey(this.options.stripeSecretKey);
   }
 
   public expressMiddleware() {
-    const { authorizationAdapter, config, storageAdapter } = this.options;
+    const { authorizationAdapter, config, storageAdapter, endpointSecret } =
+      this.options;
     return async function billing(
       req: Request,
       res: Response,
@@ -76,6 +78,7 @@ export default class BillingServer {
       }
 
       req.params.configPath = config;
+      req.params.endpointSecret = endpointSecret;
 
       const handler = R.compose<
         [Mapper],

@@ -9,6 +9,7 @@ import Stripe from 'stripe';
 import stripe from './setup';
 import readConfig from './read-config';
 import { StorageAdapter } from '../interfaces/storage-adapter';
+import webhookHandlers, { WebhookEvents } from './webhook-handler';
 
 async function createCustomer(id: Buffer) {
   const customer = await stripe.customers.create({
@@ -150,8 +151,32 @@ async function getPortal(req: Request, storageAdapter: StorageAdapter) {
   return R.pick(['url'], session);
 }
 
-export type Methods = 'get' | 'put';
-export type Endpoints = 'tiers' | 'secret' | 'subscription' | 'portal';
+async function handleWebhook(req: Request, storageAdapter: StorageAdapter) {
+  const { endpointSecret } = req.params;
+  let event: Stripe.Event = await parse(req);
+
+  if (endpointSecret) {
+    const signature = req.headers['stripe-signature'];
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      signature as string,
+      endpointSecret,
+    );
+  }
+
+  await webhookHandlers[event.type as WebhookEvents]({
+    object: event.data.object,
+    storageAdapter,
+  });
+}
+
+export type Methods = 'get' | 'put' | 'post';
+export type Endpoints =
+  | 'tiers'
+  | 'secret'
+  | 'subscription'
+  | 'portal'
+  | 'webhook';
 
 export type Mapper = {
   [method in Methods]: {
@@ -171,5 +196,8 @@ export const handlerMapper: Mapper = {
   },
   put: {
     subscription: updateSubscription,
+  },
+  post: {
+    webhook: handleWebhook,
   },
 };

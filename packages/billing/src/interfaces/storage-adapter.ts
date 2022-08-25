@@ -10,7 +10,7 @@ export interface StorageAdapter {
   }): Promise<void>;
   deleteSubscription(params: {
     id: Buffer;
-    subscription: string;
+    // subscription: string;
   }): Promise<void>;
   findOneCustomerById(params: { id: Buffer }): Promise<Customer | null>;
   saveUserAsCustomer(params: { id: Buffer; customerId: string }): Promise<void>;
