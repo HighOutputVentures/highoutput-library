@@ -14,7 +14,8 @@ import {
 } from './lib/route-handlers';
 import { setSecretKey } from './lib/setup';
 
-const ENDPOINTS_REGEX = /^\/tiers$|^\/secret$|^\/subscription|^\/portal$/;
+const ENDPOINTS_REGEX =
+  /^\/tiers$|^\/secret$|^\/subscription|^\/portal$|^\/webhook/;
 
 export default class BillingServer {
   constructor(
@@ -38,46 +39,52 @@ export default class BillingServer {
       next: NextFunction,
     ) {
       const { method, path } = req;
-      const [endpoint] = path.match(ENDPOINTS_REGEX) as RegExpMatchArray;
 
-      if (R.isNil(endpoint)) {
+      const hasMatch = path.match(ENDPOINTS_REGEX) as RegExpMatchArray;
+
+      if (R.isNil(hasMatch)) {
         next();
         return;
       }
 
-      const { authorization: authHeader } = req.headers;
+      const [endpoint] = hasMatch;
 
-      if (R.isNil(authHeader)) {
-        res.sendStatus(404);
-        res.send({
-          error: {
-            code: 'UNAUTHORIZED_ACCESS',
-            message: 'Invalid authorization header.',
-          },
+      if (!endpoint.includes('webhook')) {
+        const { authorization: authHeader } = req.headers;
+
+        if (R.isNil(authHeader)) {
+          res.sendStatus(404).send({
+            error: {
+              code: 'UNAUTHORIZED_ACCESS',
+              message: 'Invalid authorization header.',
+            },
+          });
+          return;
+        }
+
+        const [scheme, token] = (authHeader as string).split(' ');
+
+        const user = await authorizationAdapter.authorize({
+          scheme: scheme as 'Bearer',
+          parameters: token,
         });
-        return;
+
+        if (R.isNil(user)) {
+          res
+            .set('Content-Type', 'application/json')
+            .sendStatus(400)
+            .send({
+              error: {
+                code: 'UNAUTHENTICATED_ACCESS',
+                message: 'User is not found.',
+              },
+            });
+          return;
+        }
+
+        req.params.configPath = config;
       }
 
-      const [scheme, token] = (authHeader as string).split(' ');
-
-      const user = await authorizationAdapter.authorize({
-        scheme: scheme as 'Bearer',
-        parameters: token,
-      });
-
-      if (R.isNil(user)) {
-        res.set('Content-Type', 'application/json');
-        res.sendStatus(400);
-        res.send({
-          error: {
-            code: 'UNAUTHENTICATED_ACCESS',
-            message: 'User is not found.',
-          },
-        });
-        return;
-      }
-
-      req.params.configPath = config;
       req.params.endpointSecret = endpointSecret;
 
       const handler = R.compose<
@@ -92,7 +99,12 @@ export default class BillingServer {
       const [error, data] = await tryCatch(handler, [req, storageAdapter]);
 
       if (error) {
-        res.sendStatus(400);
+        res.sendStatus(400).send({
+          error: {
+            code: error.name,
+            message: error.message,
+          },
+        });
         return;
       }
 
