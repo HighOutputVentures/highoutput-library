@@ -28,6 +28,8 @@ async function handleSubscriptionUpdatedOrCreated(opts: {
     id: Buffer.from(customer.metadata.id, 'base64url'),
     tier: subscription.id as string,
   });
+
+  return { received: true };
 }
 
 async function handleSubscriptionDeleted(opts: {
@@ -42,6 +44,8 @@ async function handleSubscriptionDeleted(opts: {
   await opts.storageAdapter.deleteSubscription({
     id: Buffer.from(customer.metadata.id, 'base64url'),
   });
+
+  return { received: true };
 }
 
 const webhookHandlers: WebhookHandlers = {
