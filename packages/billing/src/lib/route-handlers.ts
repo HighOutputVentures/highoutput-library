@@ -153,18 +153,22 @@ async function getPortal(req: Request, storageAdapter: StorageAdapter) {
 
 async function handleWebhook(req: Request, storageAdapter: StorageAdapter) {
   const { endpointSecret } = req.params;
-  let event: Stripe.Event = await parse(req);
+  const { raw: rawBody } = await parse(req, { returnRawBody: true });
 
-  if (endpointSecret) {
-    const signature = req.headers['stripe-signature'];
-    event = stripe.webhooks.constructEvent(
-      req.body,
-      signature as string,
-      endpointSecret,
-    );
+  if (R.isNil(endpointSecret)) {
+    throw new Error('Cannot verify payload without signing secret.');
   }
 
-  await webhookHandlers[event.type as WebhookEvents]({
+  const signature = req.headers['stripe-signature'];
+  const event = stripe.webhooks.constructEvent(
+    rawBody,
+    signature as string,
+    endpointSecret,
+  );
+
+  const eventHandler = R.prop(event.type as WebhookEvents, webhookHandlers);
+
+  return eventHandler({
     object: event.data.object,
     storageAdapter,
   });
