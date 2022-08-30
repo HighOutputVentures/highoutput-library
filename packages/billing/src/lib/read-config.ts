@@ -38,6 +38,11 @@ const configSchema: JTDSchemaType<StripeConfig> = {
         },
       },
     },
+    webhook: {
+      properties: {
+        url: { type: 'string' },
+      },
+    },
   },
 };
 const parse = ajv.compileParser(configSchema);

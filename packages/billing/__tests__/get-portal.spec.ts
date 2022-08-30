@@ -42,6 +42,7 @@ describe('GET /portal', () => {
       authorizationAdapter,
       storageAdapter,
       config: './__tests__/test-config.json',
+      endpointSecret: 'whsec_T1sWT0N2rHkaFNG8EDgJfryNdlg6r2MW',
     });
 
     ctx.app.use(billingServer.expressMiddleware());

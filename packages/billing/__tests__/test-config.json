@@ -35,5 +35,8 @@
       "privacyPolicyUrl": "https://example.com/privacy",
       "termsOfServiceUrl": "https://example.com/terms"
     }
+  },
+  "webhook": {
+    "url": "https://example.com/webhook"
   }
 }
