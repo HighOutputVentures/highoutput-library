@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable import/extensions */
 /* eslint-disable import/prefer-default-export */
-// import { Response } from 'express';
 import * as R from 'ramda';
 import { Request } from 'express';
 import parse from 'co-body';
@@ -11,14 +10,31 @@ import readConfig from './read-config';
 import { StorageAdapter } from '../interfaces/storage-adapter';
 import webhookHandlers, { WebhookEvents } from './webhook-handler';
 
-async function createCustomer(id: Buffer) {
-  const customer = await stripe.customers.create({
-    metadata: {
-      id: id.toString('base64url'),
-    },
-  });
+async function getOrCreateCustomer(
+  stringId: string | undefined,
+  storageAdapter: StorageAdapter,
+) {
+  if (R.isNil(stringId)) {
+    throw new Error('Cannot find property: id');
+  }
 
-  return customer.id;
+  const id = Buffer.from(stringId, 'base64url');
+  const customer = await storageAdapter.findOneCustomerById({ id });
+
+  if (R.isNil(customer)) {
+    const newCustomer = await stripe.customers.create({
+      metadata: {
+        id: id.toString('base64url'),
+      },
+    });
+    await storageAdapter.saveUserAsCustomer({
+      id,
+      customerId: newCustomer.id,
+    });
+    return newCustomer.id;
+  }
+
+  return customer.customerId;
 }
 
 export async function tryCatch(
@@ -53,26 +69,9 @@ async function getTiersHandler(req: Request) {
 
 async function getClientSecret(req: Request, storageAdapter: StorageAdapter) {
   const stringId = req.query.id as string;
+  const customer = await getOrCreateCustomer(stringId, storageAdapter);
 
-  if (R.isNil(stringId)) {
-    throw new Error('A query parameter is missing: id');
-  }
-
-  const id = Buffer.from(stringId, 'base64url');
-  const customer = await storageAdapter.findOneCustomerById({ id });
-  let customerId = customer?.customerId as string;
-
-  if (R.isNil(customer)) {
-    customerId = await createCustomer(id);
-    await storageAdapter.saveUserAsCustomer({
-      id,
-      customerId,
-    });
-  }
-
-  const intentList = await stripe.setupIntents.list({
-    customer: customerId,
-  });
+  const intentList = await stripe.setupIntents.list({ customer });
 
   if (!R.isEmpty(intentList.data)) {
     const [intent] = intentList.data;
@@ -93,28 +92,14 @@ async function updateSubscription(
   const body = await parse(req);
   const { id: stringId, price, quantity } = body;
 
-  if (R.isNil(stringId)) {
-    throw new Error('Lacking property in request payload: id');
-  }
-
   if (R.isNil(price)) {
     throw new Error('Lacking property in request payload: price');
   }
 
-  const id = Buffer.from(stringId as string, 'base64url');
-  const customer = await storageAdapter.findOneCustomerById({ id });
-  let customerId = customer?.customerId as string;
-
-  if (R.isNil(customer)) {
-    customerId = await createCustomer(id);
-    await storageAdapter.saveUserAsCustomer({
-      id,
-      customerId,
-    });
-  }
+  const customer = await getOrCreateCustomer(stringId, storageAdapter);
 
   const subscription = await stripe.subscriptions.create({
-    customer: customerId,
+    customer,
     items: [
       {
         price,
@@ -131,7 +116,7 @@ async function updateSubscription(
 
   if (paymentIntent.status === 'succeeded') {
     await storageAdapter.updateSubscription({
-      id,
+      id: Buffer.from(stringId, 'base64url'),
       tier: product.id,
       quantity: item.quantity,
     });
@@ -158,25 +143,10 @@ async function getSubscription(req: Request, storageAdapter: StorageAdapter) {
 
 async function getPortal(req: Request, storageAdapter: StorageAdapter) {
   const stringId = req.query.id as string;
-
-  if (R.isNil(stringId)) {
-    throw new Error('A query parameter is missing: id');
-  }
-
-  const id = Buffer.from(stringId, 'base64url');
-  const customer = await storageAdapter.findOneCustomerById({ id });
-  let customerId = customer?.customerId as string;
-
-  if (R.isNil(customer)) {
-    customerId = await createCustomer(id);
-    await storageAdapter.saveUserAsCustomer({
-      id,
-      customerId,
-    });
-  }
+  const customer = await getOrCreateCustomer(stringId, storageAdapter);
 
   const session = await stripe.billingPortal.sessions.create({
-    customer: customerId,
+    customer,
   });
 
   return R.pick(['url'], session);
