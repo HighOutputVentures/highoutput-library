@@ -30,14 +30,12 @@ export type User = {
 
 export type Subscription = {
   user: Buffer;
-  tier: string;
-  quantity?: number;
+  customer: string;
+  product: string;
+  quantity: number;
 };
 
-export type Customer = {
-  user: Buffer;
-  customerId: string;
-};
+export type Customer = Pick<Subscription, 'user' | 'customer'>;
 
 export type Methods = 'get' | 'put' | 'post';
 export type Routes = 'tiers' | 'secret' | 'subscription' | 'portal' | 'webhook';

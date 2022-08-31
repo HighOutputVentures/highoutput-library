@@ -20,7 +20,7 @@ async function getOrCreateCustomer(
   }
 
   const id = Buffer.from(stringId, 'base64url');
-  const customer = await storageAdapter.findOneCustomerById({ id });
+  const customer = await storageAdapter.findOneCustomer({ user: id });
 
   if (R.isNil(customer)) {
     const newCustomer = await stripe.customers.create({
@@ -28,14 +28,14 @@ async function getOrCreateCustomer(
         id: id.toString('base64url'),
       },
     });
-    await storageAdapter.saveUserAsCustomer({
-      id,
-      customerId: newCustomer.id,
+    await storageAdapter.saveCustomer({
+      user: id,
+      customer: newCustomer.id,
     });
     return newCustomer.id;
   }
 
-  return customer.customerId;
+  return customer.customer;
 }
 
 export async function tryCatch(
@@ -116,9 +116,8 @@ async function updateSubscription(
   const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
 
   if (paymentIntent.status === 'succeeded') {
-    await storageAdapter.updateSubscription({
-      id: Buffer.from(stringId, 'base64url'),
-      tier: product.id,
+    await storageAdapter.updateSubscription(customer, {
+      product: product.id,
       quantity: item.quantity,
     });
   }
@@ -138,7 +137,7 @@ async function getSubscription(req: Request, storageAdapter: StorageAdapter) {
   }
 
   return storageAdapter.getSubscription({
-    id: Buffer.from(id as string, 'base64url'),
+    user: Buffer.from(id as string, 'base64url'),
   });
 }
 

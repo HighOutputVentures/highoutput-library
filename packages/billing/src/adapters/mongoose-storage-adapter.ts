@@ -1,14 +1,11 @@
 /* eslint-disable import/extensions */
 import { Connection, Model, Schema } from 'mongoose';
-import * as R from 'ramda';
 import { StorageAdapter } from '../interfaces/storage-adapter';
-import { Subscription } from '../types';
 
 export default class MongooseStorageAdapter implements StorageAdapter {
   private models = {
     User: Model,
     Subscription: Model,
-    Customer: Model,
   };
 
   constructor(
@@ -17,85 +14,66 @@ export default class MongooseStorageAdapter implements StorageAdapter {
       userModel: string;
     },
   ) {
-    const subscriptionSchema = new Schema<Subscription>(
+    const subscriptionSchema = new Schema(
       {
         user: {
           type: Buffer,
           required: true,
-          index: true,
+          unique: true,
         },
-        tier: {
+        customer: {
           type: String,
-          required: true,
+          unique: true,
         },
-        quantity: {
-          type: Number,
-        },
+        product: { type: String },
+        quantity: { type: Number },
       },
       { timestamps: true },
     );
-    const customerSchema = new Schema(
-      {
-        user: {
-          type: Buffer,
-          required: true,
-          index: true,
-        },
-        customerId: {
-          type: String,
-          required: true,
-        },
-      },
-      { timestamps: true },
-    );
+
+    subscriptionSchema.index({ user: 1, customerId: 1 });
 
     this.models.Subscription = this.opts.connection.model(
       'Subscription',
       subscriptionSchema,
     );
-    this.models.Customer = this.opts.connection.model(
-      'Customer',
-      customerSchema,
-    );
+
     this.models.User = this.opts.connection.model(this.opts.userModel);
   }
 
-  async getSubscription(params: { id: Buffer }) {
+  async getSubscription(filter: { user?: Buffer; customer?: string }) {
     return this.models.Subscription.findOne({
-      user: params.id,
+      $or: [{ user: filter.user }, { customer: filter.customer }],
     }).lean();
   }
 
-  async updateSubscription(params: {
-    id: Buffer;
-    tier: string;
-    quantity?: number;
-  }) {
-    return this.models.Subscription.findOneAndUpdate(
-      { user: params.id },
-      R.pick(['tier', 'quantity'], params),
-      {
-        new: true,
-        upsert: true,
-      },
+  async updateSubscription(
+    customer: string,
+    update: {
+      product?: string;
+      quantity?: number;
+    },
+  ) {
+    return this.models.Subscription.findOneAndUpdate({ customer }, update, {
+      new: true,
+      upsert: true,
+    }).lean();
+  }
+
+  async deleteSubscription(customer: string) {
+    await this.models.Subscription.findOneAndUpdate(
+      { customer },
+      { product: undefined },
     ).lean();
   }
 
-  async deleteSubscription(params: { id: Buffer }) {
-    return this.models.Subscription.findOneAndUpdate(
-      { user: params.id },
-      { subscription: {} },
-    ).lean();
+  async findOneCustomer(filter: { user?: Buffer; customer?: string }) {
+    return this.models.Subscription.findOne({
+      $or: [{ user: filter.user }, { customer: filter.customer }],
+    }).lean();
   }
 
-  async findOneCustomerById(params: { id: Buffer }) {
-    return this.models.Customer.findOne({ user: params.id });
-  }
-
-  async saveUserAsCustomer(params: { id: Buffer; customerId: string }) {
-    return this.models.Customer.create({
-      user: params.id,
-      customerId: params.customerId,
-    });
+  async saveCustomer(doc: { user: Buffer; customer: string }) {
+    await this.models.Subscription.create(doc);
   }
 }

@@ -1,6 +1,5 @@
 /* eslint-disable import/extensions */
 import Stripe from 'stripe';
-import stripe from './setup';
 import { StorageAdapter } from '../interfaces/storage-adapter';
 
 export type WebhookEvents =
@@ -20,14 +19,20 @@ async function handleSubscriptionUpdatedOrCreated(opts: {
   storageAdapter: StorageAdapter;
 }) {
   const subscription = opts.object as Stripe.Subscription;
-  const customer = (await stripe.customers.retrieve(
-    subscription.customer as string,
-  )) as Stripe.Customer;
+  const [item] = subscription.items.data;
+  const product = item.price.product as Stripe.Product;
+  const invoice = subscription.latest_invoice as Stripe.Invoice;
+  const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
 
-  await opts.storageAdapter.updateSubscription({
-    id: Buffer.from(customer.metadata.id, 'base64url'),
-    tier: subscription.id as string,
-  });
+  if (paymentIntent.status === 'succeeded') {
+    await opts.storageAdapter.updateSubscription(
+      subscription.customer as string,
+      {
+        product: product.id,
+        quantity: item.quantity,
+      },
+    );
+  }
 
   return { received: true };
 }
@@ -37,13 +42,8 @@ async function handleSubscriptionDeleted(opts: {
   storageAdapter: StorageAdapter;
 }) {
   const subscription = opts.object as Stripe.Subscription;
-  const customer = (await stripe.customers.retrieve(
-    subscription.customer as string,
-  )) as Stripe.Customer;
 
-  await opts.storageAdapter.deleteSubscription({
-    id: Buffer.from(customer.metadata.id, 'base64url'),
-  });
+  await opts.storageAdapter.deleteSubscription(subscription.customer as string);
 
   return { received: true };
 }
