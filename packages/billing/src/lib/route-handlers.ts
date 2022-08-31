@@ -126,15 +126,15 @@ async function updateSubscription(
 
   if (paymentIntent.status === 'succeeded') {
     await storageAdapter.updateSubscription({
-      id: Buffer.from(id),
-      tier: product.name,
+      id,
+      tier: product.id,
       quantity: item.quantity,
     });
   }
 
   return {
-    user: id,
-    tier: product.name,
+    user: stringId,
+    tier: product.id,
     quantity: item.quantity,
   };
 }
