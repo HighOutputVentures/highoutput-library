@@ -53,7 +53,7 @@ export default class BillingServer {
         const { authorization: authHeader } = req.headers;
 
         if (R.isNil(authHeader)) {
-          res.sendStatus(404).send({
+          res.status(404).send({
             error: {
               code: 'UNAUTHORIZED_ACCESS',
               message: 'Invalid authorization header.',
@@ -72,7 +72,7 @@ export default class BillingServer {
         if (R.isNil(user)) {
           res
             .set('Content-Type', 'application/json')
-            .sendStatus(400)
+            .status(400)
             .send({
               error: {
                 code: 'UNAUTHENTICATED_ACCESS',
@@ -99,7 +99,8 @@ export default class BillingServer {
       const [error, data] = await tryCatch(handler, [req, storageAdapter]);
 
       if (error) {
-        res.sendStatus(400).send({
+        console.log('ERROR', error);
+        res.status(400).send({
           error: {
             code: error.name,
             message: error.message,
