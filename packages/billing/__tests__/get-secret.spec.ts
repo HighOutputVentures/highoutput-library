@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable import/extensions */
 import { faker } from '@faker-js/faker';
 import nock from 'nock';
@@ -7,22 +8,24 @@ import BillingServer from '../src/billing-server';
 import { setup, teardown } from './fixture';
 
 describe('GET /secret', () => {
-  test('when there is no existing intent -> should return client secret', async () => {
+  test('when request is valid -> should return client secret', async () => {
     const ctx = await setup();
     const authorizationAdapter = {
       authorize: jest.fn(async () =>
         Promise.resolve({ id: Buffer.from(faker.datatype.uuid()) }),
       ),
     };
-    ctx.mongoose.model(
+    const UserModel = ctx.mongoose.model(
       'User',
       new Schema({
-        emailAddress: {
-          type: String,
-          required: true,
+        _id: {
+          type: Buffer,
+          default: Buffer.from(faker.datatype.uuid()),
         },
       }),
     );
+    const user = await UserModel.create({});
+
     const storageAdapter = new MongooseStorageAdapter({
       connection: ctx.mongoose,
       userModel: 'User',
@@ -43,17 +46,19 @@ describe('GET /secret', () => {
         24,
       )}_secret_${faker.random.alphaNumeric(24)}`,
     };
+
     nock(/stripe.com/)
+      .post(/\/v1\/customers/)
+      .reply(200, { id: `cus_${faker.random.alphaNumeric(24)}` })
       .get(/\/v1\/setup_intents/)
-      .reply(200, { data: [] });
-    nock(/stripe.com/)
+      .reply(200, { data: [] })
       .post(/\/v1\/setup_intents/)
       .reply(200, expected);
 
     await ctx.request
       .get('/secret')
       .set('Authorization', 'Bearer Token')
-      .query({ userId: `cus_${faker.random.alphaNumeric(24)}` })
+      .query({ id: user._id.toString('base64url') })
       .expect('Content-Type', /json/)
       .expect(200)
       .expect((res) => {
