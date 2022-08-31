@@ -38,3 +38,12 @@ export type Customer = {
   user: Buffer;
   customerId: string;
 };
+
+export type Methods = 'get' | 'put' | 'post';
+export type Routes = 'tiers' | 'secret' | 'subscription' | 'portal' | 'webhook';
+
+export type RouteHandlerMapper<R, S> = {
+  [method in Methods]: {
+    [endpoint in Routes]+?: (req: R, storageAdapter: S) => Promise<unknown>;
+  };
+};

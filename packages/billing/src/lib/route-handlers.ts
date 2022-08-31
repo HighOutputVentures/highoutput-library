@@ -9,6 +9,7 @@ import stripe from './setup';
 import readConfig from './read-config';
 import { StorageAdapter } from '../interfaces/storage-adapter';
 import webhookHandlers, { WebhookEvents } from './webhook-handler';
+import { RouteHandlerMapper } from '../types';
 
 async function getOrCreateCustomer(
   stringId: string | undefined,
@@ -175,24 +176,7 @@ async function handleWebhook(req: Request, storageAdapter: StorageAdapter) {
   });
 }
 
-export type Methods = 'get' | 'put' | 'post';
-export type Endpoints =
-  | 'tiers'
-  | 'secret'
-  | 'subscription'
-  | 'portal'
-  | 'webhook';
-
-export type Mapper = {
-  [method in Methods]: {
-    [endpoint in Endpoints]+?: (
-      req: Request,
-      storageAdapter: StorageAdapter,
-    ) => Promise<unknown>;
-  };
-};
-
-export const handlerMapper: Mapper = {
+export const handlerMapper: RouteHandlerMapper<Request, StorageAdapter> = {
   get: {
     tiers: getTiersHandler,
     secret: getClientSecret,

@@ -5,13 +5,8 @@ import { Request, Response, NextFunction } from 'express';
 import * as R from 'ramda';
 import { AuthorizationAdapter } from './interfaces/authorization-adapter';
 import { StorageAdapter } from './interfaces/storage-adapter';
-import {
-  Endpoints,
-  handlerMapper,
-  Mapper,
-  Methods,
-  tryCatch,
-} from './lib/route-handlers';
+import { handlerMapper, tryCatch } from './lib/route-handlers';
+import { RouteHandlerMapper, Routes, Methods } from './types';
 import { setSecretKey } from './lib/setup';
 
 const ENDPOINTS_REGEX =
@@ -86,9 +81,9 @@ export default class BillingServer {
       req.context = { endpointSecret, configPath: config };
 
       const handler = R.compose<
-        [Mapper],
-        Mapper[Methods],
-        Mapper[Methods][Endpoints]
+        [RouteHandlerMapper<Request, StorageAdapter>],
+        RouteHandlerMapper<Request, StorageAdapter>[Methods],
+        RouteHandlerMapper<Request, StorageAdapter>[Methods][Routes]
       >(
         R.prop(endpoint.replace(/\//, '')),
         R.prop(method.toLowerCase()),
