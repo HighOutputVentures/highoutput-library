@@ -5,7 +5,7 @@ import { ThemeProvider } from '../..';
 import PinInputField from './PinInputField';
 
 export default {
-  title: 'UI Components/Form/Pin Input Field',
+  title: 'Components/Form/Pin Input Field',
   component: PinInputField,
 } as ComponentMeta<typeof PinInputField>;
 

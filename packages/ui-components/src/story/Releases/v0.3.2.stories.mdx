@@ -1,0 +1,42 @@
+import { Meta, Preview } from '@storybook/addon-docs';
+
+<Meta
+  title="Releases/v0.3.2"
+  parameters={{
+    previewTabs: {
+      canvas: { hidden: true },
+    },
+  }}
+/>
+
+# v0.3.2
+
+v0.3.2 contains API breaking changes and new features.
+
+## 🚀 Features
+
+- added **AutoForm** component
+- added **AuthProvider** context and hooks utility
+- added **PasswordInputField** component
+
+## ❗ Refactor/ Breaking Changes
+
+- deprecate `inputChakraProps`, `inputGroupChakraProps`, `hasLeftPointerEvents`, `hasLeftPointerEvents` in **InputField** component.
+- deprecate `styles` coverted to `partProps` in **Pagination** component.
+- deprecate `selectChakraProps` in **SelectField** component.
+- deprecate `buttonProps`, `containerProps` coverted to `partProps` in **CredentialLoginForm** component.
+- deprecate `buttonProps`, `containerProps` coverted to `partProps` in **OTPForm** component.
+- deprecate `buttonProps`, `containerProps` coverted to `partProps` in **OTPVerificationForm** component.
+- deprecate `contactFormProps` coverted to `partProps` in **ContactCard** component.
+- deprecate `buttonProps` coverted to `partProps` in **ContactForm** component.
+- deprecate `contactCardProps` coverted to `partProps` in **ContactPage** component.
+
+## 🐛 Fixes
+
+- fix contact form success message when adding support url
+
+## 🧹 Chores:
+
+- added getting started page
+- added contribution guide page
+- added release page v0.3.2

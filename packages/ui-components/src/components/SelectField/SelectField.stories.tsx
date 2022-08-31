@@ -5,7 +5,7 @@ import { ThemeProvider } from '../..';
 import SelectField from './SelectField';
 
 export default {
-  title: 'UI Components/Form/Select Field',
+  title: 'Components/Form/Select Field',
   component: SelectField,
 } as ComponentMeta<typeof SelectField>;
 

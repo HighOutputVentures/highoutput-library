@@ -1,0 +1,77 @@
+import { Meta, Preview } from '@storybook/addon-docs';
+
+<Meta
+  title="Getting Started"
+  parameters={{
+    previewTabs: {
+      canvas: { hidden: true },
+    },
+  }}
+/>
+
+# HOV UI Components
+
+**CURRENT VERSION:** 0.3.3
+
+**@highoutput/ui-components** is a ui component library that is built around [chakra ui](https://chakra-ui.com/), and aims to be:
+
+- a reusable block of components
+- very customizable with ease of styling
+- easy to implement
+
+## Getting Started
+
+To install package, use:
+
+```bash
+npm i @highoutput/ui-components
+```
+
+### Usage
+
+```typescript
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import { ThemeProvider } from '@highoutput/ui-components';
+
+const App = () => {
+  return (<ThemeProvider><div>{...components here}</div></ThemeProvider>);
+};
+
+ReactDOM.render(<App />, document.getElementById('root'));
+```
+
+```typescript
+import { RadioImageGroup } from '@highoutput/ui-components';
+
+export const SamplePage = () => {
+  const [value, setValue] = useState('');
+
+  return (
+    <>
+      <Text>Select Image: {value}</Text>
+      <RadioImageGroup
+        avatars={[
+          {
+            value: 'Kat',
+            image: 'https://randomuser.me/api/portraits/women/44.jpg',
+          },
+          {
+            value: 'Kevin',
+            image: 'https://randomuser.me/api/portraits/men/86.jpg',
+          },
+          {
+            value: 'Andy',
+            image: 'https://randomuser.me/api/portraits/men/29.jpg',
+          },
+          {
+            value: 'Jess',
+            image: 'https://randomuser.me/api/portraits/women/95.jpg',
+          },
+        ]}
+        onChange={v => setValue(v)}
+      />
+    </>
+  );
+};
+```

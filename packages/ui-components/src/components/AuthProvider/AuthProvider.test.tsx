@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import * as React from 'react';
 import AuthProvider from './AuthProvider';
-import useAuth from './useAuth';
+import useAuthService from './useAuthService';
 
 const ead = new Date().toISOString();
 const otp = Math.random().toString();
@@ -9,19 +9,17 @@ const otp = Math.random().toString();
 const generateOtp = jest.fn();
 const validateOtp = jest.fn();
 
-jest.mock('./useAuth', () => {
+jest.mock('./useAuthService', () => {
   return () => ({
     generateOtp,
     validateOtp,
   });
 });
 
-const hostname = 'http://localhost:3000';
-
 describe('AuthProvider', () => {
   beforeEach(() => {
     render(
-      <AuthProvider hostname={hostname}>
+      <AuthProvider hostname="http://localhost:3000">
         <Component />
       </AuthProvider>
     );
@@ -41,7 +39,7 @@ describe('AuthProvider', () => {
 });
 
 const Component = () => {
-  const { generateOtp, validateOtp } = useAuth();
+  const { generateOtp, validateOtp } = useAuthService();
 
   return (
     <div>

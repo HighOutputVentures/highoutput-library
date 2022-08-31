@@ -62,9 +62,9 @@ export const SamplePage = () => {
 
 ## Other Documented Usage
 
-[Components Live Preview](https://ui-components-jwmcsqh5i-nberongoy.vercel.app/)
-[Contact Us Form](https://www.notion.so/highoutput/Contact-us-form-6b4a49c0cbe24891a34d96e1b34b1e6e)
+- [Components Live Preview](https://hov-ui-components-highoutput.vercel.app/)
+- [Contact Us Form](https://www.notion.so/highoutput/Contact-us-form-6b4a49c0cbe24891a34d96e1b34b1e6e)
 
 ## Contribute
 
-[document for contributing in this library](https://github.com/HighOutputVentures/experiments/tree/main/016)
+- [document for contributing in this library](https://github.com/HighOutputVentures/experiments/tree/main/016)

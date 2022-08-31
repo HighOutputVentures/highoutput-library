@@ -135,6 +135,7 @@ function serializeFilter(filter: FilterQuery<Record<any, any>>) {
         return {
           ...accum,
           [`${field}.data`]: (value as ObjectId).toBuffer(),
+          [`${field}._type`]: 'ObjectId',
         };
       }
 
@@ -193,7 +194,7 @@ export class Repository<
   }
 
   async count(filter: FilterQuery<TEntity>): Promise<number> {
-    return this._model.countDocuments(filter);
+    return this._model.countDocuments(serializeFilter(filter));
   }
 
   async updateOne(
@@ -207,7 +208,8 @@ export class Repository<
       {
         upsert: false,
         new: true,
-        ...options,
+        setDefaultsOnInsert: true,
+        ...(options || {}),
       },
     );
 

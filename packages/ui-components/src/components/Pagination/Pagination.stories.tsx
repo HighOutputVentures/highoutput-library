@@ -6,7 +6,7 @@ import { ThemeProvider } from '../..';
 import Pagination from './Pagination';
 
 export default {
-  title: 'UI Components/Pagination',
+  title: 'Components/Pagination',
   component: Pagination,
 } as ComponentMeta<typeof Pagination>;
 
@@ -32,7 +32,7 @@ const Template: ComponentStory<typeof Pagination> = props => {
         loading={args.loading}
         onPageChange={handlePageChange}
         onSizeChange={handleSizeChange}
-        styles={args.styles}
+        partProps={args.styles}
       />
     </ThemeProvider>
   );
@@ -52,7 +52,7 @@ Default.args = {
   onPageChange: noop,
   onSizeChange: noop,
   total: 75,
-  styles: {
+  partProps: {
     container: {
       fontSize: 'sm',
     },

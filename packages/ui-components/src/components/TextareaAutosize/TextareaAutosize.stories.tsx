@@ -3,7 +3,7 @@ import * as React from 'react';
 import TextareaAutosize from './TextareaAutosize';
 
 export default {
-  title: 'UI Components/Textarea/Textarea Autosize',
+  title: 'Components/Textarea/Textarea Autosize',
   component: TextareaAutosize,
 };
 

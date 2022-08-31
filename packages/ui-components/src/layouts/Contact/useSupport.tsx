@@ -12,12 +12,14 @@ const useSupport = () => {
     setSuccess(false);
     setLoading(true);
 
-    const response = await postJson<{ ok: true }>(url, { ...data });
+    try {
+      const response = await postJson<{ ok: true }>(url, { ...data });
 
-    if (!response.ok) {
+      if (response) {
+        setSuccess(true);
+      }
+    } catch (error) {
       setHasError(true);
-    } else {
-      setSuccess(true);
     }
 
     setLoading(false);
