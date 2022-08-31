@@ -40,7 +40,12 @@ export async function tryCatch(
 }
 
 async function getTiersHandler(req: Request) {
-  const { configPath } = req.params;
+  const { configPath } = req.context;
+
+  if (R.isNil(configPath)) {
+    throw new Error('Cannot read undefined path.');
+  }
+
   const config = await readConfig(configPath);
 
   return config.tiers;
@@ -178,7 +183,7 @@ async function getPortal(req: Request, storageAdapter: StorageAdapter) {
 }
 
 async function handleWebhook(req: Request, storageAdapter: StorageAdapter) {
-  const { endpointSecret } = req.params;
+  const { endpointSecret } = req.context;
   const { raw: rawBody } = await parse(req, { returnRawBody: true });
 
   if (R.isNil(endpointSecret)) {

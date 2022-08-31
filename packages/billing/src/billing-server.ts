@@ -81,11 +81,9 @@ export default class BillingServer {
             });
           return;
         }
-
-        req.params.configPath = config;
       }
 
-      req.params.endpointSecret = endpointSecret;
+      req.context = { endpointSecret, configPath: config };
 
       const handler = R.compose<
         [Mapper],
