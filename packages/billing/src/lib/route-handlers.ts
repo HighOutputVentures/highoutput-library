@@ -46,11 +46,27 @@ async function getTiersHandler(req: Request) {
   return config.tiers;
 }
 
-async function getClientSecret(req: Request) {
-  const { userId } = req.params;
+async function getClientSecret(req: Request, storageAdapter: StorageAdapter) {
+  const stringId = req.query.id as string;
+
+  if (R.isNil(stringId)) {
+    throw new Error('A query parameter is missing: id');
+  }
+
+  const id = Buffer.from(stringId, 'base64url');
+  const customer = await storageAdapter.findOneCustomerById({ id });
+  let customerId = customer?.customerId as string;
+
+  if (R.isNil(customer)) {
+    customerId = await createCustomer(id);
+    await storageAdapter.saveUserAsCustomer({
+      id,
+      customerId,
+    });
+  }
 
   const intentList = await stripe.setupIntents.list({
-    customer: userId,
+    customer: customerId,
   });
 
   if (!R.isEmpty(intentList.data)) {
