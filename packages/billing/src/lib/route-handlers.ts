@@ -86,20 +86,24 @@ async function updateSubscription(
   storageAdapter: StorageAdapter,
 ) {
   const body = await parse(req);
-  const { id, price, quantity } = body;
-  const customer = await storageAdapter.findOneCustomerById({
-    id: Buffer.from(id),
-  });
-  let customerId = customer?.customerId as string;
+  const { id: stringId, price, quantity } = body;
+
+  if (R.isNil(stringId)) {
+    throw new Error('Lacking property in request payload: id');
+  }
 
   if (R.isNil(price)) {
     throw new Error('Lacking property in request payload: price');
   }
 
+  const id = Buffer.from(stringId as string, 'base64url');
+  const customer = await storageAdapter.findOneCustomerById({ id });
+  let customerId = customer?.customerId as string;
+
   if (R.isNil(customer)) {
     customerId = await createCustomer(id);
     await storageAdapter.saveUserAsCustomer({
-      id: Buffer.from(id),
+      id,
       customerId,
     });
   }
@@ -148,7 +152,13 @@ async function getSubscription(req: Request, storageAdapter: StorageAdapter) {
 }
 
 async function getPortal(req: Request, storageAdapter: StorageAdapter) {
-  const id = Buffer.from(req.query.id as string, 'base64url');
+  const stringId = req.query.id as string;
+
+  if (R.isNil(stringId)) {
+    throw new Error('A query parameter is missing: id');
+  }
+
+  const id = Buffer.from(stringId, 'base64url');
   const customer = await storageAdapter.findOneCustomerById({ id });
   let customerId = customer?.customerId as string;
 
