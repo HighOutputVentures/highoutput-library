@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable import/extensions */
 import { faker } from '@faker-js/faker';
 import nock from 'nock';
@@ -17,15 +18,13 @@ describe('PUT /subscription', () => {
     const UserModel = ctx.mongoose.model(
       'User',
       new Schema({
-        emailAddress: {
-          type: String,
-          required: true,
+        _id: {
+          type: Buffer,
+          default: Buffer.from(faker.datatype.uuid()),
         },
       }),
     );
-    const user = await UserModel.create({
-      emailAddress: faker.internet.email(),
-    });
+    const user = await UserModel.create({});
 
     const storageAdapter = new MongooseStorageAdapter({
       connection: ctx.mongoose,
@@ -43,15 +42,14 @@ describe('PUT /subscription', () => {
     ctx.app.use(billingServer.expressMiddleware());
 
     const expected = {
-      user: user.id,
-      tier: 'Professional',
+      user: user._id.toString('base64url'),
+      tier: `prod_${faker.random.alphaNumeric(24)}`,
       quantity: 1,
     };
 
     nock(/stripe.com/)
       .post(/\/v1\/customers/)
-      .reply(200, { id: `cus_${faker.random.alphaNumeric(24)}` });
-    nock(/stripe.com/)
+      .reply(200, { id: `cus_${faker.random.alphaNumeric(24)}` })
       .post(/\/v1\/subscriptions/)
       .reply(200, {
         id: expected.tier,
@@ -65,7 +63,7 @@ describe('PUT /subscription', () => {
             {
               price: {
                 product: {
-                  name: expected.tier,
+                  id: expected.tier,
                 },
               },
               quantity: 1,
@@ -77,7 +75,7 @@ describe('PUT /subscription', () => {
     await ctx.request
       .put('/subscription')
       .send({
-        id: user.id,
+        id: user._id.toString('base64url'),
         price: `price_${faker.random.alphaNumeric(24)}`,
         quantity: 1,
       })

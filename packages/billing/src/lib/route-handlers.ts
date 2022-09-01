@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable import/extensions */
 /* eslint-disable import/prefer-default-export */
-// import { Response } from 'express';
 import * as R from 'ramda';
 import { Request } from 'express';
 import parse from 'co-body';
@@ -10,15 +9,33 @@ import stripe from './setup';
 import readConfig from './read-config';
 import { StorageAdapter } from '../interfaces/storage-adapter';
 import webhookHandlers, { WebhookEvents } from './webhook-handler';
+import { RouteHandlerMapper } from '../types';
 
-async function createCustomer(id: Buffer) {
-  const customer = await stripe.customers.create({
-    metadata: {
-      id: id.toString('base64url'),
-    },
-  });
+async function getOrCreateCustomer(
+  stringId: string | undefined,
+  storageAdapter: StorageAdapter,
+) {
+  if (R.isNil(stringId)) {
+    throw new Error('Cannot find property: id');
+  }
 
-  return customer.id;
+  const id = Buffer.from(stringId, 'base64url');
+  const customer = await storageAdapter.findOneCustomer({ user: id });
+
+  if (R.isNil(customer)) {
+    const newCustomer = await stripe.customers.create({
+      metadata: {
+        id: id.toString('base64url'),
+      },
+    });
+    await storageAdapter.saveCustomer({
+      user: id,
+      customer: newCustomer.id,
+    });
+    return newCustomer.id;
+  }
+
+  return customer.customer;
 }
 
 export async function tryCatch(
@@ -40,18 +57,22 @@ export async function tryCatch(
 }
 
 async function getTiersHandler(req: Request) {
-  const { configPath } = req.params;
+  const { configPath } = req.context;
+
+  if (R.isNil(configPath)) {
+    throw new Error('Cannot read undefined path.');
+  }
+
   const config = await readConfig(configPath);
 
   return config.tiers;
 }
 
-async function getClientSecret(req: Request) {
-  const { userId } = req.params;
+async function getClientSecret(req: Request, storageAdapter: StorageAdapter) {
+  const stringId = req.query.id as string;
+  const customer = await getOrCreateCustomer(stringId, storageAdapter);
 
-  const intentList = await stripe.setupIntents.list({
-    customer: userId,
-  });
+  const intentList = await stripe.setupIntents.list({ customer });
 
   if (!R.isEmpty(intentList.data)) {
     const [intent] = intentList.data;
@@ -70,26 +91,16 @@ async function updateSubscription(
   storageAdapter: StorageAdapter,
 ) {
   const body = await parse(req);
-  const { id, price, quantity } = body;
-  const customer = await storageAdapter.findOneCustomerById({
-    id: Buffer.from(id),
-  });
-  let customerId = customer?.customerId as string;
+  const { id: stringId, price, quantity } = body;
 
   if (R.isNil(price)) {
     throw new Error('Lacking property in request payload: price');
   }
 
-  if (R.isNil(customer)) {
-    customerId = await createCustomer(id);
-    await storageAdapter.saveUserAsCustomer({
-      id: Buffer.from(id),
-      customerId,
-    });
-  }
+  const customer = await getOrCreateCustomer(stringId, storageAdapter);
 
   const subscription = await stripe.subscriptions.create({
-    customer: customerId,
+    customer,
     items: [
       {
         price,
@@ -105,16 +116,15 @@ async function updateSubscription(
   const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
 
   if (paymentIntent.status === 'succeeded') {
-    await storageAdapter.updateSubscription({
-      id: Buffer.from(id),
-      tier: product.name,
+    await storageAdapter.updateSubscription(customer, {
+      product: product.id,
       quantity: item.quantity,
     });
   }
 
   return {
-    user: id,
-    tier: product.name,
+    user: stringId,
+    tier: product.id,
     quantity: item.quantity,
   };
 }
@@ -127,32 +137,23 @@ async function getSubscription(req: Request, storageAdapter: StorageAdapter) {
   }
 
   return storageAdapter.getSubscription({
-    id: Buffer.from(id as string, 'base64url'),
+    user: Buffer.from(id as string, 'base64url'),
   });
 }
 
 async function getPortal(req: Request, storageAdapter: StorageAdapter) {
-  const id = Buffer.from(req.query.id as string, 'base64url');
-  const customer = await storageAdapter.findOneCustomerById({ id });
-  let customerId = customer?.customerId as string;
-
-  if (R.isNil(customer)) {
-    customerId = await createCustomer(id);
-    await storageAdapter.saveUserAsCustomer({
-      id,
-      customerId,
-    });
-  }
+  const stringId = req.query.id as string;
+  const customer = await getOrCreateCustomer(stringId, storageAdapter);
 
   const session = await stripe.billingPortal.sessions.create({
-    customer: customerId,
+    customer,
   });
 
   return R.pick(['url'], session);
 }
 
 async function handleWebhook(req: Request, storageAdapter: StorageAdapter) {
-  const { endpointSecret } = req.params;
+  const { endpointSecret } = req.context;
   const { raw: rawBody } = await parse(req, { returnRawBody: true });
 
   if (R.isNil(endpointSecret)) {
@@ -174,24 +175,7 @@ async function handleWebhook(req: Request, storageAdapter: StorageAdapter) {
   });
 }
 
-export type Methods = 'get' | 'put' | 'post';
-export type Endpoints =
-  | 'tiers'
-  | 'secret'
-  | 'subscription'
-  | 'portal'
-  | 'webhook';
-
-export type Mapper = {
-  [method in Methods]: {
-    [endpoint in Endpoints]+?: (
-      req: Request,
-      storageAdapter: StorageAdapter,
-    ) => Promise<unknown>;
-  };
-};
-
-export const handlerMapper: Mapper = {
+export const handlerMapper: RouteHandlerMapper<Request, StorageAdapter> = {
   get: {
     tiers: getTiersHandler,
     secret: getClientSecret,

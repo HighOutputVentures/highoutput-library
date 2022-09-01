@@ -5,13 +5,8 @@ import { Request, Response, NextFunction } from 'express';
 import * as R from 'ramda';
 import { AuthorizationAdapter } from './interfaces/authorization-adapter';
 import { StorageAdapter } from './interfaces/storage-adapter';
-import {
-  Endpoints,
-  handlerMapper,
-  Mapper,
-  Methods,
-  tryCatch,
-} from './lib/route-handlers';
+import { handlerMapper, tryCatch } from './lib/route-handlers';
+import { RouteHandlerMapper, Routes, Methods } from './types';
 import { setSecretKey } from './lib/setup';
 
 const ENDPOINTS_REGEX =
@@ -53,7 +48,7 @@ export default class BillingServer {
         const { authorization: authHeader } = req.headers;
 
         if (R.isNil(authHeader)) {
-          res.sendStatus(404).send({
+          res.status(404).send({
             error: {
               code: 'UNAUTHORIZED_ACCESS',
               message: 'Invalid authorization header.',
@@ -72,7 +67,7 @@ export default class BillingServer {
         if (R.isNil(user)) {
           res
             .set('Content-Type', 'application/json')
-            .sendStatus(400)
+            .status(400)
             .send({
               error: {
                 code: 'UNAUTHENTICATED_ACCESS',
@@ -81,16 +76,14 @@ export default class BillingServer {
             });
           return;
         }
-
-        req.params.configPath = config;
       }
 
-      req.params.endpointSecret = endpointSecret;
+      req.context = { endpointSecret, configPath: config };
 
       const handler = R.compose<
-        [Mapper],
-        Mapper[Methods],
-        Mapper[Methods][Endpoints]
+        [RouteHandlerMapper<Request, StorageAdapter>],
+        RouteHandlerMapper<Request, StorageAdapter>[Methods],
+        RouteHandlerMapper<Request, StorageAdapter>[Methods][Routes]
       >(
         R.prop(endpoint.replace(/\//, '')),
         R.prop(method.toLowerCase()),
@@ -99,7 +92,8 @@ export default class BillingServer {
       const [error, data] = await tryCatch(handler, [req, storageAdapter]);
 
       if (error) {
-        res.sendStatus(400).send({
+        console.log('ERROR', error);
+        res.status(400).send({
           error: {
             code: error.name,
             message: error.message,

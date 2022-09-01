@@ -31,9 +31,9 @@ describe('GET /portal', () => {
       userModel: 'User',
     });
 
-    await storageAdapter.saveUserAsCustomer({
-      id: user._id,
-      customerId: `cus_${faker.random.alphaNumeric(24)}`,
+    await storageAdapter.saveCustomer({
+      user: user._id,
+      customer: `cus_${faker.random.alphaNumeric(24)}`,
     });
 
     const billingServer = new BillingServer({
