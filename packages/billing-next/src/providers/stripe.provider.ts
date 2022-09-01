@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-constructor */
 import { injectable, inject } from 'inversify';
 import Stripe from 'stripe';
-import map from 'p-map';
+import asyncMap from 'p-map';
 import { IConfigProvider } from '../interfaces/config.provider';
 import {
   IStripeProvider,
@@ -20,7 +20,7 @@ export class StripeProvider implements IStripeProvider {
   ) {}
 
   async initializeTiers() {
-    await map(
+    await asyncMap(
       this.configProvider.config.tiers,
       async (tier) => this.initializeTier(tier),
       { concurrency: 2 },
@@ -36,7 +36,7 @@ export class StripeProvider implements IStripeProvider {
       },
       product_data: {
         name: config.name,
-        // metadata: config.metadata,
+        metadata: config.metadata,
       },
     });
 

@@ -16,6 +16,7 @@ const schema: JTDSchemaType<Config> = {
           pricePerUnit: { type: 'int32' },
           free: { type: 'boolean' },
           description: { type: 'string' },
+          metadata: { type: 'object' } as never,
         },
       },
     },
