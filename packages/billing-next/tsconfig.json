@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.json",
+  "exclude": ["node_modules", "dist", "**/*.test.ts"],
+  "include": ["src/**/*", "module.d.ts", "__tests__/**/*"],
+  "compilerOptions": {
+    "outDir": "./dist",
+    "types": ["jest", "node", "reflect-metadata"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  }
+}
