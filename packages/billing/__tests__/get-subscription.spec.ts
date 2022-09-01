@@ -23,18 +23,22 @@ describe('GET /subscription', () => {
         },
       }),
     );
-    const user = await UserModel.create({
-      emailAddress: faker.internet.email(),
-    });
+    const user = await UserModel.create({});
+    const customer = `cus_${faker.random.alphaNumeric(24)}`;
+    const product = `prod_${faker.random.alphaNumeric(24)}`;
 
     const storageAdapter = new MongooseStorageAdapter({
       connection: ctx.mongoose,
       userModel: 'User',
     });
 
-    await storageAdapter.updateSubscription({
-      id: user._id,
-      tier: 'Professional',
+    await storageAdapter.saveCustomer({
+      user: user._id,
+      customer,
+    });
+
+    await storageAdapter.updateSubscription(customer, {
+      product,
       quantity: 1,
     });
 
@@ -51,7 +55,7 @@ describe('GET /subscription', () => {
 
     const expected = {
       user: user._id.toString('base64url'),
-      tier: 'Professional',
+      product,
       quantity: 1,
     };
 

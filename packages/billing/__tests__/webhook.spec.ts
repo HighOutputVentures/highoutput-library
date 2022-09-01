@@ -27,10 +27,16 @@ describe('POST /webhook', () => {
       }),
     );
     const user = await UserModel.create({});
+    const customer = `cus_${faker.random.alphaNumeric(24)}`;
 
     const storageAdapter = new MongooseStorageAdapter({
       connection: ctx.mongoose,
       userModel: 'User',
+    });
+
+    storageAdapter.saveCustomer({
+      user: user._id,
+      customer,
     });
 
     const billingServer = new BillingServer({
@@ -51,7 +57,24 @@ describe('POST /webhook', () => {
       data: {
         object: {
           id: `sub_${faker.random.alphaNumeric(24)}`,
-          customer: `cus_${faker.random.alphaNumeric(24)}`,
+          customer,
+          items: {
+            data: [
+              {
+                quantity: 1,
+                price: {
+                  product: {
+                    id: `prod_${faker.random.alphaNumeric(24)}`,
+                  },
+                },
+              },
+            ],
+          },
+          latest_invoice: {
+            payment_intent: {
+              status: 'succeeded',
+            },
+          },
         },
       },
     };
@@ -103,10 +126,16 @@ describe('POST /webhook', () => {
       }),
     );
     const user = await UserModel.create({});
+    const customer = `cus_${faker.random.alphaNumeric(24)}`;
 
     const storageAdapter = new MongooseStorageAdapter({
       connection: ctx.mongoose,
       userModel: 'User',
+    });
+
+    storageAdapter.saveCustomer({
+      user: user._id,
+      customer,
     });
 
     const billingServer = new BillingServer({
@@ -127,7 +156,24 @@ describe('POST /webhook', () => {
       data: {
         object: {
           id: `sub_${faker.random.alphaNumeric(24)}`,
-          customer: `cus_${faker.random.alphaNumeric(24)}`,
+          customer,
+          items: {
+            data: [
+              {
+                quantity: 1,
+                price: {
+                  product: {
+                    id: `prod_${faker.random.alphaNumeric(24)}`,
+                  },
+                },
+              },
+            ],
+          },
+          latest_invoice: {
+            payment_intent: {
+              status: 'succeeded',
+            },
+          },
         },
       },
     };
@@ -139,13 +185,13 @@ describe('POST /webhook', () => {
       secret: webhookSecret,
     });
 
-    nock(/stripe.com/)
-      .get(/\/v1\/customer/)
-      .reply(200, {
-        metadata: {
-          id: user.id,
-        },
-      });
+    // nock(/stripe.com/)
+    //   .get(/\/v1\/customer/)
+    //   .reply(200, {
+    //     metadata: {
+    //       id: user.id,
+    //     },
+    //   });
 
     await ctx.request
       .post('/webhook')
@@ -179,10 +225,16 @@ describe('POST /webhook', () => {
       }),
     );
     const user = await UserModel.create({});
+    const customer = `cus_${faker.random.alphaNumeric(24)}`;
 
     const storageAdapter = new MongooseStorageAdapter({
       connection: ctx.mongoose,
       userModel: 'User',
+    });
+
+    storageAdapter.saveCustomer({
+      user: user._id,
+      customer,
     });
 
     const billingServer = new BillingServer({
@@ -203,7 +255,7 @@ describe('POST /webhook', () => {
       data: {
         object: {
           id: `sub_${faker.random.alphaNumeric(24)}`,
-          customer: `cus_${faker.random.alphaNumeric(24)}`,
+          customer,
         },
       },
     };
