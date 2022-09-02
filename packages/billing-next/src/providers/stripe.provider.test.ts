@@ -1,9 +1,10 @@
 /* eslint-disable no-restricted-syntax */
 import { Container } from 'inversify';
+import { faker } from '@faker-js/faker';
 import { generateFakeStripePrice } from '../../__tests__/helpers/generate-fake-stripe-price';
 import { generateFakeConfig } from '../../__tests__/helpers/generate-fake-config';
 import { generateFakeTiers } from '../../__tests__/helpers/generate-fake-tier';
-import { IStripeProvider } from '../interfaces/stripe.provider';
+import { IStripeProvider, ValueType } from '../interfaces/stripe.provider';
 import { StripeProvider } from './stripe.provider';
 import { TYPES } from '../types';
 
@@ -113,15 +114,18 @@ describe('StripeProvider', () => {
 
         const container = new Container();
 
+        const portalConfig = { id: `bpc_${faker.random.alphaNumeric(24)}` };
         const StripeMock = {
           billingPortal: {
             configurations: {
-              create: jest.fn(async () => Promise.resolve()),
+              create: jest.fn(async () => portalConfig),
             },
           },
         };
         const StripeProviderStorageAdapterMock = {
           listTiers: jest.fn(async () => generateFakeTiers()),
+          findValue: jest.fn(async () => null),
+          insertValue: jest.fn(async () => Promise.resolve()),
         };
 
         container.bind(TYPES.Stripe).toConstantValue(StripeMock);
@@ -138,9 +142,11 @@ describe('StripeProvider', () => {
         await provider.initializeCustomerPortal();
 
         expect(StripeProviderStorageAdapterMock.listTiers).toBeCalledTimes(1);
-
         expect(StripeMock.billingPortal.configurations.create).toBeCalledTimes(
           1,
+        );
+        expect(StripeMock.billingPortal.configurations.create).toReturnWith(
+          Promise.resolve(portalConfig),
         );
         for (const [params] of StripeMock.billingPortal.configurations.create
           .mock.calls as never[][]) {
@@ -150,5 +156,44 @@ describe('StripeProvider', () => {
         }
       },
     );
+
+    test.concurrent('existing portal config is updated', async () => {
+      const config = generateFakeConfig();
+
+      const container = new Container();
+
+      const StripeMock = {
+        billingPortal: {
+          configurations: {
+            update: jest.fn(async () => Promise.resolve()),
+          },
+        },
+      };
+      const StripeProviderStorageAdapterMock = {
+        listTiers: jest.fn(async () => generateFakeTiers()),
+        findValue: jest.fn(async () =>
+          Promise.resolve({
+            id: ValueType.BILLING_PORTAL_CONFIGURATION,
+            value: `bpc_${faker.random.alphaNumeric(24)}`,
+          }),
+        ),
+      };
+
+      container.bind(TYPES.Stripe).toConstantValue(StripeMock);
+      container.bind(TYPES.ConfigProvider).toConstantValue({
+        config,
+      });
+      container
+        .bind(TYPES.StripeProviderStorageAdapter)
+        .toConstantValue(StripeProviderStorageAdapterMock);
+      container.bind(TYPES.StripeProvider).to(StripeProvider);
+
+      const provider = container.get<IStripeProvider>(TYPES.StripeProvider);
+
+      await provider.initializeCustomerPortal();
+
+      expect(StripeProviderStorageAdapterMock.findValue).toBeCalled();
+      expect(StripeMock.billingPortal.configurations.update).toBeCalled();
+    });
   });
 });
