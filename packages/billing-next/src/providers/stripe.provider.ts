@@ -74,6 +74,7 @@ export class StripeProvider implements IStripeProvider {
   }
 
   async initializeCustomerPortal() {
+    // find value with id = 'stripeBillingPortalConfiguration'
     const { customerPortal } = this.configProvider.config;
     const tiers = await this.storageAdapter.listTiers();
 
