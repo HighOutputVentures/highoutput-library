@@ -20,6 +20,7 @@ describe('StripeProvider', () => {
       };
 
       const StripeProviderStorageAdapterMock = {
+        findTier: jest.fn(async () => null),
         insertTier: jest.fn(async () => Promise.resolve()),
       };
 
@@ -36,6 +37,7 @@ describe('StripeProvider', () => {
 
       await provider.initializeTiers();
 
+      expect(StripeProviderStorageAdapterMock.findTier).toBeCalledTimes(3);
       expect(StripeMock.prices.create).toBeCalledTimes(config.tiers.length);
       for (const [params] of StripeMock.prices.create.mock.calls as never[][]) {
         expect(params).toHaveProperty('unit_amount');
@@ -54,6 +56,51 @@ describe('StripeProvider', () => {
       }
     });
 
-    test.todo('existing tier is updated');
+    test.concurrent('existing tier is updated', async () => {
+      const config = generateFakeConfig();
+
+      const container = new Container();
+
+      const StripeMock = {
+        prices: {
+          create: jest.fn(async () => generateFakeStripePrice()),
+        },
+        products: {
+          update: jest.fn(async () => Promise.resolve()),
+        },
+      };
+
+      const StripeProviderStorageAdapterMock = {
+        findTier: jest.fn(async (id) => {
+          const price = generateFakeStripePrice();
+
+          return {
+            id,
+            stripePrices: [price.id],
+            stripeProduct: price.product,
+          };
+        }),
+        updateTier: jest.fn(async () => Promise.resolve()),
+      };
+
+      container.bind(TYPES.Stripe).toConstantValue(StripeMock);
+      container.bind(TYPES.ConfigProvider).toConstantValue({
+        config,
+      });
+      container
+        .bind(TYPES.StripeProviderStorageAdapter)
+        .toConstantValue(StripeProviderStorageAdapterMock);
+      container.bind(TYPES.StripeProvider).to(StripeProvider);
+
+      const provider = container.get<IStripeProvider>(TYPES.StripeProvider);
+
+      await provider.initializeTiers();
+
+      expect(StripeMock.products.update).toBeCalledTimes(config.tiers.length);
+      expect(StripeMock.prices.create).toBeCalledTimes(config.tiers.length);
+      expect(StripeProviderStorageAdapterMock.updateTier).toBeCalledTimes(
+        config.tiers.length,
+      );
+    });
   });
 });

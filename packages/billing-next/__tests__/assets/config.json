@@ -1,7 +1,7 @@
 {
   "tiers": [
     {
-      "id": "started",
+      "id": "starter",
       "name": "Starter",
       "free": true,
       "description": "Enjoy free access to our services forever.",

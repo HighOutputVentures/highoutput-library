@@ -8,7 +8,7 @@ import {
   IStripeProviderStorageAdapter,
 } from '../interfaces/stripe.provider';
 import { TYPES } from '../types';
-import { CustomerPortalConfig, TierConfig } from '../typings';
+import { TierConfig } from '../typings';
 
 @injectable()
 export class StripeProvider implements IStripeProvider {
@@ -28,6 +28,30 @@ export class StripeProvider implements IStripeProvider {
   }
 
   private async initializeTier(config: TierConfig) {
+    const tier = await this.storageAdapter.findTier(config.id);
+
+    if (tier) {
+      await this.stripe.products.update(tier.stripeProduct, {
+        name: config.name,
+        metadata: config.metadata,
+      });
+
+      const price = await this.stripe.prices.create({
+        unit_amount: config.free ? 0 : config.pricePerUnit,
+        currency: 'usd',
+        recurring: {
+          interval: 'month',
+        },
+        product: tier.stripeProduct,
+      });
+
+      await this.storageAdapter.updateTier(tier.stripeProduct, {
+        stripePrices: [price.id],
+      });
+
+      return;
+    }
+
     const price = await this.stripe.prices.create({
       unit_amount: config.free ? 0 : config.pricePerUnit,
       currency: 'usd',
@@ -47,8 +71,9 @@ export class StripeProvider implements IStripeProvider {
     });
   }
 
-  // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
-  async initializeCustomerPortal(_config: CustomerPortalConfig) {
-    throw new Error('not implemented');
+  // eslint-disable-next-line class-methods-use-this
+  async initializeCustomerPortal() {
+    // eslint-disable-next-line no-console
+    console.log('not implemented');
   }
 }

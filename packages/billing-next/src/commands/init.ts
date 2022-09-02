@@ -51,6 +51,7 @@ const command = new Command('init')
       );
 
       await stripeProvider.initializeTiers();
+      await stripeProvider.initializeCustomerPortal();
 
       await connection.close();
     },
