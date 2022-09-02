@@ -16,7 +16,12 @@ export type CustomerPortalConfig = {
   };
 };
 
+export type WebhookConfig = {
+  url: string;
+};
+
 export type Config = {
   tiers: TierConfig[];
   customerPortal: CustomerPortalConfig;
+  webhook: WebhookConfig;
 };

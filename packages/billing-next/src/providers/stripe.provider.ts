@@ -149,4 +149,38 @@ export class StripeProvider implements IStripeProvider {
       default_return_url: customerPortal.returnUrl,
     };
   }
+
+  async initializeWebhookEndpoint() {
+    const data = await this.storageAdapter.findValue(
+      ValueType.WEBHOOK_ENDPOINT_CONFIGURATION,
+    );
+    const { webhook } = this.configProvider.config;
+
+    if (data) {
+      const { value: webhookEndpoint } = data;
+
+      await this.stripe.webhookEndpoints.update(webhookEndpoint, webhook);
+
+      return;
+    }
+
+    const webhookEndpoint = await this.stripe.webhookEndpoints.create({
+      url: webhook.url,
+      enabled_events: [
+        'customer.subscription.created',
+        'customer.subscription.deleted',
+        'customer.subscription.updated',
+      ],
+    });
+
+    await this.storageAdapter.insertValue({
+      id: ValueType.WEBHOOK_ENDPOINT_CONFIGURATION,
+      value: webhookEndpoint.id,
+    });
+
+    await this.storageAdapter.insertValue({
+      id: ValueType.WEBHOOK_SIGNING_SECRET,
+      value: webhookEndpoint.secret as string,
+    });
+  }
 }
