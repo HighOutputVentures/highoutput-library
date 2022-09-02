@@ -2,10 +2,12 @@
 import { injectable, inject } from 'inversify';
 import Stripe from 'stripe';
 import asyncMap from 'p-map';
+import R from 'ramda';
 import { IConfigProvider } from '../interfaces/config.provider';
 import {
   IStripeProvider,
   IStripeProviderStorageAdapter,
+  Tier,
 } from '../interfaces/stripe.provider';
 import { TYPES } from '../types';
 import { TierConfig } from '../typings';
@@ -71,9 +73,41 @@ export class StripeProvider implements IStripeProvider {
     });
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async initializeCustomerPortal() {
-    // eslint-disable-next-line no-console
-    console.log('not implemented');
+    const { customerPortal } = this.configProvider.config;
+    const tiers = await this.storageAdapter.listTiers();
+
+    await this.stripe.billingPortal.configurations.create({
+      business_profile: {
+        headline: customerPortal.businessProfile.headline,
+        privacy_policy_url: customerPortal.businessProfile.privacyPolicyUrl,
+        terms_of_service_url: customerPortal.businessProfile.termsOfServiceUrl,
+      },
+      features: {
+        customer_update: {
+          allowed_updates: ['email'],
+          enabled: true,
+        },
+        payment_method_update: {
+          enabled: true,
+        },
+        invoice_history: {
+          enabled: true,
+        },
+        subscription_cancel: {
+          enabled: true,
+          mode: 'at_period_end',
+        },
+        subscription_update: {
+          enabled: true,
+          default_allowed_updates: ['price'],
+          products: R.map(
+            (tier) => tier.stripeProduct as unknown,
+            tiers as Tier[],
+          ) as Stripe.BillingPortal.ConfigurationCreateParams.Features.SubscriptionUpdate.Product[],
+        },
+      },
+      default_return_url: customerPortal.returnUrl,
+    });
   }
 }
