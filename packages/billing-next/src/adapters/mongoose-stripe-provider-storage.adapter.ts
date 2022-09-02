@@ -64,4 +64,14 @@ export class MongooseStripeProdiverStorageAdapter
 
     return serialize(document) as Tier;
   }
+
+  async listTiers() {
+    const documents = await this.#tierModel.find({});
+
+    if (!documents) {
+      return null;
+    }
+
+    return R.map(serialize, documents) as Tier[];
+  }
 }
