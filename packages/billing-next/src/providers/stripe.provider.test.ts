@@ -2,6 +2,7 @@
 import { Container } from 'inversify';
 import { generateFakeStripePrice } from '../../__tests__/helpers/generate-fake-stripe-price';
 import { generateFakeConfig } from '../../__tests__/helpers/generate-fake-config';
+import { generateFakeTiers } from '../../__tests__/helpers/generate-fake-tier';
 import { IStripeProvider } from '../interfaces/stripe.provider';
 import { StripeProvider } from './stripe.provider';
 import { TYPES } from '../types';
@@ -102,5 +103,52 @@ describe('StripeProvider', () => {
         config.tiers.length,
       );
     });
+  });
+
+  describe('#initializeCustomerPortal', () => {
+    test.concurrent(
+      'customer portal is initialized for the first time',
+      async () => {
+        const config = generateFakeConfig();
+
+        const container = new Container();
+
+        const StripeMock = {
+          billingPortal: {
+            configurations: {
+              create: jest.fn(async () => Promise.resolve()),
+            },
+          },
+        };
+        const StripeProviderStorageAdapterMock = {
+          listTiers: jest.fn(async () => generateFakeTiers()),
+        };
+
+        container.bind(TYPES.Stripe).toConstantValue(StripeMock);
+        container.bind(TYPES.ConfigProvider).toConstantValue({
+          config,
+        });
+        container
+          .bind(TYPES.StripeProviderStorageAdapter)
+          .toConstantValue(StripeProviderStorageAdapterMock);
+        container.bind(TYPES.StripeProvider).to(StripeProvider);
+
+        const provider = container.get<IStripeProvider>(TYPES.StripeProvider);
+
+        await provider.initializeCustomerPortal();
+
+        expect(StripeProviderStorageAdapterMock.listTiers).toBeCalledTimes(1);
+
+        expect(StripeMock.billingPortal.configurations.create).toBeCalledTimes(
+          1,
+        );
+        for (const [params] of StripeMock.billingPortal.configurations.create
+          .mock.calls as never[][]) {
+          expect(params).toHaveProperty('business_profile');
+          expect(params).toHaveProperty('features');
+          expect(params).toHaveProperty('default_return_url');
+        }
+      },
+    );
   });
 });
