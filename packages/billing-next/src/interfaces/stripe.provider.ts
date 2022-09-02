@@ -13,6 +13,7 @@ export type Value = {
 export enum ValueType {
   'BILLING_PORTAL_CONFIGURATION' = 'stripeBillingPortalConfiguration',
   'WEBHOOK_SIGNING_SECRET' = 'stripeWebhookSigningSecret',
+  'WEBHOOK_ENDPOINT_CONFIGURATION' = 'stripeWebhookEndpointConfiguration',
 }
 
 export interface IStripeProviderStorageAdapter {
@@ -28,4 +29,5 @@ export interface IStripeProviderStorageAdapter {
 export interface IStripeProvider {
   initializeTiers(): Promise<void>;
   initializeCustomerPortal(): Promise<void>;
+  initializeWebhookEndpoint(): Promise<void>;
 }

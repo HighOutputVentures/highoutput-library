@@ -196,4 +196,96 @@ describe('StripeProvider', () => {
       expect(StripeMock.billingPortal.configurations.update).toBeCalled();
     });
   });
+
+  describe('#initializeWebhookEndpoint', () => {
+    test.concurrent(
+      'webhook endpoint is initialized for the first time',
+      async () => {
+        const config = generateFakeConfig();
+
+        const container = new Container();
+
+        const webhookEndpoint = {
+          id: `we_${faker.random.alphaNumeric(24)}`,
+          secret: `wsh_${faker.random.alphaNumeric(24)}`,
+        };
+        const StripeMock = {
+          webhookEndpoints: {
+            create: jest.fn(async () => webhookEndpoint),
+          },
+        };
+        const StripeProviderStorageAdapterMock = {
+          findValue: jest.fn(async () => null),
+          insertValue: jest.fn(async () => Promise.resolve()),
+        };
+
+        container.bind(TYPES.Stripe).toConstantValue(StripeMock);
+        container.bind(TYPES.ConfigProvider).toConstantValue({
+          config,
+        });
+        container
+          .bind(TYPES.StripeProviderStorageAdapter)
+          .toConstantValue(StripeProviderStorageAdapterMock);
+        container.bind(TYPES.StripeProvider).to(StripeProvider);
+
+        const provider = container.get<IStripeProvider>(TYPES.StripeProvider);
+
+        await provider.initializeWebhookEndpoint();
+
+        expect(StripeProviderStorageAdapterMock.findValue).toBeCalled();
+        expect(StripeMock.webhookEndpoints.create).toBeCalled();
+        expect(StripeMock.webhookEndpoints.create).toReturnWith(
+          Promise.resolve(webhookEndpoint),
+        );
+
+        expect(StripeProviderStorageAdapterMock.insertValue).toBeCalledTimes(2);
+        expect(
+          StripeProviderStorageAdapterMock.insertValue,
+        ).toHaveBeenLastCalledWith({
+          id: ValueType.WEBHOOK_SIGNING_SECRET,
+          value: webhookEndpoint.secret,
+        });
+      },
+    );
+
+    test.concurrent('existing webhook config is updated', async () => {
+      const config = generateFakeConfig();
+
+      const container = new Container();
+
+      const webhookEndpoint = {
+        id: `we_${faker.random.alphaNumeric(24)}`,
+      };
+      const StripeMock = {
+        webhookEndpoints: {
+          update: jest.fn(async () => Promise.resolve()),
+        },
+      };
+      const StripeProviderStorageAdapterMock = {
+        findValue: jest.fn(async () => ({
+          id: ValueType.WEBHOOK_ENDPOINT_CONFIGURATION,
+          value: webhookEndpoint.id,
+        })),
+      };
+
+      container.bind(TYPES.Stripe).toConstantValue(StripeMock);
+      container.bind(TYPES.ConfigProvider).toConstantValue({
+        config,
+      });
+      container
+        .bind(TYPES.StripeProviderStorageAdapter)
+        .toConstantValue(StripeProviderStorageAdapterMock);
+      container.bind(TYPES.StripeProvider).to(StripeProvider);
+
+      const provider = container.get<IStripeProvider>(TYPES.StripeProvider);
+
+      await provider.initializeWebhookEndpoint();
+
+      expect(StripeProviderStorageAdapterMock.findValue).toBeCalled();
+      expect(StripeMock.webhookEndpoints.update).toBeCalledWith(
+        webhookEndpoint.id,
+        config.webhook,
+      );
+    });
+  });
 });

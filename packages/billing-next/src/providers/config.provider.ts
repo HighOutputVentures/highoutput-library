@@ -34,6 +34,11 @@ const schema: JTDSchemaType<Config> = {
         },
       },
     },
+    webhook: {
+      properties: {
+        url: { type: 'string' },
+      },
+    },
   },
 };
 
