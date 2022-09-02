@@ -8,9 +8,10 @@ import {
   IStripeProvider,
   IStripeProviderStorageAdapter,
   Tier,
+  ValueType,
 } from '../interfaces/stripe.provider';
 import { TYPES } from '../types';
-import { TierConfig } from '../typings';
+import { CustomerPortalConfig, TierConfig } from '../typings';
 
 @injectable()
 export class StripeProvider implements IStripeProvider {
@@ -74,11 +75,48 @@ export class StripeProvider implements IStripeProvider {
   }
 
   async initializeCustomerPortal() {
-    // find value with id = 'stripeBillingPortalConfiguration'
+    const data = await this.storageAdapter.findValue(
+      ValueType.BILLING_PORTAL_CONFIGURATION,
+    );
     const { customerPortal } = this.configProvider.config;
-    const tiers = await this.storageAdapter.listTiers();
+    const tiers = (await this.storageAdapter.listTiers()) as Tier[];
 
-    await this.stripe.billingPortal.configurations.create({
+    if (data) {
+      const { value: portalConfigId } = data;
+      const updateParams = this.setConfigurationParams(
+        customerPortal,
+        tiers,
+      ) as Stripe.BillingPortal.ConfigurationUpdateParams;
+
+      await this.stripe.billingPortal.configurations.update(
+        portalConfigId,
+        updateParams,
+      );
+
+      return;
+    }
+
+    const createParams = this.setConfigurationParams(
+      customerPortal,
+      tiers,
+    ) as Stripe.BillingPortal.ConfigurationCreateParams;
+
+    const portalConfig = await this.stripe.billingPortal.configurations.create(
+      createParams,
+    );
+
+    await this.storageAdapter.insertValue({
+      id: ValueType.BILLING_PORTAL_CONFIGURATION,
+      value: portalConfig.id,
+    });
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  private setConfigurationParams(
+    customerPortal: CustomerPortalConfig,
+    tiers: Tier[],
+  ) {
+    return {
       business_profile: {
         headline: customerPortal.businessProfile.headline,
         privacy_policy_url: customerPortal.businessProfile.privacyPolicyUrl,
@@ -109,6 +147,6 @@ export class StripeProvider implements IStripeProvider {
         },
       },
       default_return_url: customerPortal.returnUrl,
-    });
+    };
   }
 }

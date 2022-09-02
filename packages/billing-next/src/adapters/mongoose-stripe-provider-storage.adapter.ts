@@ -4,6 +4,8 @@ import R from 'ramda';
 import {
   IStripeProviderStorageAdapter,
   Tier,
+  Value,
+  ValueType,
 } from '../interfaces/stripe.provider';
 
 function serialize(document: Document) {
@@ -19,6 +21,8 @@ export class MongooseStripeProdiverStorageAdapter
   implements IStripeProviderStorageAdapter
 {
   #tierModel: Model<TierDocument>;
+
+  #valueModel: Model<Value>;
 
   constructor(connection: Connection) {
     this.#tierModel = connection.model<TierDocument>(
@@ -36,6 +40,22 @@ export class MongooseStripeProdiverStorageAdapter
           required: true,
         },
       } as never),
+    );
+
+    this.#valueModel = connection.model(
+      'Value',
+      new Schema<Value>({
+        id: {
+          type: String,
+          required: true,
+          unique: true,
+          enum: Object.values(ValueType),
+        },
+        value: {
+          type: String,
+          required: true,
+        },
+      }),
     );
   }
 
@@ -73,5 +93,17 @@ export class MongooseStripeProdiverStorageAdapter
     }
 
     return R.map(serialize, documents) as Tier[];
+  }
+
+  async insertValue(value: Value) {
+    await this.#valueModel.create(value);
+  }
+
+  async findValue(id: ValueType) {
+    return this.#valueModel.findOne({ id }).lean();
+  }
+
+  async updateValue(id: ValueType, value: string) {
+    await this.#valueModel.findOneAndUpdate({ id }, { value });
   }
 }
