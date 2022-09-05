@@ -4,9 +4,16 @@ import Stripe from 'stripe';
 import { ConfigProvider } from './providers/config.provider';
 import { StripeProvider } from './providers/stripe.provider';
 import { TYPES } from './types';
+import { IStripeProviderStorageAdapter } from './interfaces/stripe.provider';
+import { IAuthorizationAdapter } from './interfaces/authorization.adapter';
 
 export class BilligServer {
-  constructor(params: { stripeSecretKey: string; configFilePath: string }) {
+  constructor(params: {
+    stripeSecretKey: string;
+    configFilePath: string;
+    stripeProviderStorageAdapter: IStripeProviderStorageAdapter;
+    authorizationAdapter: IAuthorizationAdapter;
+  }) {
     const container = new Container();
 
     container.bind(TYPES.Stripe).toConstantValue(
