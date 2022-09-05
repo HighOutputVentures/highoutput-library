@@ -11,12 +11,13 @@ import { IAuthorizationAdapter } from './interfaces/authorization.adapter';
 import { ExpressApiProvider } from './providers/express-api.provider';
 import { IApiProvider, Response } from './interfaces/api.provider';
 
-export class BilligServer {
+export class BillingServer {
   #container = new Container();
 
   constructor(params: {
     stripeSecretKey: string;
     configFilePath: string;
+    endpointSigningSecret: string;
     stripeProviderStorageAdapter: IStripeProviderStorageAdapter;
     authorizationAdapter: IAuthorizationAdapter;
   }) {
@@ -40,6 +41,9 @@ export class BilligServer {
   public expressMiddleware() {
     this.#container.bind(TYPES.ApiProvider).to(ExpressApiProvider);
     const expressApi = this.#container.get<IApiProvider>(TYPES.ApiProvider);
+    const authorizationAdapter = this.#container.get<IAuthorizationAdapter>(
+      TYPES.AuthorizationAdapter,
+    );
 
     return async (
       req: express.Request,
@@ -58,8 +62,23 @@ export class BilligServer {
 
       const [endpoint] = hasMatch;
 
-      if (R.test(/webhook/, endpoint)) {
-        // authorize user
+      if (!R.test(/webhook/, endpoint)) {
+        const user = await authorizationAdapter.authorize({
+          header: req.headers as Record<string, string>,
+        });
+
+        if (R.isNil(user)) {
+          res
+            .set('Content-Type', 'application/json')
+            .status(401)
+            .send({
+              error: {
+                code: 'INVALID_ACCESS',
+                message: 'User is not found.',
+              },
+            });
+          return;
+        }
       }
 
       let data: Response;
