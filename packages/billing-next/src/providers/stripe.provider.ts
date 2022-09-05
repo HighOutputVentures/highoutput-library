@@ -36,7 +36,7 @@ export class StripeProvider implements IStripeProvider {
     if (tier) {
       await this.stripe.products.update(tier.stripeProduct, {
         name: config.name,
-        metadata: config.metadata,
+        metadata: config.metadata as Stripe.MetadataParam,
       });
 
       const price = await this.stripe.prices.create({
@@ -63,7 +63,7 @@ export class StripeProvider implements IStripeProvider {
       },
       product_data: {
         name: config.name,
-        metadata: config.metadata,
+        metadata: config.metadata as Stripe.MetadataParam,
       },
     });
 

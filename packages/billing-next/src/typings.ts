@@ -4,7 +4,7 @@ export type TierConfig = {
   description?: string;
   pricePerUnit?: number; // required unless `free` is set
   free?: boolean;
-  metadata?: Record<string, string | number | null>;
+  metadata?: Record<string, unknown>;
 };
 
 export type CustomerPortalConfig = {
