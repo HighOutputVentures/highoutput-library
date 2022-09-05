@@ -36,10 +36,10 @@ export class BillingServer {
     this.#container
       .bind(TYPES.AuthorizationAdapter)
       .toConstantValue(params.authorizationAdapter);
+    this.#container.bind(TYPES.ApiProvider).to(ExpressApiProvider);
   }
 
   public expressMiddleware() {
-    this.#container.bind(TYPES.ApiProvider).to(ExpressApiProvider);
     const expressApi = this.#container.get<IApiProvider>(TYPES.ApiProvider);
     const authorizationAdapter = this.#container.get<IAuthorizationAdapter>(
       TYPES.AuthorizationAdapter,
