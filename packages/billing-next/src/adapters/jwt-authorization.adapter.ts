@@ -1,4 +1,6 @@
 /* eslint-disable class-methods-use-this */
+import jwt from 'jsonwebtoken';
+import R from 'ramda';
 import {
   IAuthorizationAdapter,
   User,
@@ -11,12 +13,18 @@ export class JwtAuthorizationAdapter implements IAuthorizationAdapter {
     this.#secret = params.secret;
   }
 
-  async authorize(_params: {
+  async authorize(params: {
     header: Record<string, string>;
   }): Promise<User | null> {
-    // extract JWT from the Authorization header
-    // validate JWT using the provided secret
-    // sub is the user id
-    return null;
+    const { authorization } = params.header;
+
+    if (R.isNil(authorization)) {
+      return null;
+    }
+
+    const [, token] = authorization.split(' ');
+    const payload = jwt.verify(token, this.#secret);
+
+    return { id: payload.sub as string };
   }
 }
