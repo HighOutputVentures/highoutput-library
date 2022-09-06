@@ -7,7 +7,10 @@ import { ConfigProvider } from './providers/config.provider';
 import { StripeProvider } from './providers/stripe.provider';
 import { TYPES } from './types';
 import { IStripeProviderStorageAdapter } from './interfaces/stripe.provider';
-import { IAuthorizationAdapter } from './interfaces/authorization.adapter';
+import {
+  IAuthorizationAdapter,
+  User,
+} from './interfaces/authorization.adapter';
 import { ExpressApiProvider } from './providers/express-api.provider';
 import { IApiProvider, Response } from './interfaces/api.provider';
 
@@ -61,24 +64,24 @@ export class BillingServer {
       }
 
       const [endpoint] = hasMatch;
-
-      if (!R.test(/webhook/, endpoint)) {
-        const user = await authorizationAdapter.authorize({
+      const isWebhookRequest = R.test(/webhook/, endpoint);
+      const user =
+        !isWebhookRequest &&
+        (await authorizationAdapter.authorize({
           header: req.headers as Record<string, string>,
-        });
+        }));
 
-        if (R.isNil(user)) {
-          res
-            .set('Content-Type', 'application/json')
-            .status(401)
-            .send({
-              error: {
-                code: 'INVALID_ACCESS',
-                message: 'User is not found.',
-              },
-            });
-          return;
-        }
+      if (!isWebhookRequest && !user) {
+        res
+          .set('Content-Type', 'application/json')
+          .status(401)
+          .send({
+            error: {
+              code: 'INVALID_ACCESS',
+              message: 'User is not found.',
+            },
+          });
+        return;
       }
 
       let data: Response;
@@ -87,13 +90,16 @@ export class BillingServer {
         case R.test(/GET/, method) && R.test(/tiers/, endpoint):
           data = await expressApi.getTiers();
           break;
+        case R.test(/GET/, method) && R.test(/secret/, endpoint):
+          data = await expressApi.getSecret({ user: (user as User).id });
+          break;
         default:
           data = null as never;
           break;
       }
 
       if (R.isNil(data)) {
-        res.sendStatus(400);
+        res.sendStatus(404);
         return;
       }
 
