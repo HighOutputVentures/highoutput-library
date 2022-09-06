@@ -2,6 +2,7 @@
 import { Connection, Document, Model, Schema } from 'mongoose';
 import R from 'ramda';
 import {
+  Customer,
   IStripeProviderStorageAdapter,
   Tier,
   Value,
@@ -23,6 +24,8 @@ export class MongooseStripeProdiverStorageAdapter
   #tierModel: Model<TierDocument>;
 
   #valueModel: Model<Value>;
+
+  #customerModel: Model<Customer>;
 
   constructor(connection: Connection) {
     this.#tierModel = connection.model<TierDocument>(
@@ -54,6 +57,22 @@ export class MongooseStripeProdiverStorageAdapter
         value: {
           type: String,
           required: true,
+        },
+      }),
+    );
+
+    this.#customerModel = connection.model(
+      'Customer',
+      new Schema<Customer>({
+        id: {
+          type: String,
+          required: true,
+          unique: true,
+        },
+        stripeCustomer: {
+          type: String,
+          required: true,
+          unique: true,
         },
       }),
     );
@@ -105,5 +124,13 @@ export class MongooseStripeProdiverStorageAdapter
 
   async updateValue(id: ValueType, value: string) {
     await this.#valueModel.findOneAndUpdate({ id }, { value });
+  }
+
+  async findCustomer(id: string) {
+    return this.#customerModel.findOne({ id }).lean();
+  }
+
+  async insertCustomer(customer: Customer) {
+    await this.#customerModel.create(customer);
   }
 }
