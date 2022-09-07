@@ -15,6 +15,13 @@ export type Customer = {
   stripeCustomer: string;
 };
 
+export type Subscription = {
+  id: string;
+  stripeSubscription: string;
+  tier: string;
+  quantity: number;
+};
+
 export enum ValueType {
   'BILLING_PORTAL_CONFIGURATION' = 'stripeBillingPortalConfiguration',
   'WEBHOOK_SIGNING_SECRET' = 'stripeWebhookSigningSecret',
@@ -31,10 +38,8 @@ export interface IStripeProviderStorageAdapter {
   updateValue(id: ValueType, value: string): Promise<void>;
   findCustomer(id: string): Promise<Customer | null>;
   insertCustomer(customer: Customer): Promise<void>;
-  // updateCustomer(
-  //   id: string,
-  //   params: Partial<Omit<Customer, 'id'>>,
-  // ): Promise<void>;
+  insertSubscription(subscription: Subscription): Promise<void>;
+  findSubscription(id: string): Promise<Subscription | null>;
 }
 
 export interface IStripeProvider {

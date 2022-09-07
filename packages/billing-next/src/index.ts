@@ -93,6 +93,9 @@ export class BillingServer {
         case R.test(/GET/, method) && R.test(/secret/, endpoint):
           data = await expressApi.getSecret({ user: (user as User).id });
           break;
+        case R.test(/GET/, method) && R.test(/subscription/, endpoint):
+          data = await expressApi.getSubscription({ user: (user as User).id });
+          break;
         default:
           data = null as never;
           break;

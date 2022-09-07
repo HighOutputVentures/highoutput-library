@@ -1,4 +1,3 @@
-import nock from 'nock';
 import { MongooseStripeProdiverStorageAdapter } from '../src/adapters/mongoose-stripe-provider-storage.adapter';
 import { JwtAuthorizationAdapter } from '../src/adapters/jwt-authorization.adapter';
 import { setup, teardown } from './fixture';
@@ -6,9 +5,9 @@ import { generateFakeId, IdType } from './helpers/generate-fake-id';
 import { generateToken } from './helpers/generate-token';
 import { BillingServer } from '../src';
 
-describe('GET /secret', () => {
+describe('GET /subscription', () => {
   test.concurrent(
-    'request is authorized and customer exists -> should return client secret',
+    'request is authorized and user is subscribed -> should return subscription data',
     async () => {
       const ctx = await setup();
 
@@ -16,13 +15,15 @@ describe('GET /secret', () => {
         ctx.mongoose,
       );
 
-      const customer = {
+      const subscription = {
         id: generateFakeId(IdType.USER),
-        stripeCustomer: generateFakeId(IdType.CUSTOMER),
+        stripeSubscription: generateFakeId(IdType.SUBSCRIPTION),
+        tier: 'Starter',
+        quantity: 1,
       };
-      const token = generateToken({ sub: customer.id }, 'secret');
+      const token = generateToken({ sub: subscription.id }, 'secret');
 
-      await storageAdapter.insertCustomer(customer);
+      await storageAdapter.insertSubscription(subscription);
 
       const billingServer = new BillingServer({
         stripeSecretKey:
@@ -35,21 +36,13 @@ describe('GET /secret', () => {
 
       ctx.app.use(billingServer.expressMiddleware());
 
-      const clientSecret = generateFakeId(IdType.SETUP_INTENT_SECRET);
-
-      nock(/stripe.com/)
-        .get(/\/v1\/setup_intents/)
-        .reply(200, { data: [] })
-        .post(/\/v1\/setup_intents/)
-        .reply(200, { client_secret: clientSecret });
-
       await ctx.request
-        .get('/secret')
+        .get('/subscription')
         .set('Authorization', `Bearer ${token}`)
         .expect('Content-Type', /json/)
         .expect(200)
         .expect((res) => {
-          expect(res.body.secret).toEqual(clientSecret);
+          expect(res.body.data).toMatchObject(subscription);
         });
 
       await teardown(ctx);
@@ -58,15 +51,11 @@ describe('GET /secret', () => {
   );
 
   test.concurrent(
-    'request is authorized and customer does not exist -> should return client secret',
+    'request is authorized and user is not subscribed -> should return null',
     async () => {
       const ctx = await setup();
-
-      const customer = {
-        id: generateFakeId(IdType.USER),
-        stripeCustomer: generateFakeId(IdType.CUSTOMER),
-      };
-      const token = generateToken({ sub: customer.id }, 'secret');
+      const user = generateFakeId(IdType.USER);
+      const token = generateToken({ sub: user }, 'secret');
 
       const billingServer = new BillingServer({
         stripeSecretKey:
@@ -81,21 +70,13 @@ describe('GET /secret', () => {
 
       ctx.app.use(billingServer.expressMiddleware());
 
-      const clientSecret = generateFakeId(IdType.SETUP_INTENT_SECRET);
-
-      nock(/stripe.com/)
-        .post(/\/v1\/customers/)
-        .reply(200, { id: customer.stripeCustomer })
-        .post(/\/v1\/setup_intents/)
-        .reply(200, { client_secret: clientSecret });
-
       await ctx.request
-        .get('/secret')
+        .get('/subscription')
         .set('Authorization', `Bearer ${token}`)
         .expect('Content-Type', /json/)
         .expect(200)
         .expect((res) => {
-          expect(res.body.secret).toEqual(clientSecret);
+          expect(res.body.data).toBeNull();
         });
 
       await teardown(ctx);

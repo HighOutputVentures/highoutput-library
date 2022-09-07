@@ -4,6 +4,7 @@ import R from 'ramda';
 import {
   Customer,
   IStripeProviderStorageAdapter,
+  Subscription,
   Tier,
   Value,
   ValueType,
@@ -26,6 +27,8 @@ export class MongooseStripeProdiverStorageAdapter
   #valueModel: Model<Value>;
 
   #customerModel: Model<Customer>;
+
+  #subscriptionModel: Model<Subscription>;
 
   constructor(connection: Connection) {
     this.#tierModel = connection.model<TierDocument>(
@@ -73,6 +76,30 @@ export class MongooseStripeProdiverStorageAdapter
           type: String,
           required: true,
           unique: true,
+        },
+      }),
+    );
+
+    this.#subscriptionModel = connection.model(
+      'Subscription',
+      new Schema<Subscription>({
+        id: {
+          type: String,
+          required: true,
+          unique: true,
+        },
+        stripeSubscription: {
+          type: String,
+          required: true,
+          unique: true,
+        },
+        tier: {
+          type: String,
+          required: true,
+        },
+        quantity: {
+          type: Number,
+          default: 1,
         },
       }),
     );
@@ -132,5 +159,13 @@ export class MongooseStripeProdiverStorageAdapter
 
   async insertCustomer(customer: Customer) {
     await this.#customerModel.create(customer);
+  }
+
+  async insertSubscription(subscription: Subscription) {
+    await this.#subscriptionModel.create(subscription);
+  }
+
+  async findSubscription(id: string) {
+    return this.#subscriptionModel.findOne({ id }).lean();
   }
 }

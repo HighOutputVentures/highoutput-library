@@ -5,6 +5,7 @@ export enum IdType {
   'USER' = 0,
   'CUSTOMER',
   'SETUP_INTENT_SECRET',
+  'SUBSCRIPTION',
 }
 
 export function generateFakeId(idType: IdType) {
@@ -14,6 +15,7 @@ export function generateFakeId(idType: IdType) {
     2: `seti_${faker.random.alphaNumeric(
       12,
     )}_secret_${faker.random.alphaNumeric(12)}`,
+    3: `sub_${faker.random.alphaNumeric(24)}`,
   };
 
   return idMapper[idType];
