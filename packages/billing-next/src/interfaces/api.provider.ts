@@ -14,5 +14,6 @@ export interface IApiProvider {
   getTiers(): Promise<Response<TierConfig[]>>;
   getSecret(params: Request): Promise<Response<string>>;
   getSubscription(params: Request): Promise<Response>;
+  getPortal(params: Request): Promise<Response>;
   // putSubscription(params: Request<{ tier: string }>): Promise<Response>;
 }

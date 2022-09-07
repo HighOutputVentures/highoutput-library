@@ -4,7 +4,10 @@ import Stripe from 'stripe';
 import R from 'ramda';
 import { IApiProvider, Request, Response } from '../interfaces/api.provider';
 import { TYPES } from '../types';
-import { IStripeProviderStorageAdapter } from '../interfaces/stripe.provider';
+import {
+  IStripeProviderStorageAdapter,
+  ValueType,
+} from '../interfaces/stripe.provider';
 import { IConfigProvider } from '../interfaces/config.provider';
 import { TierConfig } from '../typings';
 
@@ -81,6 +84,45 @@ export class ExpressApiProvider implements IApiProvider {
       status: 200,
       body: {
         data: subscription,
+      },
+    } as Response;
+  }
+
+  async getPortal(params: Request<never>) {
+    const { user } = params;
+    const portalConfig = await this.storageAdapter.findValue(
+      ValueType.BILLING_PORTAL_CONFIGURATION,
+    );
+    const customer = await this.storageAdapter.findCustomer(user);
+    let customerId: string;
+
+    if (!customer) {
+      const stripeCustomer = await this.stripe.customers.create({
+        metadata: {
+          id: user,
+        },
+      });
+
+      await this.storageAdapter.insertCustomer({
+        id: user,
+        stripeCustomer: stripeCustomer.id,
+      });
+
+      customerId = stripeCustomer.id;
+    }
+
+    customerId = customer?.stripeCustomer as string;
+
+    const session = await this.stripe.billingPortal.sessions.create({
+      customer: customerId,
+      return_url: this.configProvider.config.customerPortal.returnUrl,
+      configuration: portalConfig?.value as string,
+    });
+
+    return {
+      status: 301,
+      body: {
+        redirect_url: session.url,
       },
     } as Response;
   }
