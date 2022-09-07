@@ -86,19 +86,29 @@ export class BillingServer {
 
       let data: Response;
 
-      switch (true) {
-        case R.test(/GET/, method) && R.test(/tiers/, endpoint):
-          data = await expressApi.getTiers();
-          break;
-        case R.test(/GET/, method) && R.test(/secret/, endpoint):
-          data = await expressApi.getSecret({ user: (user as User).id });
-          break;
-        case R.test(/GET/, method) && R.test(/subscription/, endpoint):
-          data = await expressApi.getSubscription({ user: (user as User).id });
-          break;
-        default:
-          data = null as never;
-          break;
+      try {
+        switch (true) {
+          case R.test(/GET/, method) && R.test(/tiers/, endpoint):
+            data = await expressApi.getTiers();
+            break;
+          case R.test(/GET/, method) && R.test(/secret/, endpoint):
+            data = await expressApi.getSecret({ user: (user as User).id });
+            break;
+          case R.test(/GET/, method) && R.test(/subscription/, endpoint):
+            data = await expressApi.getSubscription({
+              user: (user as User).id,
+            });
+            break;
+          case R.test(/GET/, method) && R.test(/portal/, endpoint):
+            data = await expressApi.getPortal({ user: (user as User).id });
+            break;
+          default:
+            data = null as never;
+            break;
+        }
+      } catch (error) {
+        res.status(500).send((error as Error).message);
+        return;
       }
 
       if (R.isNil(data)) {
@@ -107,7 +117,7 @@ export class BillingServer {
       }
 
       if (data.status === 301) {
-        res.redirect(data.body?.url as string);
+        res.redirect(data.status, data.body?.redirect_url as string);
         return;
       }
 
