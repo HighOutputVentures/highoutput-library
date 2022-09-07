@@ -49,7 +49,7 @@ describe('GET /secret', () => {
         .expect('Content-Type', /json/)
         .expect(200)
         .expect((res) => {
-          expect(res.body).toMatchObject({ secret: clientSecret });
+          expect(res.body.secret).toEqual(clientSecret);
         });
 
       await teardown(ctx);
@@ -95,7 +95,7 @@ describe('GET /secret', () => {
         .expect('Content-Type', /json/)
         .expect(200)
         .expect((res) => {
-          expect(res.body).toMatchObject({ secret: clientSecret });
+          expect(res.body.secret).toEqual(clientSecret);
         });
 
       await teardown(ctx);
