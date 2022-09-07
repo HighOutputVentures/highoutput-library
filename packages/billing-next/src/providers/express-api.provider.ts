@@ -72,4 +72,16 @@ export class ExpressApiProvider implements IApiProvider {
       },
     } as Response<string>;
   }
+
+  async getSubscription(params: Request) {
+    const { user } = params;
+    const subscription = await this.storageAdapter.findSubscription(user);
+
+    return {
+      status: 200,
+      body: {
+        data: subscription,
+      },
+    } as Response;
+  }
 }

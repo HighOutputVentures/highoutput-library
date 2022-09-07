@@ -13,6 +13,6 @@ export type Response<T = unknown> = {
 export interface IApiProvider {
   getTiers(): Promise<Response<TierConfig[]>>;
   getSecret(params: Request): Promise<Response<string>>;
-  // getSubscription(params: Request): Promise<Response>;
+  getSubscription(params: Request): Promise<Response>;
   // putSubscription(params: Request<{ tier: string }>): Promise<Response>;
 }
