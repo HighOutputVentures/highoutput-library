@@ -40,6 +40,10 @@ export interface IStripeProviderStorageAdapter {
   insertCustomer(customer: Customer): Promise<void>;
   insertSubscription(subscription: Subscription): Promise<void>;
   findSubscription(id: string): Promise<Subscription | null>;
+  updateSubscription(
+    id: string,
+    params: Partial<Omit<Subscription, 'id'>>,
+  ): Promise<void>;
 }
 
 export interface IStripeProvider {

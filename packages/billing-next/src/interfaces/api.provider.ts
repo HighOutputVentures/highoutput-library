@@ -1,8 +1,8 @@
 import { TierConfig } from '../typings';
 
-export type Request<T = never> = {
+export type Request<T = unknown> = {
   user: string;
-  body?: T;
+  body?: Record<string, T>;
 };
 
 export type Response<T = unknown> = {
@@ -15,5 +15,5 @@ export interface IApiProvider {
   getSecret(params: Request): Promise<Response<string>>;
   getSubscription(params: Request): Promise<Response>;
   getPortal(params: Request): Promise<Response>;
-  // putSubscription(params: Request<{ tier: string }>): Promise<Response>;
+  putSubscription(params: Request<string>): Promise<Response>;
 }
