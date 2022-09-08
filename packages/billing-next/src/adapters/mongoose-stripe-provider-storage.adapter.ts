@@ -168,4 +168,11 @@ export class MongooseStripeProdiverStorageAdapter
   async findSubscription(id: string) {
     return this.#subscriptionModel.findOne({ id }).lean();
   }
+
+  async updateSubscription(
+    id: string,
+    params: Partial<Omit<Subscription, 'id'>>,
+  ) {
+    await this.#subscriptionModel.updateOne({ id }, { $set: params });
+  }
 }

@@ -126,4 +126,57 @@ export class ExpressApiProvider implements IApiProvider {
       },
     } as Response;
   }
+
+  async putSubscription(params: Request<string>) {
+    const { user } = params;
+    const tier = params.body?.tier as string;
+    const quantity = parseInt(params.body?.quantity as string, 10) || 1;
+    const customer = await this.storageAdapter.findCustomer(user);
+
+    if (!customer) {
+      throw new Error('Cannot find customer.');
+    }
+
+    const product = await this.storageAdapter.findTier(tier);
+
+    if (!product) {
+      throw new Error('Cannot find product.');
+    }
+
+    const [price] = product.stripePrices;
+
+    const subscription = await this.stripe.subscriptions.create({
+      customer: customer?.stripeCustomer as string,
+      items: [
+        {
+          price,
+          quantity,
+        },
+      ],
+      expand: ['items.data.price.product', 'latest_invoice.payment_intent'],
+    });
+
+    const invoice = subscription.latest_invoice as Stripe.Invoice;
+    const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
+
+    if (paymentIntent.status === 'succeeded') {
+      await this.storageAdapter.insertSubscription({
+        id: user,
+        stripeSubscription: subscription.id,
+        tier,
+        quantity,
+      });
+    }
+
+    return {
+      status: 200,
+      body: {
+        data: {
+          tier,
+          quantity,
+          payment_status: paymentIntent.status,
+        },
+      },
+    } as Response;
+  }
 }

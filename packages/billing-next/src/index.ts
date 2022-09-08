@@ -3,6 +3,7 @@ import { Container } from 'inversify';
 import Stripe from 'stripe';
 import R from 'ramda';
 import * as express from 'express';
+import parse from 'co-body';
 import { ConfigProvider } from './providers/config.provider';
 import { StripeProvider } from './providers/stripe.provider';
 import { TYPES } from './types';
@@ -102,12 +103,25 @@ export class BillingServer {
           case R.test(/GET/, method) && R.test(/portal/, endpoint):
             data = await expressApi.getPortal({ user: (user as User).id });
             break;
+          case R.test(/PUT/, method) && R.test(/subscription/, endpoint): {
+            const body = await parse(req);
+
+            if (!body.tier) {
+              throw new Error('Lacking property in request payload: price');
+            }
+
+            data = await expressApi.putSubscription({
+              user: (user as User).id,
+              body,
+            });
+            break;
+          }
           default:
             data = null as never;
             break;
         }
       } catch (error) {
-        res.status(500).send((error as Error).message);
+        res.status(400).send({ error: (error as Error).message });
         return;
       }
 
