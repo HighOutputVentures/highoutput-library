@@ -1,7 +1,6 @@
 /* eslint-disable no-useless-constructor */
 import { injectable, inject } from 'inversify';
 import Stripe from 'stripe';
-import R from 'ramda';
 import { IApiProvider, Request, Response } from '../interfaces/api.provider';
 import { TYPES } from '../types';
 import {
@@ -12,7 +11,7 @@ import { IConfigProvider } from '../interfaces/config.provider';
 import { TierConfig } from '../typings';
 
 @injectable()
-export class ExpressApiProvider implements IApiProvider {
+export class ApiProvider implements IApiProvider {
   constructor(
     @inject(TYPES.Stripe) private stripe: Stripe,
     @inject(TYPES.ConfigProvider) private configProvider: IConfigProvider,
@@ -29,51 +28,45 @@ export class ExpressApiProvider implements IApiProvider {
     } as Response<TierConfig[]>;
   }
 
-  async getSecret(params: Request) {
+  async getSecret(params: Request): Promise<Response<string>> {
     const { user } = params;
 
-    const customer = await this.storageAdapter.findCustomer(user);
-    let customerId: string;
+    let customer = await this.storageAdapter.findCustomer(user);
 
-    if (customer) {
-      const intentList = await this.stripe.setupIntents.list({
-        customer: customer.stripeCustomer,
-      });
-      customerId = customer.stripeCustomer;
-
-      if (!R.isEmpty(intentList.data)) {
-        const [intent] = intentList.data;
-        return {
-          status: 200,
-          body: {
-            secret: intent.client_secret,
-          },
-        } as Response<string>;
-      }
-    } else {
+    if (!customer) {
       const stripeCustomer = await this.stripe.customers.create({
         metadata: {
           id: user,
         },
       });
-      await this.storageAdapter.insertCustomer({
+
+      customer = {
         id: user,
         stripeCustomer: stripeCustomer.id,
-      });
-      customerId = stripeCustomer.id;
+      };
+
+      await this.storageAdapter.insertCustomer(customer);
     }
 
-    const intent = await this.stripe.setupIntents.create({
-      payment_method_types: ['card'],
-      customer: customerId,
+    let {
+      data: [setupIntent],
+    } = await this.stripe.setupIntents.list({
+      customer: customer.stripeCustomer,
     });
+
+    if (!setupIntent) {
+      setupIntent = await this.stripe.setupIntents.create({
+        payment_method_types: ['card'],
+        customer: customer.stripeCustomer,
+      });
+    }
 
     return {
       status: 200,
       body: {
-        secret: intent.client_secret,
+        secret: setupIntent.client_secret as string,
       },
-    } as Response<string>;
+    };
   }
 
   async getSubscription(params: Request) {

@@ -6,7 +6,7 @@ import { generateFakeId, IdType } from './helpers/generate-fake-id';
 import { generateToken } from './helpers/generate-token';
 import { BillingServer } from '../src';
 
-describe('GET /secret', () => {
+describe.skip('GET /secret', () => {
   test.concurrent(
     'request is authorized and customer exists -> should return client secret',
     async () => {

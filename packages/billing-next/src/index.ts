@@ -12,7 +12,7 @@ import {
   IAuthorizationAdapter,
   User,
 } from './interfaces/authorization.adapter';
-import { ExpressApiProvider } from './providers/express-api.provider';
+import { ApiProvider } from './providers/api.provider';
 import { IApiProvider, Response } from './interfaces/api.provider';
 
 export class BillingServer {
@@ -40,7 +40,7 @@ export class BillingServer {
     this.#container
       .bind(TYPES.AuthorizationAdapter)
       .toConstantValue(params.authorizationAdapter);
-    this.#container.bind(TYPES.ApiProvider).to(ExpressApiProvider);
+    this.#container.bind(TYPES.ApiProvider).to(ApiProvider);
   }
 
   public expressMiddleware() {
