@@ -1,6 +1,6 @@
 import program from '../../src/program';
 import { generateFakeDeployment } from '../helpers';
-import { DeploymentStatus } from '../../types';
+import { DeploymentStatus } from '../../src/types';
 import nock from 'nock';
 import { API_BASE_URL } from '../../src/library/contants';
 

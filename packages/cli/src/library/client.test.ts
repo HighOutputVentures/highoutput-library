@@ -1,6 +1,6 @@
 import nock from 'nock';
 import R from 'ramda';
-import { DeploymentStatus, ResourceType } from '../../types';
+import { DeploymentStatus, ResourceType } from '../../src/types';
 import { createOrUpdate } from './client';
 import { generateFakeDeployment } from '../../__tests__/helpers';
 import { API_BASE_URL } from './contants';

@@ -1,6 +1,6 @@
 import faker from '@faker-js/faker';
 import R from 'ramda';
-import { Deployment, DeploymentStatus, ObjectID } from '@highoutputventures/hovcli/types';
+import { Deployment, DeploymentStatus, ObjectID } from '../../src/types';
 import sample from 'lodash.sample';
 
 export default function (): Deployment {
