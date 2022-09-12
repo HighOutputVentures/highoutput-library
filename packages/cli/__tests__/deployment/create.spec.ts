@@ -4,7 +4,7 @@ import R from 'ramda';
 import generateDeployment from '../helpers.next/generate-deployment';
 import { API_BASE_URL } from '../../src/library/contants';
 import program from '../../src/program';
-import { DeploymentStatus } from '../../types';
+import { DeploymentStatus } from '../../src/types';
 import { DateTime } from 'luxon';
 import Chance from 'chance';
 

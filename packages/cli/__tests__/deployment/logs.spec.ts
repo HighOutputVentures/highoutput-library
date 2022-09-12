@@ -1,6 +1,6 @@
 
 import program from '../../src/program';
-import { ObjectID } from '../../types';
+import { ObjectID } from '../../src/types';
 import nock from 'nock';
 import { API_BASE_URL } from '../../src/library/contants';
 import faker from '@faker-js/faker';
