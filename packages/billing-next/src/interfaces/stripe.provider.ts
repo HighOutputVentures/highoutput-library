@@ -42,7 +42,7 @@ export interface IStripeProviderStorageAdapter {
   findCustomer(id: string): Promise<Customer | null>;
   insertCustomer(customer: Customer): Promise<void>;
   insertSubscription(subscription: Subscription): Promise<void>;
-  findSubscriptionByUser(user: string): Promise<Subscription[] | null>;
+  findSubscriptionByUser(user: string): Promise<Subscription | null>;
   updateSubscription(
     id: string,
     params: Partial<Omit<Subscription, 'id'>>,

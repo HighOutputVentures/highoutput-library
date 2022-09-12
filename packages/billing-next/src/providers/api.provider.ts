@@ -29,7 +29,9 @@ export class ApiProvider implements IApiProvider {
     return {
       status: 200,
       body: {
-        data: this.configProvider.config.tiers,
+        data: {
+          tiers: this.configProvider.config.tiers,
+        },
       },
     } as Response<TierConfig[]>;
   }
@@ -70,9 +72,11 @@ export class ApiProvider implements IApiProvider {
     return {
       status: 200,
       body: {
-        secret: setupIntent.client_secret as string,
+        data: {
+          secret: setupIntent.client_secret,
+        },
       },
-    };
+    } as Response<string>;
   }
 
   async getSubscription(params: Request) {
@@ -82,7 +86,7 @@ export class ApiProvider implements IApiProvider {
     return {
       status: 200,
       body: {
-        data: subscription,
+        data: R.isNil(subscription) ? null : { subscription },
       },
     } as Response;
   }
@@ -120,9 +124,7 @@ export class ApiProvider implements IApiProvider {
 
     return {
       status: 301,
-      body: {
-        redirect_url: session.url,
-      },
+      redirectionUrl: session.url,
     } as Response;
   }
 
@@ -166,9 +168,13 @@ export class ApiProvider implements IApiProvider {
       status: 200,
       body: {
         data: {
-          tier,
-          quantity,
-          payment_status: subscription.status,
+          subscription: {
+            id: subscription.id,
+            user,
+            tier,
+            quantity,
+            status: subscription.status,
+          },
         },
       },
     } as Response;
@@ -254,7 +260,9 @@ export class ApiProvider implements IApiProvider {
     return {
       status: 200,
       body: {
-        received: true,
+        data: {
+          received: true,
+        },
       },
     } as Response;
   }

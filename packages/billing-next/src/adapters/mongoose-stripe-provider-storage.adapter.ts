@@ -190,7 +190,7 @@ export class MongooseStripeProdiverStorageAdapter
   }
 
   async findSubscriptionByUser(user: string) {
-    return this.#subscriptionModel.find({ user }).lean();
+    return this.#subscriptionModel.findOne({ user }).lean();
   }
 
   async updateSubscription(

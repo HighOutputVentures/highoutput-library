@@ -140,13 +140,13 @@ export class BillingServer {
         return;
       }
 
-      if (R.isNil(data)) {
+      if (data.status === 404 || R.isNil(data)) {
         res.sendStatus(404);
         return;
       }
 
       if (data.status === 301) {
-        res.redirect(data.status, data.body?.redirect_url as string);
+        res.redirect(data.status, data.redirectionUrl as string);
         return;
       }
 

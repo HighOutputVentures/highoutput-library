@@ -6,10 +6,26 @@ export type Request<T = unknown> = {
   body?: Record<string, T>;
 };
 
-export type Response<T = unknown> = {
-  status: 200 | 301 | 404;
-  body: Record<string, T>;
-};
+export type Response<T = unknown> =
+  | {
+      status: 200;
+      body: {
+        data: Record<string, T>;
+      };
+    }
+  | {
+      status: 301;
+      redirectionUrl: string;
+    }
+  | {
+      status: 404;
+    }
+  | {
+      status: 400;
+      body: {
+        error: string;
+      };
+    };
 
 export enum WebhookEvents {
   'SUBSCRIPTION_CREATED' = 'customer.subscription.created',

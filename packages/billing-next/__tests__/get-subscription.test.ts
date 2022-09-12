@@ -23,7 +23,7 @@ describe('GET /subscription', () => {
         quantity: 1,
         status: 'active',
       };
-      const token = generateToken({ sub: subscription.id }, 'secret');
+      const token = generateToken({ sub: subscription.user }, 'secret');
 
       await storageAdapter.insertSubscription(subscription);
 
@@ -44,7 +44,8 @@ describe('GET /subscription', () => {
         .expect('Content-Type', /json/)
         .expect(200)
         .expect((res) => {
-          expect(res.body.data).toMatchObject(subscription);
+          expect(res.body.data).toBeTruthy();
+          expect(res.body.data.subscription).toMatchObject(subscription);
         });
 
       await teardown(ctx);

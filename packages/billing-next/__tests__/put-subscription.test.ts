@@ -42,19 +42,19 @@ describe('PUT /subscription', () => {
 
       ctx.app.use(billingServer.expressMiddleware());
 
-      const expected = {
-        tier: tier.id,
-        quantity: 1,
-        payment_status: 'succeeded',
-      };
+      // const expected = {
+      // };
 
       const subscription = {
         id: generateFakeId(IdType.SUBSCRIPTION),
-        latest_invoice: {
-          payment_intent: {
-            status: expected.payment_status,
-          },
-        },
+        user: customer.id,
+        tier: tier.id,
+        quantity: 1,
+        status: 'active',
+        // latest_invoice: {
+        //   payment_intent: {
+        //   },
+        // },
       };
 
       nock(/stripe.com/)
@@ -65,12 +65,13 @@ describe('PUT /subscription', () => {
 
       await ctx.request
         .put('/subscription')
-        .send(R.omit(['payment_status'], expected))
+        .send(R.omit(['status, id, user'], subscription))
         .set('Authorization', `Bearer ${token}`)
         .expect('Content-Type', /json/)
         .expect(200)
         .expect((res) => {
-          expect(res.body.data).toMatchObject(expected);
+          expect(res.body.data).toBeTruthy();
+          expect(res.body.data.subscription).toMatchObject(subscription);
         });
 
       await teardown(ctx);

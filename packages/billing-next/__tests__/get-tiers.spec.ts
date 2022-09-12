@@ -32,8 +32,8 @@ describe('GET /tiers', () => {
         .expect('Content-Type', /json/)
         .expect(200)
         .expect((res) => {
-          expect(res.body.data).toBeInstanceOf(Array);
-          expect(res.body.data).toStrictEqual(config.tiers);
+          expect(res.body.data.tiers).toBeInstanceOf(Array);
+          expect(res.body.data.tiers).toStrictEqual(config.tiers);
         });
 
       await teardown(ctx);

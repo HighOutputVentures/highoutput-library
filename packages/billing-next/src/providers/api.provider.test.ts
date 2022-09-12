@@ -62,7 +62,9 @@ describe('ApiProvider', () => {
       expect(output).toEqual({
         status: 200,
         body: {
-          secret: clientSecret,
+          data: {
+            secret: clientSecret,
+          },
         },
       });
     });
@@ -113,7 +115,9 @@ describe('ApiProvider', () => {
       expect(output).toEqual({
         status: 200,
         body: {
-          secret: clientSecret,
+          data: {
+            secret: clientSecret,
+          },
         },
       });
     });
@@ -182,7 +186,9 @@ describe('ApiProvider', () => {
       expect(output).toEqual({
         status: 200,
         body: {
-          secret: clientSecret,
+          data: {
+            secret: clientSecret,
+          },
         },
       });
     });
@@ -252,9 +258,13 @@ describe('ApiProvider', () => {
             status: 200,
             body: {
               data: expect.objectContaining({
-                tier: expect.any(String),
-                quantity: expect.any(Number),
-                payment_status: expect.any(String),
+                subscription: expect.objectContaining({
+                  id: expect.any(String),
+                  user: expect.any(String),
+                  tier: expect.any(String),
+                  quantity: expect.any(Number),
+                  status: expect.any(String),
+                }),
               }),
             },
           }),
