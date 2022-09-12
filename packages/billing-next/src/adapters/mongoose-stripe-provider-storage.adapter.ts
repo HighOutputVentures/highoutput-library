@@ -83,26 +83,43 @@ export class MongooseStripeProdiverStorageAdapter
 
     this.#subscriptionModel = connection.model(
       'Subscription',
-      new Schema<Subscription>({
-        id: {
-          type: String,
-          required: true,
-          unique: true,
+      new Schema<Subscription>(
+        {
+          id: {
+            type: String,
+            required: true,
+            unique: true,
+          },
+          user: {
+            type: String,
+            required: true,
+            index: true,
+          },
+          tier: {
+            type: String,
+            required: true,
+          },
+          quantity: {
+            type: Number,
+            default: 1,
+          },
+          status: {
+            type: String,
+            enum: [
+              'active',
+              'canceled',
+              'incomplete',
+              'incomplete_expired',
+              'past_due',
+              'trialing',
+              'unpaid',
+            ],
+          },
         },
-        stripeSubscription: {
-          type: String,
-          required: true,
-          unique: true,
+        {
+          timestamps: true,
         },
-        tier: {
-          type: String,
-          required: true,
-        },
-        quantity: {
-          type: Number,
-          default: 1,
-        },
-      }),
+      ),
     );
   }
 
@@ -172,8 +189,8 @@ export class MongooseStripeProdiverStorageAdapter
     await this.#subscriptionModel.create(subscription);
   }
 
-  async findSubscription(id: string) {
-    return this.#subscriptionModel.findOne({ id }).lean();
+  async findSubscriptionByUser(user: string) {
+    return this.#subscriptionModel.find({ user }).lean();
   }
 
   async updateSubscription(

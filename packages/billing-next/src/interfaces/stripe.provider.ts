@@ -1,3 +1,5 @@
+import Stripe from 'stripe';
+
 /* eslint-disable no-shadow */
 export type Tier = {
   id: string;
@@ -17,9 +19,10 @@ export type Customer = {
 
 export type Subscription = {
   id: string;
-  stripeSubscription: string;
+  user: string;
   tier: string;
   quantity: number;
+  status: Stripe.Subscription.Status;
 };
 
 export enum ValueType {
@@ -39,7 +42,7 @@ export interface IStripeProviderStorageAdapter {
   findCustomer(id: string): Promise<Customer | null>;
   insertCustomer(customer: Customer): Promise<void>;
   insertSubscription(subscription: Subscription): Promise<void>;
-  findSubscription(id: string): Promise<Subscription | null>;
+  findSubscriptionByUser(user: string): Promise<Subscription[] | null>;
   updateSubscription(
     id: string,
     params: Partial<Omit<Subscription, 'id'>>,

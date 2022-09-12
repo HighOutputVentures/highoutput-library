@@ -76,7 +76,7 @@ export class ApiProvider implements IApiProvider {
 
   async getSubscription(params: Request) {
     const { user } = params;
-    const subscription = await this.storageAdapter.findSubscription(user);
+    const subscription = await this.storageAdapter.findSubscriptionByUser(user);
 
     return {
       status: 200,
@@ -151,20 +151,15 @@ export class ApiProvider implements IApiProvider {
           quantity,
         },
       ],
-      expand: ['items.data.price.product', 'latest_invoice.payment_intent'],
     });
 
-    const invoice = subscription.latest_invoice as Stripe.Invoice;
-    const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
-
-    if (paymentIntent.status === 'succeeded') {
-      await this.storageAdapter.insertSubscription({
-        id: user,
-        stripeSubscription: subscription.id,
-        tier,
-        quantity,
-      });
-    }
+    await this.storageAdapter.insertSubscription({
+      id: subscription.id,
+      user,
+      tier,
+      quantity,
+      status: subscription.status,
+    });
 
     return {
       status: 200,
@@ -172,7 +167,7 @@ export class ApiProvider implements IApiProvider {
         data: {
           tier,
           quantity,
-          payment_status: paymentIntent.status,
+          payment_status: subscription.status,
         },
       },
     } as Response;
@@ -198,31 +193,25 @@ export class ApiProvider implements IApiProvider {
         const expandedSubscription = await this.stripe.subscriptions.retrieve(
           subscription.id,
           {
-            expand: [
-              'items.data.price.product',
-              'latest_invoice.payment_intent',
-            ],
+            expand: ['items.data.price.product'],
           },
         );
 
         const [item] = expandedSubscription.items.data;
         const product = item.price.product as Stripe.Product;
-        const invoice = subscription.latest_invoice as Stripe.Invoice;
-        const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
 
-        if (paymentIntent.status === 'succeeded') {
-          const user = await this.storageAdapter.findCustomer(
-            expandedSubscription.customer as string,
-          );
-          const tier = await this.storageAdapter.findTier(product.id);
+        const user = await this.storageAdapter.findCustomer(
+          expandedSubscription.customer as string,
+        );
+        const tier = await this.storageAdapter.findTier(product.id);
 
-          await this.storageAdapter.insertSubscription({
-            id: user?.id as string,
-            stripeSubscription: expandedSubscription.id,
-            tier: tier?.id as string,
-            quantity: item.quantity as number,
-          });
-        }
+        await this.storageAdapter.insertSubscription({
+          id: expandedSubscription.id,
+          user: user?.id as string,
+          tier: tier?.id as string,
+          quantity: item.quantity as number,
+          status: expandedSubscription.status,
+        });
 
         break;
       }
@@ -232,43 +221,27 @@ export class ApiProvider implements IApiProvider {
         const expandedSubscription = await this.stripe.subscriptions.retrieve(
           subscription.id,
           {
-            expand: [
-              'items.data.price.product',
-              'latest_invoice.payment_intent',
-            ],
+            expand: ['items.data.price.product'],
           },
         );
 
         const [item] = expandedSubscription.items.data;
         const product = item.price.product as Stripe.Product;
-        const invoice = subscription.latest_invoice as Stripe.Invoice;
-        const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
+        const tier = await this.storageAdapter.findTier(product.id);
 
-        if (paymentIntent.status === 'succeeded') {
-          const user = await this.storageAdapter.findCustomer(
-            expandedSubscription.customer as string,
-          );
-          const tier = await this.storageAdapter.findTier(product.id);
-
-          await this.storageAdapter.updateSubscription(user?.id as string, {
-            stripeSubscription: expandedSubscription.id,
-            tier: tier?.id,
-            quantity: item.quantity,
-          });
-        }
+        await this.storageAdapter.updateSubscription(expandedSubscription.id, {
+          tier: tier?.id,
+          quantity: item.quantity,
+          status: expandedSubscription.status,
+        });
 
         break;
       }
       case WebhookEvents.SUBSCRIPTION_DELETED: {
         const subscription = event.data.object as Stripe.Subscription;
-        const user = await this.storageAdapter.findCustomer(
-          subscription.customer as string,
-        );
 
-        await this.storageAdapter.updateSubscription(user?.id as string, {
-          stripeSubscription: subscription.id,
-          tier: undefined,
-          quantity: undefined,
+        await this.storageAdapter.updateSubscription(subscription.id, {
+          status: 'canceled',
         });
 
         break;

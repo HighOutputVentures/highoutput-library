@@ -153,10 +153,11 @@ describe('POST /webhook', () => {
       await storageAdapter.insertCustomer(customer);
       await storageAdapter.insertTier(tier);
       await storageAdapter.insertSubscription({
-        id: customer.id,
-        stripeSubscription: subscription.id,
+        id: subscription.id,
+        user: customer.id,
         tier: tier.id,
         quantity: 1,
+        status: 'active',
       });
 
       const billingServer = new BillingServer({

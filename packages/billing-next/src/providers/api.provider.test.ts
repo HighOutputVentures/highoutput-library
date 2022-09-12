@@ -621,11 +621,7 @@ describe('ApiProvider', () => {
               },
             ],
           },
-          latest_invoice: {
-            payment_intent: {
-              status: 'succeeded',
-            },
-          },
+          status: 'active',
         };
 
         const StripeMock = {
@@ -680,9 +676,10 @@ describe('ApiProvider', () => {
         ).toBeCalledWith(
           expect.objectContaining({
             id: expect.any(String),
-            stripeSubscription: expect.any(String),
+            user: expect.any(String),
             tier: expect.any(String),
             quantity: expect.any(Number),
+            status: expect.any(String),
           }),
         );
       },
@@ -718,11 +715,7 @@ describe('ApiProvider', () => {
               },
             ],
           },
-          latest_invoice: {
-            payment_intent: {
-              status: 'succeeded',
-            },
-          },
+          status: 'active',
         };
 
         const StripeMock = {
@@ -740,7 +733,6 @@ describe('ApiProvider', () => {
         };
 
         const StripeProviderStorageAdapterMock = {
-          findCustomer: jest.fn(async () => Promise.resolve(customer)),
           findTier: jest.fn(async () => Promise.resolve(tier)),
           updateSubscription: jest.fn(async () => Promise.resolve()),
         };
@@ -770,16 +762,15 @@ describe('ApiProvider', () => {
           expect.any(String),
         );
         expect(StripeMock.subscriptions.retrieve).toBeCalled();
-        expect(StripeProviderStorageAdapterMock.findCustomer).toBeCalled();
         expect(StripeProviderStorageAdapterMock.findTier).toBeCalled();
         expect(
           StripeProviderStorageAdapterMock.updateSubscription,
         ).toBeCalledWith(
           expect.any(String),
           expect.objectContaining({
-            stripeSubscription: expect.any(String),
             tier: expect.any(String),
             quantity: expect.any(Number),
+            status: expect.any(String),
           }),
         );
       },
@@ -815,11 +806,7 @@ describe('ApiProvider', () => {
               },
             ],
           },
-          latest_invoice: {
-            payment_intent: {
-              status: 'succeeded',
-            },
-          },
+          status: 'active',
         };
 
         const StripeMock = {
@@ -834,7 +821,6 @@ describe('ApiProvider', () => {
         };
 
         const StripeProviderStorageAdapterMock = {
-          findCustomer: jest.fn(async () => Promise.resolve(customer)),
           updateSubscription: jest.fn(async () => Promise.resolve()),
         };
 
@@ -862,15 +848,12 @@ describe('ApiProvider', () => {
           expect.any(String),
           expect.any(String),
         );
-        expect(StripeProviderStorageAdapterMock.findCustomer).toBeCalled();
         expect(
           StripeProviderStorageAdapterMock.updateSubscription,
         ).toBeCalledWith(
           expect.any(String),
           expect.objectContaining({
-            stripeSubscription: expect.any(String),
-            tier: undefined,
-            quantity: undefined,
+            status: expect.any(String),
           }),
         );
       },

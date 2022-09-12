@@ -4,6 +4,7 @@ import { setup, teardown } from './fixture';
 import { generateFakeId, IdType } from './helpers/generate-fake-id';
 import { generateToken } from './helpers/generate-token';
 import { BillingServer } from '../src';
+import { Subscription } from '../src/interfaces/stripe.provider';
 
 describe('GET /subscription', () => {
   test.concurrent(
@@ -15,11 +16,12 @@ describe('GET /subscription', () => {
         ctx.mongoose,
       );
 
-      const subscription = {
-        id: generateFakeId(IdType.USER),
-        stripeSubscription: generateFakeId(IdType.SUBSCRIPTION),
+      const subscription: Subscription = {
+        id: generateFakeId(IdType.SUBSCRIPTION),
+        user: generateFakeId(IdType.USER),
         tier: 'Starter',
         quantity: 1,
+        status: 'active',
       };
       const token = generateToken({ sub: subscription.id }, 'secret');
 
