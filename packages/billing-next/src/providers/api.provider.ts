@@ -1,7 +1,12 @@
 /* eslint-disable no-useless-constructor */
 import { injectable, inject } from 'inversify';
 import Stripe from 'stripe';
-import { IApiProvider, Request, Response } from '../interfaces/api.provider';
+import {
+  IApiProvider,
+  Request,
+  Response,
+  WebhookEvents,
+} from '../interfaces/api.provider';
 import { TYPES } from '../types';
 import {
   IStripeProviderStorageAdapter,
@@ -169,6 +174,113 @@ export class ApiProvider implements IApiProvider {
           quantity,
           payment_status: paymentIntent.status,
         },
+      },
+    } as Response;
+  }
+
+  async postWebhook(params: Required<Omit<Request, 'user'>>) {
+    const { endpointSecret, signature, rawBody } = params.body;
+
+    if (R.isNil(endpointSecret)) {
+      throw new Error('Cannot verify payload without signing secret.');
+    }
+
+    const event = this.stripe.webhooks.constructEvent(
+      rawBody as Buffer,
+      signature as string,
+      endpointSecret as string,
+    );
+
+    switch (event.type) {
+      case WebhookEvents.SUBSCRIPTION_CREATED: {
+        const subscription = event.data.object as Stripe.Subscription;
+
+        const expandedSubscription = await this.stripe.subscriptions.retrieve(
+          subscription.id,
+          {
+            expand: [
+              'items.data.price.product',
+              'latest_invoice.payment_intent',
+            ],
+          },
+        );
+
+        const [item] = expandedSubscription.items.data;
+        const product = item.price.product as Stripe.Product;
+        const invoice = subscription.latest_invoice as Stripe.Invoice;
+        const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
+
+        if (paymentIntent.status === 'succeeded') {
+          const user = await this.storageAdapter.findCustomer(
+            expandedSubscription.customer as string,
+          );
+          const tier = await this.storageAdapter.findTier(product.id);
+
+          await this.storageAdapter.insertSubscription({
+            id: user?.id as string,
+            stripeSubscription: expandedSubscription.id,
+            tier: tier?.id as string,
+            quantity: item.quantity as number,
+          });
+        }
+
+        break;
+      }
+      case WebhookEvents.SUBSCRIPTION_UPDATED: {
+        const subscription = event.data.object as Stripe.Subscription;
+
+        const expandedSubscription = await this.stripe.subscriptions.retrieve(
+          subscription.id,
+          {
+            expand: [
+              'items.data.price.product',
+              'latest_invoice.payment_intent',
+            ],
+          },
+        );
+
+        const [item] = expandedSubscription.items.data;
+        const product = item.price.product as Stripe.Product;
+        const invoice = subscription.latest_invoice as Stripe.Invoice;
+        const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
+
+        if (paymentIntent.status === 'succeeded') {
+          const user = await this.storageAdapter.findCustomer(
+            expandedSubscription.customer as string,
+          );
+          const tier = await this.storageAdapter.findTier(product.id);
+
+          await this.storageAdapter.updateSubscription(user?.id as string, {
+            stripeSubscription: expandedSubscription.id,
+            tier: tier?.id,
+            quantity: item.quantity,
+          });
+        }
+
+        break;
+      }
+      case WebhookEvents.SUBSCRIPTION_DELETED: {
+        const subscription = event.data.object as Stripe.Subscription;
+        const user = await this.storageAdapter.findCustomer(
+          subscription.customer as string,
+        );
+
+        await this.storageAdapter.updateSubscription(user?.id as string, {
+          stripeSubscription: subscription.id,
+          tier: undefined,
+          quantity: undefined,
+        });
+
+        break;
+      }
+      default:
+        throw new Error(`Unhandled event type: ${event.type}`);
+    }
+
+    return {
+      status: 200,
+      body: {
+        received: true,
       },
     } as Response;
   }

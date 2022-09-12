@@ -18,6 +18,8 @@ import { IApiProvider, Response } from './interfaces/api.provider';
 export class BillingServer {
   #container = new Container();
 
+  #signingSecret: string;
+
   constructor(params: {
     stripeSecretKey: string;
     configFilePath: string;
@@ -41,6 +43,7 @@ export class BillingServer {
       .bind(TYPES.AuthorizationAdapter)
       .toConstantValue(params.authorizationAdapter);
     this.#container.bind(TYPES.ApiProvider).to(ApiProvider);
+    this.#signingSecret = params.endpointSigningSecret;
   }
 
   public expressMiddleware() {
@@ -55,7 +58,7 @@ export class BillingServer {
       next: express.NextFunction,
     ) => {
       const ENDPOINTS_REGEX =
-        /^\/tiers$|^\/secret$|^\/subscription|^\/portal$|^\/webhook/;
+        /^\/tiers$|^\/secret$|^\/subscription$|^\/portal$|^\/webhook$/;
       const { method, path } = req;
       const hasMatch = R.match(ENDPOINTS_REGEX, path);
 
@@ -114,6 +117,18 @@ export class BillingServer {
               user: (user as User).id,
               body,
             });
+            break;
+          }
+          case R.test(/POST/, method) && R.test(/webhook/, endpoint): {
+            const { raw: rawBody } = await parse(req, { returnRawBody: true });
+            const signature = req.headers['stripe-signature'];
+
+            const webhookParams = {
+              endpointSecret: this.#signingSecret,
+              rawBody,
+              signature,
+            };
+            data = await expressApi.postWebhook({ body: webhookParams });
             break;
           }
           default:

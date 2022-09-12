@@ -44,6 +44,7 @@ export class MongooseStripeProdiverStorageAdapter
         stripeProduct: {
           type: String,
           required: true,
+          unique: true,
         },
       } as never),
     );
@@ -122,7 +123,9 @@ export class MongooseStripeProdiverStorageAdapter
   }
 
   async findTier(id: string): Promise<Tier | null> {
-    const document = await this.#tierModel.findById(id);
+    const document = await this.#tierModel.findOne({
+      $or: [{ id }, { stripeProduct: id }],
+    });
 
     if (!document) {
       return null;
@@ -154,7 +157,11 @@ export class MongooseStripeProdiverStorageAdapter
   }
 
   async findCustomer(id: string) {
-    return this.#customerModel.findOne({ id }).lean();
+    return this.#customerModel
+      .findOne({
+        $or: [{ id }, { stripeCustomer: id }],
+      })
+      .lean();
   }
 
   async insertCustomer(customer: Customer) {
