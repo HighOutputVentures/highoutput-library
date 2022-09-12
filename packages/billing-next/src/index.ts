@@ -10,7 +10,7 @@ import { TYPES } from './types';
 import { IStripeProviderStorageAdapter } from './interfaces/stripe.provider';
 import {
   IAuthorizationAdapter,
-  User,
+  // User,
 } from './interfaces/authorization.adapter';
 import { ApiProvider } from './providers/api.provider';
 import { IApiProvider, Response } from './interfaces/api.provider';
@@ -57,56 +57,84 @@ export class BillingServer {
       res: express.Response,
       next: express.NextFunction,
     ) => {
-      const ENDPOINTS_REGEX =
-        /^\/tiers$|^\/secret$|^\/subscription$|^\/portal$|^\/webhook$/;
+      // const ENDPOINTS_REGEX =
+      //   /^\/tiers$|^\/secret$|^\/subscription$|^\/portal$|^\/webhook$/;
       const { method, path } = req;
-      const hasMatch = R.match(ENDPOINTS_REGEX, path);
+      // const hasMatch = R.match(ENDPOINTS_REGEX, path);
 
-      if (R.isNil(hasMatch)) {
-        next();
-        return;
-      }
+      // if (R.isNil(hasMatch)) {
+      //   next();
+      //   return;
+      // }
 
-      const [endpoint] = hasMatch;
-      const isWebhookRequest = R.test(/webhook/, endpoint);
-      const user =
-        !isWebhookRequest &&
-        (await authorizationAdapter.authorize({
-          header: req.headers as Record<string, string>,
-        }));
+      // const [endpoint] = hasMatch;
+      // const isWebhookRequest = R.test(/^\/webhook/, path);
+      const user = await authorizationAdapter.authorize({
+        header: req.headers as Record<string, string>,
+      });
 
-      if (!isWebhookRequest && !user) {
-        res
-          .set('Content-Type', 'application/json')
-          .status(401)
-          .send({
-            error: {
-              code: 'INVALID_ACCESS',
-              message: 'User is not found.',
-            },
-          });
-        return;
-      }
+      // const user =
+      //   !isWebhookRequest &&
+      //   (await authorizationAdapter.authorize({
+      //     header: req.headers as Record<string, string>,
+      //   }));
+
+      // if (!isWebhookRequest && !user) {
+      //   res
+      //     .set('Content-Type', 'application/json')
+      //     .status(401)
+      //     .send({
+      //       error: {
+      //         code: 'INVALID_ACCESS',
+      //         message: 'User not found.',
+      //       },
+      //     });
+      //   return;
+      // }
 
       let data: Response;
 
       try {
         switch (true) {
-          case R.test(/GET/, method) && R.test(/tiers/, endpoint):
+          case R.test(/GET/, method) && R.test(/^\/tiers$/, path):
+            if (!user) {
+              throw new Error('User not found.');
+            }
+
             data = await expressApi.getTiers();
             break;
-          case R.test(/GET/, method) && R.test(/secret/, endpoint):
-            data = await expressApi.getSecret({ user: (user as User).id });
+
+          case R.test(/GET/, method) && R.test(/^\/secret$/, path):
+            if (!user) {
+              throw new Error('User not found.');
+            }
+
+            data = await expressApi.getSecret({ user: user.id });
             break;
-          case R.test(/GET/, method) && R.test(/subscription/, endpoint):
+
+          case R.test(/GET/, method) && R.test(/^\/subscription$/, path):
+            if (!user) {
+              throw new Error('User not found.');
+            }
+
             data = await expressApi.getSubscription({
-              user: (user as User).id,
+              user: user.id,
             });
             break;
-          case R.test(/GET/, method) && R.test(/portal/, endpoint):
-            data = await expressApi.getPortal({ user: (user as User).id });
+
+          case R.test(/GET/, method) && R.test(/^\/portal$/, path):
+            if (!user) {
+              throw new Error('User not found.');
+            }
+
+            data = await expressApi.getPortal({ user: user.id });
             break;
-          case R.test(/PUT/, method) && R.test(/subscription/, endpoint): {
+
+          case R.test(/PUT/, method) && R.test(/^\/subscription$/, path): {
+            if (!user) {
+              throw new Error('User not found.');
+            }
+
             const body = await parse(req);
 
             if (!body.tier) {
@@ -114,12 +142,13 @@ export class BillingServer {
             }
 
             data = await expressApi.putSubscription({
-              user: (user as User).id,
+              user: user.id,
               body,
             });
             break;
           }
-          case R.test(/POST/, method) && R.test(/webhook/, endpoint): {
+
+          case R.test(/POST/, method) && R.test(/^\/webhook$/, path): {
             const { raw: rawBody } = await parse(req, { returnRawBody: true });
             const signature = req.headers['stripe-signature'];
 
@@ -132,15 +161,15 @@ export class BillingServer {
             break;
           }
           default:
-            data = null as never;
-            break;
+            next();
+            return;
         }
       } catch (error) {
         res.status(400).send({ error: (error as Error).message });
         return;
       }
 
-      if (data.status === 404 || R.isNil(data)) {
+      if (data.status === 404) {
         res.sendStatus(404);
         return;
       }
