@@ -34,6 +34,7 @@ export default function (): Deployment {
     ), 5),
     directory: `./${faker.word.noun()}`,
     url: faker.internet.url(),
+    dockerFile: faker.lorem.word(),
     dateTimeCreated: new Date(),
     dateTimeUpdated: new Date(),
   };
