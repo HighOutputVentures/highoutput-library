@@ -207,11 +207,7 @@ describe('ApiProvider', () => {
         };
         const subscription = {
           id: generateFakeId(IdType.SUBSCRIPTION),
-          latest_invoice: {
-            payment_intent: {
-              status: 'pending',
-            },
-          },
+          status: 'incomplete',
         };
 
         const StripeMock = {
@@ -223,6 +219,7 @@ describe('ApiProvider', () => {
         const StripeProviderStorageAdapterMock = {
           findCustomer: jest.fn(async () => Promise.resolve(customer)),
           findTier: jest.fn(async () => Promise.resolve(tier)),
+          insertSubscription: jest.fn(async () => Promise.resolve()),
         };
 
         container.bind(TYPES.Stripe).toConstantValue(StripeMock);
@@ -337,173 +334,6 @@ describe('ApiProvider', () => {
         expect((error as Error).message).toEqual('Cannot find product.');
       }
     });
-
-    test.concurrent(
-      'payment succeeded -> should update subscription database',
-      async () => {
-        const config = generateFakeConfig();
-
-        const container = new Container();
-
-        const customer = {
-          id: generateFakeId(IdType.USER),
-          stripeCustomer: generateFakeId(IdType.CUSTOMER),
-        };
-        const tier = {
-          id: 'starter',
-          stripePrices: [generateFakeId(IdType.PRICE)],
-          stripeProduct: generateFakeId(IdType.PRODUCT),
-        };
-        const subscription = {
-          id: generateFakeId(IdType.SUBSCRIPTION),
-          latest_invoice: {
-            payment_intent: {
-              status: 'succeeded',
-            },
-          },
-        };
-
-        const StripeMock = {
-          subscriptions: {
-            create: jest.fn(async () => Promise.resolve(subscription)),
-          },
-        };
-
-        const StripeProviderStorageAdapterMock = {
-          findCustomer: jest.fn(async () => Promise.resolve(customer)),
-          findTier: jest.fn(async () => Promise.resolve(tier)),
-          insertSubscription: jest.fn(async () => Promise.resolve()),
-        };
-
-        container.bind(TYPES.Stripe).toConstantValue(StripeMock);
-        container.bind(TYPES.ConfigProvider).toConstantValue({
-          config,
-        });
-        container
-          .bind(TYPES.StripeProviderStorageAdapter)
-          .toConstantValue(StripeProviderStorageAdapterMock);
-        container.bind(TYPES.ApiProvider).to(ApiProvider);
-
-        const provider = container.get<IApiProvider>(TYPES.ApiProvider);
-
-        const response = await provider.putSubscription({
-          user: customer.id,
-          body: {
-            tier: tier.id,
-          },
-        });
-
-        expect(
-          StripeProviderStorageAdapterMock.findCustomer,
-        ).toHaveBeenCalledWith(customer.id);
-        expect(StripeProviderStorageAdapterMock.findTier).toHaveBeenCalledWith(
-          tier.id,
-        );
-        expect(StripeMock.subscriptions.create).toBeCalled();
-        expect(
-          StripeProviderStorageAdapterMock.insertSubscription,
-        ).toBeCalledWith(
-          expect.objectContaining({
-            id: expect.any(String),
-            stripeSubscription: expect.any(String),
-            tier: expect.any(String),
-            quantity: expect.any(Number),
-          }),
-        );
-        expect(response).toMatchObject(
-          expect.objectContaining({
-            status: 200,
-            body: {
-              data: expect.objectContaining({
-                tier: expect.any(String),
-                quantity: expect.any(Number),
-                payment_status: expect.any(String),
-              }),
-            },
-          }),
-        );
-      },
-    );
-
-    test.concurrent(
-      'payment is not succeeded -> shoud not update subscription database',
-      async () => {
-        const config = generateFakeConfig();
-
-        const container = new Container();
-
-        const customer = {
-          id: generateFakeId(IdType.USER),
-          stripeCustomer: generateFakeId(IdType.CUSTOMER),
-        };
-        const tier = {
-          id: 'starter',
-          stripePrices: [generateFakeId(IdType.PRICE)],
-          stripeProduct: generateFakeId(IdType.PRODUCT),
-        };
-        const subscription = {
-          id: generateFakeId(IdType.SUBSCRIPTION),
-          latest_invoice: {
-            payment_intent: {
-              status: 'pending',
-            },
-          },
-        };
-
-        const StripeMock = {
-          subscriptions: {
-            create: jest.fn(async () => Promise.resolve(subscription)),
-          },
-        };
-
-        const StripeProviderStorageAdapterMock = {
-          findCustomer: jest.fn(async () => Promise.resolve(customer)),
-          findTier: jest.fn(async () => Promise.resolve(tier)),
-          insertSubscription: jest.fn(async () => Promise.resolve()),
-        };
-
-        container.bind(TYPES.Stripe).toConstantValue(StripeMock);
-        container.bind(TYPES.ConfigProvider).toConstantValue({
-          config,
-        });
-        container
-          .bind(TYPES.StripeProviderStorageAdapter)
-          .toConstantValue(StripeProviderStorageAdapterMock);
-        container.bind(TYPES.ApiProvider).to(ApiProvider);
-
-        const provider = container.get<IApiProvider>(TYPES.ApiProvider);
-
-        const response = await provider.putSubscription({
-          user: customer.id,
-          body: {
-            tier: tier.id,
-          },
-        });
-
-        expect(
-          StripeProviderStorageAdapterMock.findCustomer,
-        ).toHaveBeenCalledWith(customer.id);
-        expect(StripeProviderStorageAdapterMock.findTier).toHaveBeenCalledWith(
-          tier.id,
-        );
-        expect(StripeMock.subscriptions.create).toBeCalled();
-        expect(
-          StripeProviderStorageAdapterMock.insertSubscription,
-        ).not.toBeCalled();
-        expect(response).toMatchObject(
-          expect.objectContaining({
-            status: 200,
-            body: {
-              data: expect.objectContaining({
-                tier: expect.any(String),
-                quantity: expect.any(Number),
-                payment_status: expect.any(String),
-              }),
-            },
-          }),
-        );
-      },
-    );
   });
 
   describe('#postWebhook', () => {
@@ -525,7 +355,7 @@ describe('ApiProvider', () => {
           config,
         });
         container.bind(TYPES.StripeProviderStorageAdapter).toConstantValue({});
-        container.bind(TYPES.ApiProvider).to(ExpressApiProvider);
+        container.bind(TYPES.ApiProvider).to(ApiProvider);
 
         const provider = container.get<IApiProvider>(TYPES.ApiProvider);
 
@@ -574,7 +404,7 @@ describe('ApiProvider', () => {
         config,
       });
       container.bind(TYPES.StripeProviderStorageAdapter).toConstantValue({});
-      container.bind(TYPES.ApiProvider).to(ExpressApiProvider);
+      container.bind(TYPES.ApiProvider).to(ApiProvider);
 
       const provider = container.get<IApiProvider>(TYPES.ApiProvider);
 
@@ -651,7 +481,7 @@ describe('ApiProvider', () => {
         container
           .bind(TYPES.StripeProviderStorageAdapter)
           .toConstantValue(StripeProviderStorageAdapterMock);
-        container.bind(TYPES.ApiProvider).to(ExpressApiProvider);
+        container.bind(TYPES.ApiProvider).to(ApiProvider);
 
         const provider = container.get<IApiProvider>(TYPES.ApiProvider);
 
@@ -744,7 +574,7 @@ describe('ApiProvider', () => {
         container
           .bind(TYPES.StripeProviderStorageAdapter)
           .toConstantValue(StripeProviderStorageAdapterMock);
-        container.bind(TYPES.ApiProvider).to(ExpressApiProvider);
+        container.bind(TYPES.ApiProvider).to(ApiProvider);
 
         const provider = container.get<IApiProvider>(TYPES.ApiProvider);
 
@@ -831,7 +661,7 @@ describe('ApiProvider', () => {
         container
           .bind(TYPES.StripeProviderStorageAdapter)
           .toConstantValue(StripeProviderStorageAdapterMock);
-        container.bind(TYPES.ApiProvider).to(ExpressApiProvider);
+        container.bind(TYPES.ApiProvider).to(ApiProvider);
 
         const provider = container.get<IApiProvider>(TYPES.ApiProvider);
 

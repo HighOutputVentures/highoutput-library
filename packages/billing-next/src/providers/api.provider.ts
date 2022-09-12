@@ -1,6 +1,7 @@
 /* eslint-disable no-useless-constructor */
 import { injectable, inject } from 'inversify';
 import Stripe from 'stripe';
+import R from 'ramda';
 import {
   IApiProvider,
   Request,
