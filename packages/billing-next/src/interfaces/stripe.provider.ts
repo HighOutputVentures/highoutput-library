@@ -31,6 +31,13 @@ export enum ValueType {
   'WEBHOOK_ENDPOINT_CONFIGURATION' = 'stripeWebhookEndpointConfiguration',
 }
 
+export type EventLog = {
+  id: string;
+  type: string;
+  idempotencyKey: string;
+  requestId: string | null;
+};
+
 export interface IStripeProviderStorageAdapter {
   insertTier(tier: Tier): Promise<void>;
   updateTier(id: string, params: Partial<Omit<Tier, 'id'>>): Promise<void>;
@@ -47,6 +54,8 @@ export interface IStripeProviderStorageAdapter {
     id: string,
     params: Partial<Omit<Subscription, 'id'>>,
   ): Promise<void>;
+  insertEvent(event: EventLog): Promise<void>;
+  findEvent(key: string): Promise<EventLog | null>;
 }
 
 export interface IStripeProvider {

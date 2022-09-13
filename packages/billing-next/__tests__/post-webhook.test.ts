@@ -1,5 +1,6 @@
 import nock from 'nock';
 import Stripe from 'stripe';
+import { faker } from '@faker-js/faker';
 import { MongooseStripeProdiverStorageAdapter } from '../src/adapters/mongoose-stripe-provider-storage.adapter';
 import { JwtAuthorizationAdapter } from '../src/adapters/jwt-authorization.adapter';
 import { setup, teardown } from './fixture';
@@ -65,19 +66,19 @@ describe('POST /webhook', () => {
             },
           ],
         },
-        // latest_invoice: {
-        //   payment_intent: {
-        //   },
-        // },
         status: 'active',
       };
 
       const payload = {
-        id: 'evt_test_webhook',
+        id: generateFakeId(IdType.EVENT),
         object: 'event',
         type: 'customer.subscription.created',
         data: {
           object: subscription,
+        },
+        request: {
+          id: null,
+          idempotency_key: faker.datatype.uuid(),
         },
       };
 
@@ -88,7 +89,8 @@ describe('POST /webhook', () => {
       });
 
       nock(/stripe.com/)
-        .get(/\/v1\/subscriptions/)
+        .get(`/v1/subscriptions/${subscription.id}`)
+        .query({ expand: ['items.data.price.product'] })
         .reply(200, subscription);
 
       await ctx.request
@@ -144,10 +146,6 @@ describe('POST /webhook', () => {
             },
           ],
         },
-        // latest_invoice: {
-        //   payment_intent: {
-        //   },
-        // },
         status: 'active',
       };
 
@@ -177,11 +175,15 @@ describe('POST /webhook', () => {
       };
 
       const payload = {
-        id: 'evt_test_webhook',
+        id: generateFakeId(IdType.EVENT),
         object: 'event',
         type: 'customer.subscription.updated',
         data: {
           object: subscription,
+        },
+        request: {
+          id: null,
+          idempotency_key: faker.datatype.uuid(),
         },
       };
 
@@ -192,7 +194,8 @@ describe('POST /webhook', () => {
       });
 
       nock(/stripe.com/)
-        .get(/\/v1\/subscriptions/)
+        .get(`/v1/subscriptions/${subscription.id}`)
+        .query({ expand: ['items.data.price.product'] })
         .reply(200, subscription);
 
       await ctx.request
@@ -252,11 +255,15 @@ describe('POST /webhook', () => {
       };
 
       const payload = {
-        id: 'evt_test_webhook',
+        id: generateFakeId(IdType.EVENT),
         object: 'event',
         type: 'customer.subscription.deleted',
         data: {
           object: subscription,
+        },
+        request: {
+          id: null,
+          idempotency_key: faker.datatype.uuid(),
         },
       };
 
@@ -311,9 +318,9 @@ describe('POST /webhook', () => {
       };
 
       const payload = {
-        id: 'evt_test_webhook',
+        id: generateFakeId(IdType.EVENT),
         object: 'event',
-        type: 'customer.subscription.created',
+        type: 'INVALID_EVENT',
         data: {
           object: subscription,
         },
@@ -343,4 +350,68 @@ describe('POST /webhook', () => {
     },
     10000,
   );
+
+  test.concurrent('webhook event is already processed and logged', async () => {
+    const ctx = await setup();
+    const stripe = new Stripe('', {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      apiVersion: null,
+    });
+
+    const storageAdapter = new MongooseStripeProdiverStorageAdapter(
+      ctx.mongoose,
+    );
+
+    const webhookSecret = 'whsec_T1sWT0N2rHkaFNG8EDgJfryNdlg6r2MW';
+
+    const payload = {
+      id: generateFakeId(IdType.EVENT),
+      type: 'customer.subscription.updated',
+      request: {
+        id: null,
+        idempotency_key: faker.datatype.uuid(),
+      },
+    };
+
+    await storageAdapter.insertEvent({
+      id: payload.id,
+      type: payload.type,
+      requestId: payload.request.id,
+      idempotencyKey: payload.request.idempotency_key,
+    });
+
+    const billingServer = new BillingServer({
+      stripeSecretKey:
+        'sk_test_51LWeDVGrNXva3DrphN3qGT3dnhh2bAoNZ7O80w4XpMEbBlMeLul10aMS7a41PXZHl8vOpcDI6JZ7KoNTSBFyV9r800kV6WzTLo',
+      configFilePath: './__tests__/assets/config.json',
+      endpointSigningSecret: webhookSecret,
+      stripeProviderStorageAdapter: storageAdapter,
+      authorizationAdapter: new JwtAuthorizationAdapter({ secret: 'secret' }),
+    });
+
+    ctx.app.use(billingServer.expressMiddleware());
+
+    const expected = {
+      received: true,
+    };
+
+    const payloadString = JSON.stringify(payload, null, 2);
+    const header = stripe.webhooks.generateTestHeaderString({
+      payload: payloadString,
+      secret: webhookSecret,
+    });
+
+    await ctx.request
+      .post('/webhook')
+      .set('stripe-signature', header)
+      .send(payloadString)
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.data).toEqual(expected);
+      });
+
+    await teardown(ctx);
+  });
 });

@@ -3,6 +3,7 @@ import { Connection, Document, Model, Schema } from 'mongoose';
 import R from 'ramda';
 import {
   Customer,
+  EventLog,
   IStripeProviderStorageAdapter,
   Subscription,
   Tier,
@@ -29,6 +30,8 @@ export class MongooseStripeProdiverStorageAdapter
   #customerModel: Model<Customer>;
 
   #subscriptionModel: Model<Subscription>;
+
+  #eventModel: Model<EventLog>;
 
   constructor(connection: Connection) {
     this.#tierModel = connection.model<TierDocument>(
@@ -121,6 +124,29 @@ export class MongooseStripeProdiverStorageAdapter
         },
       ),
     );
+
+    this.#eventModel = connection.model(
+      'Event',
+      new Schema<EventLog>({
+        id: {
+          type: String,
+          required: true,
+          unique: true,
+        },
+        type: {
+          type: String,
+          required: true,
+        },
+        idempotencyKey: {
+          type: String,
+          unique: true,
+          required: true,
+        },
+        requestId: {
+          type: String,
+        },
+      }),
+    );
   }
 
   async insertTier(tier: Tier) {
@@ -198,5 +224,17 @@ export class MongooseStripeProdiverStorageAdapter
     params: Partial<Omit<Subscription, 'id'>>,
   ) {
     await this.#subscriptionModel.updateOne({ id }, { $set: params });
+  }
+
+  async insertEvent(event: EventLog) {
+    await this.#eventModel.create(event);
+  }
+
+  async findEvent(key: string) {
+    return this.#eventModel
+      .findOne({
+        $or: [{ id: key }, { idempotencyKey: key }],
+      })
+      .lean();
   }
 }

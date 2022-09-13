@@ -193,6 +193,21 @@ export class ApiProvider implements IApiProvider {
       endpointSecret as string,
     );
 
+    const isLogged = await this.storageAdapter.findEvent(
+      event.request?.idempotency_key || event.id,
+    );
+
+    if (isLogged) {
+      return {
+        status: 200,
+        body: {
+          data: {
+            received: true,
+          },
+        },
+      } as Response;
+    }
+
     switch (event.type) {
       case WebhookEvents.SUBSCRIPTION_CREATED: {
         const subscription = event.data.object as Stripe.Subscription;
@@ -222,6 +237,7 @@ export class ApiProvider implements IApiProvider {
 
         break;
       }
+
       case WebhookEvents.SUBSCRIPTION_UPDATED: {
         const subscription = event.data.object as Stripe.Subscription;
 
@@ -244,6 +260,7 @@ export class ApiProvider implements IApiProvider {
 
         break;
       }
+
       case WebhookEvents.SUBSCRIPTION_DELETED: {
         const subscription = event.data.object as Stripe.Subscription;
 
@@ -256,6 +273,13 @@ export class ApiProvider implements IApiProvider {
       default:
         throw new Error(`Unhandled event type: ${event.type}`);
     }
+
+    await this.storageAdapter.insertEvent({
+      id: event.id,
+      type: event.type,
+      idempotencyKey: event.request?.idempotency_key as string,
+      requestId: event.request?.id as string | null,
+    });
 
     return {
       status: 200,

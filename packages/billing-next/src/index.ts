@@ -8,10 +8,7 @@ import { ConfigProvider } from './providers/config.provider';
 import { StripeProvider } from './providers/stripe.provider';
 import { TYPES } from './types';
 import { IStripeProviderStorageAdapter } from './interfaces/stripe.provider';
-import {
-  IAuthorizationAdapter,
-  // User,
-} from './interfaces/authorization.adapter';
+import { IAuthorizationAdapter } from './interfaces/authorization.adapter';
 import { ApiProvider } from './providers/api.provider';
 import { IApiProvider, Response } from './interfaces/api.provider';
 
@@ -57,40 +54,10 @@ export class BillingServer {
       res: express.Response,
       next: express.NextFunction,
     ) => {
-      // const ENDPOINTS_REGEX =
-      //   /^\/tiers$|^\/secret$|^\/subscription$|^\/portal$|^\/webhook$/;
       const { method, path } = req;
-      // const hasMatch = R.match(ENDPOINTS_REGEX, path);
-
-      // if (R.isNil(hasMatch)) {
-      //   next();
-      //   return;
-      // }
-
-      // const [endpoint] = hasMatch;
-      // const isWebhookRequest = R.test(/^\/webhook/, path);
       const user = await authorizationAdapter.authorize({
         header: req.headers as Record<string, string>,
       });
-
-      // const user =
-      //   !isWebhookRequest &&
-      //   (await authorizationAdapter.authorize({
-      //     header: req.headers as Record<string, string>,
-      //   }));
-
-      // if (!isWebhookRequest && !user) {
-      //   res
-      //     .set('Content-Type', 'application/json')
-      //     .status(401)
-      //     .send({
-      //       error: {
-      //         code: 'INVALID_ACCESS',
-      //         message: 'User not found.',
-      //       },
-      //     });
-      //   return;
-      // }
 
       let data: Response;
 

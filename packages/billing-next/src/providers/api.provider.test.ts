@@ -1,5 +1,6 @@
 import { Container } from 'inversify';
 import Stripe from 'stripe';
+import { faker } from '@faker-js/faker';
 import { generateFakeConfig } from '../../__tests__/helpers/generate-fake-config';
 import { IApiProvider } from '../interfaces/api.provider';
 import { ApiProvider } from './api.provider';
@@ -409,11 +410,17 @@ describe('ApiProvider', () => {
         },
       };
 
+      const StripeProviderStorageAdapterMock = {
+        findEvent: jest.fn(async () => Promise.resolve({})),
+      };
+
       container.bind(TYPES.Stripe).toConstantValue(StripeMock);
       container.bind(TYPES.ConfigProvider).toConstantValue({
         config,
       });
-      container.bind(TYPES.StripeProviderStorageAdapter).toConstantValue({});
+      container
+        .bind(TYPES.StripeProviderStorageAdapter)
+        .toConstantValue(StripeProviderStorageAdapterMock);
       container.bind(TYPES.ApiProvider).to(ApiProvider);
 
       const provider = container.get<IApiProvider>(TYPES.ApiProvider);
@@ -467,9 +474,13 @@ describe('ApiProvider', () => {
         const StripeMock = {
           webhooks: {
             constructEvent: jest.fn(() => ({
+              id: generateFakeId(IdType.EVENT),
               type: 'customer.subscription.created',
               data: {
                 object: subscription,
+              },
+              request: {
+                idempotency_key: faker.datatype.uuid(),
               },
             })),
           },
@@ -482,6 +493,8 @@ describe('ApiProvider', () => {
           findCustomer: jest.fn(async () => Promise.resolve(customer)),
           findTier: jest.fn(async () => Promise.resolve(tier)),
           insertSubscription: jest.fn(async () => Promise.resolve()),
+          findEvent: jest.fn(async () => Promise.resolve(null)),
+          insertEvent: jest.fn(async () => Promise.resolve()),
         };
 
         container.bind(TYPES.Stripe).toConstantValue(StripeMock);
@@ -508,6 +521,7 @@ describe('ApiProvider', () => {
           expect.any(String),
           expect.any(String),
         );
+        expect(StripeProviderStorageAdapterMock.findEvent).toBeCalled();
         expect(StripeMock.subscriptions.retrieve).toBeCalled();
         expect(StripeProviderStorageAdapterMock.findCustomer).toBeCalled();
         expect(StripeProviderStorageAdapterMock.findTier).toBeCalled();
@@ -520,6 +534,14 @@ describe('ApiProvider', () => {
             tier: expect.any(String),
             quantity: expect.any(Number),
             status: expect.any(String),
+          }),
+        );
+        expect(StripeProviderStorageAdapterMock.insertEvent).toBeCalledWith(
+          expect.objectContaining({
+            id: expect.any(String),
+            type: expect.any(String),
+            idempotencyKey: expect.any(String),
+            requestId: undefined,
           }),
         );
       },
@@ -561,9 +583,13 @@ describe('ApiProvider', () => {
         const StripeMock = {
           webhooks: {
             constructEvent: jest.fn(() => ({
+              id: generateFakeId(IdType.EVENT),
               type: 'customer.subscription.updated',
               data: {
                 object: subscription,
+              },
+              request: {
+                idempotency_key: faker.datatype.uuid(),
               },
             })),
           },
@@ -575,6 +601,8 @@ describe('ApiProvider', () => {
         const StripeProviderStorageAdapterMock = {
           findTier: jest.fn(async () => Promise.resolve(tier)),
           updateSubscription: jest.fn(async () => Promise.resolve()),
+          findEvent: jest.fn(async () => Promise.resolve(null)),
+          insertEvent: jest.fn(async () => Promise.resolve()),
         };
 
         container.bind(TYPES.Stripe).toConstantValue(StripeMock);
@@ -601,6 +629,7 @@ describe('ApiProvider', () => {
           expect.any(String),
           expect.any(String),
         );
+        expect(StripeProviderStorageAdapterMock.findEvent).toBeCalled();
         expect(StripeMock.subscriptions.retrieve).toBeCalled();
         expect(StripeProviderStorageAdapterMock.findTier).toBeCalled();
         expect(
@@ -611,6 +640,14 @@ describe('ApiProvider', () => {
             tier: expect.any(String),
             quantity: expect.any(Number),
             status: expect.any(String),
+          }),
+        );
+        expect(StripeProviderStorageAdapterMock.insertEvent).toBeCalledWith(
+          expect.objectContaining({
+            id: expect.any(String),
+            type: expect.any(String),
+            idempotencyKey: expect.any(String),
+            requestId: undefined,
           }),
         );
       },
@@ -652,9 +689,13 @@ describe('ApiProvider', () => {
         const StripeMock = {
           webhooks: {
             constructEvent: jest.fn(() => ({
+              id: generateFakeId(IdType.EVENT),
               type: 'customer.subscription.deleted',
               data: {
                 object: subscription,
+              },
+              request: {
+                idempotency_key: faker.datatype.uuid(),
               },
             })),
           },
@@ -662,6 +703,8 @@ describe('ApiProvider', () => {
 
         const StripeProviderStorageAdapterMock = {
           updateSubscription: jest.fn(async () => Promise.resolve()),
+          findEvent: jest.fn(async () => Promise.resolve(null)),
+          insertEvent: jest.fn(async () => Promise.resolve()),
         };
 
         container.bind(TYPES.Stripe).toConstantValue(StripeMock);
@@ -688,12 +731,82 @@ describe('ApiProvider', () => {
           expect.any(String),
           expect.any(String),
         );
+        expect(StripeProviderStorageAdapterMock.findEvent).toBeCalled();
         expect(
           StripeProviderStorageAdapterMock.updateSubscription,
         ).toBeCalledWith(
           expect.any(String),
           expect.objectContaining({
             status: expect.any(String),
+          }),
+        );
+        expect(StripeProviderStorageAdapterMock.insertEvent).toBeCalledWith(
+          expect.objectContaining({
+            id: expect.any(String),
+            type: expect.any(String),
+            idempotencyKey: expect.any(String),
+            requestId: undefined,
+          }),
+        );
+      },
+    );
+
+    test.concurrent(
+      'event is already logged -> should return 200',
+      async () => {
+        const config = generateFakeConfig();
+
+        const container = new Container();
+
+        const event = {
+          id: generateFakeId(IdType.EVENT),
+          type: 'customer.subscription.created',
+          request: {
+            idempotency_key: faker.datatype.uuid(),
+          },
+        };
+
+        const StripeMock = {
+          webhooks: {
+            constructEvent: jest.fn(() => event),
+          },
+        };
+
+        const StripeProviderStorageAdapterMock = {
+          findEvent: jest.fn(async () => Promise.resolve(event)),
+        };
+
+        container.bind(TYPES.Stripe).toConstantValue(StripeMock);
+        container.bind(TYPES.ConfigProvider).toConstantValue({
+          config,
+        });
+        container
+          .bind(TYPES.StripeProviderStorageAdapter)
+          .toConstantValue(StripeProviderStorageAdapterMock);
+        container.bind(TYPES.ApiProvider).to(ApiProvider);
+
+        const provider = container.get<IApiProvider>(TYPES.ApiProvider);
+
+        const output = await provider.postWebhook({
+          body: {
+            endpointSecret: '',
+            rawBody: Buffer.from(''),
+            signature: '',
+          },
+        });
+
+        expect(StripeMock.webhooks.constructEvent).toBeCalledWith(
+          expect.any(Buffer),
+          expect.any(String),
+          expect.any(String),
+        );
+        expect(StripeProviderStorageAdapterMock.findEvent).toBeCalledWith(
+          expect.any(String),
+        );
+        expect(output).toMatchObject(
+          expect.objectContaining({
+            status: 200,
+            body: expect.any(Object),
           }),
         );
       },
