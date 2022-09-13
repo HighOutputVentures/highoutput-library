@@ -32,8 +32,8 @@ describe('GET /tiers', () => {
         .expect('Content-Type', /json/)
         .expect(200)
         .expect((res) => {
-          expect(res.body.data).toBeInstanceOf(Array);
-          expect(res.body.data).toStrictEqual(config.tiers);
+          expect(res.body.data.tiers).toBeInstanceOf(Array);
+          expect(res.body.data.tiers).toStrictEqual(config.tiers);
         });
 
       await teardown(ctx);
@@ -42,7 +42,7 @@ describe('GET /tiers', () => {
   );
 
   test.concurrent(
-    'token is not sent -> should return 401',
+    'token is not sent -> should return 400',
     async () => {
       const ctx = await setup();
       const billingServer = new BillingServer({
@@ -61,9 +61,9 @@ describe('GET /tiers', () => {
       await ctx.request
         .get('/tiers')
         .expect('Content-Type', /json/)
-        .expect(401)
+        .expect(400)
         .expect((res) => {
-          expect(res.body.error.code).toEqual('INVALID_ACCESS');
+          expect(res.body.error).toEqual('User not found.');
         });
 
       await teardown(ctx);

@@ -3,6 +3,7 @@ import { Connection, Document, Model, Schema } from 'mongoose';
 import R from 'ramda';
 import {
   Customer,
+  EventLog,
   IStripeProviderStorageAdapter,
   Subscription,
   Tier,
@@ -30,6 +31,8 @@ export class MongooseStripeProdiverStorageAdapter
 
   #subscriptionModel: Model<Subscription>;
 
+  #eventModel: Model<EventLog>;
+
   constructor(connection: Connection) {
     this.#tierModel = connection.model<TierDocument>(
       'Tier',
@@ -44,6 +47,7 @@ export class MongooseStripeProdiverStorageAdapter
         stripeProduct: {
           type: String,
           required: true,
+          unique: true,
         },
       } as never),
     );
@@ -82,26 +86,76 @@ export class MongooseStripeProdiverStorageAdapter
 
     this.#subscriptionModel = connection.model(
       'Subscription',
-      new Schema<Subscription>({
-        id: {
-          type: String,
-          required: true,
-          unique: true,
+      new Schema<Subscription>(
+        {
+          id: {
+            type: String,
+            required: true,
+            unique: true,
+          },
+          user: {
+            type: String,
+            required: true,
+            index: true,
+          },
+          tier: {
+            type: String,
+            required: true,
+          },
+          quantity: {
+            type: Number,
+            default: 1,
+          },
+          status: {
+            type: String,
+            enum: [
+              'active',
+              'canceled',
+              'incomplete',
+              'incomplete_expired',
+              'past_due',
+              'trialing',
+              'unpaid',
+            ],
+          },
         },
-        stripeSubscription: {
-          type: String,
-          required: true,
-          unique: true,
+        {
+          timestamps: true,
         },
-        tier: {
-          type: String,
-          required: true,
+      ),
+    );
+
+    this.#eventModel = connection.model(
+      'Event',
+      new Schema<EventLog>(
+        {
+          id: {
+            type: String,
+            required: true,
+            unique: true,
+          },
+          type: {
+            type: String,
+            required: true,
+          },
+          idempotencyKey: {
+            type: String,
+            unique: true,
+            required: true,
+          },
+          requestId: {
+            type: String,
+          },
         },
-        quantity: {
-          type: Number,
-          default: 1,
+        {
+          timestamps: true,
+          timeseries: {
+            timeField: 'createdAt',
+            granularity: 'minutes',
+          },
+          expires: '3d',
         },
-      }),
+      ),
     );
   }
 
@@ -122,7 +176,9 @@ export class MongooseStripeProdiverStorageAdapter
   }
 
   async findTier(id: string): Promise<Tier | null> {
-    const document = await this.#tierModel.findById(id);
+    const document = await this.#tierModel.findOne({
+      $or: [{ id }, { stripeProduct: id }],
+    });
 
     if (!document) {
       return null;
@@ -154,7 +210,11 @@ export class MongooseStripeProdiverStorageAdapter
   }
 
   async findCustomer(id: string) {
-    return this.#customerModel.findOne({ id }).lean();
+    return this.#customerModel
+      .findOne({
+        $or: [{ id }, { stripeCustomer: id }],
+      })
+      .lean();
   }
 
   async insertCustomer(customer: Customer) {
@@ -165,8 +225,8 @@ export class MongooseStripeProdiverStorageAdapter
     await this.#subscriptionModel.create(subscription);
   }
 
-  async findSubscription(id: string) {
-    return this.#subscriptionModel.findOne({ id }).lean();
+  async findSubscriptionByUser(user: string) {
+    return this.#subscriptionModel.findOne({ user }).lean();
   }
 
   async updateSubscription(
@@ -174,5 +234,17 @@ export class MongooseStripeProdiverStorageAdapter
     params: Partial<Omit<Subscription, 'id'>>,
   ) {
     await this.#subscriptionModel.updateOne({ id }, { $set: params });
+  }
+
+  async insertEvent(event: EventLog) {
+    await this.#eventModel.create(event);
+  }
+
+  async findEvent(key: string) {
+    return this.#eventModel
+      .findOne({
+        $or: [{ id: key }, { idempotencyKey: key }],
+      })
+      .lean();
   }
 }

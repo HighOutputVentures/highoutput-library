@@ -1,3 +1,5 @@
+import Stripe from 'stripe';
+
 /* eslint-disable no-shadow */
 export type Tier = {
   id: string;
@@ -17,9 +19,10 @@ export type Customer = {
 
 export type Subscription = {
   id: string;
-  stripeSubscription: string;
+  user: string;
   tier: string;
   quantity: number;
+  status: Stripe.Subscription.Status;
 };
 
 export enum ValueType {
@@ -27,6 +30,13 @@ export enum ValueType {
   'WEBHOOK_SIGNING_SECRET' = 'stripeWebhookSigningSecret',
   'WEBHOOK_ENDPOINT_CONFIGURATION' = 'stripeWebhookEndpointConfiguration',
 }
+
+export type EventLog = {
+  id: string;
+  type: string;
+  idempotencyKey: string;
+  requestId: string | null;
+};
 
 export interface IStripeProviderStorageAdapter {
   insertTier(tier: Tier): Promise<void>;
@@ -39,11 +49,13 @@ export interface IStripeProviderStorageAdapter {
   findCustomer(id: string): Promise<Customer | null>;
   insertCustomer(customer: Customer): Promise<void>;
   insertSubscription(subscription: Subscription): Promise<void>;
-  findSubscription(id: string): Promise<Subscription | null>;
+  findSubscriptionByUser(user: string): Promise<Subscription | null>;
   updateSubscription(
     id: string,
     params: Partial<Omit<Subscription, 'id'>>,
   ): Promise<void>;
+  insertEvent(event: EventLog): Promise<void>;
+  findEvent(key: string): Promise<EventLog | null>;
 }
 
 export interface IStripeProvider {

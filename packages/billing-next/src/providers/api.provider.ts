@@ -1,7 +1,13 @@
 /* eslint-disable no-useless-constructor */
 import { injectable, inject } from 'inversify';
 import Stripe from 'stripe';
-import { IApiProvider, Request, Response } from '../interfaces/api.provider';
+import R from 'ramda';
+import {
+  IApiProvider,
+  Request,
+  Response,
+  WebhookEvents,
+} from '../interfaces/api.provider';
 import { TYPES } from '../types';
 import {
   IStripeProviderStorageAdapter,
@@ -23,7 +29,9 @@ export class ApiProvider implements IApiProvider {
     return {
       status: 200,
       body: {
-        data: this.configProvider.config.tiers,
+        data: {
+          tiers: this.configProvider.config.tiers,
+        },
       },
     } as Response<TierConfig[]>;
   }
@@ -64,19 +72,21 @@ export class ApiProvider implements IApiProvider {
     return {
       status: 200,
       body: {
-        secret: setupIntent.client_secret as string,
+        data: {
+          secret: setupIntent.client_secret,
+        },
       },
-    };
+    } as Response<string>;
   }
 
   async getSubscription(params: Request) {
     const { user } = params;
-    const subscription = await this.storageAdapter.findSubscription(user);
+    const subscription = await this.storageAdapter.findSubscriptionByUser(user);
 
     return {
       status: 200,
       body: {
-        data: subscription,
+        data: R.isNil(subscription) ? null : { subscription },
       },
     } as Response;
   }
@@ -114,9 +124,7 @@ export class ApiProvider implements IApiProvider {
 
     return {
       status: 301,
-      body: {
-        redirect_url: session.url,
-      },
+      redirectionUrl: session.url,
     } as Response;
   }
 
@@ -146,28 +154,138 @@ export class ApiProvider implements IApiProvider {
           quantity,
         },
       ],
-      expand: ['items.data.price.product', 'latest_invoice.payment_intent'],
     });
 
-    const invoice = subscription.latest_invoice as Stripe.Invoice;
-    const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
-
-    if (paymentIntent.status === 'succeeded') {
-      await this.storageAdapter.insertSubscription({
-        id: user,
-        stripeSubscription: subscription.id,
-        tier,
-        quantity,
-      });
-    }
+    await this.storageAdapter.insertSubscription({
+      id: subscription.id,
+      user,
+      tier,
+      quantity,
+      status: subscription.status,
+    });
 
     return {
       status: 200,
       body: {
         data: {
-          tier,
-          quantity,
-          payment_status: paymentIntent.status,
+          subscription: {
+            id: subscription.id,
+            user,
+            tier,
+            quantity,
+            status: subscription.status,
+          },
+        },
+      },
+    } as Response;
+  }
+
+  async postWebhook(params: Required<Omit<Request, 'user'>>) {
+    const { endpointSecret, signature, rawBody } = params.body;
+
+    if (R.isNil(endpointSecret)) {
+      throw new Error('Cannot verify payload without signing secret.');
+    }
+
+    const event = this.stripe.webhooks.constructEvent(
+      rawBody as Buffer,
+      signature as string,
+      endpointSecret as string,
+    );
+
+    const isLogged = await this.storageAdapter.findEvent(
+      event.request?.idempotency_key || event.id,
+    );
+
+    if (isLogged) {
+      return {
+        status: 200,
+        body: {
+          data: {
+            received: true,
+          },
+        },
+      } as Response;
+    }
+
+    switch (event.type) {
+      case WebhookEvents.SUBSCRIPTION_CREATED: {
+        const subscription = event.data.object as Stripe.Subscription;
+
+        const expandedSubscription = await this.stripe.subscriptions.retrieve(
+          subscription.id,
+          {
+            expand: ['items.data.price.product'],
+          },
+        );
+
+        const [item] = expandedSubscription.items.data;
+        const product = item.price.product as Stripe.Product;
+
+        const user = await this.storageAdapter.findCustomer(
+          expandedSubscription.customer as string,
+        );
+        const tier = await this.storageAdapter.findTier(product.id);
+
+        await this.storageAdapter.insertSubscription({
+          id: expandedSubscription.id,
+          user: user?.id as string,
+          tier: tier?.id as string,
+          quantity: item.quantity as number,
+          status: expandedSubscription.status,
+        });
+
+        break;
+      }
+
+      case WebhookEvents.SUBSCRIPTION_UPDATED: {
+        const subscription = event.data.object as Stripe.Subscription;
+
+        const expandedSubscription = await this.stripe.subscriptions.retrieve(
+          subscription.id,
+          {
+            expand: ['items.data.price.product'],
+          },
+        );
+
+        const [item] = expandedSubscription.items.data;
+        const product = item.price.product as Stripe.Product;
+        const tier = await this.storageAdapter.findTier(product.id);
+
+        await this.storageAdapter.updateSubscription(expandedSubscription.id, {
+          tier: tier?.id,
+          quantity: item.quantity,
+          status: expandedSubscription.status,
+        });
+
+        break;
+      }
+
+      case WebhookEvents.SUBSCRIPTION_DELETED: {
+        const subscription = event.data.object as Stripe.Subscription;
+
+        await this.storageAdapter.updateSubscription(subscription.id, {
+          status: 'canceled',
+        });
+
+        break;
+      }
+      default:
+        throw new Error(`Unhandled event type: ${event.type}`);
+    }
+
+    await this.storageAdapter.insertEvent({
+      id: event.id,
+      type: event.type,
+      idempotencyKey: event.request?.idempotency_key as string,
+      requestId: event.request?.id as string | null,
+    });
+
+    return {
+      status: 200,
+      body: {
+        data: {
+          received: true,
         },
       },
     } as Response;

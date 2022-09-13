@@ -6,7 +6,7 @@ import { generateFakeId, IdType } from './helpers/generate-fake-id';
 import { generateToken } from './helpers/generate-token';
 import { BillingServer } from '../src';
 
-describe.skip('GET /secret', () => {
+describe('GET /secret', () => {
   test.concurrent(
     'request is authorized and customer exists -> should return client secret',
     async () => {
@@ -49,7 +49,11 @@ describe.skip('GET /secret', () => {
         .expect('Content-Type', /json/)
         .expect(200)
         .expect((res) => {
-          expect(res.body.secret).toEqual(clientSecret);
+          expect(res.body.data).toEqual(
+            expect.objectContaining({
+              secret: expect.any(String),
+            }),
+          );
         });
 
       await teardown(ctx);
@@ -86,6 +90,8 @@ describe.skip('GET /secret', () => {
       nock(/stripe.com/)
         .post(/\/v1\/customers/)
         .reply(200, { id: customer.stripeCustomer })
+        .get(/\/v1\/setup_intents/)
+        .reply(200, { data: [] })
         .post(/\/v1\/setup_intents/)
         .reply(200, { client_secret: clientSecret });
 
@@ -95,7 +101,11 @@ describe.skip('GET /secret', () => {
         .expect('Content-Type', /json/)
         .expect(200)
         .expect((res) => {
-          expect(res.body.secret).toEqual(clientSecret);
+          expect(res.body.data).toEqual(
+            expect.objectContaining({
+              secret: expect.any(String),
+            }),
+          );
         });
 
       await teardown(ctx);
