@@ -1,4 +1,4 @@
-import { User } from '@highoutputventures/hovcli/types';
+import { User } from '../../src/types';
 import nock from 'nock';
 import R from 'ramda';
 import chalk from 'chalk';

@@ -1,4 +1,4 @@
-import { Database } from '../../types';
+import { Database } from '../../src/types';
 import nock from 'nock';
 import R from 'ramda';
 import chalk from 'chalk';

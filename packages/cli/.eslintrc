@@ -3,6 +3,7 @@
   "plugins": ["@typescript-eslint", "import"],
   "extends": [
     "airbnb-base",
+    "airbnb-typescript",
     "plugin:@typescript-eslint/recommended",
     "plugin:import/typescript"
   ],
