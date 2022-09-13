@@ -97,7 +97,7 @@ const command = new Command('create')
           console.log(err.message, 'error: could not found git');
       }
     }
-console.warn({options});
+
     const {dateTimeUpdated} = await client.createOrUpdate({
       type: ResourceType.Deployment,
       id,
