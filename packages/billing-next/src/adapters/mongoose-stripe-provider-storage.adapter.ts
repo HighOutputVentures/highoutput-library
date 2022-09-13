@@ -127,25 +127,35 @@ export class MongooseStripeProdiverStorageAdapter
 
     this.#eventModel = connection.model(
       'Event',
-      new Schema<EventLog>({
-        id: {
-          type: String,
-          required: true,
-          unique: true,
+      new Schema<EventLog>(
+        {
+          id: {
+            type: String,
+            required: true,
+            unique: true,
+          },
+          type: {
+            type: String,
+            required: true,
+          },
+          idempotencyKey: {
+            type: String,
+            unique: true,
+            required: true,
+          },
+          requestId: {
+            type: String,
+          },
         },
-        type: {
-          type: String,
-          required: true,
+        {
+          timestamps: true,
+          timeseries: {
+            timeField: 'createdAt',
+            granularity: 'minutes',
+          },
+          expires: '3d',
         },
-        idempotencyKey: {
-          type: String,
-          unique: true,
-          required: true,
-        },
-        requestId: {
-          type: String,
-        },
-      }),
+      ),
     );
   }
 
