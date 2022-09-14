@@ -1,6 +1,6 @@
 {
   "name": "@highoutput/cli",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "HOVCLI frontend",
   "main": "./dist/index.js",
   "author": "High Output Ventures",
