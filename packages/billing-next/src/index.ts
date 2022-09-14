@@ -156,6 +156,7 @@ export class BillingServer {
           res.status(400).send({
             error: 'An unexpected error occured internally. Please try again.',
           });
+          return;
         }
 
         res.status(400).send({ error: (error as AppError).message });

@@ -21,12 +21,12 @@ describe('GET /subscription', () => {
         stripePrices: [generateFakeId(IdType.PRICE)],
         stripeProduct: generateFakeId(IdType.PRODUCT),
       };
-      const subscription: Subscription = {
-        id: generateFakeId(IdType.SUBSCRIPTION),
+      const subscription: Omit<Subscription, 'id'> = {
+        stripeSubscription: generateFakeId(IdType.SUBSCRIPTION),
         user: generateFakeId(IdType.USER),
         tier: tier.id,
         quantity: 1,
-        status: 'active',
+        stripeStatus: 'active',
       };
       const token = generateToken({ sub: subscription.user }, 'secret');
 
@@ -53,11 +53,11 @@ describe('GET /subscription', () => {
           expect(res.body.data).toBeTruthy();
           expect(res.body.data.subscription).toMatchObject(
             expect.objectContaining({
-              id: expect.any(String),
+              stripeSubscription: expect.any(String),
               user: expect.any(String),
               tier: expect.any(Object),
               quantity: expect.any(Number),
-              status: expect.any(String),
+              stripeStatus: expect.any(String),
             }),
           );
         });

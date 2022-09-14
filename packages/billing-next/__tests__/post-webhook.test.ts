@@ -66,7 +66,7 @@ describe('POST /webhook', () => {
             },
           ],
         },
-        status: 'active',
+        stripeStatus: 'active',
       };
 
       const payload = {
@@ -146,17 +146,17 @@ describe('POST /webhook', () => {
             },
           ],
         },
-        status: 'active',
+        stripeStatus: 'active',
       };
 
       await storageAdapter.insertUser(customer);
       await storageAdapter.insertTier(tier);
       await storageAdapter.insertSubscription({
-        id: subscription.id,
+        stripeSubscription: subscription.id,
         user: customer.id,
         tier: tier.id,
         quantity: 1,
-        status: 'active',
+        stripeStatus: 'active',
       });
 
       const billingServer = new BillingServer({

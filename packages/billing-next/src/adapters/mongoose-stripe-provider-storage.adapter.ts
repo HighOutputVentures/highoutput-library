@@ -88,7 +88,7 @@ export class MongooseStripeProdiverStorageAdapter
       'Subscription',
       new Schema<Subscription>(
         {
-          id: {
+          stripeSubscription: {
             type: String,
             required: true,
             unique: true,
@@ -106,7 +106,7 @@ export class MongooseStripeProdiverStorageAdapter
             type: Number,
             default: 1,
           },
-          status: {
+          stripeStatus: {
             type: String,
             enum: [
               'active',
@@ -221,19 +221,28 @@ export class MongooseStripeProdiverStorageAdapter
     await this.#userModel.create(user);
   }
 
-  async insertSubscription(subscription: Subscription) {
+  async insertSubscription(subscription: Omit<Subscription, 'id'>) {
     await this.#subscriptionModel.create(subscription);
   }
 
   async findSubscriptionByUser(user: string) {
-    return this.#subscriptionModel.findOne({ user }).lean();
+    const doc = await this.#subscriptionModel.findOne({ user });
+
+    if (!doc) {
+      return null;
+    }
+
+    return serialize(doc) as Subscription;
   }
 
   async updateSubscription(
     id: string,
     params: Partial<Omit<Subscription, 'id'>>,
   ) {
-    await this.#subscriptionModel.updateOne({ id }, { $set: params });
+    await this.#subscriptionModel.updateOne(
+      { stripeSubscription: id },
+      { $set: params },
+    );
   }
 
   async insertEvent(event: EventLog) {

@@ -261,11 +261,11 @@ describe('ApiProvider', () => {
             body: {
               data: expect.objectContaining({
                 subscription: expect.objectContaining({
-                  id: expect.any(String),
+                  stripeSubscription: expect.any(String),
                   user: expect.any(String),
                   tier: expect.any(String),
                   quantity: expect.any(Number),
-                  status: expect.any(String),
+                  stripeStatus: expect.any(String),
                 }),
               }),
             },
@@ -520,11 +520,11 @@ describe('ApiProvider', () => {
           StripeProviderStorageAdapterMock.insertSubscription,
         ).toBeCalledWith(
           expect.objectContaining({
-            id: expect.any(String),
+            stripeSubscription: expect.any(String),
             user: expect.any(String),
             tier: expect.any(String),
             quantity: expect.any(Number),
-            status: expect.any(String),
+            stripeStatus: expect.any(String),
           }),
         );
         expect(StripeProviderStorageAdapterMock.insertEvent).toBeCalledWith(
@@ -630,7 +630,7 @@ describe('ApiProvider', () => {
           expect.objectContaining({
             tier: expect.any(String),
             quantity: expect.any(Number),
-            status: expect.any(String),
+            stripeStatus: expect.any(String),
           }),
         );
         expect(StripeProviderStorageAdapterMock.insertEvent).toBeCalledWith(
@@ -728,7 +728,7 @@ describe('ApiProvider', () => {
         ).toBeCalledWith(
           expect.any(String),
           expect.objectContaining({
-            status: expect.any(String),
+            stripeStatus: expect.any(String),
           }),
         );
         expect(StripeProviderStorageAdapterMock.insertEvent).toBeCalledWith(

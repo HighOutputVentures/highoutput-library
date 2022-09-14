@@ -46,7 +46,7 @@ export interface IApiProvider {
   getPortal(params: Request): Promise<Response>;
   putSubscription(
     params: Request<string>,
-  ): Promise<Response<{ subscription: Subscription }>>;
+  ): Promise<Response<{ subscription: Omit<Subscription, 'id'> }>>;
   postWebhook(
     params: Required<Omit<Request, 'user'>>,
   ): Promise<Response<{ received: boolean }>>;

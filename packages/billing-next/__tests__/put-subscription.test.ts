@@ -71,7 +71,15 @@ describe('PUT /subscription', () => {
         .expect(200)
         .expect((res) => {
           expect(res.body.data).toBeTruthy();
-          expect(res.body.data.subscription).toMatchObject(subscription);
+          expect(res.body.data.subscription).toMatchObject(
+            expect.objectContaining({
+              stripeSubscription: expect.any(String),
+              user: expect.any(String),
+              tier: expect.any(String),
+              quantity: expect.any(Number),
+              stripeStatus: expect.any(String),
+            }),
+          );
         });
 
       await teardown(ctx);

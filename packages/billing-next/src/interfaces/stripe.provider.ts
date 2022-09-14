@@ -19,10 +19,11 @@ export type User = {
 
 export type Subscription = {
   id: string;
+  stripeSubscription: string;
   user: string;
   tier: string;
   quantity: number;
-  status: Stripe.Subscription.Status;
+  stripeStatus: Stripe.Subscription.Status;
 };
 
 export enum ValueType {
@@ -48,7 +49,7 @@ export interface IStripeProviderStorageAdapter {
   updateValue(id: ValueType, value: string): Promise<void>;
   findUser(id: string): Promise<User | null>;
   insertUser(user: User): Promise<void>;
-  insertSubscription(subscription: Subscription): Promise<void>;
+  insertSubscription(subscription: Omit<Subscription, 'id'>): Promise<void>;
   findSubscriptionByUser(user: string): Promise<Subscription | null>;
   updateSubscription(
     id: string,

@@ -148,7 +148,7 @@ export class ApiProvider implements IApiProvider {
 
   async putSubscription(
     params: Request<string>,
-  ): Promise<Response<{ subscription: Subscription }>> {
+  ): Promise<Response<{ subscription: Omit<Subscription, 'id'> }>> {
     const { user } = params;
     const tier = params.body?.tier as string;
     const quantity = parseInt(params.body?.quantity as string, 10) || 1;
@@ -183,11 +183,11 @@ export class ApiProvider implements IApiProvider {
     });
 
     await this.storageAdapter.insertSubscription({
-      id: subscription.id,
+      stripeSubscription: subscription.id,
       user,
       tier,
       quantity,
-      status: subscription.status,
+      stripeStatus: subscription.status,
     });
 
     return {
@@ -195,11 +195,11 @@ export class ApiProvider implements IApiProvider {
       body: {
         data: {
           subscription: {
-            id: subscription.id,
+            stripeSubscription: subscription.id,
             user,
             tier,
             quantity,
-            status: subscription.status,
+            stripeStatus: subscription.status,
           },
         },
       },
@@ -259,11 +259,11 @@ export class ApiProvider implements IApiProvider {
         const tier = await this.storageAdapter.findTier(product.id);
 
         await this.storageAdapter.insertSubscription({
-          id: expandedSubscription.id,
+          stripeSubscription: expandedSubscription.id,
           user: user?.id as string,
           tier: tier?.id as string,
           quantity: item.quantity as number,
-          status: expandedSubscription.status,
+          stripeStatus: expandedSubscription.status,
         });
 
         break;
@@ -286,7 +286,7 @@ export class ApiProvider implements IApiProvider {
         await this.storageAdapter.updateSubscription(expandedSubscription.id, {
           tier: tier?.id,
           quantity: item.quantity,
-          status: expandedSubscription.status,
+          stripeStatus: expandedSubscription.status,
         });
 
         break;
@@ -296,7 +296,7 @@ export class ApiProvider implements IApiProvider {
         const subscription = event.data.object as Stripe.Subscription;
 
         await this.storageAdapter.updateSubscription(subscription.id, {
-          status: 'canceled',
+          stripeStatus: 'canceled',
         });
 
         break;
