@@ -12,7 +12,7 @@ export type Value = {
   value: string;
 };
 
-export type Customer = {
+export type User = {
   id: string;
   stripeCustomer: string;
 };
@@ -46,8 +46,8 @@ export interface IStripeProviderStorageAdapter {
   insertValue(value: Value): Promise<void>;
   findValue(id: ValueType): Promise<Value | null>;
   updateValue(id: ValueType, value: string): Promise<void>;
-  findCustomer(id: string): Promise<Customer | null>;
-  insertCustomer(customer: Customer): Promise<void>;
+  findUser(id: string): Promise<User | null>;
+  insertUser(user: User): Promise<void>;
   insertSubscription(subscription: Subscription): Promise<void>;
   findSubscriptionByUser(user: string): Promise<Subscription | null>;
   updateSubscription(

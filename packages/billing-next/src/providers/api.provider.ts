@@ -42,7 +42,7 @@ export class ApiProvider implements IApiProvider {
   async getSecret(params: Request): Promise<Response<{ secret: string }>> {
     const { user } = params;
 
-    let customer = await this.storageAdapter.findCustomer(user);
+    let customer = await this.storageAdapter.findUser(user);
 
     if (!customer) {
       const stripeCustomer = await this.stripe.customers.create({
@@ -56,7 +56,7 @@ export class ApiProvider implements IApiProvider {
         stripeCustomer: stripeCustomer.id,
       };
 
-      await this.storageAdapter.insertCustomer(customer);
+      await this.storageAdapter.insertUser(customer);
     }
 
     let {
@@ -114,7 +114,7 @@ export class ApiProvider implements IApiProvider {
     const portalConfig = await this.storageAdapter.findValue(
       ValueType.BILLING_PORTAL_CONFIGURATION,
     );
-    const customer = await this.storageAdapter.findCustomer(user);
+    const customer = await this.storageAdapter.findUser(user);
     let customerId: string;
 
     if (!customer) {
@@ -124,7 +124,7 @@ export class ApiProvider implements IApiProvider {
         },
       });
 
-      await this.storageAdapter.insertCustomer({
+      await this.storageAdapter.insertUser({
         id: user,
         stripeCustomer: stripeCustomer.id,
       });
@@ -152,7 +152,7 @@ export class ApiProvider implements IApiProvider {
     const { user } = params;
     const tier = params.body?.tier as string;
     const quantity = parseInt(params.body?.quantity as string, 10) || 1;
-    const customer = await this.storageAdapter.findCustomer(user);
+    const customer = await this.storageAdapter.findUser(user);
 
     if (!customer) {
       throw new AppError(
@@ -253,7 +253,7 @@ export class ApiProvider implements IApiProvider {
         const [item] = expandedSubscription.items.data;
         const product = item.price.product as Stripe.Product;
 
-        const user = await this.storageAdapter.findCustomer(
+        const user = await this.storageAdapter.findUser(
           expandedSubscription.customer as string,
         );
         const tier = await this.storageAdapter.findTier(product.id);

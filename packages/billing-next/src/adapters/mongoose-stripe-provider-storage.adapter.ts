@@ -2,7 +2,7 @@
 import { Connection, Document, Model, Schema } from 'mongoose';
 import R from 'ramda';
 import {
-  Customer,
+  User,
   EventLog,
   IStripeProviderStorageAdapter,
   Subscription,
@@ -27,7 +27,7 @@ export class MongooseStripeProdiverStorageAdapter
 
   #valueModel: Model<Value>;
 
-  #customerModel: Model<Customer>;
+  #userModel: Model<User>;
 
   #subscriptionModel: Model<Subscription>;
 
@@ -68,9 +68,9 @@ export class MongooseStripeProdiverStorageAdapter
       }),
     );
 
-    this.#customerModel = connection.model(
-      'Customer',
-      new Schema<Customer>({
+    this.#userModel = connection.model(
+      'User',
+      new Schema<User>({
         id: {
           type: String,
           required: true,
@@ -209,16 +209,16 @@ export class MongooseStripeProdiverStorageAdapter
     await this.#valueModel.findOneAndUpdate({ id }, { value });
   }
 
-  async findCustomer(id: string) {
-    return this.#customerModel
+  async findUser(id: string) {
+    return this.#userModel
       .findOne({
-        $or: [{ id }, { stripeCustomer: id }],
+        $or: [{ id }, { stripeUser: id }],
       })
       .lean();
   }
 
-  async insertCustomer(customer: Customer) {
-    await this.#customerModel.create(customer);
+  async insertUser(user: User) {
+    await this.#userModel.create(user);
   }
 
   async insertSubscription(subscription: Subscription) {

@@ -33,7 +33,7 @@ describe('POST /webhook', () => {
         stripeProduct: generateFakeId(IdType.PRODUCT),
       };
 
-      await storageAdapter.insertCustomer(customer);
+      await storageAdapter.insertUser(customer);
       await storageAdapter.insertTier(tier);
 
       const billingServer = new BillingServer({
@@ -149,7 +149,7 @@ describe('POST /webhook', () => {
         status: 'active',
       };
 
-      await storageAdapter.insertCustomer(customer);
+      await storageAdapter.insertUser(customer);
       await storageAdapter.insertTier(tier);
       await storageAdapter.insertSubscription({
         id: subscription.id,
@@ -232,7 +232,7 @@ describe('POST /webhook', () => {
       };
       const webhookSecret = 'whsec_T1sWT0N2rHkaFNG8EDgJfryNdlg6r2MW';
 
-      await storageAdapter.insertCustomer(customer);
+      await storageAdapter.insertUser(customer);
 
       const billingServer = new BillingServer({
         stripeSecretKey:

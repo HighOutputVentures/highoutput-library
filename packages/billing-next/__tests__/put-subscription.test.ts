@@ -28,7 +28,7 @@ describe('PUT /subscription', () => {
         stripeProduct: generateFakeId(IdType.PRODUCT),
       };
 
-      await storageAdapter.insertCustomer(customer);
+      await storageAdapter.insertUser(customer);
       await storageAdapter.insertTier(tier);
 
       const billingServer = new BillingServer({
@@ -138,7 +138,7 @@ describe('PUT /subscription', () => {
       };
       const token = generateToken({ sub: customer.id }, 'secret');
 
-      await storageAdapter.insertCustomer(customer);
+      await storageAdapter.insertUser(customer);
 
       const billingServer = new BillingServer({
         stripeSecretKey:

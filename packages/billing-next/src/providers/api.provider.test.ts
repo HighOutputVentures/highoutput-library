@@ -35,7 +35,7 @@ describe('ApiProvider', () => {
       };
 
       const StripeProviderStorageAdapterMock = {
-        findCustomer: jest.fn(async () => Promise.resolve(customer)),
+        findUser: jest.fn(async () => Promise.resolve(customer)),
       };
 
       container.bind(TYPES.Stripe).toConstantValue(StripeMock);
@@ -51,7 +51,7 @@ describe('ApiProvider', () => {
 
       const output = await provider.getSecret({ user: customer.id });
 
-      expect(StripeProviderStorageAdapterMock.findCustomer).toBeCalledWith(
+      expect(StripeProviderStorageAdapterMock.findUser).toBeCalledWith(
         customer.id,
       );
       expect(StripeMock.setupIntents.list).toBeCalledWith({
@@ -92,7 +92,7 @@ describe('ApiProvider', () => {
       };
 
       const StripeProviderStorageAdapterMock = {
-        findCustomer: jest.fn(async () => Promise.resolve(customer)),
+        findUser: jest.fn(async () => Promise.resolve(customer)),
       };
 
       container.bind(TYPES.Stripe).toConstantValue(StripeMock);
@@ -108,7 +108,7 @@ describe('ApiProvider', () => {
 
       const output = await provider.getSecret({ user: customer.id });
 
-      expect(StripeProviderStorageAdapterMock.findCustomer).toBeCalledWith(
+      expect(StripeProviderStorageAdapterMock.findUser).toBeCalledWith(
         customer.id,
       );
       expect(StripeMock.setupIntents.list).toBeCalledWith({
@@ -153,8 +153,8 @@ describe('ApiProvider', () => {
       };
 
       const StripeProviderStorageAdapterMock = {
-        findCustomer: jest.fn(async () => Promise.resolve(null)),
-        insertCustomer: jest.fn(async () => Promise.resolve()),
+        findUser: jest.fn(async () => Promise.resolve(null)),
+        insertUser: jest.fn(async () => Promise.resolve()),
       };
 
       container.bind(TYPES.Stripe).toConstantValue(StripeMock);
@@ -170,7 +170,7 @@ describe('ApiProvider', () => {
 
       const output = await provider.getSecret({ user: customer.id });
 
-      expect(StripeProviderStorageAdapterMock.findCustomer).toBeCalledWith(
+      expect(StripeProviderStorageAdapterMock.findUser).toBeCalledWith(
         customer.id,
       );
       expect(StripeMock.customers.create).toBeCalledWith({
@@ -178,7 +178,7 @@ describe('ApiProvider', () => {
           id: customer.id,
         },
       });
-      expect(StripeProviderStorageAdapterMock.insertCustomer).toBeCalledWith(
+      expect(StripeProviderStorageAdapterMock.insertUser).toBeCalledWith(
         customer,
       );
       expect(StripeMock.setupIntents.create).toBeCalledWith({
@@ -225,7 +225,7 @@ describe('ApiProvider', () => {
         };
 
         const StripeProviderStorageAdapterMock = {
-          findCustomer: jest.fn(async () => Promise.resolve(customer)),
+          findUser: jest.fn(async () => Promise.resolve(customer)),
           findTier: jest.fn(async () => Promise.resolve(tier)),
           insertSubscription: jest.fn(async () => Promise.resolve()),
         };
@@ -248,9 +248,9 @@ describe('ApiProvider', () => {
           },
         });
 
-        expect(
-          StripeProviderStorageAdapterMock.findCustomer,
-        ).toHaveBeenCalledWith(customer.id);
+        expect(StripeProviderStorageAdapterMock.findUser).toHaveBeenCalledWith(
+          customer.id,
+        );
         expect(StripeProviderStorageAdapterMock.findTier).toHaveBeenCalledWith(
           tier.id,
         );
@@ -283,7 +283,7 @@ describe('ApiProvider', () => {
       };
 
       const StripeProviderStorageAdapterMock = {
-        findCustomer: jest.fn(async () => Promise.resolve(null)),
+        findUser: jest.fn(async () => Promise.resolve(null)),
       };
 
       container.bind(TYPES.Stripe).toConstantValue({});
@@ -318,7 +318,7 @@ describe('ApiProvider', () => {
       };
 
       const StripeProviderStorageAdapterMock = {
-        findCustomer: jest.fn(async () => Promise.resolve(customer)),
+        findUser: jest.fn(async () => Promise.resolve(customer)),
         findTier: jest.fn(async () => Promise.resolve(null)),
       };
 
@@ -481,7 +481,7 @@ describe('ApiProvider', () => {
         };
 
         const StripeProviderStorageAdapterMock = {
-          findCustomer: jest.fn(async () => Promise.resolve(customer)),
+          findUser: jest.fn(async () => Promise.resolve(customer)),
           findTier: jest.fn(async () => Promise.resolve(tier)),
           insertSubscription: jest.fn(async () => Promise.resolve()),
           findEvent: jest.fn(async () => Promise.resolve(null)),
@@ -514,7 +514,7 @@ describe('ApiProvider', () => {
         );
         expect(StripeProviderStorageAdapterMock.findEvent).toBeCalled();
         expect(StripeMock.subscriptions.retrieve).toBeCalled();
-        expect(StripeProviderStorageAdapterMock.findCustomer).toBeCalled();
+        expect(StripeProviderStorageAdapterMock.findUser).toBeCalled();
         expect(StripeProviderStorageAdapterMock.findTier).toBeCalled();
         expect(
           StripeProviderStorageAdapterMock.insertSubscription,

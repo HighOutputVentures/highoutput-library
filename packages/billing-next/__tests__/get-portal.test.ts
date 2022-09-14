@@ -23,7 +23,7 @@ describe('GET /portal', () => {
       };
       const token = generateToken({ sub: customer.id }, 'secret');
 
-      await storageAdapter.insertCustomer(customer);
+      await storageAdapter.insertUser(customer);
 
       const billingServer = new BillingServer({
         stripeSecretKey:
