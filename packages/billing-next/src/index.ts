@@ -27,6 +27,7 @@ export class BillingServer {
     this.#container.bind(TYPES.Stripe).toConstantValue(
       new Stripe(params.stripeSecretKey, {
         apiVersion: '2022-08-01',
+        maxNetworkRetries: 4,
       }),
     );
     this.#container
