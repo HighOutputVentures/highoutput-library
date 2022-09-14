@@ -7,7 +7,7 @@ import {
   useMultiStyleConfig,
 } from '@chakra-ui/react';
 import omit from 'lodash/omit';
-import React, { forwardRef, ReactNode } from 'react';
+import React, { forwardRef, ReactNode, useId } from 'react';
 
 import FormContainer, {
   FormContainerProps,
@@ -42,6 +42,7 @@ const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaFieldProps>(
       size,
     } = props;
     const styles = useMultiStyleConfig('Form', { variant, size });
+    const uid = useId();
 
     return (
       <FormContainer {...props}>
@@ -62,7 +63,7 @@ const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaFieldProps>(
             color="gray.700"
             resize="vertical"
             {...omit(props, 'errorMsg')}
-            data-testid="textareafield.input"
+            data-testid={`${uid}-textarea-field-input`}
           />
           {rightIcon && <InputRightElement>{rightIcon}</InputRightElement>}
         </InputGroup>
