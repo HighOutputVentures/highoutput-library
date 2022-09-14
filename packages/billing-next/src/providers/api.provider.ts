@@ -12,6 +12,8 @@ import {
 import { TYPES } from '../types';
 import {
   IStripeProviderStorageAdapter,
+  Subscription,
+  Tier,
   ValueType,
 } from '../interfaces/stripe.provider';
 import { IConfigProvider } from '../interfaces/config.provider';
@@ -26,7 +28,7 @@ export class ApiProvider implements IApiProvider {
     private storageAdapter: IStripeProviderStorageAdapter,
   ) {}
 
-  async getTiers() {
+  async getTiers(): Promise<Response<{ tiers: TierConfig[] }>> {
     return {
       status: 200,
       body: {
@@ -34,10 +36,10 @@ export class ApiProvider implements IApiProvider {
           tiers: this.configProvider.config.tiers,
         },
       },
-    } as Response<TierConfig[]>;
+    };
   }
 
-  async getSecret(params: Request): Promise<Response<string>> {
+  async getSecret(params: Request): Promise<Response<{ secret: string }>> {
     const { user } = params;
 
     let customer = await this.storageAdapter.findCustomer(user);
@@ -74,25 +76,40 @@ export class ApiProvider implements IApiProvider {
       status: 200,
       body: {
         data: {
-          secret: setupIntent.client_secret,
+          secret: setupIntent.client_secret as string,
         },
       },
-    } as Response<string>;
+    };
   }
 
-  async getSubscription(params: Request) {
+  async getSubscription(params: Request): Promise<
+    Response<{
+      subscription: Omit<Subscription, 'tier'> & { tier: Tier };
+    } | null>
+  > {
     const { user } = params;
     const subscription = await this.storageAdapter.findSubscriptionByUser(user);
+    let data = null;
+
+    if (!R.isNil(subscription)) {
+      const tier = await this.storageAdapter.findTier(subscription.tier);
+      data = {
+        subscription: {
+          ...R.omit(['tier'], subscription),
+          tier,
+        } as Omit<Subscription, 'tier'> & { tier: Tier },
+      };
+    }
 
     return {
       status: 200,
       body: {
-        data: R.isNil(subscription) ? null : { subscription },
+        data,
       },
-    } as Response;
+    };
   }
 
-  async getPortal(params: Request<never>) {
+  async getPortal(params: Request<never>): Promise<Response> {
     const { user } = params;
     const portalConfig = await this.storageAdapter.findValue(
       ValueType.BILLING_PORTAL_CONFIGURATION,
@@ -126,10 +143,12 @@ export class ApiProvider implements IApiProvider {
     return {
       status: 301,
       redirectionUrl: session.url,
-    } as Response;
+    };
   }
 
-  async putSubscription(params: Request<string>) {
+  async putSubscription(
+    params: Request<string>,
+  ): Promise<Response<{ subscription: Subscription }>> {
     const { user } = params;
     const tier = params.body?.tier as string;
     const quantity = parseInt(params.body?.quantity as string, 10) || 1;
@@ -184,10 +203,12 @@ export class ApiProvider implements IApiProvider {
           },
         },
       },
-    } as Response;
+    };
   }
 
-  async postWebhook(params: Required<Omit<Request, 'user'>>) {
+  async postWebhook(
+    params: Required<Omit<Request, 'user'>>,
+  ): Promise<Response<{ received: boolean }>> {
     const { endpointSecret, signature, rawBody } = params.body;
 
     if (R.isNil(endpointSecret)) {
@@ -215,7 +236,7 @@ export class ApiProvider implements IApiProvider {
             received: true,
           },
         },
-      } as Response;
+      };
     }
 
     switch (event.type) {
@@ -301,6 +322,6 @@ export class ApiProvider implements IApiProvider {
           received: true,
         },
       },
-    } as Response;
+    };
   }
 }
