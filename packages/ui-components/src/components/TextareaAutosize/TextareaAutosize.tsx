@@ -1,5 +1,6 @@
 import { Textarea, TextareaProps } from '@chakra-ui/react';
 import * as React from 'react';
+import { useId } from 'react';
 import ReactTextareaAutosize from 'react-textarea-autosize';
 
 export type TextareaAutosizeProps = TextareaProps & {
@@ -11,6 +12,7 @@ const TextareaAutosize = React.forwardRef<
   HTMLTextAreaElement,
   TextareaAutosizeProps
 >(({ minRows, maxRows, ...props }, ref) => {
+  const uid = useId();
   return (
     <Textarea
       as={ReactTextareaAutosize}
@@ -23,7 +25,7 @@ const TextareaAutosize = React.forwardRef<
       transition="height none"
       minRows={minRows ?? 2}
       maxRows={maxRows ?? 4}
-      data-testid="textarea-autosize"
+      data-testid={`${uid}-textarea-autosize`}
       {...props}
     />
   );
