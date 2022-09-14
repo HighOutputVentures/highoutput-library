@@ -44,6 +44,7 @@
     "typescript": "^4.8.2"
   },
   "dependencies": {
+    "@highoutput/error": "^0.1.12",
     "ajv": "^8.11.0",
     "co-body": "^6.1.0",
     "commander": "^9.4.0",

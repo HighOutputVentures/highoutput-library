@@ -4,6 +4,7 @@ import Stripe from 'stripe';
 import R from 'ramda';
 import * as express from 'express';
 import parse from 'co-body';
+import AppError from '@highoutput/error';
 import { ConfigProvider } from './providers/config.provider';
 import { StripeProvider } from './providers/stripe.provider';
 import { TYPES } from './types';
@@ -66,7 +67,10 @@ export class BillingServer {
         switch (true) {
           case R.test(/GET/, method) && R.test(/^\/tiers$/, path):
             if (!user) {
-              throw new Error('User not found.');
+              throw new AppError(
+                'INVALID_PERMISSION',
+                `Sorry, access is not allowed. Please provide a valid access token.`,
+              );
             }
 
             data = await expressApi.getTiers();
@@ -74,7 +78,10 @@ export class BillingServer {
 
           case R.test(/GET/, method) && R.test(/^\/secret$/, path):
             if (!user) {
-              throw new Error('User not found.');
+              throw new AppError(
+                'INVALID_PERMISSION',
+                `Sorry, access is not allowed. Please provide a valid access token.`,
+              );
             }
 
             data = await expressApi.getSecret({ user: user.id });
@@ -82,7 +89,10 @@ export class BillingServer {
 
           case R.test(/GET/, method) && R.test(/^\/subscription$/, path):
             if (!user) {
-              throw new Error('User not found.');
+              throw new AppError(
+                'INVALID_PERMISSION',
+                `Sorry, access is not allowed. Please provide a valid access token.`,
+              );
             }
 
             data = await expressApi.getSubscription({
@@ -92,7 +102,10 @@ export class BillingServer {
 
           case R.test(/GET/, method) && R.test(/^\/portal$/, path):
             if (!user) {
-              throw new Error('User not found.');
+              throw new AppError(
+                'INVALID_PERMISSION',
+                `Sorry, access is not allowed. Please provide a valid access token.`,
+              );
             }
 
             data = await expressApi.getPortal({ user: user.id });
@@ -100,13 +113,19 @@ export class BillingServer {
 
           case R.test(/PUT/, method) && R.test(/^\/subscription$/, path): {
             if (!user) {
-              throw new Error('User not found.');
+              throw new AppError(
+                'INVALID_PERMISSION',
+                `Sorry, access is not allowed. Please provide a valid access token.`,
+              );
             }
 
             const body = await parse(req);
 
             if (!body.tier) {
-              throw new Error('Lacking property in request payload: price');
+              throw new AppError(
+                'INVALID_REQUEST',
+                `Please provide a 'tier' property in your request payload.`,
+              );
             }
 
             data = await expressApi.putSubscription({
@@ -133,7 +152,13 @@ export class BillingServer {
             return;
         }
       } catch (error) {
-        res.status(400).send({ error: (error as Error).message });
+        if (!(error instanceof AppError)) {
+          res.status(400).send({
+            error: 'An unexpected error occured internally. Please try again.',
+          });
+        }
+
+        res.status(400).send({ error: (error as AppError).message });
         return;
       }
 

@@ -1,6 +1,7 @@
 import { Container } from 'inversify';
 import Stripe from 'stripe';
 import { faker } from '@faker-js/faker';
+import AppError from '@highoutput/error';
 import { generateFakeConfig } from '../../__tests__/helpers/generate-fake-config';
 import { IApiProvider } from '../interfaces/api.provider';
 import { ApiProvider } from './api.provider';
@@ -296,16 +297,14 @@ describe('ApiProvider', () => {
 
       const provider = container.get<IApiProvider>(TYPES.ApiProvider);
 
-      try {
-        await provider.putSubscription({
+      expect(
+        provider.putSubscription({
           user: customer.id,
           body: {
             tier: 'starter',
           },
-        });
-      } catch (error) {
-        expect((error as Error).message).toEqual('Cannot find customer.');
-      }
+        }),
+      ).rejects.toBeInstanceOf(AppError);
     });
 
     test.concurrent('tier is invalid -> should throw', async () => {
@@ -334,16 +333,14 @@ describe('ApiProvider', () => {
 
       const provider = container.get<IApiProvider>(TYPES.ApiProvider);
 
-      try {
-        await provider.putSubscription({
+      expect(
+        provider.putSubscription({
           user: customer.id,
           body: {
             tier: 'starter',
           },
-        });
-      } catch (error) {
-        expect((error as Error).message).toEqual('Cannot find product.');
-      }
+        }),
+      ).rejects.toBeInstanceOf(AppError);
     });
   });
 
@@ -370,18 +367,14 @@ describe('ApiProvider', () => {
 
         const provider = container.get<IApiProvider>(TYPES.ApiProvider);
 
-        try {
-          await provider.postWebhook({
+        expect(
+          provider.postWebhook({
             body: {
               rawBody: '',
               signature: '',
             },
-          });
-        } catch (error) {
-          expect((error as Error).message).toEqual(
-            'Cannot verify payload without signing secret.',
-          );
-        }
+          }),
+        ).rejects.toBeInstanceOf(AppError);
       },
     );
 
@@ -411,7 +404,7 @@ describe('ApiProvider', () => {
       };
 
       const StripeProviderStorageAdapterMock = {
-        findEvent: jest.fn(async () => Promise.resolve({})),
+        findEvent: jest.fn(async () => Promise.resolve(null)),
       };
 
       container.bind(TYPES.Stripe).toConstantValue(StripeMock);
@@ -425,17 +418,15 @@ describe('ApiProvider', () => {
 
       const provider = container.get<IApiProvider>(TYPES.ApiProvider);
 
-      try {
-        await provider.postWebhook({
+      expect(
+        provider.postWebhook({
           body: {
             endpointSecret: webhookSecret,
             rawBody: payloadString,
             signature: header,
           },
-        });
-      } catch (error) {
-        expect((error as Error).message).toMatch(/Unhandled event type/);
-      }
+        }),
+      ).rejects.toBeInstanceOf(AppError);
     });
 
     test.concurrent(

@@ -2,6 +2,7 @@
 import { injectable, inject } from 'inversify';
 import Stripe from 'stripe';
 import R from 'ramda';
+import AppError from '@highoutput/error';
 import {
   IApiProvider,
   Request,
@@ -135,13 +136,19 @@ export class ApiProvider implements IApiProvider {
     const customer = await this.storageAdapter.findCustomer(user);
 
     if (!customer) {
-      throw new Error('Cannot find customer.');
+      throw new AppError(
+        'RESOURCE_NOT_FOUND',
+        `Sorry, customer with ID ${user} cannot be found.`,
+      );
     }
 
     const product = await this.storageAdapter.findTier(tier);
 
     if (!product) {
-      throw new Error('Cannot find product.');
+      throw new AppError(
+        'RESOURCE_NOT_FOUND',
+        `Sorry, product with ID ${tier} cannot be found.`,
+      );
     }
 
     const [price] = product.stripePrices;
@@ -184,7 +191,10 @@ export class ApiProvider implements IApiProvider {
     const { endpointSecret, signature, rawBody } = params.body;
 
     if (R.isNil(endpointSecret)) {
-      throw new Error('Cannot verify payload without signing secret.');
+      throw new AppError(
+        'RESOURCE_NOT_FOUND',
+        'Cannot verify payload without a signing secret. Please provide a webhook signing secret.',
+      );
     }
 
     const event = this.stripe.webhooks.constructEvent(
@@ -271,7 +281,10 @@ export class ApiProvider implements IApiProvider {
         break;
       }
       default:
-        throw new Error(`Unhandled event type: ${event.type}`);
+        throw new AppError(
+          'UNHANDLED_WEBHOOK_EVENT',
+          `Unexpected event type. Event ${event.type} is currently not supported.`,
+        );
     }
 
     await this.storageAdapter.insertEvent({

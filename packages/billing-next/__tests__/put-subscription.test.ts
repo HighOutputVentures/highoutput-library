@@ -115,9 +115,7 @@ describe('PUT /subscription', () => {
         .expect('Content-Type', /json/)
         .expect(400)
         .expect((res) => {
-          expect(res.body.error).toEqual(
-            expect.stringContaining('Cannot find customer.'),
-          );
+          expect(res.body.error).toMatch(/cannot be found/);
         });
 
       await teardown(ctx);
@@ -165,9 +163,7 @@ describe('PUT /subscription', () => {
         .expect('Content-Type', /json/)
         .expect(400)
         .expect((res) => {
-          expect(res.body.error).toEqual(
-            expect.stringContaining('Cannot find product.'),
-          );
+          expect(res.body.error).toMatch(/cannot be found/);
         });
 
       await teardown(ctx);
