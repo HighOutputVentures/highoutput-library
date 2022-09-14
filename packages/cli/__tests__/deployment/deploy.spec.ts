@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import program from '../../src/program';
 import generateDeployment from '../helpers.next/generate-deployment';
-import { DeploymentStatus } from '../../types';
+import { DeploymentStatus } from '../../src/types';
 import nock from 'nock';
 import { API_BASE_URL } from '../../src/library/contants';
 import { DateTime } from 'luxon';

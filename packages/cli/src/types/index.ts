@@ -60,6 +60,7 @@ export type Deployment = Resource & {
   directory?: string;
   environment?: EnvironmentVariable[];
   url?: string;
+  dockerFile?: string;
   dateTimeCreated: Date;
   dateTimeUpdated: Date;
 };

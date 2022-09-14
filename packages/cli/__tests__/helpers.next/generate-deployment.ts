@@ -1,6 +1,6 @@
 import faker from '@faker-js/faker';
 import R from 'ramda';
-import { Deployment, DeploymentStatus, ObjectID } from '@highoutputventures/hovcli/types';
+import { Deployment, DeploymentStatus, ObjectID } from '../../src/types';
 import sample from 'lodash.sample';
 
 export default function (): Deployment {
@@ -34,6 +34,7 @@ export default function (): Deployment {
     ), 5),
     directory: `./${faker.word.noun()}`,
     url: faker.internet.url(),
+    dockerFile: faker.lorem.word(),
     dateTimeCreated: new Date(),
     dateTimeUpdated: new Date(),
   };

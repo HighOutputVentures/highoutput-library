@@ -1,4 +1,4 @@
-import { Deployment } from '../../types';
+import { Deployment } from '../../src/types';
 import nock from 'nock';
 import R from 'ramda';
 import chalk from 'chalk';

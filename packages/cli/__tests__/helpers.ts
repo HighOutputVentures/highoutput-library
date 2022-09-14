@@ -2,7 +2,7 @@ import {
   Deployment,
   DeploymentStatus,
   ObjectID,
-} from '@highoutputventures/hovcli/types';
+} from '../src/types';
 import Chance from 'chance';
 
 export const chance = new Chance();

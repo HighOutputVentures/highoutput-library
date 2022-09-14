@@ -13,11 +13,13 @@ const command = new Command('create')
   .option('-d, --directory <directory>', 'If using monorepo setup, specify the app directory.')
   .option('-e, --env <environment...>', 'The application runtime environment variables. If you need to use build time environment variables, put it into your dockerfile instead. This flag can be used multiple times.')
   .option('-t, --tag <tag...>', 'Resource tags to help identify the deployment. This flag can be used multiple times')
+  .option('-df, --docker-file <filename>', 'Custom Dockerfile.')
   .action(async (name: string, options: {
     env?: string[];
     repository: string;
     directory?: string;
     tag?: string[];
+    dockerFile?: string;
   }) => {
     const id = new ObjectID();
     
@@ -71,7 +73,7 @@ const command = new Command('create')
       }),
     )([...(options.tag || []), `name=${name}`]);
     
-    let { repository, directory } = options;
+    let { repository, directory, dockerFile } = options;
 
     if (!repository) {
       try {
@@ -104,6 +106,7 @@ const command = new Command('create')
         directory,
         tags,
         environment,
+        dockerFile,
       }
     }) as Deployment;
 

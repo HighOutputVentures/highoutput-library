@@ -1,5 +1,5 @@
 import faker from '@faker-js/faker';
-import { DatabaseStatus, ObjectID, DatabaseType } from '@highoutputventures/hovcli/types';
+import { DatabaseStatus, ObjectID, DatabaseType } from '../../src/types';
 
 export default function () {
   return {

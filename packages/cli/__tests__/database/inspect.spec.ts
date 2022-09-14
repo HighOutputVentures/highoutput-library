@@ -1,5 +1,5 @@
 import program from '../../src/program';
-import { DatabaseStatus } from '../../types';
+import { DatabaseStatus } from '../../src/types';
 import nock from 'nock';
 import { API_BASE_URL } from '../../src/library/contants';
 import generateDatabase from '../helpers.next/generate-database';
