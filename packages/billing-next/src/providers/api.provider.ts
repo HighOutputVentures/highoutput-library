@@ -182,14 +182,6 @@ export class ApiProvider implements IApiProvider {
       ],
     });
 
-    await this.storageAdapter.insertSubscription({
-      stripeSubscription: subscription.id,
-      user,
-      tier,
-      quantity,
-      stripeStatus: subscription.status,
-    });
-
     return {
       status: 200,
       body: {

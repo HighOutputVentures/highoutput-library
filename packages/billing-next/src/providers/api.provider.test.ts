@@ -227,7 +227,6 @@ describe('ApiProvider', () => {
         const StripeProviderStorageAdapterMock = {
           findUser: jest.fn(async () => Promise.resolve(customer)),
           findTier: jest.fn(async () => Promise.resolve(tier)),
-          insertSubscription: jest.fn(async () => Promise.resolve()),
         };
 
         container.bind(TYPES.Stripe).toConstantValue(StripeMock);
