@@ -51,7 +51,7 @@ const FormContainer: FC<FormContainerProps> = ({
       id={id}
       isInvalid={Boolean(errorMsg)}
       isReadOnly={disabled}
-      data-testid={`${uid}-form-container-formcontrol`}
+      data-testid={`${uid}-form-container-form-control`}
       sx={styles.formControl}
       {...partProps?.formControl}
     >

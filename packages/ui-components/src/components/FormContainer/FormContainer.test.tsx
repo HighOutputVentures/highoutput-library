@@ -21,7 +21,7 @@ describe('Form Container Component', () => {
 
   it('should renders form container form control', async () => {
     const formControl = await screen.findAllByTestId(
-      ':r0:-form-container-formcontrol'
+      ':r0:-form-container-form-control'
     );
     expect(formControl).toHaveLength(1);
   });
