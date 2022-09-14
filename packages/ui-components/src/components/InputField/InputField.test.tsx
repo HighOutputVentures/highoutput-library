@@ -27,9 +27,7 @@ describe('Input Field Component', () => {
   });
 
   it('should renders input field input group', async () => {
-    const inputGroup = await screen.findAllByTestId(
-      ':r0:-input-field-input-group'
-    );
+    const inputGroup = await screen.findAllByTestId(':r0:-input-field-group');
     expect(inputGroup).toHaveLength(1);
   });
 

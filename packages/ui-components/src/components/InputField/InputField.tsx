@@ -72,7 +72,7 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
           sx={styles.formInputGroup}
           {...partProps?.inputGroup}
           size={size}
-          data-testid={`${uid}-input-field-input-group`}
+          data-testid={`${uid}-input-field-group`}
         >
           {leftIcon && (
             <InputLeftElement
