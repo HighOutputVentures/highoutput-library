@@ -16,16 +16,22 @@ describe('GET /subscription', () => {
         ctx.mongoose,
       );
 
-      const subscription: Subscription = {
-        id: generateFakeId(IdType.SUBSCRIPTION),
+      const tier = {
+        id: 'starter',
+        stripePrices: [generateFakeId(IdType.PRICE)],
+        stripeProduct: generateFakeId(IdType.PRODUCT),
+      };
+      const subscription: Omit<Subscription, 'id'> = {
+        stripeSubscription: generateFakeId(IdType.SUBSCRIPTION),
         user: generateFakeId(IdType.USER),
-        tier: 'Starter',
+        tier: tier.id,
         quantity: 1,
-        status: 'active',
+        stripeStatus: 'active',
       };
       const token = generateToken({ sub: subscription.user }, 'secret');
 
       await storageAdapter.insertSubscription(subscription);
+      await storageAdapter.insertTier(tier);
 
       const billingServer = new BillingServer({
         stripeSecretKey:
@@ -45,7 +51,15 @@ describe('GET /subscription', () => {
         .expect(200)
         .expect((res) => {
           expect(res.body.data).toBeTruthy();
-          expect(res.body.data.subscription).toMatchObject(subscription);
+          expect(res.body.data.subscription).toMatchObject(
+            expect.objectContaining({
+              stripeSubscription: expect.any(String),
+              user: expect.any(String),
+              tier: expect.any(Object),
+              quantity: expect.any(Number),
+              stripeStatus: expect.any(String),
+            }),
+          );
         });
 
       await teardown(ctx);

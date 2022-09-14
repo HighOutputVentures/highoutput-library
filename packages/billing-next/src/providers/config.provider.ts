@@ -1,3 +1,4 @@
+import AppError from '@highoutput/error';
 import Ajv, { JTDSchemaType } from 'ajv/dist/jtd';
 import { readFileSync } from 'fs';
 import { injectable } from 'inversify';
@@ -56,7 +57,7 @@ export class ConfigProvider implements IConfigProvider {
     const config = parser(readFileSync(path, { encoding: 'utf8' }));
 
     if (!config) {
-      throw new Error(parser.message);
+      throw new AppError('INVALID_CONFIG', parser.message as string);
     }
 
     this.#config = config;

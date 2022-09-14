@@ -2,6 +2,7 @@
 import { injectable, inject } from 'inversify';
 import Stripe from 'stripe';
 import R from 'ramda';
+import AppError from '@highoutput/error';
 import {
   IApiProvider,
   Request,
@@ -11,6 +12,8 @@ import {
 import { TYPES } from '../types';
 import {
   IStripeProviderStorageAdapter,
+  Subscription,
+  Tier,
   ValueType,
 } from '../interfaces/stripe.provider';
 import { IConfigProvider } from '../interfaces/config.provider';
@@ -25,7 +28,7 @@ export class ApiProvider implements IApiProvider {
     private storageAdapter: IStripeProviderStorageAdapter,
   ) {}
 
-  async getTiers() {
+  async getTiers(): Promise<Response<{ tiers: TierConfig[] }>> {
     return {
       status: 200,
       body: {
@@ -33,13 +36,13 @@ export class ApiProvider implements IApiProvider {
           tiers: this.configProvider.config.tiers,
         },
       },
-    } as Response<TierConfig[]>;
+    };
   }
 
-  async getSecret(params: Request): Promise<Response<string>> {
+  async getSecret(params: Request): Promise<Response<{ secret: string }>> {
     const { user } = params;
 
-    let customer = await this.storageAdapter.findCustomer(user);
+    let customer = await this.storageAdapter.findUser(user);
 
     if (!customer) {
       const stripeCustomer = await this.stripe.customers.create({
@@ -53,7 +56,7 @@ export class ApiProvider implements IApiProvider {
         stripeCustomer: stripeCustomer.id,
       };
 
-      await this.storageAdapter.insertCustomer(customer);
+      await this.storageAdapter.insertUser(customer);
     }
 
     let {
@@ -73,30 +76,45 @@ export class ApiProvider implements IApiProvider {
       status: 200,
       body: {
         data: {
-          secret: setupIntent.client_secret,
+          secret: setupIntent.client_secret as string,
         },
       },
-    } as Response<string>;
+    };
   }
 
-  async getSubscription(params: Request) {
+  async getSubscription(params: Request): Promise<
+    Response<{
+      subscription: Omit<Subscription, 'tier'> & { tier: Tier };
+    } | null>
+  > {
     const { user } = params;
     const subscription = await this.storageAdapter.findSubscriptionByUser(user);
+    let data = null;
+
+    if (!R.isNil(subscription)) {
+      const tier = await this.storageAdapter.findTier(subscription.tier);
+      data = {
+        subscription: {
+          ...R.omit(['tier'], subscription),
+          tier,
+        } as Omit<Subscription, 'tier'> & { tier: Tier },
+      };
+    }
 
     return {
       status: 200,
       body: {
-        data: R.isNil(subscription) ? null : { subscription },
+        data,
       },
-    } as Response;
+    };
   }
 
-  async getPortal(params: Request<never>) {
+  async getPortal(params: Request<never>): Promise<Response> {
     const { user } = params;
     const portalConfig = await this.storageAdapter.findValue(
       ValueType.BILLING_PORTAL_CONFIGURATION,
     );
-    const customer = await this.storageAdapter.findCustomer(user);
+    const customer = await this.storageAdapter.findUser(user);
     let customerId: string;
 
     if (!customer) {
@@ -106,7 +124,7 @@ export class ApiProvider implements IApiProvider {
         },
       });
 
-      await this.storageAdapter.insertCustomer({
+      await this.storageAdapter.insertUser({
         id: user,
         stripeCustomer: stripeCustomer.id,
       });
@@ -125,23 +143,31 @@ export class ApiProvider implements IApiProvider {
     return {
       status: 301,
       redirectionUrl: session.url,
-    } as Response;
+    };
   }
 
-  async putSubscription(params: Request<string>) {
+  async putSubscription(
+    params: Request<string>,
+  ): Promise<Response<{ subscription: Omit<Subscription, 'id'> }>> {
     const { user } = params;
     const tier = params.body?.tier as string;
     const quantity = parseInt(params.body?.quantity as string, 10) || 1;
-    const customer = await this.storageAdapter.findCustomer(user);
+    const customer = await this.storageAdapter.findUser(user);
 
     if (!customer) {
-      throw new Error('Cannot find customer.');
+      throw new AppError(
+        'RESOURCE_NOT_FOUND',
+        `Sorry, customer with ID ${user} cannot be found.`,
+      );
     }
 
     const product = await this.storageAdapter.findTier(tier);
 
     if (!product) {
-      throw new Error('Cannot find product.');
+      throw new AppError(
+        'RESOURCE_NOT_FOUND',
+        `Sorry, product with ID ${tier} cannot be found.`,
+      );
     }
 
     const [price] = product.stripePrices;
@@ -156,35 +182,32 @@ export class ApiProvider implements IApiProvider {
       ],
     });
 
-    await this.storageAdapter.insertSubscription({
-      id: subscription.id,
-      user,
-      tier,
-      quantity,
-      status: subscription.status,
-    });
-
     return {
       status: 200,
       body: {
         data: {
           subscription: {
-            id: subscription.id,
+            stripeSubscription: subscription.id,
             user,
             tier,
             quantity,
-            status: subscription.status,
+            stripeStatus: subscription.status,
           },
         },
       },
-    } as Response;
+    };
   }
 
-  async postWebhook(params: Required<Omit<Request, 'user'>>) {
+  async postWebhook(
+    params: Required<Omit<Request, 'user'>>,
+  ): Promise<Response<{ received: boolean }>> {
     const { endpointSecret, signature, rawBody } = params.body;
 
     if (R.isNil(endpointSecret)) {
-      throw new Error('Cannot verify payload without signing secret.');
+      throw new AppError(
+        'RESOURCE_NOT_FOUND',
+        'Cannot verify payload without a signing secret. Please provide a webhook signing secret.',
+      );
     }
 
     const event = this.stripe.webhooks.constructEvent(
@@ -205,7 +228,7 @@ export class ApiProvider implements IApiProvider {
             received: true,
           },
         },
-      } as Response;
+      };
     }
 
     switch (event.type) {
@@ -222,17 +245,17 @@ export class ApiProvider implements IApiProvider {
         const [item] = expandedSubscription.items.data;
         const product = item.price.product as Stripe.Product;
 
-        const user = await this.storageAdapter.findCustomer(
+        const user = await this.storageAdapter.findUser(
           expandedSubscription.customer as string,
         );
         const tier = await this.storageAdapter.findTier(product.id);
 
         await this.storageAdapter.insertSubscription({
-          id: expandedSubscription.id,
+          stripeSubscription: expandedSubscription.id,
           user: user?.id as string,
           tier: tier?.id as string,
           quantity: item.quantity as number,
-          status: expandedSubscription.status,
+          stripeStatus: expandedSubscription.status,
         });
 
         break;
@@ -255,7 +278,7 @@ export class ApiProvider implements IApiProvider {
         await this.storageAdapter.updateSubscription(expandedSubscription.id, {
           tier: tier?.id,
           quantity: item.quantity,
-          status: expandedSubscription.status,
+          stripeStatus: expandedSubscription.status,
         });
 
         break;
@@ -265,13 +288,16 @@ export class ApiProvider implements IApiProvider {
         const subscription = event.data.object as Stripe.Subscription;
 
         await this.storageAdapter.updateSubscription(subscription.id, {
-          status: 'canceled',
+          stripeStatus: 'canceled',
         });
 
         break;
       }
       default:
-        throw new Error(`Unhandled event type: ${event.type}`);
+        throw new AppError(
+          'UNHANDLED_WEBHOOK_EVENT',
+          `Unexpected event type. Event ${event.type} is currently not supported.`,
+        );
     }
 
     await this.storageAdapter.insertEvent({
@@ -288,6 +314,6 @@ export class ApiProvider implements IApiProvider {
           received: true,
         },
       },
-    } as Response;
+    };
   }
 }

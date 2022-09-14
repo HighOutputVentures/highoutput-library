@@ -2,7 +2,7 @@
 import { Connection, Document, Model, Schema } from 'mongoose';
 import R from 'ramda';
 import {
-  Customer,
+  User,
   EventLog,
   IStripeProviderStorageAdapter,
   Subscription,
@@ -27,7 +27,7 @@ export class MongooseStripeProdiverStorageAdapter
 
   #valueModel: Model<Value>;
 
-  #customerModel: Model<Customer>;
+  #userModel: Model<User>;
 
   #subscriptionModel: Model<Subscription>;
 
@@ -68,9 +68,9 @@ export class MongooseStripeProdiverStorageAdapter
       }),
     );
 
-    this.#customerModel = connection.model(
-      'Customer',
-      new Schema<Customer>({
+    this.#userModel = connection.model(
+      'User',
+      new Schema<User>({
         id: {
           type: String,
           required: true,
@@ -88,7 +88,7 @@ export class MongooseStripeProdiverStorageAdapter
       'Subscription',
       new Schema<Subscription>(
         {
-          id: {
+          stripeSubscription: {
             type: String,
             required: true,
             unique: true,
@@ -106,7 +106,7 @@ export class MongooseStripeProdiverStorageAdapter
             type: Number,
             default: 1,
           },
-          status: {
+          stripeStatus: {
             type: String,
             enum: [
               'active',
@@ -209,31 +209,40 @@ export class MongooseStripeProdiverStorageAdapter
     await this.#valueModel.findOneAndUpdate({ id }, { value });
   }
 
-  async findCustomer(id: string) {
-    return this.#customerModel
+  async findUser(id: string) {
+    return this.#userModel
       .findOne({
-        $or: [{ id }, { stripeCustomer: id }],
+        $or: [{ id }, { stripeUser: id }],
       })
       .lean();
   }
 
-  async insertCustomer(customer: Customer) {
-    await this.#customerModel.create(customer);
+  async insertUser(user: User) {
+    await this.#userModel.create(user);
   }
 
-  async insertSubscription(subscription: Subscription) {
+  async insertSubscription(subscription: Omit<Subscription, 'id'>) {
     await this.#subscriptionModel.create(subscription);
   }
 
   async findSubscriptionByUser(user: string) {
-    return this.#subscriptionModel.findOne({ user }).lean();
+    const doc = await this.#subscriptionModel.findOne({ user });
+
+    if (!doc) {
+      return null;
+    }
+
+    return serialize(doc) as Subscription;
   }
 
   async updateSubscription(
     id: string,
     params: Partial<Omit<Subscription, 'id'>>,
   ) {
-    await this.#subscriptionModel.updateOne({ id }, { $set: params });
+    await this.#subscriptionModel.updateOne(
+      { stripeSubscription: id },
+      { $set: params },
+    );
   }
 
   async insertEvent(event: EventLog) {

@@ -63,7 +63,7 @@ describe('GET /tiers', () => {
         .expect('Content-Type', /json/)
         .expect(400)
         .expect((res) => {
-          expect(res.body.error).toEqual('User not found.');
+          expect(res.body.error).toMatch(/access is not allowed/);
         });
 
       await teardown(ctx);

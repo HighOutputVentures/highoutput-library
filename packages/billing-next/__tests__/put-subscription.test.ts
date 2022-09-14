@@ -28,7 +28,7 @@ describe('PUT /subscription', () => {
         stripeProduct: generateFakeId(IdType.PRODUCT),
       };
 
-      await storageAdapter.insertCustomer(customer);
+      await storageAdapter.insertUser(customer);
       await storageAdapter.insertTier(tier);
 
       const billingServer = new BillingServer({
@@ -71,7 +71,15 @@ describe('PUT /subscription', () => {
         .expect(200)
         .expect((res) => {
           expect(res.body.data).toBeTruthy();
-          expect(res.body.data.subscription).toMatchObject(subscription);
+          expect(res.body.data.subscription).toMatchObject(
+            expect.objectContaining({
+              stripeSubscription: expect.any(String),
+              user: expect.any(String),
+              tier: expect.any(String),
+              quantity: expect.any(Number),
+              stripeStatus: expect.any(String),
+            }),
+          );
         });
 
       await teardown(ctx);
@@ -115,9 +123,7 @@ describe('PUT /subscription', () => {
         .expect('Content-Type', /json/)
         .expect(400)
         .expect((res) => {
-          expect(res.body.error).toEqual(
-            expect.stringContaining('Cannot find customer.'),
-          );
+          expect(res.body.error).toMatch(/cannot be found/);
         });
 
       await teardown(ctx);
@@ -140,7 +146,7 @@ describe('PUT /subscription', () => {
       };
       const token = generateToken({ sub: customer.id }, 'secret');
 
-      await storageAdapter.insertCustomer(customer);
+      await storageAdapter.insertUser(customer);
 
       const billingServer = new BillingServer({
         stripeSecretKey:
@@ -165,9 +171,7 @@ describe('PUT /subscription', () => {
         .expect('Content-Type', /json/)
         .expect(400)
         .expect((res) => {
-          expect(res.body.error).toEqual(
-            expect.stringContaining('Cannot find product.'),
-          );
+          expect(res.body.error).toMatch(/cannot be found/);
         });
 
       await teardown(ctx);

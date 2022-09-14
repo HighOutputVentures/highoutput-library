@@ -1,5 +1,6 @@
 /* eslint-disable no-shadow */
 import { TierConfig } from '../typings';
+import { Subscription, Tier } from './stripe.provider';
 
 export type Request<T = unknown> = {
   user: string;
@@ -10,7 +11,7 @@ export type Response<T = unknown> =
   | {
       status: 200;
       body: {
-        data: Record<string, T>;
+        data: T;
       };
     }
   | {
@@ -35,10 +36,18 @@ export enum WebhookEvents {
 }
 
 export interface IApiProvider {
-  getTiers(): Promise<Response<TierConfig[]>>;
-  getSecret(params: Request): Promise<Response<string>>;
-  getSubscription(params: Request): Promise<Response>;
+  getTiers(): Promise<Response<{ tiers: TierConfig[] }>>;
+  getSecret(params: Request): Promise<Response<{ secret: string }>>;
+  getSubscription(params: Request): Promise<
+    Response<{
+      subscription: Omit<Subscription, 'tier'> & { tier: Tier };
+    } | null>
+  >;
   getPortal(params: Request): Promise<Response>;
-  putSubscription(params: Request<string>): Promise<Response>;
-  postWebhook(params: Required<Omit<Request, 'user'>>): Promise<Response>;
+  putSubscription(
+    params: Request<string>,
+  ): Promise<Response<{ subscription: Omit<Subscription, 'id'> }>>;
+  postWebhook(
+    params: Required<Omit<Request, 'user'>>,
+  ): Promise<Response<{ received: boolean }>>;
 }
