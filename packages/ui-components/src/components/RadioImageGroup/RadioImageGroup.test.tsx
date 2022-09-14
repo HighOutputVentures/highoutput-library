@@ -34,26 +34,26 @@ describe('Radio Image Group', () => {
 
   it('should renders radio image stack container', async () => {
     const radioImageBoxGroupStack = await screen.findAllByTestId(
-      'radio.image.group.stack.container'
+      /radio-image-group-stack-container/i
     );
     expect(radioImageBoxGroupStack).toHaveLength(1);
   });
 
   it('should renders radio image horizontal stack', async () => {
     const radioImageBoxGroupStack = await screen.findAllByTestId(
-      'radio.image.group.horizontal.stack'
+      /radio-image-group-horizontal-stack/i
     );
     expect(radioImageBoxGroupStack).toHaveLength(1);
   });
 
   it('should render 4 radio image box', async () => {
-    const radioImageBox = await screen.findAllByTestId('radio.image.box');
+    const radioImageBox = await screen.findAllByTestId(/radio-image-box/i);
     expect(radioImageBox).toHaveLength(4);
   });
 
   it('should render 4 radio image container', async () => {
     const radioImageContainer = await screen.findAllByTestId(
-      'radio.image.container'
+      /radio-image-container/i
     );
     expect(radioImageContainer).toHaveLength(4);
   });
@@ -88,26 +88,26 @@ describe('Storybook - Radio Image Group', () => {
 
   it('should renders radio image stack container', async () => {
     const radioImageBoxGroupStack = await screen.findAllByTestId(
-      'radio.image.group.stack.container'
+      /radio-image-group-stack-container/i
     );
     expect(radioImageBoxGroupStack).toHaveLength(1);
   });
 
   it('should renders radio image horizontal stack', async () => {
     const radioImageBoxGroupStack = await screen.findAllByTestId(
-      'radio.image.group.horizontal.stack'
+      /radio-image-group-horizontal-stack/i
     );
     expect(radioImageBoxGroupStack).toHaveLength(1);
   });
 
   it('should render 4 radio image box', async () => {
-    const radioImageBox = await screen.findAllByTestId('radio.image.box');
+    const radioImageBox = await screen.findAllByTestId(/radio-image-box/i);
     expect(radioImageBox).toHaveLength(4);
   });
 
   it('should render 4 radio image container', async () => {
     const radioImageContainer = await screen.findAllByTestId(
-      'radio.image.container'
+      /radio-image-container/i
     );
     expect(radioImageContainer).toHaveLength(4);
   });
