@@ -24,6 +24,7 @@ export default function render(deployment: Deployment) {
   line += `${chalk.bold('Tags')}:\n  ${tags.join('\n  ')}\n`;
   line += `${chalk.bold('Directory')}: ${deployment.directory || ''}\n`;
   line += `${chalk.bold('Environment')}:\n  ${environment.join('\n  ')}\n`;
+  line += `${chalk.bold('Dockerfile')}:\n  ${deployment.dockerFile || 'Dockerfile'}\n`;
   line += `${chalk.bold('Date Created')}: ${deployment.dateTimeCreated.toISOString()}\n`;
   line += `${chalk.bold('Date Updated')}: ${deployment.dateTimeUpdated.toISOString()}\n`;
 

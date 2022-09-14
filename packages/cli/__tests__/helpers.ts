@@ -31,6 +31,7 @@ export function generateFakeDeployment(): Deployment {
     ],
     directory: `./${chance.word()}`,
     url: chance.url(),
+    dockerFile: `Dockerfile.${chance.word()}`,
     dateTimeCreated: new Date(),
     dateTimeUpdated: new Date(),
   };
