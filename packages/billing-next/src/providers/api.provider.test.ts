@@ -762,6 +762,9 @@ describe('ApiProvider', () => {
             },
           })),
         },
+        customers: {
+          update: jest.fn(() => Promise.resolve()),
+        },
       };
 
       const StripeProviderStorageAdapterMock = {
@@ -793,6 +796,14 @@ describe('ApiProvider', () => {
         expect.any(Buffer),
         expect.any(String),
         expect.any(String),
+      );
+      expect(StripeMock.customers.update).toBeCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          invoice_settings: {
+            default_payment_method: expect.any(String),
+          },
+        }),
       );
       expect(StripeProviderStorageAdapterMock.findEvent).toBeCalled();
       expect(StripeProviderStorageAdapterMock.updateUser).toBeCalledWith(

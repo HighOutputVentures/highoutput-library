@@ -327,7 +327,8 @@ describe('POST /webhook', () => {
       const setupIntent = {
         id: generateFakeId(IdType.SETUP_INTENT),
         customer: user.stripeCustomer,
-        payment_method: generateFakeId(IdType.PAYMENT_METHOD),
+        // payment_method: generateFakeId(IdType.PAYMENT_METHOD),
+        payment_method: 'samplepayment',
       };
       const payload = {
         id: generateFakeId(IdType.EVENT),
@@ -345,6 +346,14 @@ describe('POST /webhook', () => {
         payload: payloadString,
         secret: webhookSecret,
       });
+
+      nock(/stripe.com/)
+        .post(`/v1/customers/${user.stripeCustomer}`, {
+          invoice_settings: {
+            default_payment_method: setupIntent.payment_method,
+          },
+        })
+        .reply(200, {});
 
       await ctx.request
         .post('/webhook')

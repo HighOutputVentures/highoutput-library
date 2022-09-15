@@ -291,11 +291,19 @@ export class ApiProvider implements IApiProvider {
 
       case WebhookEvents.SETUP_INTENT_SUCCEEDED: {
         const setupIntent = event.data.object as Stripe.SetupIntent;
-        const { payment_method: paymentMethod, customer } = setupIntent;
+        const paymentMethod = setupIntent.payment_method as string;
+        const customer = setupIntent.customer as string;
 
-        await this.storageAdapter.updateUser(customer as string, {
-          stripePaymentMethod: paymentMethod as string,
+        await this.stripe.customers.update(customer, {
+          invoice_settings: {
+            default_payment_method: paymentMethod,
+          },
         });
+
+        await this.storageAdapter.updateUser(customer, {
+          stripePaymentMethod: paymentMethod,
+        });
+
         break;
       }
 
