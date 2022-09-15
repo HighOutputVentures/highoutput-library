@@ -13,9 +13,11 @@ command
   .description('Update tags and environment variables of your deployment.')
   .option('-e, --env <environment...>', 'The application runtime environment variables. If you need to use build time environment variables, put it into your dockerfile instead. This flag can be used multiple times.')
   .option('-t, --tag <tag...>', 'Resource tags to help identify the deployment.')
+  .option('-df, --docker-file <filename>', 'Custom Dockerfile.')
   .action(async (id: string, options: {
     env?: string[];
     tag?: string[];
+    dockerFile?: string;
   }) => {
     const deployment = (await client.find({
       type: ResourceType.Deployment,
@@ -44,6 +46,7 @@ command
       body: {
         environment,
         tags,
+        dockerFile: options.dockerFile
       },
     });
     

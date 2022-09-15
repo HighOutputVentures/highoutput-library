@@ -3,7 +3,7 @@ import nock from 'nock';
 import R from 'ramda';
 import { API_BASE_URL } from '../../src/library/contants';
 import program from '../../src/program';
-import { DatabaseStatus, DatabaseType } from '../../types';
+import { DatabaseStatus, DatabaseType } from '../../src/types';
 import { DateTime } from 'luxon';
 import Chance from 'chance';
 import generateDatabase from '../helpers.next/generate-database';

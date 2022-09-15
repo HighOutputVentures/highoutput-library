@@ -9,7 +9,7 @@ import {
   useStyleConfig,
 } from '@chakra-ui/react';
 import { StringOrNumber } from '@chakra-ui/utils';
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useId } from 'react';
 
 declare type EventOrValue =
   | React.ChangeEvent<HTMLInputElement>
@@ -30,13 +30,23 @@ export interface RadioImageProps
 const RadioImage = forwardRef<HTMLDivElement, RadioImageProps>((props, ref) => {
   const { image, size, variant, selectColor, ...rest } = props;
   const styles = useStyleConfig('RadioImage', { size, variant });
+  const uid = useId();
 
-  const { state, getInputProps, getCheckboxProps, htmlProps, getLabelProps } =
-    useRadio(rest);
+  const {
+    state,
+    getInputProps,
+    getCheckboxProps,
+    htmlProps,
+    getLabelProps,
+  } = useRadio(rest);
 
   return (
     <chakra.label {...htmlProps} cursor="pointer">
-      <input {...getInputProps({})} hidden data-testid="radio.image.input" />
+      <chakra.input
+        {...getInputProps({})}
+        hidden
+        data-testid={`${uid}-radio-image-input`}
+      />
       <Box
         ref={ref}
         w={12}
@@ -49,13 +59,13 @@ const RadioImage = forwardRef<HTMLDivElement, RadioImageProps>((props, ref) => {
             ? selectColor || (styles.color as string) || 'green.500'
             : 'transparent'
         }
-        data-testid="radio.image.box"
+        data-testid={`${uid}-radio-image-box`}
       >
         <Image
           src={image}
           rounded="full"
           {...getLabelProps()}
-          data-testid="radio.image.container"
+          data-testid={`${uid}-radio-image-container`}
         />
       </Box>
     </chakra.label>

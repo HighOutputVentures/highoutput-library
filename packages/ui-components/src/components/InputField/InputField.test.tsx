@@ -1,13 +1,13 @@
+import '@testing-library/react/dont-cleanup-after-each';
+
 import '@testing-library/jest-dom';
-import { cleanup, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import React from 'react';
 
 import InputField from './InputField';
 
 describe('Input Field Component', () => {
-  afterEach(cleanup);
-
-  beforeEach(() => {
+  beforeAll(() => {
     render(
       <InputField
         id="name"
@@ -21,29 +21,31 @@ describe('Input Field Component', () => {
 
   it('should renders input field form container', async () => {
     const formControl = await screen.findAllByTestId(
-      'formcontainer.formcontrol'
+      ':r1:-form-container-form-control'
     );
     expect(formControl).toHaveLength(1);
   });
 
   it('should renders input field input group', async () => {
-    const inputGroup = await screen.findAllByTestId('inputfield.inputgroup');
+    const inputGroup = await screen.findAllByTestId(':r0:-input-field-group');
     expect(inputGroup).toHaveLength(1);
   });
 
   it('should renders input field input', async () => {
-    const input = await screen.findAllByTestId('inputfield.input');
+    const input = await screen.findAllByTestId(':r0:-input-field-input');
     expect(input).toHaveLength(1);
   });
 
   it('should renders input field left element', async () => {
-    const leftELement = await screen.findAllByTestId('inputfield.leftelement');
+    const leftELement = await screen.findAllByTestId(
+      ':r0:-input-field-left-element'
+    );
     expect(leftELement).toHaveLength(1);
   });
 
   it('should renders input field right element', async () => {
     const rightELement = await screen.findAllByTestId(
-      'inputfield.rightelement'
+      ':r0:-input-field-right-element'
     );
     expect(rightELement).toHaveLength(1);
   });

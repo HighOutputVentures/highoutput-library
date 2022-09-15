@@ -29,7 +29,7 @@ describe('Contact Form Component', () => {
   });
 
   it('should render 2 input field', async () => {
-    const inputFields = await screen.findAllByTestId('inputfield.input');
+    const inputFields = await screen.findAllByTestId(/input-field-input/i);
     expect(inputFields).toHaveLength(2);
   });
 
@@ -64,7 +64,7 @@ describe('Contact Form Component', () => {
     const submit = await screen.findByTestId('box.contactform.form');
     await fireEvent.submit(submit);
     const errorFormContorl = await screen.findAllByTestId(
-      'formcontainer.error'
+      /form-container-error/i
     );
     expect(errorFormContorl).toHaveLength(3);
   });
@@ -124,7 +124,7 @@ describe('Storybook - Contact Form Component', () => {
   });
 
   it('should render 2 input field', async () => {
-    const inputFields = await screen.findAllByTestId('inputfield.input');
+    const inputFields = await screen.findAllByTestId(/input-field-input/i);
     expect(inputFields).toHaveLength(2);
   });
 
@@ -159,7 +159,7 @@ describe('Storybook - Contact Form Component', () => {
     const submit = await screen.findByTestId('box.contactform.form');
     await fireEvent.submit(submit);
     const errorFormContorl = await screen.findAllByTestId(
-      'formcontainer.error'
+      /form-container-error/i
     );
     expect(errorFormContorl).toHaveLength(3);
   });

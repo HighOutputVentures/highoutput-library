@@ -10,7 +10,7 @@ import {
   ThemeTypings,
   useMultiStyleConfig,
 } from '@chakra-ui/react';
-import React, { forwardRef, ReactNode } from 'react';
+import React, { forwardRef, ReactNode, useId } from 'react';
 
 import FormContainer, {
   FormContainerProps,
@@ -64,6 +64,7 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
       inputValue,
     } = props;
     const styles = useMultiStyleConfig('Form', { variant, size });
+    const uid = useId();
 
     return (
       <FormContainer {...props}>
@@ -71,12 +72,12 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
           sx={styles.formInputGroup}
           {...partProps?.inputGroup}
           size={size}
-          data-testid="inputfield.inputgroup"
+          data-testid={`${uid}-input-field-group`}
         >
           {leftIcon && (
             <InputLeftElement
               {...partProps?.inputLeftElement}
-              data-testid="inputfield.leftelement"
+              data-testid={`${uid}-input-field-left-element`}
             >
               {leftIcon}
             </InputLeftElement>
@@ -105,12 +106,12 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
             }}
             value={inputValue ? inputValue.trim() : undefined}
             role="input"
-            data-testid="inputfield.input"
+            data-testid={`${uid}-input-field-input`}
           />
           {rightIcon && (
             <InputRightElement
               {...partProps?.inputRightElement}
-              data-testid="inputfield.rightelement"
+              data-testid={`${uid}-input-field-right-element`}
             >
               {rightIcon}
             </InputRightElement>
