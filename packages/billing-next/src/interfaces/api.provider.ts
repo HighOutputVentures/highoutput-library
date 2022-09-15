@@ -1,4 +1,5 @@
 /* eslint-disable no-shadow */
+import Stripe from 'stripe';
 import { TierConfig } from '../typings';
 import { Subscription, Tier } from './stripe.provider';
 
@@ -40,7 +41,16 @@ export interface IApiProvider {
   getSecret(params: Request): Promise<Response<{ secret: string }>>;
   getSubscription(params: Request): Promise<
     Response<{
-      subscription: Omit<Subscription, 'tier'> & { tier: Tier };
+      subscription: Omit<Subscription, 'tier' | 'user'> & {
+        tier: Tier;
+        user: {
+          stripeCustomer: string;
+          paymentMethod: Pick<
+            Stripe.PaymentMethod.Card,
+            'brand' | 'country' | 'exp_month' | 'exp_year' | 'last4'
+          >;
+        };
+      };
     } | null>
   >;
   getPortal(params: Request): Promise<Response>;

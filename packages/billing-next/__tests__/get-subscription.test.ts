@@ -1,3 +1,4 @@
+import nock from 'nock';
 import { MongooseStripeProdiverStorageAdapter } from '../src/adapters/mongoose-stripe-provider-storage.adapter';
 import { JwtAuthorizationAdapter } from '../src/adapters/jwt-authorization.adapter';
 import { setup, teardown } from './fixture';
@@ -16,6 +17,11 @@ describe('GET /subscription', () => {
         ctx.mongoose,
       );
 
+      const user = {
+        id: generateFakeId(IdType.USER),
+        stripeCustomer: generateFakeId(IdType.CUSTOMER),
+        stripePaymentMethod: generateFakeId(IdType.PAYMENT_METHOD),
+      };
       const tier = {
         id: 'starter',
         stripePrices: [generateFakeId(IdType.PRICE)],
@@ -23,13 +29,14 @@ describe('GET /subscription', () => {
       };
       const subscription: Omit<Subscription, 'id'> = {
         stripeSubscription: generateFakeId(IdType.SUBSCRIPTION),
-        user: generateFakeId(IdType.USER),
+        user: user.id,
         tier: tier.id,
         quantity: 1,
         stripeStatus: 'active',
       };
-      const token = generateToken({ sub: subscription.user }, 'secret');
+      const token = generateToken({ sub: user.id }, 'secret');
 
+      await storageAdapter.insertUser(user);
       await storageAdapter.insertSubscription(subscription);
       await storageAdapter.insertTier(tier);
 
@@ -44,6 +51,18 @@ describe('GET /subscription', () => {
 
       ctx.app.use(billingServer.expressMiddleware());
 
+      nock(/stripe.com/)
+        .get(`/v1/payment_methods/${user.stripePaymentMethod}`)
+        .reply(200, {
+          card: {
+            brand: 'visa',
+            country: 'US',
+            exp_month: 9,
+            exp_year: 2023,
+            last4: '4242',
+          },
+        });
+
       await ctx.request
         .get('/subscription')
         .set('Authorization', `Bearer ${token}`)
@@ -54,7 +73,7 @@ describe('GET /subscription', () => {
           expect(res.body.data.subscription).toMatchObject(
             expect.objectContaining({
               stripeSubscription: expect.any(String),
-              user: expect.any(String),
+              user: expect.any(Object),
               tier: expect.any(Object),
               quantity: expect.any(Number),
               stripeStatus: expect.any(String),
