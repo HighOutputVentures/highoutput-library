@@ -15,6 +15,7 @@ export type Value = {
 export type User = {
   id: string;
   stripeCustomer: string;
+  stripePaymentMethod?: string;
 };
 
 export type Subscription = {
@@ -34,9 +35,10 @@ export enum ValueType {
 
 export type EventLog = {
   id: string;
-  type: string;
-  idempotencyKey: string;
-  requestId: string | null;
+  stripeEvent: string;
+  stripeEventType: string;
+  stripeIdempotencyKey: string;
+  // requestId: string | null;
 };
 
 export interface IStripeProviderStorageAdapter {
@@ -49,13 +51,14 @@ export interface IStripeProviderStorageAdapter {
   updateValue(id: ValueType, value: string): Promise<void>;
   findUser(id: string): Promise<User | null>;
   insertUser(user: User): Promise<void>;
+  updateUser(id: string, user: Partial<Omit<User, 'id'>>): Promise<void>;
   insertSubscription(subscription: Omit<Subscription, 'id'>): Promise<void>;
   findSubscriptionByUser(user: string): Promise<Subscription | null>;
   updateSubscription(
     id: string,
     params: Partial<Omit<Subscription, 'id'>>,
   ): Promise<void>;
-  insertEvent(event: EventLog): Promise<void>;
+  insertEvent(event: Omit<EventLog, 'id'>): Promise<void>;
   findEvent(key: string): Promise<EventLog | null>;
 }
 

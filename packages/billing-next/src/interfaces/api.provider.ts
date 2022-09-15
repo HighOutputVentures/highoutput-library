@@ -32,7 +32,7 @@ export enum WebhookEvents {
   'SUBSCRIPTION_CREATED' = 'customer.subscription.created',
   'SUBSCRIPTION_UPDATED' = 'customer.subscription.updated',
   'SUBSCRIPTION_DELETED' = 'customer.subscription.deleted',
-  // 'PAYMENT_SUCCEEDED'
+  'SETUP_INTENT_SUCCEEDED' = 'setup_intent.succeeded',
 }
 
 export interface IApiProvider {

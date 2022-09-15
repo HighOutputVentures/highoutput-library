@@ -81,6 +81,10 @@ export class MongooseStripeProdiverStorageAdapter
           required: true,
           unique: true,
         },
+        stripePaymentMethod: {
+          type: String,
+          unique: true,
+        },
       }),
     );
 
@@ -129,22 +133,19 @@ export class MongooseStripeProdiverStorageAdapter
       'Event',
       new Schema<EventLog>(
         {
-          id: {
+          stripeEvent: {
             type: String,
             required: true,
             unique: true,
           },
-          type: {
+          stripeEventType: {
             type: String,
             required: true,
           },
-          idempotencyKey: {
+          stripeIdempotencyKey: {
             type: String,
             unique: true,
             required: true,
-          },
-          requestId: {
-            type: String,
           },
         },
         {
@@ -206,7 +207,7 @@ export class MongooseStripeProdiverStorageAdapter
   }
 
   async updateValue(id: ValueType, value: string) {
-    await this.#valueModel.findOneAndUpdate({ id }, { value });
+    await this.#valueModel.updateOne({ id }, { $set: { value } });
   }
 
   async findUser(id: string) {
@@ -219,6 +220,15 @@ export class MongooseStripeProdiverStorageAdapter
 
   async insertUser(user: User) {
     await this.#userModel.create(user);
+  }
+
+  async updateUser(id: string, user: Partial<Omit<User, 'id'>>): Promise<void> {
+    await this.#userModel.updateOne(
+      {
+        $or: [{ id }, { stripeCustomer: id }],
+      },
+      { $set: user },
+    );
   }
 
   async insertSubscription(subscription: Omit<Subscription, 'id'>) {
@@ -245,14 +255,14 @@ export class MongooseStripeProdiverStorageAdapter
     );
   }
 
-  async insertEvent(event: EventLog) {
+  async insertEvent(event: Omit<EventLog, 'id'>) {
     await this.#eventModel.create(event);
   }
 
   async findEvent(key: string) {
     return this.#eventModel
       .findOne({
-        $or: [{ id: key }, { idempotencyKey: key }],
+        $or: [{ stripeEvent: key }, { stripeIdempotencyKey: key }],
       })
       .lean();
   }

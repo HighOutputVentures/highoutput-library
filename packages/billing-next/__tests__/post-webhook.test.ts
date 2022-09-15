@@ -289,6 +289,78 @@ describe('POST /webhook', () => {
   );
 
   test.concurrent(
+    'setup_intent.succeeded is sent -> should attach payment method to user',
+    async () => {
+      const ctx = await setup();
+      const stripe = new Stripe('', {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        apiVersion: null,
+      });
+
+      const storageAdapter = new MongooseStripeProdiverStorageAdapter(
+        ctx.mongoose,
+      );
+
+      const user = {
+        id: generateFakeId(IdType.USER),
+        stripeCustomer: generateFakeId(IdType.CUSTOMER),
+      };
+      const webhookSecret = 'whsec_T1sWT0N2rHkaFNG8EDgJfryNdlg6r2MW';
+
+      await storageAdapter.insertUser(user);
+
+      const billingServer = new BillingServer({
+        stripeSecretKey:
+          'sk_test_51LWeDVGrNXva3DrphN3qGT3dnhh2bAoNZ7O80w4XpMEbBlMeLul10aMS7a41PXZHl8vOpcDI6JZ7KoNTSBFyV9r800kV6WzTLo',
+        configFilePath: './__tests__/assets/config.json',
+        endpointSigningSecret: webhookSecret,
+        stripeProviderStorageAdapter: storageAdapter,
+        authorizationAdapter: new JwtAuthorizationAdapter({ secret: 'secret' }),
+      });
+
+      ctx.app.use(billingServer.expressMiddleware());
+
+      const expected = {
+        received: true,
+      };
+      const setupIntent = {
+        id: generateFakeId(IdType.SETUP_INTENT),
+        customer: user.stripeCustomer,
+        payment_method: generateFakeId(IdType.PAYMENT_METHOD),
+      };
+      const payload = {
+        id: generateFakeId(IdType.EVENT),
+        type: 'setup_intent.succeeded',
+        data: {
+          object: setupIntent,
+        },
+        request: {
+          idempotency_key: faker.datatype.uuid(),
+        },
+      };
+
+      const payloadString = JSON.stringify(payload, null, 2);
+      const header = stripe.webhooks.generateTestHeaderString({
+        payload: payloadString,
+        secret: webhookSecret,
+      });
+
+      await ctx.request
+        .post('/webhook')
+        .set('stripe-signature', header)
+        .send(payloadString)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.data).toEqual(expected);
+        });
+
+      await teardown(ctx);
+    },
+  );
+
+  test.concurrent(
     'unhandled event -> should return 400',
     async () => {
       const ctx = await setup();
@@ -369,16 +441,14 @@ describe('POST /webhook', () => {
       id: generateFakeId(IdType.EVENT),
       type: 'customer.subscription.updated',
       request: {
-        id: null,
         idempotency_key: faker.datatype.uuid(),
       },
     };
 
     await storageAdapter.insertEvent({
-      id: payload.id,
-      type: payload.type,
-      requestId: payload.request.id,
-      idempotencyKey: payload.request.idempotency_key,
+      stripeEvent: payload.id,
+      stripeEventType: payload.type,
+      stripeIdempotencyKey: payload.request.idempotency_key,
     });
 
     const billingServer = new BillingServer({
