@@ -15,6 +15,7 @@ export type Value = {
 export type User = {
   id: string;
   stripeCustomer: string;
+  stripePaymentMethod?: string;
 };
 
 export type Subscription = {
@@ -50,6 +51,7 @@ export interface IStripeProviderStorageAdapter {
   updateValue(id: ValueType, value: string): Promise<void>;
   findUser(id: string): Promise<User | null>;
   insertUser(user: User): Promise<void>;
+  updateUser(id: string, user: Partial<Omit<User, 'id'>>): Promise<void>;
   insertSubscription(subscription: Omit<Subscription, 'id'>): Promise<void>;
   findSubscriptionByUser(user: string): Promise<Subscription | null>;
   updateSubscription(

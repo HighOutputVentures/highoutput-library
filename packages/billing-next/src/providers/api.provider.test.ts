@@ -738,6 +738,78 @@ describe('ApiProvider', () => {
       },
     );
 
+    test.concurrent('setup_intent.succeeded -> event is handled', async () => {
+      const config = generateFakeConfig();
+
+      const container = new Container();
+
+      const setupIntent = {
+        id: generateFakeId(IdType.SETUP_INTENT),
+        customer: generateFakeId(IdType.USER),
+        payment_method: generateFakeId(IdType.PAYMENT_METHOD),
+      };
+
+      const StripeMock = {
+        webhooks: {
+          constructEvent: jest.fn(() => ({
+            id: generateFakeId(IdType.EVENT),
+            type: 'setup_intent.succeeded',
+            data: {
+              object: setupIntent,
+            },
+            request: {
+              idempotency_key: faker.datatype.uuid(),
+            },
+          })),
+        },
+      };
+
+      const StripeProviderStorageAdapterMock = {
+        findEvent: jest.fn(async () => Promise.resolve(null)),
+        insertEvent: jest.fn(async () => Promise.resolve()),
+        updateUser: jest.fn(async () => Promise.resolve()),
+      };
+
+      container.bind(TYPES.Stripe).toConstantValue(StripeMock);
+      container.bind(TYPES.ConfigProvider).toConstantValue({
+        config,
+      });
+      container
+        .bind(TYPES.StripeProviderStorageAdapter)
+        .toConstantValue(StripeProviderStorageAdapterMock);
+      container.bind(TYPES.ApiProvider).to(ApiProvider);
+
+      const provider = container.get<IApiProvider>(TYPES.ApiProvider);
+
+      await provider.postWebhook({
+        body: {
+          endpointSecret: '',
+          rawBody: Buffer.from(''),
+          signature: '',
+        },
+      });
+
+      expect(StripeMock.webhooks.constructEvent).toBeCalledWith(
+        expect.any(Buffer),
+        expect.any(String),
+        expect.any(String),
+      );
+      expect(StripeProviderStorageAdapterMock.findEvent).toBeCalled();
+      expect(StripeProviderStorageAdapterMock.updateUser).toBeCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          stripePaymentMethod: expect.any(String),
+        }),
+      );
+      expect(StripeProviderStorageAdapterMock.insertEvent).toBeCalledWith(
+        expect.objectContaining({
+          stripeEvent: expect.any(String),
+          stripeEventType: expect.any(String),
+          stripeIdempotencyKey: expect.any(String),
+        }),
+      );
+    });
+
     test.concurrent(
       'event is already logged -> should return 200',
       async () => {
