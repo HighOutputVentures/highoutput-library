@@ -3,7 +3,7 @@ import {
   SelectFieldProps as SelectFieldChakraProps,
   useMultiStyleConfig,
 } from '@chakra-ui/react';
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useId } from 'react';
 
 import FormContainer, {
   FormContainerProps,
@@ -31,6 +31,7 @@ const SelectField = forwardRef<HTMLSelectElement, SelectFieldProps>(
       variant = 'primary',
     } = props;
     const styles = useMultiStyleConfig('Form', { variant });
+    const uid = useId();
 
     return (
       <FormContainer {...props}>
@@ -44,7 +45,7 @@ const SelectField = forwardRef<HTMLSelectElement, SelectFieldProps>(
           placeholder={placeholder}
           defaultValue={defaultValue}
           disabled={disabled}
-          data-testid="selectfield.select"
+          data-testid={`${uid}-select-field-select`}
         >
           {options.map(({ value, label }) => (
             <option

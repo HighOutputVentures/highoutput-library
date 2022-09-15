@@ -1,3 +1,5 @@
+import '@testing-library/react/dont-cleanup-after-each';
+
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
@@ -5,7 +7,7 @@ import React from 'react';
 import TextareaField from './TextareaField';
 
 describe('Form Container Component', () => {
-  beforeEach(() => {
+  beforeAll(() => {
     render(
       <TextareaField
         id="description"
@@ -17,13 +19,15 @@ describe('Form Container Component', () => {
 
   it('should renders form container', async () => {
     const formControl = await screen.findAllByTestId(
-      'formcontainer.formcontrol'
+      /form-container-form-control/i
     );
     expect(formControl).toHaveLength(1);
   });
 
   it('should renders text area field input', async () => {
-    const textareInput = await screen.findAllByTestId('textareafield.input');
+    const textareInput = await screen.findAllByTestId(
+      ':r0:-textarea-field-input'
+    );
     expect(textareInput).toHaveLength(1);
   });
 });

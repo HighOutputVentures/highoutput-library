@@ -1,13 +1,13 @@
+import '@testing-library/react/dont-cleanup-after-each';
+
 import '@testing-library/jest-dom';
-import { cleanup, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import React from 'react';
 
 import PinInputField from './PinInputField';
 
 describe('Pin Input Field Component', () => {
-  afterEach(cleanup);
-
-  beforeEach(() => {
+  beforeAll(() => {
     render(
       <PinInputField
         id="otpPin"
@@ -20,13 +20,13 @@ describe('Pin Input Field Component', () => {
 
   it('should render pin input field form container', async () => {
     const formControl = await screen.findAllByTestId(
-      'formcontainer.formcontrol'
+      ':r1:-form-container-form-control'
     );
     expect(formControl).toHaveLength(1);
   });
 
   it('should render pin input field pin', async () => {
-    const pin = await screen.findAllByTestId('pininput.pin');
+    const pin = await screen.findAllByTestId(/:r0:-pininput-pin/i);
     expect(pin).toHaveLength(6);
   });
 });

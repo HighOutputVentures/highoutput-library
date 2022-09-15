@@ -10,7 +10,7 @@ import {
   ThemingProps,
   useMultiStyleConfig,
 } from '@chakra-ui/react';
-import React, { FC, ReactNode } from 'react';
+import React, { FC, ReactNode, useId } from 'react';
 import { UseFormRegisterReturn } from 'react-hook-form';
 
 type WithoutChildren<T> = Omit<T, 'children'>;
@@ -44,13 +44,14 @@ const FormContainer: FC<FormContainerProps> = ({
   variant,
 }) => {
   const styles = useMultiStyleConfig('Form', { variant });
+  const uid = useId();
 
   return (
     <FormControl
       id={id}
       isInvalid={Boolean(errorMsg)}
       isReadOnly={disabled}
-      data-testid="formcontainer.formcontrol"
+      data-testid={`${uid}-form-container-form-control`}
       sx={styles.formControl}
       {...partProps?.formControl}
     >
@@ -58,7 +59,7 @@ const FormContainer: FC<FormContainerProps> = ({
         <FormLabel
           borderRadius="4px"
           {...(labelColor && { color: labelColor })}
-          data-testid="formcontainer.label"
+          data-testid={`${uid}-form-container-label`}
           sx={styles.formLabel}
           {...partProps?.formLabel}
         >
@@ -69,7 +70,7 @@ const FormContainer: FC<FormContainerProps> = ({
       <FormErrorMessage
         sx={styles.formErrorMessage}
         {...partProps?.formErrorMessage}
-        data-testid="formcontainer.error"
+        data-testid={`${uid}-form-container-error`}
       >
         {errorMsg}
       </FormErrorMessage>
@@ -77,7 +78,7 @@ const FormContainer: FC<FormContainerProps> = ({
         <FormHelperText
           sx={styles.formHelperText}
           {...partProps?.formErrorMessage}
-          data-testid="formcontainer.helper"
+          data-testid={`${uid}-form-container-helper`}
         >
           {helperMsg}
         </FormHelperText>
