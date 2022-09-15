@@ -180,6 +180,7 @@ export class ApiProvider implements IApiProvider {
           quantity,
         },
       ],
+      default_payment_method: customer.stripePaymentMethod,
     });
 
     return {
