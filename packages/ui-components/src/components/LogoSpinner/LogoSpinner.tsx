@@ -63,7 +63,7 @@ export default function LogoSpinner({
           // @ts-ignore "Bug"
           transition={{
             duration: 4,
-            loop: Infinity,
+            repeat: Infinity,
           }}
           {...partProps?.square1}
         />
@@ -83,7 +83,7 @@ export default function LogoSpinner({
           // @ts-ignore "Bug"
           transition={{
             duration: 3,
-            loop: Infinity,
+            repeat: Infinity,
           }}
           {...partProps?.square2}
         />
@@ -124,7 +124,7 @@ function DefaultLogo(props: SVGMotionProps<SVGSVGElement>) {
       // @ts-ignore "Bug"
       transition={{
         duration: 3,
-        loop: Infinity,
+        repeat: Infinity,
       }}
       width="32"
       height="32"
