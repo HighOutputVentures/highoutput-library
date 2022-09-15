@@ -129,22 +129,19 @@ export class MongooseStripeProdiverStorageAdapter
       'Event',
       new Schema<EventLog>(
         {
-          id: {
+          stripeEvent: {
             type: String,
             required: true,
             unique: true,
           },
-          type: {
+          stripeEventType: {
             type: String,
             required: true,
           },
-          idempotencyKey: {
+          stripeIdempotencyKey: {
             type: String,
             unique: true,
             required: true,
-          },
-          requestId: {
-            type: String,
           },
         },
         {
@@ -245,14 +242,14 @@ export class MongooseStripeProdiverStorageAdapter
     );
   }
 
-  async insertEvent(event: EventLog) {
+  async insertEvent(event: Omit<EventLog, 'id'>) {
     await this.#eventModel.create(event);
   }
 
   async findEvent(key: string) {
     return this.#eventModel
       .findOne({
-        $or: [{ id: key }, { idempotencyKey: key }],
+        $or: [{ stripeEvent: key }, { stripeIdempotencyKey: key }],
       })
       .lean();
   }

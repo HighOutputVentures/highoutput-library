@@ -369,16 +369,14 @@ describe('POST /webhook', () => {
       id: generateFakeId(IdType.EVENT),
       type: 'customer.subscription.updated',
       request: {
-        id: null,
         idempotency_key: faker.datatype.uuid(),
       },
     };
 
     await storageAdapter.insertEvent({
-      id: payload.id,
-      type: payload.type,
-      requestId: payload.request.id,
-      idempotencyKey: payload.request.idempotency_key,
+      stripeEvent: payload.id,
+      stripeEventType: payload.type,
+      stripeIdempotencyKey: payload.request.idempotency_key,
     });
 
     const billingServer = new BillingServer({

@@ -301,10 +301,9 @@ export class ApiProvider implements IApiProvider {
     }
 
     await this.storageAdapter.insertEvent({
-      id: event.id,
-      type: event.type,
-      idempotencyKey: event.request?.idempotency_key as string,
-      requestId: event.request?.id as string | null,
+      stripeEvent: event.id,
+      stripeEventType: event.type,
+      stripeIdempotencyKey: event.request?.idempotency_key as string,
     });
 
     return {

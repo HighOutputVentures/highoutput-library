@@ -528,10 +528,9 @@ describe('ApiProvider', () => {
         );
         expect(StripeProviderStorageAdapterMock.insertEvent).toBeCalledWith(
           expect.objectContaining({
-            id: expect.any(String),
-            type: expect.any(String),
-            idempotencyKey: expect.any(String),
-            requestId: undefined,
+            stripeEvent: expect.any(String),
+            stripeEventType: expect.any(String),
+            stripeIdempotencyKey: expect.any(String),
           }),
         );
       },
@@ -634,10 +633,9 @@ describe('ApiProvider', () => {
         );
         expect(StripeProviderStorageAdapterMock.insertEvent).toBeCalledWith(
           expect.objectContaining({
-            id: expect.any(String),
-            type: expect.any(String),
-            idempotencyKey: expect.any(String),
-            requestId: undefined,
+            stripeEvent: expect.any(String),
+            stripeEventType: expect.any(String),
+            stripeIdempotencyKey: expect.any(String),
           }),
         );
       },
@@ -732,10 +730,9 @@ describe('ApiProvider', () => {
         );
         expect(StripeProviderStorageAdapterMock.insertEvent).toBeCalledWith(
           expect.objectContaining({
-            id: expect.any(String),
-            type: expect.any(String),
-            idempotencyKey: expect.any(String),
-            requestId: undefined,
+            stripeEvent: expect.any(String),
+            stripeEventType: expect.any(String),
+            stripeIdempotencyKey: expect.any(String),
           }),
         );
       },

@@ -34,9 +34,10 @@ export enum ValueType {
 
 export type EventLog = {
   id: string;
-  type: string;
-  idempotencyKey: string;
-  requestId: string | null;
+  stripeEvent: string;
+  stripeEventType: string;
+  stripeIdempotencyKey: string;
+  // requestId: string | null;
 };
 
 export interface IStripeProviderStorageAdapter {
@@ -55,7 +56,7 @@ export interface IStripeProviderStorageAdapter {
     id: string,
     params: Partial<Omit<Subscription, 'id'>>,
   ): Promise<void>;
-  insertEvent(event: EventLog): Promise<void>;
+  insertEvent(event: Omit<EventLog, 'id'>): Promise<void>;
   findEvent(key: string): Promise<EventLog | null>;
 }
 
