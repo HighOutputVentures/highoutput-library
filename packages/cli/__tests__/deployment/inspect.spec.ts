@@ -44,6 +44,7 @@ describe('deployment', () => {
       expect(output.includes(deployment.url!)).toBeTruthy();
       expect(output.includes(deployment.repository)).toBeTruthy();
       expect(output.includes(deployment.directory!)).toBeTruthy();
+      expect(output.includes(deployment.dockerFile!)).toBeTruthy();
       expect(output.includes(deployment.dateTimeCreated.toISOString())).toBeTruthy();
       expect(output.includes(deployment.dateTimeUpdated.toISOString())).toBeTruthy();
     });
