@@ -27,7 +27,6 @@ describe('ApiProvider', () => {
 
       const StripeMock = {
         setupIntents: {
-          // list: jest.fn(async () => Promise.resolve({ data: [] })),
           create: jest.fn(async () =>
             Promise.resolve({ client_secret: clientSecret }),
           ),
@@ -526,9 +525,6 @@ describe('ApiProvider', () => {
               },
             })),
           },
-          subscriptions: {
-            retrieve: jest.fn(async () => Promise.resolve(subscription)),
-          },
         };
 
         const StripeProviderStorageAdapterMock = {
@@ -563,7 +559,6 @@ describe('ApiProvider', () => {
           expect.any(String),
         );
         expect(StripeProviderStorageAdapterMock.findEvent).toBeCalled();
-        expect(StripeMock.subscriptions.retrieve).toBeCalled();
         expect(StripeProviderStorageAdapterMock.findTier).toBeCalled();
         expect(
           StripeProviderStorageAdapterMock.updateSubscription,

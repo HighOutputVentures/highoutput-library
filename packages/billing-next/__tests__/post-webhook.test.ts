@@ -194,11 +194,6 @@ describe('POST /webhook', () => {
         secret: webhookSecret,
       });
 
-      nock(/stripe.com/)
-        .get(`/v1/subscriptions/${subscription.id}`)
-        .query({ expand: ['items.data.price.product'] })
-        .reply(200, subscription);
-
       await ctx.request
         .post('/webhook')
         .set('stripe-signature', header)
