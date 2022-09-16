@@ -170,6 +170,7 @@ describe('ApiProvider', () => {
         const StripeProviderStorageAdapterMock = {
           findUser: jest.fn(async () => Promise.resolve(customer)),
           findTier: jest.fn(async () => Promise.resolve(tier)),
+          insertSubscription: jest.fn(async () => Promise.resolve()),
         };
 
         container.bind(TYPES.Stripe).toConstantValue(StripeMock);
@@ -197,6 +198,17 @@ describe('ApiProvider', () => {
           tier.id,
         );
         expect(StripeMock.subscriptions.create).toBeCalled();
+        expect(
+          StripeProviderStorageAdapterMock.insertSubscription,
+        ).toBeCalledWith(
+          expect.objectContaining({
+            stripeSubscription: expect.any(String),
+            user: expect.any(String),
+            tier: expect.any(String),
+            quantity: expect.any(Number),
+            stripeStatus: expect.any(String),
+          }),
+        );
         expect(response).toMatchObject(
           expect.objectContaining({
             status: 200,
@@ -370,114 +382,6 @@ describe('ApiProvider', () => {
         }),
       ).rejects.toBeInstanceOf(AppError);
     });
-
-    test.concurrent(
-      'customer.subscription.created and payment succeeded -> event is handled',
-      async () => {
-        const config = generateFakeConfig();
-
-        const container = new Container();
-
-        const customer = {
-          id: generateFakeId(IdType.USER),
-          stripeCustomer: generateFakeId(IdType.CUSTOMER),
-        };
-        const tier = {
-          id: 'starter',
-          stripeProduct: generateFakeId(IdType.PRODUCT),
-        };
-        const subscription = {
-          id: generateFakeId(IdType.SUBSCRIPTION),
-          customer: customer.stripeCustomer,
-          items: {
-            data: [
-              {
-                quantity: 1,
-                price: {
-                  product: {
-                    id: tier.stripeProduct,
-                  },
-                },
-              },
-            ],
-          },
-          status: 'active',
-        };
-
-        const StripeMock = {
-          webhooks: {
-            constructEvent: jest.fn(() => ({
-              id: generateFakeId(IdType.EVENT),
-              type: 'customer.subscription.created',
-              data: {
-                object: subscription,
-              },
-              request: {
-                idempotency_key: faker.datatype.uuid(),
-              },
-            })),
-          },
-          subscriptions: {
-            retrieve: jest.fn(async () => Promise.resolve(subscription)),
-          },
-        };
-
-        const StripeProviderStorageAdapterMock = {
-          findUser: jest.fn(async () => Promise.resolve(customer)),
-          findTier: jest.fn(async () => Promise.resolve(tier)),
-          insertSubscription: jest.fn(async () => Promise.resolve()),
-          findEvent: jest.fn(async () => Promise.resolve(null)),
-          insertEvent: jest.fn(async () => Promise.resolve()),
-        };
-
-        container.bind(TYPES.Stripe).toConstantValue(StripeMock);
-        container.bind(TYPES.ConfigProvider).toConstantValue({
-          config,
-        });
-        container
-          .bind(TYPES.StripeProviderStorageAdapter)
-          .toConstantValue(StripeProviderStorageAdapterMock);
-        container.bind(TYPES.ApiProvider).to(ApiProvider);
-
-        const provider = container.get<IApiProvider>(TYPES.ApiProvider);
-
-        await provider.postWebhook({
-          body: {
-            endpointSecret: '',
-            rawBody: Buffer.from(''),
-            signature: '',
-          },
-        });
-
-        expect(StripeMock.webhooks.constructEvent).toBeCalledWith(
-          expect.any(Buffer),
-          expect.any(String),
-          expect.any(String),
-        );
-        expect(StripeProviderStorageAdapterMock.findEvent).toBeCalled();
-        expect(StripeMock.subscriptions.retrieve).toBeCalled();
-        expect(StripeProviderStorageAdapterMock.findUser).toBeCalled();
-        expect(StripeProviderStorageAdapterMock.findTier).toBeCalled();
-        expect(
-          StripeProviderStorageAdapterMock.insertSubscription,
-        ).toBeCalledWith(
-          expect.objectContaining({
-            stripeSubscription: expect.any(String),
-            user: expect.any(String),
-            tier: expect.any(String),
-            quantity: expect.any(Number),
-            stripeStatus: expect.any(String),
-          }),
-        );
-        expect(StripeProviderStorageAdapterMock.insertEvent).toBeCalledWith(
-          expect.objectContaining({
-            stripeEvent: expect.any(String),
-            stripeEventType: expect.any(String),
-            stripeIdempotencyKey: expect.any(String),
-          }),
-        );
-      },
-    );
 
     test.concurrent(
       'customer.subscription.updated and payment succeeded-> event is handled',
