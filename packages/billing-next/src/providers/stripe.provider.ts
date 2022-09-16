@@ -170,6 +170,8 @@ export class StripeProvider implements IStripeProvider {
         'customer.subscription.created',
         'customer.subscription.deleted',
         'customer.subscription.updated',
+        'setup_intent.succeeded',
+        'invoice.paid',
       ],
     });
 
