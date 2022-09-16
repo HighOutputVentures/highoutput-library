@@ -42,19 +42,12 @@ describe('PUT /subscription', () => {
 
       ctx.app.use(billingServer.expressMiddleware());
 
-      // const expected = {
-      // };
-
       const subscription = {
         id: generateFakeId(IdType.SUBSCRIPTION),
         user: customer.id,
         tier: tier.id,
         quantity: 1,
         status: 'active',
-        // latest_invoice: {
-        //   payment_intent: {
-        //   },
-        // },
       };
 
       nock(/stripe.com/)

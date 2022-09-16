@@ -38,7 +38,6 @@ export type EventLog = {
   stripeEvent: string;
   stripeEventType: string;
   stripeIdempotencyKey: string;
-  // requestId: string | null;
 };
 
 export interface IStripeProviderStorageAdapter {
