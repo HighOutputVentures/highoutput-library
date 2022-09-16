@@ -10,105 +10,6 @@ import { Subscription } from '../src/interfaces/stripe.provider';
 
 describe('POST /webhook', () => {
   test.concurrent(
-    'customer.subscription.created event is sent -> should create subscription',
-    async () => {
-      const ctx = await setup();
-      const stripe = new Stripe('', {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        apiVersion: null,
-      });
-
-      const storageAdapter = new MongooseStripeProdiverStorageAdapter(
-        ctx.mongoose,
-      );
-
-      const customer = {
-        id: generateFakeId(IdType.USER),
-        stripeCustomer: generateFakeId(IdType.CUSTOMER),
-      };
-      const webhookSecret = 'whsec_T1sWT0N2rHkaFNG8EDgJfryNdlg6r2MW';
-      const tier = {
-        id: 'starter',
-        stripePrices: [generateFakeId(IdType.PRICE)],
-        stripeProduct: generateFakeId(IdType.PRODUCT),
-      };
-
-      await storageAdapter.insertUser(customer);
-      await storageAdapter.insertTier(tier);
-
-      const billingServer = new BillingServer({
-        stripeSecretKey:
-          'sk_test_51LWeDVGrNXva3DrphN3qGT3dnhh2bAoNZ7O80w4XpMEbBlMeLul10aMS7a41PXZHl8vOpcDI6JZ7KoNTSBFyV9r800kV6WzTLo',
-        configFilePath: './__tests__/assets/config.json',
-        endpointSigningSecret: webhookSecret,
-        stripeProviderStorageAdapter: storageAdapter,
-        authorizationAdapter: new JwtAuthorizationAdapter({ secret: 'secret' }),
-      });
-
-      ctx.app.use(billingServer.expressMiddleware());
-
-      const expected = {
-        received: true,
-      };
-
-      const subscription = {
-        id: generateFakeId(IdType.SUBSCRIPTION),
-        customer: customer.stripeCustomer,
-        items: {
-          data: [
-            {
-              quantity: 1,
-              price: {
-                product: {
-                  id: tier.stripeProduct,
-                },
-              },
-            },
-          ],
-        },
-        stripeStatus: 'active',
-      };
-
-      const payload = {
-        id: generateFakeId(IdType.EVENT),
-        object: 'event',
-        type: 'customer.subscription.created',
-        data: {
-          object: subscription,
-        },
-        request: {
-          id: null,
-          idempotency_key: faker.datatype.uuid(),
-        },
-      };
-
-      const payloadString = JSON.stringify(payload, null, 2);
-      const header = stripe.webhooks.generateTestHeaderString({
-        payload: payloadString,
-        secret: webhookSecret,
-      });
-
-      nock(/stripe.com/)
-        .get(`/v1/subscriptions/${subscription.id}`)
-        .query({ expand: ['items.data.price.product'] })
-        .reply(200, subscription);
-
-      await ctx.request
-        .post('/webhook')
-        .set('stripe-signature', header)
-        .send(payloadString)
-        .expect('Content-Type', /json/)
-        .expect(200)
-        .expect((res) => {
-          expect(res.body.data).toEqual(expected);
-        });
-
-      await teardown(ctx);
-    },
-    10000,
-  );
-  test.concurrent(
     'customer.subscription.updated event is sent -> should update user subscription',
     async () => {
       const ctx = await setup();
@@ -193,11 +94,6 @@ describe('POST /webhook', () => {
         payload: payloadString,
         secret: webhookSecret,
       });
-
-      nock(/stripe.com/)
-        .get(`/v1/subscriptions/${subscription.id}`)
-        .query({ expand: ['items.data.price.product'] })
-        .reply(200, subscription);
 
       await ctx.request
         .post('/webhook')

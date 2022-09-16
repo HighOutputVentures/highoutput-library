@@ -167,7 +167,6 @@ export class StripeProvider implements IStripeProvider {
     const webhookEndpoint = await this.stripe.webhookEndpoints.create({
       url: webhook.url,
       enabled_events: [
-        'customer.subscription.created',
         'customer.subscription.deleted',
         'customer.subscription.updated',
         'setup_intent.succeeded',

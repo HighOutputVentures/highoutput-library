@@ -59,18 +59,10 @@ export class ApiProvider implements IApiProvider {
       await this.storageAdapter.insertUser(customer);
     }
 
-    let {
-      data: [setupIntent],
-    } = await this.stripe.setupIntents.list({
+    const setupIntent = await this.stripe.setupIntents.create({
+      payment_method_types: ['card'],
       customer: customer.stripeCustomer,
     });
-
-    if (!setupIntent) {
-      setupIntent = await this.stripe.setupIntents.create({
-        payment_method_types: ['card'],
-        customer: customer.stripeCustomer,
-      });
-    }
 
     return {
       status: 200,
@@ -210,6 +202,14 @@ export class ApiProvider implements IApiProvider {
       default_payment_method: customer.stripePaymentMethod,
     });
 
+    await this.storageAdapter.insertSubscription({
+      stripeSubscription: subscription.id,
+      user,
+      tier,
+      quantity,
+      stripeStatus: subscription.status,
+    });
+
     return {
       status: 200,
       body: {
@@ -260,35 +260,6 @@ export class ApiProvider implements IApiProvider {
     }
 
     switch (event.type) {
-      case WebhookEvents.SUBSCRIPTION_CREATED: {
-        const subscription = event.data.object as Stripe.Subscription;
-
-        const expandedSubscription = await this.stripe.subscriptions.retrieve(
-          subscription.id,
-          {
-            expand: ['items.data.price.product'],
-          },
-        );
-
-        const [item] = expandedSubscription.items.data;
-        const product = item.price.product as Stripe.Product;
-
-        const user = await this.storageAdapter.findUser(
-          expandedSubscription.customer as string,
-        );
-        const tier = await this.storageAdapter.findTier(product.id);
-
-        await this.storageAdapter.insertSubscription({
-          stripeSubscription: expandedSubscription.id,
-          user: user?.id as string,
-          tier: tier?.id as string,
-          quantity: item.quantity as number,
-          stripeStatus: expandedSubscription.status,
-        });
-
-        break;
-      }
-
       case WebhookEvents.INVOICE_PAID: {
         const invoice = event.data.object as Stripe.Invoice;
         const subscription = invoice.subscription as string;
@@ -321,21 +292,14 @@ export class ApiProvider implements IApiProvider {
       case WebhookEvents.SUBSCRIPTION_UPDATED: {
         const subscription = event.data.object as Stripe.Subscription;
 
-        const expandedSubscription = await this.stripe.subscriptions.retrieve(
-          subscription.id,
-          {
-            expand: ['items.data.price.product'],
-          },
-        );
-
-        const [item] = expandedSubscription.items.data;
+        const [item] = subscription.items.data;
         const product = item.price.product as Stripe.Product;
         const tier = await this.storageAdapter.findTier(product.id);
 
-        await this.storageAdapter.updateSubscription(expandedSubscription.id, {
+        await this.storageAdapter.updateSubscription(subscription.id, {
           tier: tier?.id,
           quantity: item.quantity,
-          stripeStatus: expandedSubscription.status,
+          stripeStatus: subscription.status,
         });
 
         break;
