@@ -1,4 +1,5 @@
 /* eslint-disable no-shadow */
+import Stripe from 'stripe';
 import { TierConfig } from '../typings';
 import { Subscription, Tier } from './stripe.provider';
 
@@ -33,6 +34,7 @@ export enum WebhookEvents {
   'SUBSCRIPTION_UPDATED' = 'customer.subscription.updated',
   'SUBSCRIPTION_DELETED' = 'customer.subscription.deleted',
   'SETUP_INTENT_SUCCEEDED' = 'setup_intent.succeeded',
+  'INVOICE_PAID' = 'invoice.paid',
 }
 
 export interface IApiProvider {
@@ -40,7 +42,16 @@ export interface IApiProvider {
   getSecret(params: Request): Promise<Response<{ secret: string }>>;
   getSubscription(params: Request): Promise<
     Response<{
-      subscription: Omit<Subscription, 'tier'> & { tier: Tier };
+      subscription: Omit<Subscription, 'tier' | 'user'> & {
+        tier: Tier;
+        user: {
+          stripeCustomer: string;
+          paymentMethod: Pick<
+            Stripe.PaymentMethod.Card,
+            'brand' | 'country' | 'exp_month' | 'exp_year' | 'last4'
+          >;
+        };
+      };
     } | null>
   >;
   getPortal(params: Request): Promise<Response>;

@@ -84,22 +84,49 @@ export class ApiProvider implements IApiProvider {
 
   async getSubscription(params: Request): Promise<
     Response<{
-      subscription: Omit<Subscription, 'tier'> & { tier: Tier };
+      subscription: Omit<Subscription, 'tier' | 'user'> & {
+        tier: Tier;
+        user: {
+          stripeCustomer: string;
+          paymentMethod: Pick<
+            Stripe.PaymentMethod.Card,
+            'brand' | 'country' | 'exp_month' | 'exp_year' | 'last4'
+          >;
+        };
+      };
     } | null>
   > {
     const { user } = params;
     const subscription = await this.storageAdapter.findSubscriptionByUser(user);
-    let data = null;
 
-    if (!R.isNil(subscription)) {
-      const tier = await this.storageAdapter.findTier(subscription.tier);
-      data = {
-        subscription: {
-          ...R.omit(['tier'], subscription),
-          tier,
-        } as Omit<Subscription, 'tier'> & { tier: Tier },
+    if (R.isNil(subscription)) {
+      return {
+        status: 200,
+        body: {
+          data: null,
+        },
       };
     }
+
+    const tier = await this.storageAdapter.findTier(subscription.tier);
+    const customer = await this.storageAdapter.findUser(user);
+    const stripePaymentMethod = await this.stripe.paymentMethods.retrieve(
+      customer?.stripePaymentMethod as string,
+    );
+
+    const data = {
+      subscription: {
+        ...R.omit(['tier', 'user'], subscription),
+        tier: tier as Tier,
+        user: {
+          stripeCustomer: customer?.stripeCustomer,
+          paymentMethod: R.pick(
+            ['brand', 'country', 'exp_month', 'exp_year', 'last4'],
+            stripePaymentMethod.card,
+          ),
+        },
+      } as never,
+    };
 
     return {
       status: 200,
@@ -262,13 +289,32 @@ export class ApiProvider implements IApiProvider {
         break;
       }
 
+      case WebhookEvents.INVOICE_PAID: {
+        const invoice = event.data.object as Stripe.Invoice;
+        const subscription = invoice.subscription as string;
+
+        await this.storageAdapter.updateSubscription(subscription, {
+          stripeStatus: 'active',
+        });
+
+        break;
+      }
+
       case WebhookEvents.SETUP_INTENT_SUCCEEDED: {
         const setupIntent = event.data.object as Stripe.SetupIntent;
-        const { payment_method: paymentMethod, customer } = setupIntent;
+        const paymentMethod = setupIntent.payment_method as string;
+        const customer = setupIntent.customer as string;
 
-        await this.storageAdapter.updateUser(customer as string, {
-          stripePaymentMethod: paymentMethod as string,
+        await this.stripe.customers.update(customer, {
+          invoice_settings: {
+            default_payment_method: paymentMethod,
+          },
         });
+
+        await this.storageAdapter.updateUser(customer, {
+          stripePaymentMethod: paymentMethod,
+        });
+
         break;
       }
 

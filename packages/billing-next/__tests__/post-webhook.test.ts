@@ -6,6 +6,7 @@ import { JwtAuthorizationAdapter } from '../src/adapters/jwt-authorization.adapt
 import { setup, teardown } from './fixture';
 import { generateFakeId, IdType } from './helpers/generate-fake-id';
 import { BillingServer } from '../src';
+import { Subscription } from '../src/interfaces/stripe.provider';
 
 describe('POST /webhook', () => {
   test.concurrent(
@@ -289,6 +290,81 @@ describe('POST /webhook', () => {
   );
 
   test.concurrent(
+    'invoice.paid is sent -> should set subscription as active',
+    async () => {
+      const ctx = await setup();
+      const stripe = new Stripe('', {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        apiVersion: null,
+      });
+
+      const storageAdapter = new MongooseStripeProdiverStorageAdapter(
+        ctx.mongoose,
+      );
+
+      const subscription: Omit<Subscription, 'id'> = {
+        stripeSubscription: generateFakeId(IdType.SUBSCRIPTION),
+        user: generateFakeId(IdType.USER),
+        tier: 'starter',
+        quantity: 1,
+        stripeStatus: 'incomplete',
+      };
+
+      const webhookSecret = 'whsec_T1sWT0N2rHkaFNG8EDgJfryNdlg6r2MW';
+
+      await storageAdapter.insertSubscription(subscription);
+
+      const billingServer = new BillingServer({
+        stripeSecretKey:
+          'sk_test_51LWeDVGrNXva3DrphN3qGT3dnhh2bAoNZ7O80w4XpMEbBlMeLul10aMS7a41PXZHl8vOpcDI6JZ7KoNTSBFyV9r800kV6WzTLo',
+        configFilePath: './__tests__/assets/config.json',
+        endpointSigningSecret: webhookSecret,
+        stripeProviderStorageAdapter: storageAdapter,
+        authorizationAdapter: new JwtAuthorizationAdapter({ secret: 'secret' }),
+      });
+
+      ctx.app.use(billingServer.expressMiddleware());
+
+      const expected = {
+        received: true,
+      };
+      const invoice = {
+        subscription: subscription.stripeSubscription,
+      };
+      const payload = {
+        id: generateFakeId(IdType.EVENT),
+        type: 'invoice.paid',
+        data: {
+          object: invoice,
+        },
+        request: {
+          idempotency_key: faker.datatype.uuid(),
+        },
+      };
+
+      const payloadString = JSON.stringify(payload, null, 2);
+      const header = stripe.webhooks.generateTestHeaderString({
+        payload: payloadString,
+        secret: webhookSecret,
+      });
+
+      await ctx.request
+        .post('/webhook')
+        .set('stripe-signature', header)
+        .send(payloadString)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.data).toEqual(expected);
+        });
+
+      await teardown(ctx);
+    },
+    10000,
+  );
+
+  test.concurrent(
     'setup_intent.succeeded is sent -> should attach payment method to user',
     async () => {
       const ctx = await setup();
@@ -327,7 +403,8 @@ describe('POST /webhook', () => {
       const setupIntent = {
         id: generateFakeId(IdType.SETUP_INTENT),
         customer: user.stripeCustomer,
-        payment_method: generateFakeId(IdType.PAYMENT_METHOD),
+        // payment_method: generateFakeId(IdType.PAYMENT_METHOD),
+        payment_method: 'samplepayment',
       };
       const payload = {
         id: generateFakeId(IdType.EVENT),
@@ -346,6 +423,14 @@ describe('POST /webhook', () => {
         secret: webhookSecret,
       });
 
+      nock(/stripe.com/)
+        .post(`/v1/customers/${user.stripeCustomer}`, {
+          invoice_settings: {
+            default_payment_method: setupIntent.payment_method,
+          },
+        })
+        .reply(200, {});
+
       await ctx.request
         .post('/webhook')
         .set('stripe-signature', header)
@@ -358,6 +443,7 @@ describe('POST /webhook', () => {
 
       await teardown(ctx);
     },
+    10000,
   );
 
   test.concurrent(
