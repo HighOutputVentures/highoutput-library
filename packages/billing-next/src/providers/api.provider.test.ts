@@ -27,7 +27,7 @@ describe('ApiProvider', () => {
 
       const StripeMock = {
         setupIntents: {
-          list: jest.fn(async () => Promise.resolve({ data: [] })),
+          // list: jest.fn(async () => Promise.resolve({ data: [] })),
           create: jest.fn(async () =>
             Promise.resolve({ client_secret: clientSecret }),
           ),
@@ -54,64 +54,8 @@ describe('ApiProvider', () => {
       expect(StripeProviderStorageAdapterMock.findUser).toBeCalledWith(
         customer.id,
       );
-      expect(StripeMock.setupIntents.list).toBeCalledWith({
-        customer: customer.stripeCustomer,
-      });
       expect(StripeMock.setupIntents.create).toBeCalledWith({
         payment_method_types: ['card'],
-        customer: customer.stripeCustomer,
-      });
-      expect(output).toEqual({
-        status: 200,
-        body: {
-          data: {
-            secret: clientSecret,
-          },
-        },
-      });
-    });
-
-    test.concurrent('customer exists with intent', async () => {
-      const customer = {
-        id: generateFakeId(IdType.USER),
-        stripeCustomer: generateFakeId(IdType.CUSTOMER),
-      };
-
-      const config = generateFakeConfig();
-
-      const container = new Container();
-
-      const clientSecret = generateFakeId(IdType.SETUP_INTENT_SECRET);
-
-      const StripeMock = {
-        setupIntents: {
-          list: jest.fn(async () =>
-            Promise.resolve({ data: [{ client_secret: clientSecret }] }),
-          ),
-        },
-      };
-
-      const StripeProviderStorageAdapterMock = {
-        findUser: jest.fn(async () => Promise.resolve(customer)),
-      };
-
-      container.bind(TYPES.Stripe).toConstantValue(StripeMock);
-      container.bind(TYPES.ConfigProvider).toConstantValue({
-        config,
-      });
-      container
-        .bind(TYPES.StripeProviderStorageAdapter)
-        .toConstantValue(StripeProviderStorageAdapterMock);
-      container.bind(TYPES.ApiProvider).to(ApiProvider);
-
-      const provider = container.get<IApiProvider>(TYPES.ApiProvider);
-
-      const output = await provider.getSecret({ user: customer.id });
-
-      expect(StripeProviderStorageAdapterMock.findUser).toBeCalledWith(
-        customer.id,
-      );
-      expect(StripeMock.setupIntents.list).toBeCalledWith({
         customer: customer.stripeCustomer,
       });
       expect(output).toEqual({

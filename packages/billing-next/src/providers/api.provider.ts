@@ -59,18 +59,10 @@ export class ApiProvider implements IApiProvider {
       await this.storageAdapter.insertUser(customer);
     }
 
-    let {
-      data: [setupIntent],
-    } = await this.stripe.setupIntents.list({
+    const setupIntent = await this.stripe.setupIntents.create({
+      payment_method_types: ['card'],
       customer: customer.stripeCustomer,
     });
-
-    if (!setupIntent) {
-      setupIntent = await this.stripe.setupIntents.create({
-        payment_method_types: ['card'],
-        customer: customer.stripeCustomer,
-      });
-    }
 
     return {
       status: 200,

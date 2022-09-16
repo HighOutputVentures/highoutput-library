@@ -38,8 +38,6 @@ describe('GET /secret', () => {
       const clientSecret = generateFakeId(IdType.SETUP_INTENT_SECRET);
 
       nock(/stripe.com/)
-        .get(/\/v1\/setup_intents/)
-        .reply(200, { data: [] })
         .post(/\/v1\/setup_intents/)
         .reply(200, { client_secret: clientSecret });
 
@@ -90,8 +88,6 @@ describe('GET /secret', () => {
       nock(/stripe.com/)
         .post(/\/v1\/customers/)
         .reply(200, { id: customer.stripeCustomer })
-        .get(/\/v1\/setup_intents/)
-        .reply(200, { data: [] })
         .post(/\/v1\/setup_intents/)
         .reply(200, { client_secret: clientSecret });
 
