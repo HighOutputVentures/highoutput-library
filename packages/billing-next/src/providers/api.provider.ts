@@ -323,6 +323,19 @@ export class ApiProvider implements IApiProvider {
         break;
       }
 
+      case WebhookEvents.INVOICE_PAYMENT_FAILED: {
+        const invoice = event.data.object as Stripe.Invoice;
+
+        await this.storageAdapter.updateSubscription(
+          invoice.subscription as string,
+          {
+            stripeStatus: 'unpaid',
+          },
+        );
+
+        break;
+      }
+
       default:
         throw new AppError(
           'UNHANDLED_WEBHOOK_EVENT',
