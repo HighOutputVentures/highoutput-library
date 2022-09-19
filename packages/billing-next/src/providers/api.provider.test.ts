@@ -731,6 +731,67 @@ describe('ApiProvider', () => {
       );
     });
 
+    test.concurrent('invoice.created -> event is handled', async () => {
+      const config = generateFakeConfig();
+
+      const container = new Container();
+
+      const invoice = {
+        id: generateFakeId(IdType.INVOICE),
+      };
+
+      const StripeMock = {
+        webhooks: {
+          constructEvent: jest.fn(() => ({
+            id: generateFakeId(IdType.EVENT),
+            type: 'invoice.created',
+            data: {
+              object: invoice,
+            },
+            request: {
+              idempotency_key: faker.datatype.uuid(),
+            },
+          })),
+        },
+        invoices: {
+          finalizeInvoice: jest.fn(() => Promise.resolve()),
+        },
+      };
+
+      const StripeProviderStorageAdapterMock = {
+        findEvent: jest.fn(async () => Promise.resolve(null)),
+        insertEvent: jest.fn(async () => Promise.resolve()),
+      };
+
+      container.bind(TYPES.Stripe).toConstantValue(StripeMock);
+      container.bind(TYPES.ConfigProvider).toConstantValue({
+        config,
+      });
+      container
+        .bind(TYPES.StripeProviderStorageAdapter)
+        .toConstantValue(StripeProviderStorageAdapterMock);
+      container.bind(TYPES.ApiProvider).to(ApiProvider);
+
+      const provider = container.get<IApiProvider>(TYPES.ApiProvider);
+
+      await provider.postWebhook({
+        body: {
+          endpointSecret: '',
+          rawBody: Buffer.from(''),
+          signature: '',
+        },
+      });
+
+      expect(StripeMock.webhooks.constructEvent).toBeCalledWith(
+        expect.any(Buffer),
+        expect.any(String),
+        expect.any(String),
+      );
+      expect(StripeMock.invoices.finalizeInvoice).toBeCalledWith(
+        expect.any(String),
+      );
+    });
+
     test.concurrent(
       'event is already logged -> should return 200',
       async () => {

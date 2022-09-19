@@ -314,6 +314,15 @@ export class ApiProvider implements IApiProvider {
 
         break;
       }
+
+      case WebhookEvents.INVOICE_CREATED: {
+        const invoice = event.data.object as Stripe.Invoice;
+
+        await this.stripe.invoices.finalizeInvoice(invoice.id as string);
+
+        break;
+      }
+
       default:
         throw new AppError(
           'UNHANDLED_WEBHOOK_EVENT',

@@ -171,6 +171,7 @@ export class StripeProvider implements IStripeProvider {
         'customer.subscription.updated',
         'setup_intent.succeeded',
         'invoice.paid',
+        'invoice.created',
       ],
     });
 
