@@ -12,6 +12,7 @@ import {
 } from '../interfaces/stripe.provider';
 import { TYPES } from '../types';
 import { CustomerPortalConfig, TierConfig } from '../typings';
+import { WebhookEvents } from '../interfaces/api.provider';
 
 @injectable()
 export class StripeProvider implements IStripeProvider {
@@ -166,12 +167,7 @@ export class StripeProvider implements IStripeProvider {
 
     const webhookEndpoint = await this.stripe.webhookEndpoints.create({
       url: webhook.url,
-      enabled_events: [
-        'customer.subscription.deleted',
-        'customer.subscription.updated',
-        'setup_intent.succeeded',
-        'invoice.paid',
-      ],
+      enabled_events: Object.values(WebhookEvents),
     });
 
     await this.storageAdapter.insertValue({

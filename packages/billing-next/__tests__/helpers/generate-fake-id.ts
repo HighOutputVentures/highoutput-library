@@ -11,6 +11,7 @@ export enum IdType {
   'EVENT',
   'SETUP_INTENT',
   'PAYMENT_METHOD',
+  'INVOICE',
 }
 
 export function generateFakeId(idType: IdType) {
@@ -26,6 +27,7 @@ export function generateFakeId(idType: IdType) {
     6: `evt_${faker.random.alphaNumeric(24)}`,
     7: `seti_${faker.random.alphaNumeric(24)}`,
     8: `pm_${faker.random.alphaNumeric(24)}`,
+    9: `in_${faker.random.alphaNumeric(24)}`,
   };
 
   return idMapper[idType];
