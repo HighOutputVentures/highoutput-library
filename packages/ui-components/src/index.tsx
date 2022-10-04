@@ -574,6 +574,8 @@ export {
   WrapProps,
 } from '@chakra-ui/react';
 export { isValidMotionProp, motion } from 'framer-motion';
+export { default as For, ForProps } from './components/For/For';
+export { default as Mount, MountProps } from './components/Mount/Mount';
 export {
   ThemeProvider,
   ThemeProviderProps,
