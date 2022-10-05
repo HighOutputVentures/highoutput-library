@@ -845,7 +845,7 @@ export const sizeText = {
 };
 
 export const Text = {
-  baseStyle: { fontStyle: 'Inter', fontColor: 'gray.800' },
+  baseStyle: { fontStyle: 'Helvetica Neue', fontColor: 'neutrals.900' },
   sizes: sizeText,
 };
 
