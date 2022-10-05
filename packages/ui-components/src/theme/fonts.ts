@@ -1,6 +1,6 @@
 const fonts = {
-  heading: "'Inter', sans-serif",
-  body: "'Inter', sans-serif",
+  heading: "Helvetica Neue, 'Inter', sans-serif",
+  body: "Helvetica Neue, 'Inter', sans-serif",
 };
 
 export default fonts;
