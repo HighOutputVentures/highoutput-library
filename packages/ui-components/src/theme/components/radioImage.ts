@@ -3,12 +3,12 @@ export const RadioImage = {
     padding: 1,
     borderRadius: 180,
     w: 14,
-    color: 'primary.500',
+    color: 'brand.primary.700',
   }),
   variants: {
     primary: () => ({
       padding: 1,
-      color: 'primary.500',
+      color: 'brand.primary.700',
     }),
   },
 };

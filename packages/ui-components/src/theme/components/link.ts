@@ -10,7 +10,7 @@ export const Link = {
   variants: {
     primary: {
       fontWeight: 'medium',
-      color: 'primary.500',
+      color: 'brand.primary.700',
     },
     orange: {
       fontWeight: 'medium',

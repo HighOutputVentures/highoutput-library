@@ -11,7 +11,7 @@ export const Tabs = {
         _selected: {
           paddingBottom: '6px',
           borderBottom: '2px solid',
-          borderBottomColor: 'primary.500',
+          borderBottomColor: 'brand.primary.700',
           color: 'gray.800',
           fontWeight: 'semibold',
         },
