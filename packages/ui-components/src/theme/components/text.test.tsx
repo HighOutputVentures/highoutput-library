@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { sizeText } from '../../theme/components/text';
+import { sizeText } from './text';
 
 describe('Text sizes values', () => {
   it('should renders input field form container', async () => {
