@@ -5,7 +5,7 @@ import { ThemeProvider } from '../..';
 import ArrayField from './ArrayField';
 
 export default {
-  title: 'UI Components/Form/Array Field',
+  title: 'Components/Form/Array Field',
   component: ArrayField,
 } as ComponentMeta<typeof ArrayField>;
 

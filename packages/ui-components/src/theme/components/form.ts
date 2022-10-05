@@ -39,12 +39,15 @@ export const Form = {
   variants: {
     primary: {
       formInput: {
-        _focus: { border: '2px solid', borderColor: 'primary.500' },
+        _focus: { border: '2px solid', borderColor: 'brand.primary.700' },
         _invalid: { _focus: { border: '2px solid', borderColor: 'red.500' } },
         fontSize: '14px',
       },
       formTextarea: {
-        _focusVisible: { border: '2px solid', borderColor: 'primary.500' },
+        _focusVisible: {
+          border: '2px solid',
+          borderColor: 'brand.primary.700',
+        },
         _invalid: {
           _focusVisible: { border: '2px solid', borderColor: 'red.500' },
         },
@@ -54,11 +57,14 @@ export const Form = {
     'check-in-edit': {
       formInput: {
         height: '34px',
-        _focus: { border: '2px solid', borderColor: 'primary.500' },
+        _focus: { border: '2px solid', borderColor: 'brand.primary.700' },
         _invalid: { _focus: { border: '2px solid', borderColor: 'red.500' } },
       },
       formTextarea: {
-        _focusVisible: { border: '2px solid', borderColor: 'primary.500' },
+        _focusVisible: {
+          border: '2px solid',
+          borderColor: 'brand.primary.700',
+        },
         _invalid: {
           _focusVisible: { border: '2px solid', borderColor: 'red.500' },
         },
@@ -75,7 +81,10 @@ export const Form = {
         _hover: { border: '1px dashed', borderColor: 'gray.400' },
       },
       formTextarea: {
-        _focusVisible: { border: '2px solid', borderColor: 'primary.500' },
+        _focusVisible: {
+          border: '2px solid',
+          borderColor: 'brand.primary.700',
+        },
         _invalid: {
           _focusVisible: { border: '2px solid', borderColor: 'red.500' },
         },

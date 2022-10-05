@@ -12,15 +12,15 @@ export const Button: ComponentStyleConfig = {
   variants: {
     link: {
       fontWeight: 'medium',
-      color: 'primary.500',
+      color: 'brand.primary.700',
     },
     primary: {
       color: '#FAFAFA',
-      bg: 'primary.500',
+      bg: 'brand.primary.700',
       p: '8px 16px',
       borderRadius: 'base',
       _hover: {
-        bg: 'primary.500',
+        bg: 'brand.primary.700',
       },
       _disabled: {
         bg: 'gray.200',
@@ -38,7 +38,7 @@ export const Button: ComponentStyleConfig = {
       },
     },
     'primary-circle': {
-      bg: 'primary.500',
+      bg: 'brand.primary.700',
       borderRadius: 'full',
     },
     'solid-gray': {

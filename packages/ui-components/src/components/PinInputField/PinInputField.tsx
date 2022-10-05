@@ -53,7 +53,7 @@ const PinInputField = forwardRef<HTMLInputElement, PinInputFieldProps>(
           <PinInput
             autoFocus
             otp
-            focusBorderColor="primary.500"
+            focusBorderColor="brand.primary.700"
             errorBorderColor="red.300"
             isInvalid={Boolean(props?.errorMsg)}
             type={type}

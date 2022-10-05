@@ -8,7 +8,7 @@ export const Switch = {
     primary: {
       track: {
         _checked: {
-          bg: 'primary.500',
+          bg: 'brand.primary.700',
         },
       },
     },
