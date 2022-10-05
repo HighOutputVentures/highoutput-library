@@ -12,30 +12,12 @@
     "noUnusedLocals": true, // noUnused* overlap with @typescript-eslint/no-unused-vars, can disable if duplicative
     "noUnusedParameters": true,
     "moduleResolution": "node", // use Node's module resolution algorithm, instead of the legacy TS one
+    "jsx": "react", // transpile JSX to React.createElement
     "esModuleInterop": true, // interop between ESM and CJS modules. Recommended by TS
     "skipLibCheck": true, // significant perf increase by skipping checking .d.ts files, particularly those in node_modules. Recommended by TS
     "forceConsistentCasingInFileNames": true, // error out if import and file system have a casing mismatch. Recommended by TS
-    "noEmit": true, // `tsdx build` ignores this option, but it is commonly used when type-checking separately with `tsc`
-    "target": "es6" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', 'ES2021', or 'ESNEXT'. */,
-    "allowJs": true /* Allow javascript files to be compiled. */,
-    "jsx": "preserve" /* Specify JSX code generation: 'preserve', 'react-native', 'react', 'react-jsx' or 'react-jsxdev'. */,
-    "downlevelIteration": true /* Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'. */,
-    "isolatedModules": true /* Transpile each file as a separate module (similar to 'ts.transpileModule'). */,
-    "strictNullChecks": true,
-    "noImplicitAny": true /* Raise error on expressions and declarations with an implied 'any' type. */,
-    "noImplicitThis": true /* Raise error on 'this' expressions with an implied 'any' type. */,
-    "experimentalDecorators": true /* Enables experimental support for ES7 decorators. */,
-    "emitDecoratorMetadata": true /* Enables experimental support for emitting type metadata for decorators. */,
-    "resolveJsonModule": true,
-    "incremental": true
+    "noEmit": true // `tsdx build` ignores this option, but it is commonly used when type-checking separately with `tsc`
   },
-  "include": [
-    "src",
-    "**/*.ts",
-    "**/*.tsx",
-    ".eslintrc.js",
-    "next.config.js",
-    "**/*.js"
-  ],
+  "include": ["src"],
   "exclude": ["node_modules", "types/*.ts"]
 }
