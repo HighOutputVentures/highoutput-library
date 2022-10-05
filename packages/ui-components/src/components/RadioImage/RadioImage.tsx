@@ -11,9 +11,7 @@ import {
 import { StringOrNumber } from '@chakra-ui/utils';
 import React, { forwardRef, useId } from 'react';
 
-declare type EventOrValue =
-  | React.ChangeEvent<HTMLInputElement>
-  | StringOrNumber;
+export type EventOrValue = React.ChangeEvent<HTMLInputElement> | StringOrNumber;
 
 export interface RadioImageProps
   extends ThemingProps,

@@ -73,6 +73,7 @@
     "chromatic": "^6.7.0",
     "hovgen-cli": "^0.0.6",
     "husky": "^8.0.1",
+    "identity-obj-proxy": "^3.0.0",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-is": "^18.1.0",
@@ -97,6 +98,12 @@
     "react-textarea-autosize": "^8.3.4",
     "rollup-plugin-import-css": "^3.0.3",
     "yup": "^0.32.11"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "\\.(css|less|sass|scss)$": "<rootDir>/__mocks__/styleMock.js",
+      "\\.(gif|ttf|eot|svg)$": "<rootDir>/__mocks__/fileMock.js"
+    }
   },
   "gitHead": "59b0564dbe17d70eabdca0a6ca543b037b18bc22",
   "readme": "ERROR: No README data found!",
