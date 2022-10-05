@@ -1,0 +1,87 @@
+import { Meta, Preview } from '@storybook/addon-docs';
+
+<Meta
+  title="System Design/Typograhpy"
+  parameters={{
+    previewTabs: {
+      canvas: { hidden: true },
+    },
+  }}
+/>
+
+# Type system
+
+Building a robust responsive set of typescale system for designing real products for both web and mobile platforms. [Download font here.](https://www.playbook.com/s/hovdesign/CxvyNG1btuHMzu9W5GAFX7a5)
+
+## Responsive type system
+
+Common use case of type scaling:
+
+- Headers
+- Paragraph
+- Labels
+- Buttons
+
+Breakpoints - We need to create sets of breakpoints for web and mobil.
+
+## Brand typography
+
+We use **Helvetica Neue** all through out our website and product typography. In other use case like labels and code snippets, we use **SF Mono** typeface.
+
+## Type scaling
+
+Headers have typically tighter line height scales compared to the paragraph. We follow the 4-point system to compute our typography spacing such as line height, paragaph spacing, and character spacing.
+
+We need to create sets of breakpoints for web and mobile.
+4 px, 8 px, 16 px, 20 px, .... N px
+
+To keep the buttons, tags, and labels components proportion according to its baseline, we will multiply them with 100%.
+
+## Type roles
+
+Different size, different roles. This ensures proper heirarchy of our interfaces.
+
+### Headers and subheaders
+
+Headers and subheaders have typically tighter line spacing compared to the paragraph and are mostly one to three liners.
+When it comes to font-weight, the smaller the font-size gets, the lighter the weights.
+Headers and subheaders weights ranges from 700 maximum typically H1-H3 and 500 minimum typically applied to subheaders (H4-H6).
+
+### Paragraphs
+
+Paragraphs are typically multi-line so we want to give them more breathability.
+
+We have three different font-style for each sizes:
+
+- Regular
+- Italic
+- Bold
+
+### Recommended size for web paragraphs is 20px
+
+Type scaling helps with ensuring the typography readability and how will it behave from larger screen vs smaller screens.
+
+## Labels and Buttons
+
+Buttons and labels should be in their base line height in order to maintain the margins and paddings proportion. They are mostly one liner and sometimes two lines. Buttons are in most cases one line.
+
+## Applying colors to type
+
+Our colors and type needs to work well together according to heirarchy, similarity, and common region allowing our UI to communicate with the end-users better at glance.
+
+## Ensuring readability
+
+Make sure that we do not put restraints on the viewers and readers eyes by limiting the line length. Line length is the minimum and maximum width of a paragraph content.
+Ideally, the ideal width contains 60-100 characters per line but we want to limit according to container width instead. It is rather convenient when it comes to creating breakpoints of our interface.
+
+## Do’s and don’ts
+
+Iconography is based on proportionality rather than fixed height and width. To achieve 1:1 ration for icons, it is usually put inside a frame. We use the Untitled UI PRO icon pack for our iconography library.
+Pairing type with iconography needs to be standardized from color to scales.
+
+- Use the same height size for the icons and label
+- Use the baseline to middle align the icon and label
+- Do not stretch the icons
+- Do not use the same baseline for both icons and label
+- Never compress your type, allow them to breath
+- Do not part the characters too far away from each other

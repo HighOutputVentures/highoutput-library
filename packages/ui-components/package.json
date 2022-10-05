@@ -95,6 +95,7 @@
     "lodash-es": "^4.17.21",
     "react-hook-form": "^7.33.1",
     "react-textarea-autosize": "^8.3.4",
+    "rollup-plugin-import-css": "^3.0.3",
     "yup": "^0.32.11"
   },
   "gitHead": "59b0564dbe17d70eabdca0a6ca543b037b18bc22",
