@@ -105,7 +105,7 @@
       "\\.(gif|ttf|eot|svg)$": "<rootDir>/__mocks__/fileMock.js"
     }
   },
-  "gitHead": "59b0564dbe17d70eabdca0a6ca543b037b18bc22",
+  "gitHead": "6cc1ae32b7a1cda7f677cad3c649e2881725916d",
   "readme": "ERROR: No README data found!",
   "_id": "@highoutput/ui-components@0.1.15"
 }
