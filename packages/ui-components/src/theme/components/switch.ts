@@ -12,22 +12,6 @@ export const Switch = {
         },
       },
     },
-
-    secondary: {
-      track: {
-        _checked: {
-          bg: 'secondary.500',
-        },
-      },
-    },
-
-    orange: {
-      track: {
-        _checked: {
-          bg: 'orange.500',
-        },
-      },
-    },
   },
   defaultProps: {
     variant: 'primary',

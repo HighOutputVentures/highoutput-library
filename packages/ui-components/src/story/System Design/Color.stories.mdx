@@ -1,0 +1,75 @@
+import { Meta, Preview } from '@storybook/addon-docs';
+
+<Meta
+  title="System Design/Colors"
+  parameters={{
+    previewTabs: {
+      canvas: { hidden: true },
+    },
+  }}
+/>
+
+# Color System
+
+We use HSB to determine the brand’s primary color palette and the 100-900 neutral colors.
+
+## Color usage
+
+Our brand colors distinguishes the HOV identity. The Color System is composed of multiple color groups -Brand colors, Neutral colors, Interface colors, and Alpha colors.
+Brand colors are divided into three subgroups - Primary, Secondary, and Tertiary.
+
+## Brand palette
+
+We use HSB (Hue, Saturation, Brightness) instead of using hex to define our primary palette. It is mostly beneficial to standardize and define the light and dark shades of our brand primary palette. We need a much more comprehensive set of colors to choose from.
+For light, we simply decrease the saturation to ~10 and increase the brightness to 99.
+Then for dark, we typically leave the saturation alone and decrease the brightness down to ~50.
+
+### Standardization
+
+Use a standard value for saturation and brightness to determine our brand primary palettes.
+
+Following the 60/30/10 rule, it allow us to have a unifying criteria when applying our brand to UI. This rule guides us how and when to use the brand color palettes.
+
+### What is the 60-30-10 Rule?
+
+The 60% of the interface should be the background color 30% should be the typography color or texture and 10% should be the brand’s primary color.
+
+## Color as a system
+
+Defining the shades of HDS. Colors are intentional, has meaning, and able to communicate.
+
+### The Brand Colors
+
+The interface is basically composed of 10% brand colors. The primary palette #7070DD is used for primary functionalities.
+The secondary #BAEFC2 is used to back up and accentuate the pirmary. And lastly, the #75AEE4 is a helper color and is used sparingly across the interface.
+
+### Color roles
+
+Light mode
+
+Dark mode
+
+### The Neutrals
+
+Neutral colors play as the supporting role in the interface.
+In most use cases we define neutral color scaling from 100 as the lightest to 900 darkest.
+
+**Standardize the hue**
+
+- Use the same Hue across your primary palettes and neutral colors.
+
+**Computation**
+
+- I just changed the brightness and stick with the 8-grid system counting for me systematically determine the range.
+
+### Interface state colors
+
+It is important to define the state colors for errors, warning, and success. Keeping the Hue value standardized with your primary colors will be helpful with your color decision making. Colors describes the result of the acton taken
+Applications and websites use red/green/yellow to indicate states.
+Red - Error
+Green - Success/Progress
+Yellow - Warning
+
+## Is this document helpful?
+
+Give us some feedback for us to improve it at design@hov.co
