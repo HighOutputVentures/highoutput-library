@@ -1,5 +1,5 @@
 import { extendTheme } from '@chakra-ui/react';
-import colors from './colors';
+import colors from './color/colors';
 import components from './components';
 import config from './config';
 import fonts from './fonts';

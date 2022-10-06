@@ -1,4 +1,4 @@
-import { sizeText } from './text';
+import { sizeText } from './text/text';
 
 export const Link = {
   baseStyle: {
