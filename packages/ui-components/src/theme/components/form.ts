@@ -1,4 +1,4 @@
-import { sizeText } from './text';
+import { sizeText } from './text/text';
 
 export const Form = {
   parts: ['formLabel', 'formInput', 'formTextarea'],

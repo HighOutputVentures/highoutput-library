@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { sizeText } from '../text';
+import { sizeText } from './text';
 
 interface ExpectedTextSize {
   textTransform?: string;

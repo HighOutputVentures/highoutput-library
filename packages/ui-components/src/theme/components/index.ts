@@ -12,7 +12,7 @@ import Select from './select';
 import Stack from './stack';
 import Switch from './switch';
 import Tabs from './tabs';
-import Text from './text';
+import Text from './text/text';
 
 const components: { [key: string]: ComponentStyleConfig } = {
   Box,

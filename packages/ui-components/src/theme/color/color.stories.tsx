@@ -2,7 +2,7 @@ import { Box, Center, Heading, SimpleGrid, Text } from '@chakra-ui/react';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React, { FC } from 'react';
 
-import ThemeProvider from '../components/ThemeProvider';
+import ThemeProvider from '../../components/ThemeProvider';
 
 const ColorCircle: FC<{ color: string; isWhite?: boolean }> = ({
   color,

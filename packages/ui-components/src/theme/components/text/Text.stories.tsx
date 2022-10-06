@@ -1,21 +1,40 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import React from 'react';
 import {
   Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
   TableContainer,
+  Tbody,
+  Td,
   Text,
+  Th,
+  Thead,
+  Tr,
 } from '@chakra-ui/react';
+import { ComponentMeta, ComponentStory } from '@storybook/react';
+import React from 'react';
 
 import ThemeProvider from '../../../components/ThemeProvider';
 export default {
   title: 'System Design/Text System',
   component: Text,
 } as ComponentMeta<typeof Text>;
+interface TextRowProps {
+  size: string;
+  label: string;
+}
+
+const TextRow: React.FC<TextRowProps> = ({ size, label }) => {
+  return (
+    <Tr>
+      <Td>
+        {' '}
+        <Text size="paragraph-md-bold">{size}</Text>
+      </Td>
+      <Td>
+        {' '}
+        <Text size={size}>{label}</Text>
+      </Td>
+    </Tr>
+  );
+};
 
 const Template: ComponentStory<typeof Text> = () => (
   <ThemeProvider>
@@ -156,24 +175,4 @@ export const Default = Template.bind({});
 
 Default.args = {
   ...Default.args,
-};
-
-interface TextRowProps {
-  size: string;
-  label: string;
-}
-
-const TextRow: React.FC<TextRowProps> = ({ size, label }) => {
-  return (
-    <Tr>
-      <Td>
-        {' '}
-        <Text size="paragraph-md-bold">{size}</Text>
-      </Td>
-      <Td>
-        {' '}
-        <Text size={size}>{label}</Text>
-      </Td>
-    </Tr>
-  );
 };
