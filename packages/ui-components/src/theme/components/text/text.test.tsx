@@ -1,439 +1,558 @@
-export const sizeText = {
-  'heading-web-1': {
+import '@testing-library/jest-dom';
+import { sizeText } from '../text';
+
+interface ExpectedTextSize {
+  textTransform?: string;
+  letterSpacing?: string;
+  fontFamily?: string;
+  fontStyle: string;
+  fontWeight: string;
+  fontSize: string;
+  lineHeight: string;
+}
+
+type SizeTypes =
+  | 'heading-web-1'
+  | 'heading-web-2'
+  | 'heading-web-3'
+  | 'heading-web-4'
+  | 'heading-web-5'
+  | 'heading-web-6'
+  | 'heading-mobile-1'
+  | 'heading-mobile-2'
+  | 'heading-mobile-3'
+  | 'heading-mobile-4'
+  | 'heading-mobile-5'
+  | 'heading-mobile-6'
+  | 'paragraph-xxl-default'
+  | 'paragraph-xl-default'
+  | 'paragraph-lg-default'
+  | 'paragraph-md-default'
+  | 'paragraph-sm-default'
+  | 'paragraph-xs-default'
+  | 'paragraph-xxs-default'
+  | 'paragraph-xxl-italic'
+  | 'paragraph-xl-italic'
+  | 'paragraph-lg-italic'
+  | 'paragraph-md-italic'
+  | 'paragraph-sm-italic'
+  | 'paragraph-xs-italic'
+  | 'paragraph-xxs-italic'
+  | 'paragraph-xxl-bold'
+  | 'paragraph-xl-bold'
+  | 'paragraph-lg-bold'
+  | 'paragraph-md-bold'
+  | 'paragraph-sm-bold'
+  | 'paragraph-xs-bold'
+  | 'paragraph-xxs-bold'
+  | 'label-xl-default'
+  | 'label-lg-default'
+  | 'label-md-default'
+  | 'label-sm-default'
+  | 'label-xs-default'
+  | 'label-xxs-default'
+  | 'label-xl-italic'
+  | 'label-lg-italic'
+  | 'label-md-italic'
+  | 'label-sm-italic'
+  | 'label-xs-italic'
+  | 'label-xxs-italic'
+  | 'label-xl-medium'
+  | 'label-lg-medium'
+  | 'label-md-medium'
+  | 'label-sm-medium'
+  | 'label-xs-medium'
+  | 'label-xxs-medium'
+  | 'label-xl-bold'
+  | 'label-lg-bold'
+  | 'label-md-bold'
+  | 'label-sm-bold'
+  | 'label-xs-bold'
+  | 'label-xxs-bold'
+  | 'uppercase-xl-default'
+  | 'uppercase-lg-default'
+  | 'uppercase-md-default'
+  | 'uppercase-sm-default'
+  | 'uppercase-xs-default'
+  | 'uppercase-xxs-default'
+  | 'uppercase-xl-italic'
+  | 'uppercase-lg-italic'
+  | 'uppercase-md-italic'
+  | 'uppercase-sm-italic'
+  | 'uppercase-xs-italic'
+  | 'uppercase-xxs-italic'
+  | 'uppercase-xl-medium'
+  | 'uppercase-lg-medium'
+  | 'uppercase-md-medium'
+  | 'uppercase-sm-medium'
+  | 'uppercase-xs-medium'
+  | 'uppercase-xxs-medium'
+  | 'uppercase-xl-bold'
+  | 'uppercase-lg-bold'
+  | 'uppercase-md-bold'
+  | 'uppercase-sm-bold'
+  | 'uppercase-xs-bold'
+  | 'uppercase-xxs-bold'
+  | 'monospace-xl-default'
+  | 'monospace-lg-default'
+  | 'monospace-md-default'
+  | 'monospace-sm-default'
+  | 'monospace-xs-default'
+  | 'monospace-xxs-default'
+  | 'monospace-xl-italic'
+  | 'monospace-lg-italic'
+  | 'monospace-md-italic'
+  | 'monospace-sm-italic'
+  | 'monospace-xs-italic'
+  | 'monospace-xxs-italic'
+  | 'monospace-xl-medium'
+  | 'monospace-lg-medium'
+  | 'monospace-md-medium'
+  | 'monospace-sm-medium'
+  | 'monospace-xs-medium'
+  | 'monospace-xxs-medium'
+  | 'monospace-xl-bold'
+  | 'monospace-lg-bold'
+  | 'monospace-md-bold'
+  | 'monospace-sm-bold'
+  | 'monospace-xs-bold'
+  | 'monospace-xxs-bold'
+  | 'button-default'
+  | 'button-uppercase';
+
+describe('Test text sizes values', () => {
+  const TestTextSize = (size: SizeTypes, expected: ExpectedTextSize) => {
+    test(`${size} correct style json`, async () => {
+      expect(JSON.stringify(sizeText[size])).toBe(JSON.stringify(expected));
+    });
+  };
+
+  const headingweb1 = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '80px',
     lineHeight: '88px',
     letterSpacing: '-0.02em',
-  },
-  'heading-web-2': {
+  };
+  const headingweb2 = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '56px',
     lineHeight: '64px',
     letterSpacing: '-0.02em',
-  },
-  'heading-web-3': {
+  };
+  const headingweb3 = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '40px',
     lineHeight: '44px',
     letterSpacing: '-0.02em',
-  },
-  'heading-web-4': {
+  };
+  const headingweb4 = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '500',
     fontSize: '32px',
     lineHeight: '36px',
     letterSpacing: '-0.02em',
-  },
-  'heading-web-5': {
+  };
+  const headingweb5 = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '500',
     fontSize: '24px',
     lineHeight: '28px',
     letterSpacing: '-0.02em',
-  },
-  'heading-web-6': {
+  };
+  const headingweb6 = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '500',
     fontSize: '20px',
     lineHeight: '24px',
     letterSpacing: '-0.02em',
-  },
-
-  'heading-mobile-1': {
+  };
+  const headingmobile1 = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '44px',
     lineHeight: '48px',
     letterSpacing: '-0.012em',
-  },
-  'heading-mobile-2': {
+  };
+  const headingmobile2 = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '32px',
     lineHeight: '36px',
     letterSpacing: '-0.012em',
-  },
-  'heading-mobile-3': {
+  };
+  const headingmobile3 = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '24px',
     lineHeight: '28px',
     letterSpacing: '-0.012em',
-  },
-  'heading-mobile-4': {
+  };
+  const headingmobile4 = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '500',
     fontSize: '20px',
     lineHeight: '24px',
     letterSpacing: '-0.012em',
-  },
-  'heading-mobile-5': {
+  };
+  const headingmobile5 = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '500',
     fontSize: '18px',
     lineHeight: '20px',
     letterSpacing: '-0.012em',
-  },
-  'heading-mobile-6': {
+  };
+  const headingmobile6 = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '500',
     fontSize: '16px',
     lineHeight: '18px',
     letterSpacing: '-0.012em',
-  },
-
-  'paragraph-xxl-default': {
+  };
+  const paragraphxxldefault = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '400',
     fontSize: '32px',
     lineHeight: '48px',
-  },
-  'paragraph-xl-default': {
+  };
+  const paragraphxldefault = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '400',
     fontSize: '34px',
     lineHeight: '36px',
-  },
-  'paragraph-lg-default': {
+  };
+  const paragraphlgdefault = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '400',
     fontSize: '20px',
     lineHeight: '32px',
-  },
-  'paragraph-md-default': {
+  };
+  const paragraphmddefault = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '400',
     fontSize: '18px',
     lineHeight: '28px',
-  },
-  'paragraph-sm-default': {
+  };
+  const paragraphsmdefault = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '400',
     fontSize: '16px',
     lineHeight: '24px',
-  },
-  'paragraph-xs-default': {
+  };
+  const paragraphxsdefault = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '400',
     fontSize: '14px',
     lineHeight: '20px',
-  },
-  'paragraph-xxs-default': {
+  };
+  const paragraphxxsdefault = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '400',
     fontSize: '12px',
     lineHeight: '16px',
-  },
-
-  'paragraph-xxl-italic': {
+  };
+  const paragraphxxlitalic = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'italic',
     fontWeight: '400',
     fontSize: '32px',
     lineHeight: '48px',
-  },
-  'paragraph-xl-italic': {
+  };
+  const paragraphxlitalic = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'italic',
     fontWeight: '400',
     fontSize: '34px',
     lineHeight: '36px',
-  },
-  'paragraph-lg-italic': {
+  };
+  const paragraphlgitalic = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'italic',
     fontWeight: '400',
     fontSize: '20px',
     lineHeight: '32px',
-  },
-  'paragraph-md-italic': {
+  };
+  const paragraphmditalic = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'italic',
     fontWeight: '400',
     fontSize: '18px',
     lineHeight: '28px',
-  },
-  'paragraph-sm-italic': {
+  };
+  const paragraphsmitalic = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'italic',
     fontWeight: '400',
     fontSize: '16px',
     lineHeight: '24px',
     letterSpacing: '0.02em',
-  },
-  'paragraph-xs-italic': {
+  };
+  const paragraphxsitalic = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'italic',
     fontWeight: '400',
     fontSize: '14px',
     lineHeight: '20px',
     letterSpacing: '0.02em',
-  },
-  'paragraph-xxs-italic': {
+  };
+  const paragraphxxsitalic = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'italic',
     fontWeight: '400',
     fontSize: '12px',
     lineHeight: '16px',
     letterSpacing: '0.02em',
-  },
-
-  'paragraph-xxl-bold': {
+  };
+  const paragraphxxlbold = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '32px',
     lineHeight: '48px',
-  },
-  'paragraph-xl-bold': {
+  };
+  const paragraphxlbold = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '34px',
     lineHeight: '36px',
-  },
-  'paragraph-lg-bold': {
+  };
+  const paragraphlgbold = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '20px',
     lineHeight: '32px',
-  },
-  'paragraph-md-bold': {
+  };
+  const paragraphmdbold = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '18px',
     lineHeight: '28px',
-  },
-  'paragraph-sm-bold': {
+  };
+  const paragraphsmbold = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '16px',
     lineHeight: '24px',
     letterSpacing: '0.02em',
-  },
-  'paragraph-xs-bold': {
+  };
+  const paragraphxsbold = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '14px',
     lineHeight: '20px',
     letterSpacing: '0.02em',
-  },
-  'paragraph-xxs-bold': {
+  };
+  const paragraphxxsbold = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '12px',
     lineHeight: '16px',
     letterSpacing: '0.02em',
-  },
-
-  'label-xl-default': {
+  };
+  const labelxldefault = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '400',
     fontSize: '32px',
     lineHeight: '32px',
-  },
-  'label-lg-default': {
+  };
+  const labellgdefault = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '400',
     fontSize: '28px',
     lineHeight: '28px',
-  },
-  'label-md-default': {
+  };
+  const labelmddefault = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '400',
     fontSize: '20px',
     lineHeight: '20px',
-  },
-  'label-sm-default': {
+  };
+  const labelsmdefault = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '400',
     fontSize: '18px',
     lineHeight: '18px',
-  },
-  'label-xs-default': {
+  };
+  const labelxsdefault = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '400',
     fontSize: '14px',
     lineHeight: '14px',
     letterSpacing: '0.02em',
-  },
-  'label-xxs-default': {
+  };
+  const labelxxsdefault = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '400',
     fontSize: '12px',
     lineHeight: '12px',
     letterSpacing: '0.02em',
-  },
-
-  'label-xl-italic': {
+  };
+  const labelxlitalic = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'italic',
     fontWeight: '400',
     fontSize: '32px',
     lineHeight: '32px',
-  },
-  'label-lg-italic': {
+  };
+  const labellgitalic = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'italic',
     fontWeight: '400',
     fontSize: '28px',
     lineHeight: '28px',
-  },
-  'label-md-italic': {
+  };
+  const labelmditalic = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'italic',
     fontWeight: '400',
     fontSize: '20px',
     lineHeight: '20px',
-  },
-  'label-sm-italic': {
+  };
+  const labelsmitalic = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'italic',
     fontWeight: '400',
     fontSize: '18px',
     lineHeight: '18px',
-  },
-  'label-xs-italic': {
+  };
+  const labelxsitalic = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'italic',
     fontWeight: '400',
     fontSize: '14px',
     lineHeight: '14px',
     letterSpacing: '0.02em',
-  },
-  'label-xxs-italic': {
+  };
+  const labelxxsitalic = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'italic',
     fontWeight: '400',
     fontSize: '12px',
     lineHeight: '12px',
     letterSpacing: '0.02em',
-  },
-
-  'label-xl-medium': {
+  };
+  const labelxlmedium = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '500',
     fontSize: '32px',
     lineHeight: '32px',
-  },
-  'label-lg-medium': {
+  };
+  const labellgmedium = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '500',
     fontSize: '28px',
     lineHeight: '28px',
-  },
-  'label-md-medium': {
+  };
+  const labelmdmedium = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '500',
     fontSize: '20px',
     lineHeight: '20px',
-  },
-  'label-sm-medium': {
+  };
+  const labelsmmedium = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '500',
     fontSize: '18px',
     lineHeight: '18px',
-  },
-  'label-xs-medium': {
+  };
+  const labelxsmedium = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '500',
     fontSize: '14px',
     lineHeight: '14px',
     letterSpacing: '0.02em',
-  },
-  'label-xxs-medium': {
+  };
+  const labelxxsmedium = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '500',
     fontSize: '12px',
     lineHeight: '12px',
     letterSpacing: '0.02em',
-  },
-
-  'label-xl-bold': {
+  };
+  const labelxlbold = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '32px',
     lineHeight: '32px',
-  },
-  'label-lg-bold': {
+  };
+  const labellgbold = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '28px',
     lineHeight: '28px',
-  },
-  'label-md-bold': {
+  };
+  const labelmdbold = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '20px',
     lineHeight: '20px',
-  },
-  'label-sm-bold': {
+  };
+  const labelsmbold = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '18px',
     lineHeight: '18px',
-  },
-  'label-xs-bold': {
+  };
+  const labelxsbold = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '14px',
     lineHeight: '14px',
     letterSpacing: '0.02em',
-  },
-  'label-xxs-bold': {
+  };
+  const labelxxsbold = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '12px',
     lineHeight: '12px',
     letterSpacing: '0.02em',
-  },
-
-  'uppercase-xl-default': {
+  };
+  const uppercasexldefault = {
     textTransform: 'upperCase',
     letterSpacing: '0.05em',
     fontFamily: 'Helvetica Neue',
@@ -441,8 +560,8 @@ export const sizeText = {
     fontWeight: '400',
     fontSize: '32px',
     lineHeight: '32px',
-  },
-  'uppercase-lg-default': {
+  };
+  const uppercaselgdefault = {
     textTransform: 'upperCase',
     letterSpacing: '0.05em',
     fontFamily: 'Helvetica Neue',
@@ -450,8 +569,8 @@ export const sizeText = {
     fontWeight: '400',
     fontSize: '28px',
     lineHeight: '28px',
-  },
-  'uppercase-md-default': {
+  };
+  const uppercasemddefault = {
     textTransform: 'upperCase',
     letterSpacing: '0.05em',
     fontFamily: 'Helvetica Neue',
@@ -459,8 +578,8 @@ export const sizeText = {
     fontWeight: '400',
     fontSize: '20px',
     lineHeight: '20px',
-  },
-  'uppercase-sm-default': {
+  };
+  const uppercasesmdefault = {
     textTransform: 'upperCase',
     letterSpacing: '0.05em',
     fontFamily: 'Helvetica Neue',
@@ -468,8 +587,8 @@ export const sizeText = {
     fontWeight: '400',
     fontSize: '18px',
     lineHeight: '18px',
-  },
-  'uppercase-xs-default': {
+  };
+  const uppercasexsdefault = {
     textTransform: 'upperCase',
     letterSpacing: '0.05em',
     fontFamily: 'Helvetica Neue',
@@ -477,8 +596,8 @@ export const sizeText = {
     fontWeight: '400',
     fontSize: '14px',
     lineHeight: '14px',
-  },
-  'uppercase-xxs-default': {
+  };
+  const uppercasexxsdefault = {
     textTransform: 'upperCase',
     letterSpacing: '0.05em',
     fontFamily: 'Helvetica Neue',
@@ -486,9 +605,8 @@ export const sizeText = {
     fontWeight: '400',
     fontSize: '12px',
     lineHeight: '12px',
-  },
-
-  'uppercase-xl-italic': {
+  };
+  const uppercasexlitalic = {
     textTransform: 'upperCase',
     letterSpacing: '0.05em',
     fontFamily: 'Helvetica Neue',
@@ -496,8 +614,8 @@ export const sizeText = {
     fontWeight: '400',
     fontSize: '32px',
     lineHeight: '32px',
-  },
-  'uppercase-lg-italic': {
+  };
+  const uppercaselgitalic = {
     textTransform: 'upperCase',
     letterSpacing: '0.05em',
     fontFamily: 'Helvetica Neue',
@@ -505,8 +623,8 @@ export const sizeText = {
     fontWeight: '400',
     fontSize: '28px',
     lineHeight: '28px',
-  },
-  'uppercase-md-italic': {
+  };
+  const uppercasemditalic = {
     textTransform: 'upperCase',
     letterSpacing: '0.05em',
     fontFamily: 'Helvetica Neue',
@@ -514,8 +632,8 @@ export const sizeText = {
     fontWeight: '400',
     fontSize: '20px',
     lineHeight: '20px',
-  },
-  'uppercase-sm-italic': {
+  };
+  const uppercasesmitalic = {
     textTransform: 'upperCase',
     letterSpacing: '0.05em',
     fontFamily: 'Helvetica Neue',
@@ -523,8 +641,8 @@ export const sizeText = {
     fontWeight: '400',
     fontSize: '18px',
     lineHeight: '18px',
-  },
-  'uppercase-xs-italic': {
+  };
+  const uppercasexsitalic = {
     textTransform: 'upperCase',
     letterSpacing: '0.05em',
     fontFamily: 'Helvetica Neue',
@@ -532,8 +650,8 @@ export const sizeText = {
     fontWeight: '400',
     fontSize: '14px',
     lineHeight: '14px',
-  },
-  'uppercase-xxs-italic': {
+  };
+  const uppercasexxsitalic = {
     textTransform: 'upperCase',
     letterSpacing: '0.05em',
     fontFamily: 'Helvetica Neue',
@@ -541,9 +659,8 @@ export const sizeText = {
     fontWeight: '400',
     fontSize: '12px',
     lineHeight: '12px',
-  },
-
-  'uppercase-xl-medium': {
+  };
+  const uppercasexlmedium = {
     textTransform: 'upperCase',
     letterSpacing: '0.05em',
     fontFamily: 'Helvetica Neue',
@@ -551,8 +668,8 @@ export const sizeText = {
     fontWeight: '500',
     fontSize: '32px',
     lineHeight: '32px',
-  },
-  'uppercase-lg-medium': {
+  };
+  const uppercaselgmedium = {
     textTransform: 'upperCase',
     letterSpacing: '0.05em',
     fontFamily: 'Helvetica Neue',
@@ -560,8 +677,8 @@ export const sizeText = {
     fontWeight: '500',
     fontSize: '28px',
     lineHeight: '28px',
-  },
-  'uppercase-md-medium': {
+  };
+  const uppercasemdmedium = {
     textTransform: 'upperCase',
     letterSpacing: '0.05em',
     fontFamily: 'Helvetica Neue',
@@ -569,8 +686,8 @@ export const sizeText = {
     fontWeight: '500',
     fontSize: '20px',
     lineHeight: '20px',
-  },
-  'uppercase-sm-medium': {
+  };
+  const uppercasesmmedium = {
     textTransform: 'upperCase',
     letterSpacing: '0.05em',
     fontFamily: 'Helvetica Neue',
@@ -578,8 +695,8 @@ export const sizeText = {
     fontWeight: '500',
     fontSize: '18px',
     lineHeight: '18px',
-  },
-  'uppercase-xs-medium': {
+  };
+  const uppercasexsmedium = {
     textTransform: 'upperCase',
     letterSpacing: '0.05em',
     fontFamily: 'Helvetica Neue',
@@ -587,8 +704,8 @@ export const sizeText = {
     fontWeight: '500',
     fontSize: '14px',
     lineHeight: '14px',
-  },
-  'uppercase-xxs-medium': {
+  };
+  const uppercasexxsmedium = {
     textTransform: 'upperCase',
     letterSpacing: '0.05em',
     fontFamily: 'Helvetica Neue',
@@ -596,9 +713,8 @@ export const sizeText = {
     fontWeight: '500',
     fontSize: '12px',
     lineHeight: '12px',
-  },
-
-  'uppercase-xl-bold': {
+  };
+  const uppercasexlbold = {
     textTransform: 'upperCase',
     letterSpacing: '0.05em',
     fontFamily: 'Helvetica Neue',
@@ -606,8 +722,8 @@ export const sizeText = {
     fontWeight: '700',
     fontSize: '32px',
     lineHeight: '32px',
-  },
-  'uppercase-lg-bold': {
+  };
+  const uppercaselgbold = {
     textTransform: 'upperCase',
     letterSpacing: '0.05em',
     fontFamily: 'Helvetica Neue',
@@ -615,8 +731,8 @@ export const sizeText = {
     fontWeight: '700',
     fontSize: '28px',
     lineHeight: '28px',
-  },
-  'uppercase-md-bold': {
+  };
+  const uppercasemdbold = {
     textTransform: 'upperCase',
     letterSpacing: '0.05em',
     fontFamily: 'Helvetica Neue',
@@ -624,8 +740,8 @@ export const sizeText = {
     fontWeight: '700',
     fontSize: '20px',
     lineHeight: '20px',
-  },
-  'uppercase-sm-bold': {
+  };
+  const uppercasesmbold = {
     textTransform: 'upperCase',
     letterSpacing: '0.05em',
     fontFamily: 'Helvetica Neue',
@@ -633,8 +749,8 @@ export const sizeText = {
     fontWeight: '700',
     fontSize: '18px',
     lineHeight: '18px',
-  },
-  'uppercase-xs-bold': {
+  };
+  const uppercasexsbold = {
     textTransform: 'upperCase',
     letterSpacing: '0.05em',
     fontFamily: 'Helvetica Neue',
@@ -642,8 +758,8 @@ export const sizeText = {
     fontWeight: '700',
     fontSize: '14px',
     lineHeight: '14px',
-  },
-  'uppercase-xxs-bold': {
+  };
+  const uppercasexxsbold = {
     textTransform: 'upperCase',
     letterSpacing: '0.05em',
     fontFamily: 'Helvetica Neue',
@@ -651,189 +767,184 @@ export const sizeText = {
     fontWeight: '700',
     fontSize: '12px',
     lineHeight: '12px',
-  },
-
-  'monospace-xl-default': {
+  };
+  const monospacexldefault = {
     fontFamily: 'SF Mono',
     fontStyle: 'normal',
     fontWeight: '400',
     fontSize: '32px',
     lineHeight: '32px',
-  },
-  'monospace-lg-default': {
+  };
+  const monospacelgdefault = {
     fontFamily: 'SF Mono',
     fontStyle: 'normal',
     fontWeight: '400',
     fontSize: '28px',
     lineHeight: '28px',
-  },
-  'monospace-md-default': {
+  };
+  const monospacemddefault = {
     fontFamily: 'SF Mono',
     fontStyle: 'normal',
     fontWeight: '400',
     fontSize: '20px',
     lineHeight: '20px',
-  },
-  'monospace-sm-default': {
+  };
+  const monospacesmdefault = {
     fontFamily: 'SF Mono',
     fontStyle: 'normal',
     fontWeight: '400',
     fontSize: '18px',
     lineHeight: '18px',
-  },
-  'monospace-xs-default': {
+  };
+  const monospacexsdefault = {
     fontFamily: 'SF Mono',
     fontStyle: 'normal',
     fontWeight: '400',
     fontSize: '14px',
     lineHeight: '14px',
     letterSpacing: '0.02em',
-  },
-  'monospace-xxs-default': {
+  };
+  const monospacexxsdefault = {
     fontFamily: 'SF Mono',
     fontStyle: 'normal',
     fontWeight: '400',
     fontSize: '12px',
     lineHeight: '12px',
-  },
-
-  'monospace-xl-italic': {
+  };
+  const monospacexlitalic = {
     fontFamily: 'SF Mono',
     fontStyle: 'italic',
     fontWeight: '400',
     fontSize: '32px',
     lineHeight: '32px',
-  },
-  'monospace-lg-italic': {
+  };
+  const monospacelgitalic = {
     fontFamily: 'SF Mono',
     fontStyle: 'italic',
     fontWeight: '400',
     fontSize: '28px',
     lineHeight: '28px',
-  },
-  'monospace-md-italic': {
+  };
+  const monospacemditalic = {
     fontFamily: 'SF Mono',
     fontStyle: 'italic',
     fontWeight: '400',
     fontSize: '20px',
     lineHeight: '20px',
-  },
-  'monospace-sm-italic': {
+  };
+  const monospacesmitalic = {
     fontFamily: 'SF Mono',
     fontStyle: 'italic',
     fontWeight: '400',
     fontSize: '18px',
     lineHeight: '18px',
-  },
-  'monospace-xs-italic': {
+  };
+  const monospacexsitalic = {
     fontFamily: 'SF Mono',
     fontStyle: 'italic',
     fontWeight: '400',
     fontSize: '14px',
     lineHeight: '14px',
-  },
-  'monospace-xxs-italic': {
+  };
+  const monospacexxsitalic = {
     fontFamily: 'SF Mono',
     fontStyle: 'italic',
     fontWeight: '400',
     fontSize: '12px',
     lineHeight: '12px',
-  },
-
-  'monospace-xl-medium': {
+  };
+  const monospacexlmedium = {
     fontFamily: 'SF Mono',
     fontStyle: 'normal',
     fontWeight: '500',
     fontSize: '32px',
     lineHeight: '32px',
-  },
-  'monospace-lg-medium': {
+  };
+  const monospacelgmedium = {
     fontFamily: 'SF Mono',
     fontStyle: 'normal',
     fontWeight: '500',
     fontSize: '28px',
     lineHeight: '28px',
-  },
-  'monospace-md-medium': {
+  };
+  const monospacemdmedium = {
     fontFamily: 'SF Mono',
     fontStyle: 'normal',
     fontWeight: '500',
     fontSize: '20px',
     lineHeight: '20px',
-  },
-  'monospace-sm-medium': {
+  };
+  const monospacesmmedium = {
     fontFamily: 'SF Mono',
     fontStyle: 'normal',
     fontWeight: '500',
     fontSize: '18px',
     lineHeight: '18px',
-  },
-  'monospace-xs-medium': {
+  };
+  const monospacexsmedium = {
     fontFamily: 'SF Mono',
     fontStyle: 'normal',
     fontWeight: '500',
     fontSize: '14px',
     lineHeight: '14px',
-  },
-  'monospace-xxs-medium': {
+  };
+  const monospacexxsmedium = {
     fontFamily: 'SF Mono',
     fontStyle: 'normal',
     fontWeight: '500',
     fontSize: '12px',
     lineHeight: '12px',
-  },
-
-  'monospace-xl-bold': {
+  };
+  const monospacexlbold = {
     fontFamily: 'SF Mono',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '32px',
     lineHeight: '32px',
-  },
-  'monospace-lg-bold': {
+  };
+  const monospacelgbold = {
     fontFamily: 'SF Mono',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '28px',
     lineHeight: '28px',
-  },
-  'monospace-md-bold': {
+  };
+  const monospacemdbold = {
     fontFamily: 'SF Mono',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '20px',
     lineHeight: '20px',
-  },
-  'monospace-sm-bold': {
+  };
+  const monospacesmbold = {
     fontFamily: 'SF Mono',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '18px',
     lineHeight: '18px',
-  },
-  'monospace-xs-bold': {
+  };
+  const monospacexsbold = {
     fontFamily: 'SF Mono',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '14px',
     lineHeight: '14px',
-  },
-  'monospace-xxs-bold': {
+  };
+  const monospacexxsbold = {
     fontFamily: 'SF Mono',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: '12px',
     lineHeight: '12px',
-  },
-
-  'button-default': {
+  };
+  const buttondefault = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '500',
     fontSize: '18px',
     lineHeight: '24px',
-  },
-  'button-uppercase': {
+  };
+  const buttonuppercase = {
     fontFamily: 'Helvetica Neue',
     fontStyle: 'normal',
     fontWeight: '500',
@@ -841,12 +952,119 @@ export const sizeText = {
     lineHeight: '18px',
     letterSpacing: '0.05em',
     textTransform: 'uppercase',
-  },
-};
+  };
 
-export const Text = {
-  baseStyle: { fontStyle: 'Helvetica Neue', fontColor: 'neutrals.900' },
-  sizes: sizeText,
-};
+  TestTextSize('heading-web-1', headingweb1);
+  TestTextSize('heading-web-2', headingweb2);
+  TestTextSize('heading-web-3', headingweb3);
+  TestTextSize('heading-web-4', headingweb4);
+  TestTextSize('heading-web-5', headingweb5);
+  TestTextSize('heading-web-6', headingweb6);
 
-export default Text;
+  TestTextSize('heading-mobile-1', headingmobile1);
+  TestTextSize('heading-mobile-2', headingmobile2);
+  TestTextSize('heading-mobile-3', headingmobile3);
+  TestTextSize('heading-mobile-4', headingmobile4);
+  TestTextSize('heading-mobile-5', headingmobile5);
+  TestTextSize('heading-mobile-6', headingmobile6);
+
+  TestTextSize('paragraph-xxl-default', paragraphxxldefault);
+  TestTextSize('paragraph-xl-default', paragraphxldefault);
+  TestTextSize('paragraph-lg-default', paragraphlgdefault);
+  TestTextSize('paragraph-md-default', paragraphmddefault);
+  TestTextSize('paragraph-sm-default', paragraphsmdefault);
+  TestTextSize('paragraph-xs-default', paragraphxsdefault);
+  TestTextSize('paragraph-xxs-default', paragraphxxsdefault);
+  TestTextSize('paragraph-xxl-italic', paragraphxxlitalic);
+  TestTextSize('paragraph-xl-italic', paragraphxlitalic);
+  TestTextSize('paragraph-lg-italic', paragraphlgitalic);
+  TestTextSize('paragraph-md-italic', paragraphmditalic);
+  TestTextSize('paragraph-sm-italic', paragraphsmitalic);
+  TestTextSize('paragraph-xs-italic', paragraphxsitalic);
+  TestTextSize('paragraph-xxs-italic', paragraphxxsitalic);
+  TestTextSize('paragraph-xxl-bold', paragraphxxlbold);
+  TestTextSize('paragraph-xl-bold', paragraphxlbold);
+  TestTextSize('paragraph-lg-bold', paragraphlgbold);
+  TestTextSize('paragraph-md-bold', paragraphmdbold);
+  TestTextSize('paragraph-sm-bold', paragraphsmbold);
+  TestTextSize('paragraph-xs-bold', paragraphxsbold);
+  TestTextSize('paragraph-xxs-bold', paragraphxxsbold);
+
+  TestTextSize('label-xl-default', labelxldefault);
+  TestTextSize('label-lg-default', labellgdefault);
+  TestTextSize('label-md-default', labelmddefault);
+  TestTextSize('label-sm-default', labelsmdefault);
+  TestTextSize('label-xs-default', labelxsdefault);
+  TestTextSize('label-xxs-default', labelxxsdefault);
+  TestTextSize('label-xl-italic', labelxlitalic);
+  TestTextSize('label-lg-italic', labellgitalic);
+  TestTextSize('label-md-italic', labelmditalic);
+  TestTextSize('label-sm-italic', labelsmitalic);
+  TestTextSize('label-xs-italic', labelxsitalic);
+  TestTextSize('label-xxs-italic', labelxxsitalic);
+  TestTextSize('label-xl-medium', labelxlmedium);
+  TestTextSize('label-lg-medium', labellgmedium);
+  TestTextSize('label-md-medium', labelmdmedium);
+  TestTextSize('label-sm-medium', labelsmmedium);
+  TestTextSize('label-xs-medium', labelxsmedium);
+  TestTextSize('label-xxs-medium', labelxxsmedium);
+  TestTextSize('label-xl-bold', labelxlbold);
+  TestTextSize('label-lg-bold', labellgbold);
+  TestTextSize('label-md-bold', labelmdbold);
+  TestTextSize('label-sm-bold', labelsmbold);
+  TestTextSize('label-xs-bold', labelxsbold);
+  TestTextSize('label-xxs-bold', labelxxsbold);
+
+  TestTextSize('uppercase-xl-default', uppercasexldefault);
+  TestTextSize('uppercase-lg-default', uppercaselgdefault);
+  TestTextSize('uppercase-md-default', uppercasemddefault);
+  TestTextSize('uppercase-sm-default', uppercasesmdefault);
+  TestTextSize('uppercase-xs-default', uppercasexsdefault);
+  TestTextSize('uppercase-xxs-default', uppercasexxsdefault);
+  TestTextSize('uppercase-xl-italic', uppercasexlitalic);
+  TestTextSize('uppercase-lg-italic', uppercaselgitalic);
+  TestTextSize('uppercase-md-italic', uppercasemditalic);
+  TestTextSize('uppercase-sm-italic', uppercasesmitalic);
+  TestTextSize('uppercase-xs-italic', uppercasexsitalic);
+  TestTextSize('uppercase-xxs-italic', uppercasexxsitalic);
+  TestTextSize('uppercase-xl-medium', uppercasexlmedium);
+  TestTextSize('uppercase-lg-medium', uppercaselgmedium);
+  TestTextSize('uppercase-md-medium', uppercasemdmedium);
+  TestTextSize('uppercase-sm-medium', uppercasesmmedium);
+  TestTextSize('uppercase-xs-medium', uppercasexsmedium);
+  TestTextSize('uppercase-xxs-medium', uppercasexxsmedium);
+  TestTextSize('uppercase-xl-bold', uppercasexlbold);
+  TestTextSize('uppercase-lg-bold', uppercaselgbold);
+  TestTextSize('uppercase-md-bold', uppercasemdbold);
+  TestTextSize('uppercase-sm-bold', uppercasesmbold);
+  TestTextSize('uppercase-xs-bold', uppercasexsbold);
+  TestTextSize('uppercase-xxs-bold', uppercasexxsbold);
+
+  TestTextSize('monospace-xl-default', monospacexldefault);
+  TestTextSize('monospace-lg-default', monospacelgdefault);
+  TestTextSize('monospace-md-default', monospacemddefault);
+  TestTextSize('monospace-sm-default', monospacesmdefault);
+  TestTextSize('monospace-xs-default', monospacexsdefault);
+  TestTextSize('monospace-xxs-default', monospacexxsdefault);
+  TestTextSize('monospace-xl-italic', monospacexlitalic);
+  TestTextSize('monospace-lg-italic', monospacelgitalic);
+  TestTextSize('monospace-md-italic', monospacemditalic);
+  TestTextSize('monospace-sm-italic', monospacesmitalic);
+  TestTextSize('monospace-xs-italic', monospacexsitalic);
+  TestTextSize('monospace-xxs-italic', monospacexxsitalic);
+  TestTextSize('monospace-xl-medium', monospacexlmedium);
+  TestTextSize('monospace-lg-medium', monospacelgmedium);
+  TestTextSize('monospace-md-medium', monospacemdmedium);
+  TestTextSize('monospace-sm-medium', monospacesmmedium);
+  TestTextSize('monospace-xs-medium', monospacexsmedium);
+  TestTextSize('monospace-xxs-medium', monospacexxsmedium);
+  TestTextSize('monospace-xl-bold', monospacexlbold);
+  TestTextSize('monospace-lg-bold', monospacelgbold);
+  TestTextSize('monospace-md-bold', monospacemdbold);
+  TestTextSize('monospace-sm-bold', monospacesmbold);
+  TestTextSize('monospace-xs-bold', monospacexsbold);
+  TestTextSize('monospace-xxs-bold', monospacexxsbold);
+
+  TestTextSize('button-default', buttondefault);
+  TestTextSize('button-uppercase', buttonuppercase);
+});
