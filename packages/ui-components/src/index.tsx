@@ -15,6 +15,9 @@ import LogoSpinner from './components/LogoSpinner/LogoSpinner';
 import Pagination, {
   PaginationProps,
 } from './components/Pagination/Pagination';
+import InputField, {
+  InputFieldProps,
+} from './components/InputField/InputField';
 import PinInputField, {
   PinInputFieldProps,
 } from './components/PinInputField/PinInputField';
@@ -605,6 +608,8 @@ export {
   OTPFormProps,
   PinInputField,
   PinInputFieldProps,
+  InputField,
+  InputFieldProps,
   AutoForm,
   AutoFormProps,
   // default theme
