@@ -12,7 +12,7 @@ import InputField from '../InputField/InputField';
 
 type WithoutChildren<T> = Omit<T, 'children'>;
 
-export interface PasswordInputProps extends UseFormRegisterReturn {
+export interface PasswordInputFieldProps extends UseFormRegisterReturn {
   partProps?: Partial<{
     button: WithoutChildren<ButtonProps>;
     input: WithoutChildren<InputProps>;
@@ -25,45 +25,46 @@ export interface PasswordInputProps extends UseFormRegisterReturn {
   onPressEnter?: () => void;
 }
 
-const PasswordInputField = forwardRef<HTMLInputElement, PasswordInputProps>(
-  (props, _) => {
-    const {
-      partProps,
-      placeholder,
-      onBlur,
-      errorMsg,
-      onChange,
-      onPressEnter,
-    } = props;
-    const [showPassword, setShowPassword] = React.useState(false);
-    const onClickRightIcon = () => setShowPassword(prev => !prev);
+const PasswordInputField = forwardRef<
+  HTMLInputElement,
+  PasswordInputFieldProps
+>((props, _) => {
+  const {
+    partProps,
+    placeholder,
+    onBlur,
+    errorMsg,
+    onChange,
+    onPressEnter,
+  } = props;
+  const [showPassword, setShowPassword] = React.useState(false);
+  const onClickRightIcon = () => setShowPassword(prev => !prev);
 
-    return (
-      <InputField
-        placeholder={placeholder}
-        id="Password-input"
-        partProps={partProps}
-        type={showPassword ? 'text' : 'password'}
-        errorMsg={errorMsg}
-        onBlur={onBlur}
-        onChange={onChange}
-        onPressEnter={onPressEnter}
-        rightIcon={
-          <Button
-            background={'none'}
-            _hover={{ background: 'none' }}
-            _active={{ background: 'none' }}
-            {...partProps?.button}
-            aria-label={'show-hide-btn'}
-            onClick={onClickRightIcon}
-          >
-            {showPassword ? <ViewIcon /> : <ViewOffIcon />}
-          </Button>
-        }
-      />
-    );
-  }
-);
+  return (
+    <InputField
+      placeholder={placeholder}
+      id="Password-input"
+      partProps={partProps}
+      type={showPassword ? 'text' : 'password'}
+      errorMsg={errorMsg}
+      onBlur={onBlur}
+      onChange={onChange}
+      onPressEnter={onPressEnter}
+      rightIcon={
+        <Button
+          background={'none'}
+          _hover={{ background: 'none' }}
+          _active={{ background: 'none' }}
+          {...partProps?.button}
+          aria-label={'show-hide-btn'}
+          onClick={onClickRightIcon}
+        >
+          {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+        </Button>
+      }
+    />
+  );
+});
 
 PasswordInputField.displayName = 'PasswordInputField';
 

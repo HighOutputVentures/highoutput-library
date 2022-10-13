@@ -1,3 +1,6 @@
+import ArrayField, {
+  ArrayFieldProps,
+} from './components/ArrayField/ArrayField';
 import {
   AuthConfig,
   AuthContext,
@@ -11,10 +14,19 @@ import {
   useAuthState,
   useProfile,
 } from './components/AuthProvider';
+import FormContainer, {
+  FormContainerProps,
+} from './components/FormContainer/FormContainer';
+import InputField, {
+  InputFieldProps,
+} from './components/InputField/InputField';
 import LogoSpinner from './components/LogoSpinner/LogoSpinner';
 import Pagination, {
   PaginationProps,
 } from './components/Pagination/Pagination';
+import PasswordInputField, {
+  PasswordInputFieldProps,
+} from './components/PasswordInputField/PasswordInputField';
 import PinInputField, {
   PinInputFieldProps,
 } from './components/PinInputField/PinInputField';
@@ -24,9 +36,15 @@ import RadioImage, {
 import RadioImageGroup, {
   RadioImageGroupProps,
 } from './components/RadioImageGroup/RadioImageGroup';
+import SelectField, {
+  SelectFieldProps,
+} from './components/SelectField/SelectField';
 import TextareaAutosize, {
   TextareaAutosizeProps,
 } from './components/TextareaAutosize/TextareaAutosize';
+import TextAreaField, {
+  TextAreaFieldProps,
+} from './components/TextareaField/TextareaField';
 import ThemeProvider, { ThemeProviderProps } from './components/ThemeProvider';
 import CredentialLoginForm, {
   CredentialLoginFormDefaultProps,
@@ -605,6 +623,16 @@ export {
   OTPFormProps,
   PinInputField,
   PinInputFieldProps,
+  InputField,
+  InputFieldProps,
+  SelectField,
+  SelectFieldProps,
+  PasswordInputField,
+  PasswordInputFieldProps,
+  TextAreaField,
+  TextAreaFieldProps,
+  FormContainer,
+  FormContainerProps,
   AutoForm,
   AutoFormProps,
   // default theme
@@ -627,4 +655,6 @@ export {
   logout,
   useAuthState,
   LogoSpinner,
+  ArrayField,
+  ArrayFieldProps,
 };
