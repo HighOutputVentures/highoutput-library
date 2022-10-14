@@ -1,16 +1,16 @@
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import {
   Button,
+  ButtonProps,
   Flex,
   Icon,
-  Text,
+  IconProps,
   InputElementProps,
   InputGroupProps,
   InputProps,
-  VStack,
-  ButtonProps,
+  Text,
   TextProps,
-  IconProps,
+  VStack,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import React, { ReactNode } from 'react';
@@ -21,18 +21,18 @@ import { ArrayFieldSchema, ArrayFieldTypeValues } from './validation';
 type WithoutChildren<T> = Omit<T, 'children'>;
 export interface ArrayFieldProps {
   partProps?: {
-    input: WithoutChildren<InputProps>;
-    labelProps: WithoutChildren<TextProps>;
-    inputGroup: WithoutChildren<InputGroupProps>;
-    inputLeftElement: WithoutChildren<InputElementProps>;
-    inputRightElement: WithoutChildren<InputElementProps>;
-    buttonRemoveProps: {
-      buttonProps: WithoutChildren<ButtonProps>;
-      iconProps: WithoutChildren<IconProps>;
+    input?: WithoutChildren<InputProps>;
+    labelProps?: WithoutChildren<TextProps>;
+    inputGroup?: WithoutChildren<InputGroupProps>;
+    inputLeftElement?: WithoutChildren<InputElementProps>;
+    inputRightElement?: WithoutChildren<InputElementProps>;
+    buttonRemoveProps?: {
+      buttonProps?: WithoutChildren<ButtonProps>;
+      iconProps?: WithoutChildren<IconProps>;
     };
-    buttonAddProps: {
-      buttonProps: WithoutChildren<ButtonProps>;
-      iconProps: WithoutChildren<IconProps>;
+    buttonAddProps?: {
+      buttonProps?: WithoutChildren<ButtonProps>;
+      iconProps?: WithoutChildren<IconProps>;
     };
   };
   buttonRemoveChildren?: ReactNode;

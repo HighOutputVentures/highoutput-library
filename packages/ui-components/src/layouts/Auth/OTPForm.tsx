@@ -27,11 +27,11 @@ export interface OTPFormProps {
   otpType?: 'number' | 'alphanumeric';
   onSubmitOTPValue?(value: AuthenticateSchemaValues): void;
   partProps?: {
-    title: WithoutChildren<TextProps>;
-    subTitle: WithoutChildren<TextProps>;
-    button: WithoutChildren<ButtonProps>;
-    container: WithoutChildren<BoxProps>;
-    pin: WithoutChildren<PinProps>;
+    title?: WithoutChildren<TextProps>;
+    subTitle?: WithoutChildren<TextProps>;
+    button?: WithoutChildren<ButtonProps>;
+    container?: WithoutChildren<BoxProps>;
+    pin?: WithoutChildren<PinProps>;
   };
 }
 const OTPForm = (props: OTPFormProps) => {

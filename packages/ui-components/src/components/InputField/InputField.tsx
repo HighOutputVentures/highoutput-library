@@ -13,16 +13,24 @@ import {
 import React, { forwardRef, ReactNode, useId } from 'react';
 
 import FormContainer, {
+  FormContainerPartProps,
   FormContainerProps,
 } from '../FormContainer/FormContainer';
 
 type WithoutChildren<T> = Omit<T, 'children'>;
+
+export interface InputFieldPartProps extends FormContainerPartProps {
+  input?: WithoutChildren<InputProps>;
+  inputGroup?: WithoutChildren<InputGroupProps>;
+  inputLeftElement?: WithoutChildren<InputElementProps>;
+  inputRightElement?: WithoutChildren<InputElementProps>;
+}
 export interface InputFieldProps extends Omit<FormContainerProps, 'partProps'> {
   size?: ThemeTypings['sizes'];
   type?: string;
   maxLength?: number;
   autoFocus?: boolean;
-  placeholder: string;
+  placeholder?: string;
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
   autoComplete?: string;
@@ -33,12 +41,7 @@ export interface InputFieldProps extends Omit<FormContainerProps, 'partProps'> {
   _hover?: CSSObject;
   onPressEnter?(): void;
   inputValue?: string | undefined;
-  partProps?: Partial<{
-    input: WithoutChildren<InputProps>;
-    inputGroup: WithoutChildren<InputGroupProps>;
-    inputLeftElement: WithoutChildren<InputElementProps>;
-    inputRightElement: WithoutChildren<InputElementProps>;
-  }>;
+  partProps?: Partial<InputFieldPartProps>;
 }
 
 const InputField = forwardRef<HTMLInputElement, InputFieldProps>(

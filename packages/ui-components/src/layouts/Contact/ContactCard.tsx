@@ -8,8 +8,8 @@ export interface ContactCardProps extends BoxProps {
   title?: string;
   url?: string;
   partProps?: {
-    contactForm: WithoutChildren<ContactFormProps>;
-    text: WithoutChildren<TextProps>;
+    contactForm?: WithoutChildren<ContactFormProps>;
+    text?: WithoutChildren<TextProps>;
   };
 }
 

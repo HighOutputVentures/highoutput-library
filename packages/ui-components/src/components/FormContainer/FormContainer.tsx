@@ -14,22 +14,24 @@ import React, { FC, ReactNode, useId } from 'react';
 import { UseFormRegisterReturn } from 'react-hook-form';
 
 type WithoutChildren<T> = Omit<T, 'children'>;
+
+export interface FormContainerPartProps {
+  formControl?: WithoutChildren<FormControlProps>;
+  formLabel?: WithoutChildren<FormLabelProps>;
+  formErrorMessage?: WithoutChildren<FormErrorMessageProps>;
+  formHelperText?: WithoutChildren<HelpTextProps>;
+}
 export interface FormContainerProps
   extends Partial<UseFormRegisterReturn>,
     ThemingProps {
-  id: string;
+  id?: string;
   label?: string;
   labelColor?: string;
   errorMsg?: string;
   helperMsg?: string;
   disabled?: boolean;
   children?: ReactNode;
-  partProps?: Partial<{
-    formControl: WithoutChildren<FormControlProps>;
-    formLabel: WithoutChildren<FormLabelProps>;
-    formErrorMessage: WithoutChildren<FormErrorMessageProps>;
-    formHelperText: WithoutChildren<HelpTextProps>;
-  }>;
+  partProps?: Partial<FormContainerPartProps>;
 }
 
 const FormContainer: FC<FormContainerProps> = ({

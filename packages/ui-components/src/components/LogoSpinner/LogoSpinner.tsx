@@ -7,11 +7,11 @@ type LogoSpinnerProps = {
   logo?: JSX.Element;
   duration?: number;
   partProps?: Partial<{
-    container: WithoutChildren<FlexProps>;
-    wrapper: WithoutChildren<FlexProps>;
-    square1: WithoutChildren<BoxProps>;
-    square2: WithoutChildren<BoxProps>;
-    logo: WithoutChildren<SVGMotionProps<SVGSVGElement>>;
+    container?: WithoutChildren<FlexProps>;
+    wrapper?: WithoutChildren<FlexProps>;
+    square1?: WithoutChildren<BoxProps>;
+    square2?: WithoutChildren<BoxProps>;
+    logo?: WithoutChildren<SVGMotionProps<SVGSVGElement>>;
   }>;
 };
 

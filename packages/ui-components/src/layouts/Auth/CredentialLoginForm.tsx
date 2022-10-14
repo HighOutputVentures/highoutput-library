@@ -30,10 +30,10 @@ export type CredentialLoginFormDefaultProps = {
   loginTitle?: ReactNode;
   signUpTitle?: ReactNode;
   partProps?: {
-    title: WithoutChildren<TextProps>;
-    button: WithoutChildren<ButtonProps>;
-    containerProps: WithoutChildren<BoxProps>;
-    input: WithoutChildren<InputFieldProps>;
+    title?: WithoutChildren<TextProps>;
+    button?: WithoutChildren<ButtonProps>;
+    containerProps?: WithoutChildren<BoxProps>;
+    input?: WithoutChildren<InputFieldProps>;
   };
 };
 export interface CredentialLoginFormNameProps

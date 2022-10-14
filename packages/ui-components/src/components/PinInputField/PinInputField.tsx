@@ -10,11 +10,14 @@ import React, { forwardRef, useId, useMemo } from 'react';
 import { ChangeHandler } from 'react-hook-form';
 
 import FormContainer, {
+  FormContainerPartProps,
   FormContainerProps,
 } from '../FormContainer/FormContainer';
 
 type WithoutChildren<T> = Omit<T, 'children'>;
-
+export interface PinInputFieldPartProps extends FormContainerPartProps {
+  pin?: WithoutChildren<PinProps>;
+}
 export interface PinInputFieldProps
   extends Omit<
       FormContainerProps,
@@ -24,9 +27,7 @@ export interface PinInputFieldProps
   numberOfFields?: number;
   onChange: ChangeHandler;
   errorMsg?: string | undefined;
-  partProps?: Partial<{
-    pin: WithoutChildren<PinProps>;
-  }>;
+  partProps?: Partial<PinInputFieldPartProps>;
 }
 
 const PinInputField = forwardRef<HTMLInputElement, PinInputFieldProps>(

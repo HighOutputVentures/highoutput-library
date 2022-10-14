@@ -14,11 +14,11 @@ type WithoutChildren<T> = Omit<T, 'children'>;
 
 export interface PasswordInputFieldProps extends UseFormRegisterReturn {
   partProps?: Partial<{
-    button: WithoutChildren<ButtonProps>;
-    input: WithoutChildren<InputProps>;
-    inputGroup: WithoutChildren<InputGroupProps>;
-    inputLeftElement: WithoutChildren<InputElementProps>;
-    inputRightElement: WithoutChildren<InputElementProps>;
+    button?: WithoutChildren<ButtonProps>;
+    input?: WithoutChildren<InputProps>;
+    inputGroup?: WithoutChildren<InputGroupProps>;
+    inputLeftElement?: WithoutChildren<InputElementProps>;
+    inputRightElement?: WithoutChildren<InputElementProps>;
   }>;
   placeholder: string;
   errorMsg?: string;

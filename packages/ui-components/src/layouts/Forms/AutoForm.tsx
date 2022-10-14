@@ -25,10 +25,10 @@ export type AutoFormProps = {
   onSubmitForm?(v: any): void;
   placeholders?: Array<string>;
   partProps?: {
-    boxContainer: WithoutChildren<BoxProps>;
-    button: WithoutChildren<ButtonProps>;
-    textarea: WithoutChildren<TextareaProps>;
-    input: WithoutChildren<InputProps>;
+    boxContainer?: WithoutChildren<BoxProps>;
+    button?: WithoutChildren<ButtonProps>;
+    textarea?: WithoutChildren<TextareaProps>;
+    input?: WithoutChildren<InputProps>;
   };
 };
 
@@ -42,8 +42,8 @@ export interface InputTypeProps {
   label: string;
   placeholder: string;
   partProps?: {
-    textarea: WithoutChildren<TextAreaFieldProps>;
-    input: WithoutChildren<InputFieldProps>;
+    textarea?: WithoutChildren<TextAreaFieldProps>;
+    input?: WithoutChildren<InputFieldProps>;
   };
 }
 

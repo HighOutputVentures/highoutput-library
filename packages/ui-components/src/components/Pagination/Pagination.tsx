@@ -36,15 +36,15 @@ export interface PaginationProps extends ThemingProps {
    */
   loading?: boolean;
   partProps?: Partial<{
-    container: WithoutChildren<FlexProps>;
-    dropdown: WithoutChildren<SelectProps>;
-    dropdownLabel: WithoutChildren<TextProps>;
-    dropdownContainer: WithoutChildren<StackProps>;
-    caption: WithoutChildren<TextProps>;
-    captionAndControlsContainer: WithoutChildren<StackProps>;
-    controls: WithoutChildren<ButtonProps>;
-    controlIcons: WithoutChildren<IconProps>;
-    controlsContainer: WithoutChildren<StackProps>;
+    container?: WithoutChildren<FlexProps>;
+    dropdown?: WithoutChildren<SelectProps>;
+    dropdownLabel?: WithoutChildren<TextProps>;
+    dropdownContainer?: WithoutChildren<StackProps>;
+    caption?: WithoutChildren<TextProps>;
+    captionAndControlsContainer?: WithoutChildren<StackProps>;
+    controls?: WithoutChildren<ButtonProps>;
+    controlIcons?: WithoutChildren<IconProps>;
+    controlsContainer?: WithoutChildren<StackProps>;
   }>;
 }
 

@@ -30,9 +30,9 @@ export interface ContactFormProps {
   onSubmit?(values: ContactFormInputProps): void;
   url?: string;
   partProps?: Partial<{
-    input: WithoutChildren<InputFieldProps>;
-    textarea: WithoutChildren<TextAreaFieldProps>;
-    button: WithoutChildren<ButtonProps>;
+    input?: WithoutChildren<InputFieldProps>;
+    textarea?: WithoutChildren<TextAreaFieldProps>;
+    button?: WithoutChildren<ButtonProps>;
   }>;
 }
 
