@@ -14,7 +14,7 @@ import {
   useAuthState,
   useProfile,
 } from './components/AuthProvider';
-import CloseButton from './components/Button/CloseButton';
+import CloseButton, { CloseButtonProps } from './components/Button/CloseButton';
 import SocialButton, {
   SocialButtonProps,
 } from './components/Button/SocialButton';
@@ -168,7 +168,6 @@ export {
   CircularProgressLabel,
   CircularProgressLabelProps,
   CircularProgressProps,
-  CloseButtonProps,
   /**
    * @reference https://chakra-ui.com/docs/components/transitions/usage#collapse-transition
    */
@@ -663,4 +662,5 @@ export {
   SocialButton,
   SocialButtonProps,
   CloseButton,
+  CloseButtonProps,
 };
