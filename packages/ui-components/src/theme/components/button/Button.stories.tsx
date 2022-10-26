@@ -268,12 +268,12 @@ const Template: ComponentStory<typeof Text> = () => (
                 type="google"
                 variant={'outline'}
                 buttonText={'Disabled Button '}
-                buttonProps={{ disabled: true }}
+                partProps={{ button: { disabled: true } }}
               />,
               <SocialButton
                 type="google"
                 variant={'outline'}
-                buttonProps={{ disabled: true }}
+                partProps={{ button: { disabled: true } }}
               />,
             ]}
           />
