@@ -5,7 +5,7 @@ import { ThemeProvider } from '../..';
 import CloseButton from './CloseButton';
 
 export default {
-  title: 'UI Components/Button/CloseButton',
+  title: 'Components/Button/CloseButton',
   component: CloseButton,
 } as ComponentMeta<typeof CloseButton>;
 

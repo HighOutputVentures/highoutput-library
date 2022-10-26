@@ -6,7 +6,7 @@ import { ThemeProvider } from '../..';
 import SocialButton from './SocialButton';
 
 export default {
-  title: 'UI Components/Button/SocialButton',
+  title: 'Components/Button/SocialButton',
   component: SocialButton,
 } as ComponentMeta<typeof SocialButton>;
 
