@@ -12,50 +12,57 @@ import FigmaIcon from '../../icons/FigmaIcon';
 import GoogleIcon from '../../icons/GoogleIcon';
 import TwitterIcon from '../../icons/TwitterIcon';
 
+type WithoutChildren<T> = Omit<T, 'children'>;
+
+export interface SocialButtonPartProps {
+  button?: WithoutChildren<ButtonProps>;
+  icon?: WithoutChildren<IconButtonProps>;
+}
+
 export interface SocialButtonProps {
-  buttonProps?: ButtonProps;
   onClicked?: () => void;
   type: 'google' | 'dribble' | 'twitter' | 'figma' | 'facebook' | 'apple';
   buttonText?: string;
   variant: 'outline' | 'solid';
-  iconButtonProps?: IconButtonProps;
+  partProps?: Partial<SocialButtonPartProps>;
 }
 
 const SocialButton = (props: Omit<SocialButtonProps, 'children'>) => {
-  const {
-    buttonProps,
-
-    type,
-    variant,
-    iconButtonProps,
-    buttonText,
-    onClicked,
-  } = props;
+  const { partProps, type = 'google', variant, buttonText, onClicked } = props;
 
   const useIcon = () => {
     switch (type) {
       case 'apple':
         return (
-          <AppleIcon isDisabled={buttonProps?.disabled} variant={variant} />
+          <AppleIcon
+            isDisabled={partProps?.button?.disabled}
+            variant={variant}
+          />
         );
-
       case 'dribble':
         return (
-          <DribbleIcon isDisabled={buttonProps?.disabled} variant={variant} />
+          <DribbleIcon
+            isDisabled={partProps?.button?.disabled}
+            variant={variant}
+          />
         );
       case 'facebook':
         return (
-          <FacebookIcon isDisabled={buttonProps?.disabled} variant={variant} />
+          <FacebookIcon
+            isDisabled={partProps?.button?.disabled}
+            variant={variant}
+          />
         );
-
       case 'figma':
-        return <FigmaIcon isDisabled={buttonProps?.disabled} />;
-
+        return <FigmaIcon isDisabled={partProps?.button?.disabled} />;
       case 'google':
-        return <GoogleIcon isDisabled={buttonProps?.disabled} />;
+        return <GoogleIcon isDisabled={partProps?.button?.disabled} />;
       case 'twitter':
         return (
-          <TwitterIcon isDisabled={buttonProps?.disabled} variant={variant} />
+          <TwitterIcon
+            isDisabled={partProps?.button?.disabled}
+            variant={variant}
+          />
         );
     }
   };
@@ -216,10 +223,10 @@ const SocialButton = (props: Omit<SocialButtonProps, 'children'>) => {
         <Button
           p="10px 16px"
           height={'44px'}
-          {...defaultStyle[`${type}`]}
+          {...defaultStyle[type]}
           leftIcon={useIcon()}
           variant={variant}
-          {...buttonProps}
+          {...partProps?.button}
           data-testid={`${type}.social.btn`}
           onClick={onClicked}
         >
@@ -227,14 +234,14 @@ const SocialButton = (props: Omit<SocialButtonProps, 'children'>) => {
         </Button>
       ) : (
         <IconButton
-          {...defaultStyle[`${type}`]}
+          {...defaultStyle[type]}
           width={'44px'}
           height={'44px'}
           data-testid={`${type}.social.btn`}
           aria-label={`btn-${useIcon()}`}
-          disabled={props.buttonProps?.disabled}
+          disabled={props.partProps?.button?.disabled}
           icon={useIcon()}
-          {...iconButtonProps}
+          {...partProps?.icon}
           onClick={onClicked}
         />
       )}

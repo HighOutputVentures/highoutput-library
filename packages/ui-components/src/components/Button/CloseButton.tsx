@@ -8,22 +8,26 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 
+type WithoutChildren<T> = Omit<T, 'children'>;
+export interface CloseButtonPartProps {
+  button?: WithoutChildren<ButtonProps>;
+}
 export interface CloseButtonProps {
-  buttonProps?: ButtonProps;
   icon?: ComponentWithAs<'svg', IconProps>;
   onClicked?: () => void;
   variant?: ThemingProps<'Button'>['variant'];
   size?: ThemingProps<'Button'>['size'];
+  partProps?: Partial<CloseButtonPartProps>;
 }
 
 const CloseButton = (props: Omit<CloseButtonProps, 'children'>) => {
-  const { buttonProps, icon, variant, size, onClicked } = props;
+  const { partProps, icon, variant, size, onClicked } = props;
 
   return (
     <Button
       size={size ?? 'button-close-sm'}
       variant={variant ?? 'solid-close-btn'}
-      {...buttonProps}
+      {...partProps?.button}
       data-testid="close.btn"
       onClick={onClicked}
     >
