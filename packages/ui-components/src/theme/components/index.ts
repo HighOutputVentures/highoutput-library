@@ -13,6 +13,8 @@ import Stack from './stack';
 import Switch from './switch';
 import Tabs from './tabs';
 import Text from './text/text';
+import Tag from './tag';
+import PinInputField from './pinInputField';
 
 const components: { [key: string]: ComponentStyleConfig } = {
   Box,
@@ -27,7 +29,9 @@ const components: { [key: string]: ComponentStyleConfig } = {
   Flex,
   Text,
   Drawer,
+  PinInputField,
   Select,
+  Tag,
   RadioImage,
 };
 

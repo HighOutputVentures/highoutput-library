@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
-import { ThemeProvider } from '../..';
+import { Flex, ThemeProvider } from '../..';
 import InputField from './InputField';
 
 export default {
@@ -11,7 +11,24 @@ export default {
 
 const Template: ComponentStory<typeof InputField> = args => (
   <ThemeProvider>
-    <InputField {...args} />
+    <Flex gap={4} flexDirection="column">
+      <InputField
+        {...args}
+        helperMsg="This is a hint text to help user"
+        variant="unstyled"
+      />
+      <InputField
+        {...args}
+        inputValue="Hello world"
+        helperMsg="This is a hint text to help user"
+      />
+      <InputField
+        {...args}
+        helperMsg="This is a hint text to help user"
+        disabled
+      />
+      <InputField {...args} errorMsg="This is an error message" />
+    </Flex>
   </ThemeProvider>
 );
 
