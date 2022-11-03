@@ -1,98 +1,184 @@
 import { sizeText } from './text/text';
 
 export const Form = {
-  parts: ['formLabel', 'formInput', 'formTextarea', 'formHelperText'],
+  parts: [
+    'formLabel',
+    'formInput',
+    'formTextarea',
+    'formHelperText',
+    'formErrorMessage',
+  ],
   baseStyle: {
     formLabel: {
-      fontWeight: 500,
-      fontSize: 'labels-xs-medium',
-      lineHeight: '14px',
-      letterSpacing: '0.02em',
+      size: 'label-xs-medium',
       color: 'neutrals.900',
     },
     formInput: {
-      fontWeight: 'normal',
-      fontSize: 'paragraphs-sm-default',
-      lineHeight: '24px',
-      border: '1px solid',
-      height: '44px',
-      bgColor: 'alpha.white.500',
-      borderColor: 'neutrals.200',
+      size: 'paragraph-sm-default',
       padding: '8px 14px',
-      borderRadius: 'base',
       _placeholder: {
         color: 'neutrals.500',
       },
+      _disabled: {
+        bgColor: 'neutrals.100',
+        borderColor: 'neutrals.200',
+      },
     },
     formTextarea: {
-      fontWeight: 'normal',
-      fontSize: 'paragraph-sm-default',
-      boxShadow: '0px 1px 2px rgba(16, 24, 40, 0.05)',
-      border: '1px solid',
-      borderColor: 'neutrals.300',
-      color: 'neutrals.900',
-      letterSpacing: '0.02em',
-      borderRadius: '8px',
-      _invalid: {
-        border: '1px solid',
-        borderColor: 'interface.error.700',
-        _focus: { borderColor: 'interface.error.700', border: '1px solid' },
-      },
+      size: 'paragraph-sm-default',
       _placeholder: {
         color: 'neutrals.500',
       },
       padding: '14px 10px',
     },
     formHelperText: {
-      fontSize: 'labels-xs-default',
-      fontWeight: 400,
+      size: 'label-xs-default',
       mt: '6px',
-      _invalid: { color: 'interface.error.700' },
       color: 'neutrals.700',
-      letterSpacing: '0.02em',
+    },
+    formErrorMessage: {
+      size: 'label-xs-default',
+      mt: '6px',
+      color: 'interface.error.700',
     },
   },
   sizes: {
     formLabel: sizeText,
   },
   variants: {
-    primary: {
+    outline: {
       formInput: {
+        height: '44px',
+        bgColor: 'alpha.white.500',
+        borderColor: 'neutrals.200',
+        border: '1px solid',
         _focus: { border: '1px solid', borderColor: 'brand.primary.700' },
+        boxShadow: '0px 1px 2px rgba(16, 24, 40, 0.05)',
+        borderRadius: '8px',
+        color: 'neutrals.900',
         _invalid: {
           border: '1px solid',
           borderColor: 'interface.error.700',
           _focus: { border: '1px solid', borderColor: 'interface.error.700' },
         },
-        fontSize: 'paragraph-sm-default',
-        height: '44px',
-        boxShadow: '0px 1px 2px rgba(16, 24, 40, 0.05)',
-        borderRadius: '8px',
-        fontWeight: 'normal',
-        letterSpacing: '0.02em',
-        _disabled: {
-          bgColor: 'neutrals.100',
-          borderColor: 'neutrals.200',
-        },
       },
       formTextarea: {
         mt: '6px',
+        size: 'paragraph-sm-default',
+        boxShadow: '0px 1px 2px rgba(16, 24, 40, 0.05)',
+        border: '1px solid',
+        borderColor: 'neutrals.300',
+        color: 'neutrals.900',
+        borderRadius: '8px',
         _invalid: {
           border: '1px solid',
           borderColor: 'interface.error.700',
           _focus: { borderColor: 'interface.error.700', border: '1px solid' },
         },
-        fontSize: 'paragraph-sm-default',
-        boxShadow: '0px 1px 2px rgba(16, 24, 40, 0.05)',
-        border: '1px solid',
-        borderColor: 'neutrals.300',
-        color: 'neutrals.900',
-        letterSpacing: '0.02em',
-        borderRadius: '8px',
-        _placeholder: {
-          color: 'neutrals.500',
+      },
+    },
+    flushed: {
+      formInput: {
+        height: '44px',
+        bgColor: 'alpha.white.500',
+        borderBottomColor: 'neutrals.200',
+        borderBottom: '1px solid',
+        _focus: {
+          borderBottom: '1px solid',
+          borderBottomColor: 'brand.primary.700',
         },
-        padding: '14px 10px',
+        borderRadius: '0px',
+        color: 'neutrals.900',
+        _invalid: {
+          borderBottom: '1px solid',
+          borderBottomColor: 'interface.error.700',
+          _focus: {
+            borderBottom: '1px solid',
+            borderBottomColor: 'interface.error.700',
+          },
+        },
+      },
+      formTextarea: {
+        mt: '6px',
+        size: 'paragraph-sm-default',
+        borderBottom: '1px solid',
+        borderBottomColor: 'neutrals.300',
+        color: 'neutrals.900',
+        borderRadius: '0px',
+        _invalid: {
+          borderBottom: '1px solid',
+          borderBottomColor: 'interface.error.700',
+          _focus: {
+            borderBottomColor: 'interface.error.700',
+            borderBottom: '1px solid',
+          },
+        },
+      },
+    },
+    filled: {
+      formInput: {
+        height: '44px',
+        bgColor: 'brand.primary.500',
+        _focus: {
+          bgColor: 'transparent',
+        },
+        borderRadius: '8px',
+        color: 'neutrals.900',
+        _invalid: {
+          border: '1px solid',
+          borderColor: 'interface.error.700',
+          _focus: {
+            border: '1px solid',
+            borderColor: 'interface.error.700',
+          },
+        },
+      },
+      formTextarea: {
+        mt: '6px',
+        color: 'neutrals.900',
+        borderRadius: '8px',
+        bgColor: 'brand.primary.500',
+        _focus: {
+          bgColor: 'transparent',
+        },
+        _invalid: {
+          borderBottom: '1px solid',
+          borderBottomColor: 'interface.error.700',
+          _focus: {
+            borderBottomColor: 'interface.error.700',
+            borderBottom: '1px solid',
+          },
+        },
+      },
+    },
+    unstyled: {
+      formInput: {
+        height: '44px',
+        bgColor: 'transparent',
+        border: '0px',
+        color: 'neutrals.900',
+        _invalid: {
+          border: '1px solid',
+          borderColor: 'interface.error.700',
+          _focus: {
+            border: '1px solid',
+            borderColor: 'interface.error.700',
+          },
+        },
+      },
+      formTextarea: {
+        mt: '6px',
+        color: 'neutrals.900',
+        bgColor: 'transparent',
+        border: '0px',
+        _invalid: {
+          borderBottom: '1px solid',
+          borderBottomColor: 'interface.error.700',
+          _focus: {
+            borderBottomColor: 'interface.error.700',
+            borderBottom: '1px solid',
+          },
+        },
       },
     },
     'check-in-edit': {
@@ -134,7 +220,7 @@ export const Form = {
     },
   },
   defaultProps: {
-    variant: 'primary',
+    variant: 'outline',
   },
 };
 
