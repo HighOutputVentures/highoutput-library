@@ -12,11 +12,7 @@ export default {
 const Template: ComponentStory<typeof InputField> = args => (
   <ThemeProvider>
     <Flex gap={4} flexDirection="column">
-      <InputField
-        {...args}
-        helperMsg="This is a hint text to help user"
-        variant="unstyled"
-      />
+      <InputField {...args} helperMsg="This is a hint text to help user" />
       <InputField
         {...args}
         inputValue="Hello world"
