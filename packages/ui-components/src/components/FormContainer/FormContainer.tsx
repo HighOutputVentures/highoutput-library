@@ -79,7 +79,7 @@ const FormContainer: FC<FormContainerProps> = ({
       {helperMsg && (
         <FormHelperText
           sx={styles.formHelperText}
-          {...partProps?.formErrorMessage}
+          {...partProps?.formHelperText}
           data-testid={`${uid}-form-container-helper`}
         >
           {helperMsg}
