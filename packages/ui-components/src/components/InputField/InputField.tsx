@@ -62,7 +62,7 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
       readOnly,
       defaultValue,
       partProps,
-      variant = 'primary',
+      variant = 'outline',
       onPressEnter,
       inputValue,
     } = props;
@@ -101,7 +101,7 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
             readOnly={readOnly}
             defaultValue={defaultValue}
             maxLength={maxLength}
-            variant="check-in"
+            variant={variant}
             onKeyPress={(e: { key: string }) => {
               if (e.key === 'Enter') {
                 if (onPressEnter) onPressEnter();

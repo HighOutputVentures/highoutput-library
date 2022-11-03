@@ -10,6 +10,7 @@ import {
   InputProps,
   Text,
   TextProps,
+  useId,
   VStack,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -65,6 +66,7 @@ const ArrayField = (props: ArrayFieldProps) => {
     buttonRemoveChildren,
     maxValue,
   } = props;
+  const uid = useId();
   const { control, register, handleSubmit, formState } = useForm<{
     input: ArrayFieldTypeValues[];
   }>({
@@ -113,6 +115,7 @@ const ArrayField = (props: ArrayFieldProps) => {
             placeholder={placeholder ?? ''}
             {...register(`input.${idx}.value`)}
             partProps={partProps}
+            data-testid={`${uid}-array-input`}
             errorMsg={
               isRequired ? formState.errors?.input?.[idx]?.value?.message : ''
             }
@@ -124,6 +127,7 @@ const ArrayField = (props: ArrayFieldProps) => {
                 remove(idx);
                 handleRemove();
               }}
+              data-testid={`${uid}-remove-field-btn`}
               disabled={fields.length <= 1}
               width="32px"
               height="40px"
@@ -142,6 +146,7 @@ const ArrayField = (props: ArrayFieldProps) => {
               <Button
                 variant="outline"
                 width="32px"
+                data-testid={`${uid}-add-field-btn`}
                 height="40px"
                 disabled={maxValue === fields.length}
                 onClick={handleAddField}

@@ -1,6 +1,9 @@
 import ArrayField, {
   ArrayFieldProps,
 } from './components/ArrayField/ArrayField';
+import AutoCompleteInput, {
+  AutoCompleteInputFieldProps,
+} from './components/AutoCompleteInput/AutoCompleteInput';
 import {
   AuthConfig,
   AuthContext,
@@ -637,6 +640,8 @@ export {
   FormContainerProps,
   AutoForm,
   AutoFormProps,
+  AutoCompleteInput,
+  AutoCompleteInputFieldProps,
   // default theme
   theme,
   extendTheme,

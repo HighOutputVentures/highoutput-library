@@ -27,6 +27,6 @@ describe('Pin Input Field Component', () => {
 
   it('should render pin input field pin', async () => {
     const pin = await screen.findAllByTestId(/:r0:-pininput-pin/i);
-    expect(pin).toHaveLength(6);
+    expect(pin).toHaveLength(3);
   });
 });
