@@ -25,7 +25,7 @@ export interface PinInputFieldProps
       'onChange' | 'partProps' | 'size' | 'variant'
     >,
     Omit<PinInputProps, 'onChange' | 'children' | 'id'> {
-  numberOfFields?: 3 | 4 | 5 | 6;
+  numberOfFields?: number;
   onChange: ChangeHandler;
   errorMsg?: string | undefined;
 
@@ -48,7 +48,7 @@ const PinInputField = forwardRef<HTMLInputElement, PinInputFieldProps>(
     const styles = useStyleConfig('PinInputField', { size, variant });
 
     const fieldsArray = useMemo(() => {
-      return [3, 4, 5, 6].includes(numberOfFields)
+      return numberOfFields <= 6
         ? Array.from({ length: numberOfFields })
         : Array.from({ length: 3 });
     }, [numberOfFields]);
