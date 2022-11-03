@@ -112,7 +112,7 @@ const AutoCompleteInput = (props: AutoCompleteInputFieldProps) => {
         }}
         value={options.filter(option => {
           return Array.isArray(value)
-            ? value.some(val => val === option.value)
+            ? value.some((val: string | number) => val === option.value)
             : value === option.value;
         })}
       />
