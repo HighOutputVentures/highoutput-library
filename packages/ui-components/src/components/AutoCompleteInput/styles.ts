@@ -9,11 +9,13 @@ interface GetStylesProps {
   error?: boolean;
   multiple?: boolean;
   darkMode?: boolean;
+  testId?: string;
 }
 
 const getStyles = ({
   error,
   darkMode,
+  testId,
   multiple,
 }: GetStylesProps): ChakraStylesConfig<Item> => {
   return {
@@ -37,7 +39,7 @@ const getStyles = ({
     }),
     multiValueLabel: baseStyle => ({
       ...baseStyle,
-      color: '#525252',
+      color: darkMode ? 'neutrals.100' : 'neutrals.700',
       fontSize: 'paragraphs-xs-default',
       letterSpacing: '0.02em',
     }),
@@ -45,13 +47,18 @@ const getStyles = ({
     multiValue: baseStyle => {
       return {
         ...baseStyle,
-        backgroundColor: 'alpha.white.500',
+        backgroundColor: darkMode ? 'neutrals.800' : 'alpha.white.500',
         border: `1px solid`,
-        borderColor: error ? 'interface.error.700' : 'neutrals.200',
+        borderColor: error
+          ? 'interface.error.700'
+          : darkMode
+          ? 'neutrals.700'
+          : 'neutrals.200',
         borderRadius: '6px',
         padding: '2px 5px',
         height: '24px',
         marginRight: '6px',
+        'data-testid': testId,
       };
     },
     valueContainer: provided => ({ ...provided, padding: '0 0' }),
@@ -60,7 +67,7 @@ const getStyles = ({
       _hover: {
         backgroundColor: 'none',
       },
-      color: '#B8B8B8',
+      color: 'neutrals.400',
     }),
     control: (base, state) => {
       return {
@@ -106,7 +113,7 @@ const getStyles = ({
               : 'gray.400'
             : undefined,
         },
-        color: 'neutrals.900',
+        color: darkMode ? 'neutrals.100' : 'neutrals.900',
       };
     },
     menu: style => {

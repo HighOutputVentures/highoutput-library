@@ -35,16 +35,16 @@ export interface AutoCompleteInputFieldProps
   extends Omit<FormContainerProps, 'partProps'> {
   options: OptionItem[];
   loading?: boolean;
-  selectedProps?: Omit<BoxProps, 'children'>;
   fieldLabelProps?: Omit<BoxProps, 'children'>;
   required?: boolean;
   placement?: 'auto' | 'top' | 'bottom';
   multiple?: boolean;
   darkMode?: boolean;
+  autoFocus?: boolean;
   placeholder?: string;
   partProps?: Partial<AutoCompleteInputFieldPartProps>;
   value?: string | string[] | number | number[];
-  onChangeValue?: (...event: any[]) => void;
+  onChangeValue: (...event: any[]) => void;
 }
 
 const AutoCompleteInput = (props: AutoCompleteInputFieldProps) => {
@@ -55,6 +55,7 @@ const AutoCompleteInput = (props: AutoCompleteInputFieldProps) => {
     placement,
     errorMsg,
     partProps,
+    autoFocus,
     disabled,
     onChangeValue,
     multiple,
@@ -76,13 +77,14 @@ const AutoCompleteInput = (props: AutoCompleteInputFieldProps) => {
         options={options}
         chakraStyles={partProps?.reactChakraStyle ?? styles}
         placeholder={placeholder}
-        menuPlacement={placement ?? 'bottom'}
+        menuPlacement={placement ?? 'auto'}
         isMulti={multiple}
         inputId="auto-complete-input"
         useBasicStyles
         aria-label="auto-complete-input"
         captureMenuScroll
         backspaceRemovesValue
+        autoFocus={autoFocus}
         isLoading={loading}
         data-testid={`${uid}-auto-complete-input-field`}
         isSearchable
@@ -105,8 +107,8 @@ const AutoCompleteInput = (props: AutoCompleteInputFieldProps) => {
         }}
         onChange={(options: MultiValue<Item> | (SingleValue<Item> | null)) => {
           return isArray<MultiValue<Item>>(options)
-            ? onChangeValue?.(options.map(o => o.value))
-            : onChangeValue?.(options?.value ?? null);
+            ? onChangeValue(options.map(o => o.value))
+            : onChangeValue(options?.value ?? null);
         }}
         value={options.filter(option => {
           return Array.isArray(value)
