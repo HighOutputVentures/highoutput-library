@@ -1,4 +1,4 @@
-import { Avatar, BoxProps, HStack } from '@chakra-ui/react';
+import { Avatar, BoxProps, HStack, Icon } from '@chakra-ui/react';
 import React, { useId } from 'react';
 
 import {
@@ -14,6 +14,7 @@ import FormContainer, {
   FormContainerProps,
 } from '../FormContainer/FormContainer';
 import getStyles from './styles';
+import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 
 export interface Item {
   value: string | number;
@@ -41,6 +42,7 @@ export interface AutoCompleteInputFieldProps
   multiple?: boolean;
   darkMode?: boolean;
   autoFocus?: boolean;
+  showDropdownIndicator?: boolean;
   placeholder?: string;
   partProps?: Partial<AutoCompleteInputFieldPartProps>;
   value?: string | string[] | number | number[];
@@ -53,6 +55,7 @@ const AutoCompleteInput = (props: AutoCompleteInputFieldProps) => {
     options,
     darkMode,
     placement,
+    showDropdownIndicator,
     errorMsg,
     partProps,
     autoFocus,
@@ -66,7 +69,7 @@ const AutoCompleteInput = (props: AutoCompleteInputFieldProps) => {
   const uid = useId();
 
   const styles = getStyles({
-    error: !!errorMsg,
+    error: Boolean(errorMsg),
     multiple,
     darkMode: darkMode,
   });
@@ -93,7 +96,14 @@ const AutoCompleteInput = (props: AutoCompleteInputFieldProps) => {
         components={{
           ClearIndicator: () => null,
           IndicatorSeparator: () => null,
-          DropdownIndicator: () => null,
+          DropdownIndicator: ({ selectProps }) => {
+            const icon = selectProps.menuIsOpen
+              ? ChevronUpIcon
+              : ChevronDownIcon;
+            return showDropdownIndicator ? (
+              <Icon as={icon} w={4} h={6} stroke="brand.primary.500" />
+            ) : null;
+          },
           MultiValueContainer: ({ children, data, ...props }) => (
             <chakraComponents.MultiValueContainer {...props} data={data}>
               <HStack align="center" spacing="5px">

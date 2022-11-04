@@ -19,17 +19,29 @@ export const Form = {
       _placeholder: {
         color: 'neutrals.500',
       },
+      _focus: { border: '1px solid', borderColor: 'brand.primary.700' },
+      _focusVisible: {
+        outline: 'none',
+      },
+      _hover: { border: '1px solid', borderColor: 'brand.primary.700' },
       _disabled: {
         bgColor: 'neutrals.100',
         borderColor: 'neutrals.200',
       },
+      border: '1px solid',
+      borderColor: 'neutrals.200',
     },
     formTextarea: {
       size: 'paragraph-sm-default',
       _placeholder: {
         color: 'neutrals.500',
       },
+      _hover: { border: '1px solid', borderColor: 'brand.primary.700' },
       padding: '14px 10px',
+      _focus: { border: '1px solid', borderColor: 'brand.primary.700' },
+      _focusVisible: {
+        outline: 'none',
+      },
     },
     formHelperText: {
       size: 'label-xs-default',
@@ -53,6 +65,9 @@ export const Form = {
         borderColor: 'neutrals.200',
         border: '1px solid',
         _focus: { border: '1px solid', borderColor: 'brand.primary.700' },
+        _focusVisible: {
+          outline: 'none',
+        },
         boxShadow: '0px 1px 2px rgba(16, 24, 40, 0.05)',
         borderRadius: '8px',
         color: 'neutrals.900',
@@ -70,6 +85,10 @@ export const Form = {
         borderColor: 'neutrals.300',
         color: 'neutrals.900',
         borderRadius: '8px',
+        _focus: { border: '1px solid', borderColor: 'brand.primary.700' },
+        _focusVisible: {
+          outline: 'none',
+        },
         _invalid: {
           border: '1px solid',
           borderColor: 'interface.error.700',

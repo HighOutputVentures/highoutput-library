@@ -75,6 +75,9 @@ const getStyles = ({
         _focus: {
           borderColor: error ? 'interface.error.700' : 'brand.primary.700',
         },
+        _focusVisible: {
+          outline: 'none',
+        },
         _invalid: {
           borderColor: 'interface.error.700',
           _hover: { borderColor: 'none' },
