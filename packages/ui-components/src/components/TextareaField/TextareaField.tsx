@@ -38,7 +38,7 @@ const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaFieldProps>(
       onBlur,
       name,
       limit,
-      variant = 'primary',
+      variant = 'outline',
       size,
     } = props;
     const styles = useMultiStyleConfig('Form', { variant, size });

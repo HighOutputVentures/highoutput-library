@@ -64,7 +64,7 @@ const ArrayField = (props: ArrayFieldProps) => {
     isRequired,
     buttonAddChildren,
     buttonRemoveChildren,
-    maxValue,
+    maxValue = 5,
   } = props;
   const uid = useId();
   const { control, register, handleSubmit, formState } = useForm<{

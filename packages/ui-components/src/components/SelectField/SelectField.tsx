@@ -28,7 +28,7 @@ const SelectField = forwardRef<HTMLSelectElement, SelectFieldProps>(
       placeholder,
       defaultValue,
       disabled,
-      variant = 'primary',
+      variant = 'outline',
     } = props;
     const styles = useMultiStyleConfig('Form', { variant });
     const uid = useId();
